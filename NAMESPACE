@@ -1,2 +1,0 @@
-useDynLib(gmum.r)
-export(hello_gmum)
