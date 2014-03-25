@@ -1,0 +1,105 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,dsfont}
+
+\def\F{\mathcal{F}}
+\def\G{\mathcal{G}}
+\def\I{\mathcal{I}}
+\def\y{\mathcal{\mu}}
+\def\m{m}
+\def\card{\mathrm{card}}
+
+\def\diam{\mathrm{diam}}
+
+\def\det{\mathrm{det}}
+
+\def\tr{\mathrm{tr}}
+
+\def\cov{\mathrm{cov}}
+\begin{document}
+
+
+\section{Entropy formulas}
+\begin{description}
+	$\G$ - family of all normal distributions \newline
+	$\G_A$ - where $A$ proper matrix(square, symetric positvelly defined) is a subfamilly of $\G$ which covariance equals $A$
+		\newline
+	$\G_{(\cdot \I)} = \cup_{r \in \mathbb{R} - \{0\}} \G_{r\cdot \I}
+	
+\end{description}
+
+\begin{table}\centering
+
+\begin{tabular}{||l|l|l||} \hline \hline
+
+$\F$ & $\Sigma_{\F}(\y)$ & $H^{\times}(\y\|\F)$ \\[0.5ex]
+
+\hline \hline
+
+$\G_{\Sigma}$ & $\Sigma$ & $\frac{N}{2} \ln(2\pi)+\frac{1}{2}\tr(\Sigma^{-1}\Sigma_{\y})+\frac{1}{2}\ln \det(\Sigma)$
+
+\\[0.5ex] \hline
+
+$\G_{r\I}$ & $r\I$ &
+
+$\frac{N}{2}\ln(2\pi)+\frac{1}{2r}\tr(\Sigma_{\y})+\frac{N}{2}\ln r$ \\[0.5ex] \hline
+
+$\G_{(\cdot\I)}$ & $\frac{\tr(\Sigma_{\y})}{N} \I$ & $\frac{N}{2}\ln(2\pi e/N)+\frac{N}{2}\ln (\tr \Sigma_\y)$ \\[0.5ex] \hline
+
+$\G_{\mathrm{diag}}$ & $\mathrm{diag}(\Sigma_{\y})$ & $\frac{N}{2}\ln(2\pi e)+\frac{1}{2}\ln(\det(\mathrm{diag}(\Sigma_\y)))$ \\[0.5ex]
+
+\hline
+
+%$\G_{\det=A}$ & $(A/\det \Sigma_{\mu})^{1/N}
+
+%\Sigma_{\mu}$ & $\frac{N}{2} \ln(2\pi)+\frac{N}{2}(\det \Sigma_{\mu}/A)^{1/N}+\frac{1}{2}\ln(A)$ \\[0.5ex] \hline
+
+$\G$ & $\Sigma_{\y}$ & $\frac{N}{2}\ln(2\pi e)+\frac{1}{2}\ln \det(\Sigma_{\y})$ \\[0.5ex] \hline \hline
+
+\end{tabular}
+
+\caption{Table of cross-entropy formulas with respect to Gaussian subfamilies.}
+
+\label{tab1:cec}
+
+\end{table}
+
+
+\section{Cluster formulas}
+Assume we we have a cluster $A$ with parameters $\l,\m,\Sigma$ and we add to this cluster point $y$ we will get a new cluter $A_{+y}$ with paramter given by formulas:
+$$
+
+\begin{array}{rcl}
+
+\l_{+y} & = & l+1, \\[1ex]
+
+\m_{+y} & = & \frac{l\m+y}{l+1}, \\[1ex]
+
+\Sigma_{+y} & = & \frac{l}{l+1}[\Sigma+\frac{1}{l+1}(\m-y)(\m-y)^T].
+
+\end{array}
+
+$$
+
+Let's assume we'll substract point $ y $ from cluster $A$ our new cluster will have parameters given by formula :
+
+$$
+
+\begin{array}{rcl}
+
+l_{-y} & = & l-1, \\[1ex]
+
+\m_{-y} & = & \frac{l}{l-1}\m-\frac{1}{l-1} y, \\[1ex]
+
+\Sigma_{-y} & = & \frac{l}{l-1}[\Sigma-\frac{1}{l-1}(\m-y)(\m-y)^T], .
+
+\end{array}
+
+$$
+
+
+
+
+
+
+\end{document}
