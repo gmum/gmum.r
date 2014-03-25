@@ -4,6 +4,7 @@
 #' Prints out "Hello Gmum"
 #' @export
 hello_gmum <- function(){
-	.Call( "hello_gmum", PACKAGE = "gmum.r" )
+	.Call( "hello_gmum()", PACKAGE = "gmum.r" )
 }
 
+   
