@@ -34,11 +34,11 @@ public:
   /*
    *
    */
-  void singleLoop();
+  int singleLoop();
   /*
    *
    */
-  double energy();
+  double entropy();
 };
 
 #endif

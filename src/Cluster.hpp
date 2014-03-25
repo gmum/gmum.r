@@ -18,6 +18,7 @@ public:
   Cluster(int id, std::vector<int> &fits, Rcpp::NumericMatrix &points);
   Cluster addPoint();
   Cluster removePoint();
+  float entropy();
 };
 
 #endif

@@ -39,3 +39,7 @@ Cluster Cluster::addPoint() {
 Cluster Cluster::removePoint() {
 
 }
+
+float Cluster::entropy() {
+
+}
