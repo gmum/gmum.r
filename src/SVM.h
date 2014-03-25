@@ -4,7 +4,7 @@
 #include <Rcpp.h>
 #include <map>
 #include <vector>
-
+   
 // This struct will conatin all the necessery svm parameters and will be used in SVMConfig
 struct SVMParameters {
   int cost;
@@ -79,7 +79,9 @@ class TestSVMRunner : public SVMHandler {
 	bool canHandle( SVMConfiguration);
 };
 
+// Something like that will probably be used as a last block in the chain
 SEXP dispatchMessage( SVMResult );
+
 RcppExport SEXP testFlow( SEXP );
 
 #endif

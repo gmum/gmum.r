@@ -30,22 +30,25 @@ bool LIBSVMRunner::canHandle( SVMConfiguration data ) {
 	return true;
 }
 
-// SVMFlowFactory
+// SVMFlowFactory | At the moments returns empty vector<hanlder>
 std::vector<SVMHandler*> SVMFlowFactory::createSVMFlow( SVMConfiguration config ) {
   std::vector<SVMHandler*> handlers;
   return handlers;
+  // TODO
 }
 
 // SVMClient
 SVMClient::SVMClient() {
-  flowFactory = TestSVMFlowFactory();
+  flowFactory = SVMFlowFactory();
 }
 
 SVMClient::SVMClient( const char *message ) {
-  flowFactory = TestSVMFlowFactory(); // Test Factory
+  flowFactory = SVMFlowFactory();
   this->message = message;
 }
 
+// Main client function, it uses FlowFactory to get a certain work flow
+// and runs processRequest(c,r) function on each block returing last result
 SVMResult SVMClient::run( SVMConfiguration config) {
   SVMResult result(this->message);
   
