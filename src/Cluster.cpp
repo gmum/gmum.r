@@ -1,11 +1,13 @@
 #include "Cluster.hpp"
 
+Cluster::Cluster() {}
+
 Cluster::Cluster(int id, vector<int> &fits, NumericMatrix &points) {
   initializeMean(id, fits, points);
   initializeCovarianceMatrix(id, fits, points);
 }
 
-void Cluster::initializeMean(int id, vector<int> &fits, NumericMatrix &points) {
+Rcpp::NumericVector Cluster::initializeMean(int id, vector<int> &fits, NumericMatrix &points) {
   int dimention = points.ncol();
   
   mean = NumericVector(1,dimention);
@@ -14,6 +16,7 @@ void Cluster::initializeMean(int id, vector<int> &fits, NumericMatrix &points) {
   for(int i = 0; i < points.nrow(); i++) 
     if(fits[i] == id) mean += points(i,_);
   mean = mean/points.nrow();
+  return mean;
 }
 
 void Cluster::initializeCovarianceMatrix(int id, vector<int> &fits, NumericMatrix &points) {
