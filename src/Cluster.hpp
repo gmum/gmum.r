@@ -12,9 +12,10 @@ private:
    */
   Rcpp::NumericMatrix covMat;
   static int numberOfPoints;
-  void initializeMean(int id, std::vector<int> &fits, Rcpp::NumericMatrix &points);
+  Rcpp::NumericVector initializeMean(int id, std::vector<int> &fits, Rcpp::NumericMatrix &points);
   void initializeCovarianceMatrix(int id, std::vector<int> &fits, Rcpp::NumericMatrix &points);
 public:
+  Cluster();
   Cluster(int id, std::vector<int> &fits, Rcpp::NumericMatrix &points);
   Cluster addPoint();
   Cluster removePoint();
