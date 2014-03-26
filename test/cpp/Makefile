@@ -1,4 +1,5 @@
 include personal.mk
+include vars.mk
 USER_DIR = ../../src
 CPPFLAGS += -isystem $(GTEST_DIR)/include
 CXXFLAGS += -g -Wall -Wextra -pthread
@@ -29,7 +30,7 @@ gtest_main.a : gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
 
 % : %.cc gtest_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(I_PATH) $(L_PATH) $^ -o $@
 
 #firstTest : firstTest.cc gtest_main.a
 #	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
