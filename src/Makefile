@@ -1,6 +1,6 @@
 CFLAGS = -std=c++11 -fpic -c
-INCL_PATH = /usr/lib/R/site-library/RcppArmadillo/include:/usr/lib/R/site-library/Rcpp/include:/usr/share/R/include
-LINK_PATH = /usr/lib/R/site-library/RcppArmadillo/libs:/usr/lib/R/site-library/Rcpp/libs:/usr/lib/R/lib
+INCL_PATH = /usr/lib/R/site-library/Rcpp/include:/usr/share/R/include
+LINK_PATH = /usr/lib/R/site-library/Rcpp/libs:/usr/lib/R/lib
 I_PATH = -I$(subst :, -I,$(INCL_PATH))
 L_PATH = -L$(subst :, -L,$(LINK_PATH))
 

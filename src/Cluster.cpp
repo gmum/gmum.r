@@ -1,35 +1,34 @@
 #include "Cluster.hpp"
 
-Cluster::Cluster(int id, vector<int> &fits, NumericMatrix &points) {
+Cluster::Cluster(int id, vector<int> &fits, arma::mat &points) {
   initializeMean(id, fits, points);
   initializeCovarianceMatrix(id, fits, points);
 }
 
-void Cluster::initializeMean(int id, vector<int> &fits, NumericMatrix &points) {
+void Cluster::initializeMean(int id, vector<int> &fits, arma::mat &points) {
   int dimention = points.ncol();
   
-  mean = NumericVector(1,dimention);
-  std::fill(mean.begin(), mean.end(), 0);
+  mean = arma::rowvec(dimention, fill::zeros);
   
-  for(int i = 0; i < points.nrow(); i++) 
+  for(int i = 0; i < points.n_rows; i++) 
     if(fits[i] == id) mean += points(i,_);
-  mean = mean/points.nrow();
+  mean = mean/points.n_rows;
 }
 
-void Cluster::initializeCovarianceMatrix(int id, vector<int> &fits, NumericMatrix &points) {
+void Cluster::initializeCovarianceMatrix(int id, vector<int> &fits, arma::mat &points) {
   int dimention = points.ncol();
 
   arma::rowvec m = as<arma::rowvec>(mean);
 
   arma::mat out(dimension, dimension, fill::zeros);
-  for(int i = 0; i < points.nrow(); i++)
+  for(int i = 0; i < points.n_rows; i++)
     if(fits[i] == id) {
-      arma::rowvec point = as<arma::rowvec>(points(i,_));
+      arma::rowvec point = points.row(i);
       arma::rowvec tmp = point-m;
       out += tmp.t()*tmp;
     }
 
-  covMat = as<NumericMatrix>(out);
+  covMat = out;
 }
 
 Cluster Cluster::addPoint() {
