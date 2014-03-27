@@ -1,1 +1,0 @@
-GTEST_DIR = /home/lorddidger/src/gtest-1.7.0/
