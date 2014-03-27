@@ -15,8 +15,9 @@ LDLIBS := 		$(RLDFLAGS) $(RRPATH) $(RBLAS) $(RLAPACK) $(RCPPLIBS) $(RINSIDELIBS)
 all : hartigan.so
 
 clean :
-	rm *.o
-	rm *.so
+	-rm *.o
+	-rm *.gch
+	-rm *.so
 
 .PHONY : clean #R-standalone
 

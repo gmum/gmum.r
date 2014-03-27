@@ -2,12 +2,12 @@
 
 Cluster::Cluster() {}
 
-Cluster::Cluster(int id, std::vector<int> &fits, arma::mat &points) {
+Cluster::Cluster(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points) {
   initializeMean(id, fits, points);
   initializeCovarianceMatrix(id, fits, points);
 }
 
-arma::rowvec Cluster::initializeMean(int id, std::vector<int> &fits, arma::mat &points) {
+arma::rowvec Cluster::initializeMean(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points) {
   int dimention = points.n_cols;
   
   mean = arma::rowvec(dimention, arma::fill::zeros);
@@ -18,7 +18,7 @@ arma::rowvec Cluster::initializeMean(int id, std::vector<int> &fits, arma::mat &
   return mean;
 }
 
-void Cluster::initializeCovarianceMatrix(int id, std::vector<int> &fits, arma::mat &points) {
+void Cluster::initializeCovarianceMatrix(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points) {
   int dimension = points.n_cols;
 
   arma::rowvec m = mean;
@@ -49,3 +49,5 @@ float Cluster::entropy() {
 int Cluster::size() {
   return count;
 }
+
+int Cluster::numberOfPoints = 0;

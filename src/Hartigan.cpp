@@ -1,7 +1,7 @@
 #include "Hartigan.hpp"
 
 Hartigan::Hartigan(int numberOfClusters, float killThreshold,
-	 std::vector<int> &fits, arma::mat &points)
+	 std::vector<unsigned int> &fits, arma::mat &points)
   : fits(fits), points(points), killThreshold(killThreshold) {
 
   clusters.reserve(numberOfClusters);
@@ -18,9 +18,9 @@ void Hartigan::loop() {
 int Hartigan::singleLoop() {
   int switched = 0;
   for(int i = 0; i < Cluster::numberOfPoints; i++) {
-    int source = fits[i];
+    unsigned int source = fits[i];
     arma::rowvec point = points.row(i);
-    for(int k = 0; k < clusters.size(); k++)
+    for(unsigned int k = 0; k < clusters.size(); k++)
       if(k != source && clusters[k].size() > 0) {
 	Cluster &oldSource = clusters[source];
 	Cluster &oldTarget = clusters[k];
@@ -45,5 +45,5 @@ int Hartigan::singleLoop() {
 }
 
 double Hartigan::entropy() {
-
+  return 0;
 }
