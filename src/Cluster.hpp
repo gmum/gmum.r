@@ -1,4 +1,5 @@
-#include <RcppArmadillo.h>
+#include <armadillo>
+#include <vector>
 
 #ifndef CLUSTER_HPP
 #define CLUSTER_HPP
@@ -6,19 +7,22 @@
 class Cluster {
 private:
   int count;
-  Rcpp::NumericVector mean;
+  arma::rowvec mean;
   /*
    * covariance matrix 
    */
-  Rcpp::NumericMatrix covMat;
-  static int numberOfPoints;
-  void initializeMean(int id, std::vector<int> &fits, Rcpp::NumericMatrix &points);
-  void initializeCovarianceMatrix(int id, std::vector<int> &fits, Rcpp::NumericMatrix &points);
+  arma::mat covMat;
+  void initializeCovarianceMatrix(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
 public:
-  Cluster(int id, std::vector<int> &fits, Rcpp::NumericMatrix &points);
-  Cluster addPoint();
-  Cluster removePoint();
+  Cluster();
+  Cluster(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
+  Cluster addPoint(arma::rowvec &point);
+  Cluster removePoint(arma::rowvec &point);
   float entropy();
+  int size();
+  arma::rowvec initializeMean(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
+
+  static int numberOfPoints;
 };
 
 #endif
