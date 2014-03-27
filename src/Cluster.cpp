@@ -2,47 +2,50 @@
 
 Cluster::Cluster() {}
 
-Cluster::Cluster(int id, vector<int> &fits, NumericMatrix &points) {
+Cluster::Cluster(int id, std::vector<int> &fits, arma::mat &points) {
   initializeMean(id, fits, points);
   initializeCovarianceMatrix(id, fits, points);
 }
 
-Rcpp::NumericVector Cluster::initializeMean(int id, vector<int> &fits, NumericMatrix &points) {
-  int dimention = points.ncol();
+arma::rowvec Cluster::initializeMean(int id, std::vector<int> &fits, arma::mat &points) {
+  int dimention = points.n_cols;
   
-  mean = NumericVector(1,dimention);
-  std::fill(mean.begin(), mean.end(), 0);
+  mean = arma::rowvec(dimention, arma::fill::zeros);
   
-  for(int i = 0; i < points.nrow(); i++) 
-    if(fits[i] == id) mean += points(i,_);
-  mean = mean/points.nrow();
+  for(int i = 0; i < points.n_rows; i++) 
+    if(fits[i] == id) mean += points.row(i);
+  mean = mean/points.n_rows;
   return mean;
 }
 
-void Cluster::initializeCovarianceMatrix(int id, vector<int> &fits, NumericMatrix &points) {
-  int dimention = points.ncol();
+void Cluster::initializeCovarianceMatrix(int id, std::vector<int> &fits, arma::mat &points) {
+  int dimension = points.n_cols;
 
-  arma::rowvec m = as<arma::rowvec>(mean);
+  arma::rowvec m = mean;
 
-  arma::mat out(dimension, dimension, fill::zeros);
-  for(int i = 0; i < points.nrow(); i++)
+  arma::mat out(dimension, dimension, arma::fill::zeros);
+  for(int i = 0; i < points.n_rows; i++)
     if(fits[i] == id) {
-      arma::rowvec point = as<arma::rowvec>(points(i,_));
+      arma::rowvec point = points.row(i);
       arma::rowvec tmp = point-m;
       out += tmp.t()*tmp;
     }
 
-  covMat = as<NumericMatrix>(out);
+  covMat = out;
 }
 
-Cluster Cluster::addPoint() {
+Cluster Cluster::addPoint(arma::rowvec &point) {
 
 }
 
-Cluster Cluster::removePoint() {
+Cluster Cluster::removePoint(arma::rowvec &point) {
 
 }
 
 float Cluster::entropy() {
 
+}
+
+int Cluster::size() {
+  return count;
 }

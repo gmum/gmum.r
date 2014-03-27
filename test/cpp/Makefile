@@ -19,7 +19,7 @@ LDLIBS := 		$(RLDFLAGS) $(RRPATH) $(RBLAS) $(RLAPACK) $(RCPPLIBS) $(RINSIDELIBS)
 
 USER_DIR = ../../src
 
-TESTS = firstTest ClusterTest
+TESTS = ClusterTest firstTest
 
 GTEST_HEADERS = $(GTEST)/include/gtest/*.h \
                 $(GTEST)/include/gtest/internal/*.h
@@ -45,6 +45,11 @@ gtest.a : gtest-all.o
 gtest_main.a : gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
 
-% : %.cc gtest_main.a
-	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $(I_PATH) $(L_PATH) $^ -o $@
+%.o : %.cc
+	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -c
 
+ClusterTest : ClusterTest.o src/Cluster.o gtest_main.a
+	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+
+firstTest : firstTest.o
+	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
