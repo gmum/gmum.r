@@ -1,5 +1,6 @@
 #include <RcppArmadillo.h>
-#include <random>
+#include <time.h>
+#include <stdlib.h>
 #include "Hartigan.hpp"
 
 RcppExport SEXP run(SEXP &numberOfClusters, SEXP &numberOfTimes, SEXP &dataset) {
@@ -8,13 +9,13 @@ RcppExport SEXP run(SEXP &numberOfClusters, SEXP &numberOfTimes, SEXP &dataset) 
   Rcpp::NumericMatrix points = Rcpp::as<Rcpp::NumericMatrix>(dataset);
 
   //random assignment into clusters
-  std::default_random_engine generator;
-  std::uniform_int_distribution<int> distribution(0, nrOfClusters);
+  int seed = time(NULL);
+  srand(seed);
 
   std::vector<int> fits;
   fits.reserve(points.nrow());
 
-  for(int i = 0; i < points.nrow(); i++) fits[i] = distribution(generator);
+  for(int i = 0; i < points.nrow(); i++) fits[i] = rand()%nrOfClusters;
 
   //Hartigan algorithm
   Hartigan algorithm(nrOfClusters, 0.0001, fits, points);
