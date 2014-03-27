@@ -1,7 +1,4 @@
-#include <Rcpp.h>
-#include <armadillo>
-#include <random>
-#include "Hartigan.hpp"
+#include "HartiganMaster.hpp"
 
 RcppExport SEXP run(SEXP &numberOfClusters, SEXP &numberOfTimes, SEXP &dataset) {
 
@@ -11,13 +8,13 @@ RcppExport SEXP run(SEXP &numberOfClusters, SEXP &numberOfTimes, SEXP &dataset) 
   arma::mat points(proxyDataset.begin(), proxyDataset.nrow(), proxyDataset.ncol(), false);
 
   //random assignment into clusters
-  std::default_random_engine generator;
-  std::uniform_int_distribution<int> distribution(0, nrOfClusters);
+  int seed = time(NULL);
+  srand(seed);
 
   std::vector<int> fits;
   fits.reserve(points.n_rows);
 
-  for(int i = 0; i < points.n_rows; i++) fits[i] = distribution(generator);
+  for(int i = 0; i < points.n_rows; i++) fits[i] = rand()%nrOfClusters;
 
   //Hartigan algorithm
   Hartigan algorithm(nrOfClusters, 0.0001, fits, points);
