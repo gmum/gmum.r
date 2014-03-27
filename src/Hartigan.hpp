@@ -1,4 +1,5 @@
-#include <RcppArmadillo.h>
+#include <armadillo>
+#include <vector>
 #include "Cluster.hpp"
 
 #ifndef HARTIGAN_HPP
@@ -16,7 +17,7 @@ private:
   /*
    * dataset. A point is stored as a row.
    */
-  Rcpp::NumericMatrix &points;
+  arma::mat &points;
   /*
    * in hartigan algorithm a cluster is removed when its size
    * is less than certain fraction of number of points in dataset.
@@ -26,7 +27,7 @@ private:
   const float killThreshold;
 public:
   Hartigan(int numberOfClusters, float killThreshold,
-	   std::vector<int> &fits, Rcpp::NumericMatrix &points);
+	   std::vector<int> &fits, arma::mat &points);
   /*
    *
    */
