@@ -1,8 +1,18 @@
-CFLAGS = -fpic -c
-INCL_PATH = /usr/lib/R/site-library/RcppArmadillo/include:/usr/lib/R/site-library/Rcpp/include:/usr/share/R/include
-LINK_PATH = /usr/lib/R/site-library/RcppArmadillo/libs:/usr/lib/R/site-library/Rcpp/libs:/usr/lib/R/lib
-I_PATH = -I$(subst :, -I,$(INCL_PATH))
-L_PATH = -L$(subst :, -L,$(LINK_PATH))
+
+R_HOME := 		$(shell R RHOME)
+RCPPFLAGS := 		$(shell $(R_HOME)/bin/R CMD config --cppflags)
+RLDFLAGS := 		$(shell $(R_HOME)/bin/R CMD config --ldflags)
+RCPPINCL := 		$(shell echo 'Rcpp:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)
+RCPPLIBS := 		$(shell echo 'Rcpp:::LdFlags()'  | $(R_HOME)/bin/R --vanilla --slave)
+RCPPARMAINCL :=		$(shell echo 'RcppArmadillo:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)	
+
+
+CXX := 			$(shell $(R_HOME)/bin/R CMD config CXX)
+CPPFLAGS := 		-Wall $(shell $(R_HOME)/bin/R CMD config CPPFLAGS) -isystem $(GTEST)/include
+CXXFLAGS := 		$(RCPPFLAGS) $(RCPPINCL) $(RCPPARMAINCL) $(RINSIDEINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -g -Wall -Wextra -pthread -fpic -c
+LDLIBS := 		$(RLDFLAGS) $(RRPATH) $(RBLAS) $(RLAPACK) $(RCPPLIBS) $(RINSIDELIBS) 
+
+
 
 all : hartigan.so
 
@@ -18,7 +28,7 @@ clean :
 #	R CMD SHLIB $^
 
 %.o : %.cpp
-	g++ $(I_PATH) $(CFLAGS) $^ -o $@
+	g++ $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
 hartigan.so : HartiganMaster.o
-	g++ -shared $(L_PATH) $^ -o $@
+	g++ -shared -c Hartigan.cpp $^ -o $@ $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) 
