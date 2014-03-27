@@ -8,7 +8,7 @@ RCPPARMAINCL :=		$(shell echo 'RcppArmadillo:::CxxFlags()' | $(R_HOME)/bin/R --v
 
 
 CXX := 			$(shell $(R_HOME)/bin/R CMD config CXX)
-CPPFLAGS := 		-Wall $(shell $(R_HOME)/bin/R CMD config CPPFLAGS) -isystem $(GTEST)/include
+CPPFLAGS := 		-Wall $(shell $(R_HOME)/bin/R CMD config CPPFLAGS)
 CXXFLAGS := 		$(RCPPFLAGS) $(RCPPINCL) $(RCPPARMAINCL) $(RINSIDEINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -g -Wall -Wextra -pthread -fpic -c
 LDLIBS := 		$(RLDFLAGS) $(RRPATH) $(RBLAS) $(RLAPACK) $(RCPPLIBS) $(RINSIDELIBS) 
 
