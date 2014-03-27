@@ -1,45 +1,53 @@
 #include "Cluster.hpp"
 
-Cluster::Cluster(int id, vector<int> &fits, NumericMatrix &points) {
+Cluster::Cluster() {}
+
+Cluster::Cluster(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points) {
   initializeMean(id, fits, points);
   initializeCovarianceMatrix(id, fits, points);
 }
 
-void Cluster::initializeMean(int id, vector<int> &fits, NumericMatrix &points) {
-  int dimention = points.ncol();
+arma::rowvec Cluster::initializeMean(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points) {
+  int dimention = points.n_cols;
   
-  mean = NumericVector(1,dimention);
-  std::fill(mean.begin(), mean.end(), 0);
+  mean = arma::rowvec(dimention, arma::fill::zeros);
   
-  for(int i = 0; i < points.nrow(); i++) 
-    if(fits[i] == id) mean += points(i,_);
-  mean = mean/points.nrow();
+  for(unsigned int i = 0; i < points.n_rows; i++) 
+    if(fits[i] == id) mean += points.row(i);
+  mean = mean/points.n_rows;
+  return mean;
 }
 
-void Cluster::initializeCovarianceMatrix(int id, vector<int> &fits, NumericMatrix &points) {
-  int dimention = points.ncol();
+void Cluster::initializeCovarianceMatrix(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points) {
+  int dimension = points.n_cols;
 
-  arma::rowvec m = as<arma::rowvec>(mean);
+  arma::rowvec m = mean;
 
-  arma::mat out(dimension, dimension, fill::zeros);
-  for(int i = 0; i < points.nrow(); i++)
+  arma::mat out(dimension, dimension, arma::fill::zeros);
+  for(unsigned int i = 0; i < points.n_rows; i++)
     if(fits[i] == id) {
-      arma::rowvec point = as<arma::rowvec>(points(i,_));
+      arma::rowvec point = points.row(i);
       arma::rowvec tmp = point-m;
       out += tmp.t()*tmp;
     }
 
-  covMat = as<NumericMatrix>(out);
+  covMat = out;
 }
 
-Cluster Cluster::addPoint() {
-
+Cluster Cluster::addPoint(arma::rowvec &point) {
+  return *this;
 }
 
-Cluster Cluster::removePoint() {
-
+Cluster Cluster::removePoint(arma::rowvec &point) {
+  return *this;
 }
 
 float Cluster::entropy() {
-
+  return 0;
 }
+
+int Cluster::size() {
+  return count;
+}
+
+int Cluster::numberOfPoints = 0;
