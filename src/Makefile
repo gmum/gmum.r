@@ -1,4 +1,4 @@
-CFLAGS = -std=c++11 -fpic -c
+CFLAGS = -fpic -c
 INCL_PATH = /usr/lib/R/site-library/RcppArmadillo/include:/usr/lib/R/site-library/Rcpp/include:/usr/share/R/include
 LINK_PATH = /usr/lib/R/site-library/RcppArmadillo/libs:/usr/lib/R/site-library/Rcpp/libs:/usr/lib/R/lib
 I_PATH = -I$(subst :, -I,$(INCL_PATH))
@@ -6,11 +6,11 @@ L_PATH = -L$(subst :, -L,$(LINK_PATH))
 
 all : hartigan.so
 
-clear :
+clean :
 	rm *.o
 	rm *.so
 
-.PHONY : clear #R-standalone
+.PHONY : clean #R-standalone
 
 #R-standalone : HartiganMaster.cpp
 #	export PKG_LIBS=$(LINK_PATH)
