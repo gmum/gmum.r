@@ -25,4 +25,8 @@ public:
   static int numberOfPoints;
 };
 
+
+//Added initialization
+int Cluster::numberOfPoints = 0;
+
 #endif
