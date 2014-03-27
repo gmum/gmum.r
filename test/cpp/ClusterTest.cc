@@ -24,5 +24,5 @@ TEST_F(ClusterTest, MeanTest) {
   fits.push_back(1);
   fits.push_back(1);
 
-  ASSERT_EQ(arma::rowvec("1 2 3 4 5"), c.initializeMean(1,fits,dataset));
+  //ASSERT_EQ(arma::rowvec("1 2 3 4 5"), c.initializeMean(1,fits,dataset));
 }

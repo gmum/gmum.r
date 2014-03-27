@@ -51,5 +51,5 @@ gtest_main.a : gtest-all.o gtest_main.o
 ClusterTest : ClusterTest.o src/Cluster.o gtest_main.a
 	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
-firstTest : firstTest.o
+firstTest : firstTest.o gtest_main.a
 	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
