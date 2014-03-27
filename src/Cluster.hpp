@@ -12,21 +12,17 @@ private:
    * covariance matrix 
    */
   arma::mat covMat;
-  void initializeCovarianceMatrix(int id, std::vector<int> &fits, arma::mat &points);
+  void initializeCovarianceMatrix(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
 public:
   Cluster();
-  Cluster(int id, std::vector<int> &fits, arma::mat &points);
+  Cluster(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
   Cluster addPoint(arma::rowvec &point);
   Cluster removePoint(arma::rowvec &point);
   float entropy();
   int size();
-  arma::rowvec initializeMean(int id, std::vector<int> &fits, arma::mat &points);
+  arma::rowvec initializeMean(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
 
   static int numberOfPoints;
 };
-
-
-//Added initialization
-int Cluster::numberOfPoints = 0;
 
 #endif

@@ -13,7 +13,7 @@ private:
    * fits : {index of x : x \in points} -> {index of y : y \in clusters}
    * it is used to remember which cluster a point from dataset belong to.
    */
-  std::vector<int> &fits;
+  std::vector<unsigned int> &fits;
   /*
    * dataset. A point is stored as a row.
    */
@@ -27,7 +27,7 @@ private:
   const float killThreshold;
 public:
   Hartigan(int numberOfClusters, float killThreshold,
-	   std::vector<int> &fits, arma::mat &points);
+	   std::vector<unsigned int> &fits, arma::mat &points);
   /*
    *
    */
