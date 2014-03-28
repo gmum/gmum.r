@@ -13,6 +13,8 @@ private:
    */
   arma::mat covMat;
   void initializeCovarianceMatrix(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
+  
+  Cluster(int _count,arma::rowvec & _mean, arma::mat & covMat);
 public:
   Cluster();
   Cluster(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
@@ -21,6 +23,8 @@ public:
   float entropy();
   int size();
   arma::rowvec initializeMean(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
+  arma::rowvec getMean();
+  arma::mat getCovMat();
 
   static int numberOfPoints;
 };
