@@ -1,14 +1,13 @@
 #include "gtest/gtest.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <armadillo>
 #include <vector>
 #include "src/Cluster.hpp"
 
 
 TEST(OnlineFormulas,AddPoint){
-  
+  //arma_rng::set_seed(0);
   int n = 100;
   int dim = 2;
   int beg = dim+1;
@@ -71,7 +70,7 @@ TEST(OnlineFormulas,AddPoint){
 }
 
 TEST(OnlineFormulas,removePoint){
-  
+  //arma_rng::set_seed(0);
   int n = 100;
   int dim = 2;
   int end = dim+1;
