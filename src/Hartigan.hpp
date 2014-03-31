@@ -1,5 +1,6 @@
 #include <armadillo>
 #include <vector>
+#include <limits>
 #include "Cluster.hpp"
 
 #ifndef HARTIGAN_HPP
