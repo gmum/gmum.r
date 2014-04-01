@@ -75,4 +75,4 @@ arma::mat Cluster::getCovMat() {
   return covMat;
 }
 
-int Cluster::numberOfPoints = 0;
+unsigned int Cluster::numberOfPoints = 0;
