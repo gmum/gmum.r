@@ -26,7 +26,7 @@ public:
   arma::rowvec getMean();
   arma::mat getCovMat();
 
-  static int numberOfPoints;
+  static unsigned int numberOfPoints;
 };
 
 #endif

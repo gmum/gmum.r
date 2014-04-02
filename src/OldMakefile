@@ -30,4 +30,4 @@ clean :
 	g++ $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -c
 
 hartigan.so : HartiganMaster.o Cluster.o Hartigan.o
-	g++ -shared $^ $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) 
+	g++ -shared $^ $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) -o $@
