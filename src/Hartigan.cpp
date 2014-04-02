@@ -23,7 +23,7 @@ int Hartigan::singleLoop() {
     unsigned int source = fits[i];
     arma::rowvec point = points.row(i);
 
-    for(unsigned int k = 0; k < clusters.size(); k++) {
+    for(unsigned int k = 0; k < clusters.size(); k++)
       if(k != source) {
 
 	Cluster &oldSource = clusters[source];
@@ -37,6 +37,9 @@ int Hartigan::singleLoop() {
 	  clusters[source] = newSource;
 	  clusters[k] = newTarget;
 	  switched++;
+
+	  //point moved from cluster source to k  - update fits
+	  fits[i] = k;
 
 	  //if cluster has number of members lower than threshold, remove the cluster
 	  //threshold is fraction of all points
@@ -72,6 +75,8 @@ int Hartigan::singleLoop() {
 		
 		//assert(minEntropyChangeElementIndex > -1);
 		clusters[minEntropyChangeElementIndex] = minEntropyChangeCluster;
+		fits[j] = minEntropyChangeElementIndex;
+
 	      } else if(fits[j] > source) fits[j]--;
 	      //number of clusters is expected to be small in comparison to number
 	      //of data points. When you remove a cluster you decrease fits of all
@@ -82,9 +87,9 @@ int Hartigan::singleLoop() {
 
 	  break; //point was switched so we'll stop the clusters loop and we'll check the next point
 	}
-      }
-    }
-  }
+      }  //for iterates clusters
+  }  //for iterates points
+
   return switched;
 }
 
