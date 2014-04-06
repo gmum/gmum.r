@@ -5,7 +5,7 @@
 #define CLUSTER_HPP
 
 class Cluster {
-private:
+protected:
   int count;
   arma::rowvec mean;
   /*
@@ -20,7 +20,7 @@ public:
   Cluster(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
   Cluster addPoint(arma::rowvec &point);
   Cluster removePoint(arma::rowvec &point);
-  float entropy();
+  virtual float entropy();
   int size();
   arma::rowvec initializeMean(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
   arma::rowvec getMean();
@@ -29,4 +29,29 @@ public:
   static unsigned int numberOfPoints;
 };
 
+class ClusterCovMat : public Cluster {
+  arma::mat sigma;
+public:
+  ClusterCovMat(arma::mat sigma, unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
+  float entropy();
+};
+
+class ClusterConstRadius : public Cluster {
+  float r;
+public:
+  ClusterConstRadius(float r, unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
+  float entropy();
+};
+
+class ClusterSpherical : public Cluster {
+public:
+  ClusterSpherical(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
+  float entropy();
+};
+
+class ClusterDiagonal : public Cluster {
+public:
+  ClusterDiagonal(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
+  float entropy();
+};
 #endif

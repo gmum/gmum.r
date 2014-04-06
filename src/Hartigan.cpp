@@ -1,26 +1,17 @@
 #include "Hartigan.hpp"
 
-Hartigan::Hartigan(int numberOfClusters, float killThreshold,
-		   std::vector<unsigned int> &fits, arma::mat &points)
-  : fits(fits), points(points), killThreshold(killThreshold) {
-
-  clusters.reserve(numberOfClusters);
-  for(int i = 0; i < numberOfClusters; i++)
-    clusters.push_back(Cluster(i, fits, points));
-
-  Cluster::numberOfPoints = points.n_rows;
+void Hartigan::loop(arma::mat &points, std::vector<unsigned int> &assignment,
+		    float killThreshold, std::vector<Cluster> &clusters) {
+  while(singleLoop(points, assignment, killThreshold, clusters) > 0);
 }
 
-void Hartigan::loop() {
-  while(singleLoop() > 0);
-}
-
-int Hartigan::singleLoop() {
+int Hartigan::singleLoop(arma::mat &points, std::vector<unsigned int> &assignment, 
+			 float killThreshold, std::vector<Cluster> &clusters) {
 
   int switched = 0;  //numer of points who has been moved to another cluster
 
   for(unsigned int i = 0; i < Cluster::numberOfPoints; i++) {
-    unsigned int source = fits[i];
+    unsigned int source = assignment[i];
     arma::rowvec point = points.row(i);
 
     for(unsigned int k = 0; k < clusters.size(); k++)
@@ -38,8 +29,8 @@ int Hartigan::singleLoop() {
 	  clusters[k] = newTarget;
 	  switched++;
 
-	  //point moved from cluster source to k  - update fits
-	  fits[i] = k;
+	  //point moved from cluster source to k  - update assignment
+	  assignment[i] = k;
 
 	  //if cluster has number of members lower than threshold, remove the cluster
 	  //threshold is fraction of all points
@@ -52,7 +43,7 @@ int Hartigan::singleLoop() {
 	    for(unsigned int j = 0; j < Cluster::numberOfPoints; j++) {
 
 	      //find point of deleted cluster
-	      if(fits[j] == source) {
+	      if(assignment[j] == source) {
 	
 		arma::rowvec pointToAssign = points.row(j);
 		int minEntropyChangeElementIndex = -1;
@@ -75,13 +66,13 @@ int Hartigan::singleLoop() {
 		
 		//assert(minEntropyChangeElementIndex > -1);
 		clusters[minEntropyChangeElementIndex] = minEntropyChangeCluster;
-		fits[j] = minEntropyChangeElementIndex;
+		assignment[j] = minEntropyChangeElementIndex;
 
-	      } else if(fits[j] > source) fits[j]--;
+	      } else if(assignment[j] > source) assignment[j]--;
 	      //number of clusters is expected to be small in comparison to number
-	      //of data points. When you remove a cluster you decrease fits of all
+	      //of data points. When you remove a cluster you decrease assignment of all
 	      //points belonging to clusters with higher position in vector, in order
-	      //to keep fits adequate.
+	      //to keep assignment adequate.
 	    }			  
 	  }
 
@@ -91,8 +82,4 @@ int Hartigan::singleLoop() {
   }  //for iterates points
 
   return switched;
-}
-
-double Hartigan::entropy() {
-  return 0;
 }
