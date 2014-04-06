@@ -19,7 +19,7 @@ LDLIBS := 		$(RLDFLAGS) $(RRPATH) $(RBLAS) $(RLAPACK) $(RCPPLIBS) $(RINSIDELIBS)
 
 USER_DIR = ../../src
 
-TESTS = ClusterTest firstTest onlineTest
+TESTS = ClusterTest firstTest onlineTest ellipse_gauss_test
 
 GTEST_HEADERS = $(GTEST)/include/gtest/*.h \
                 $(GTEST)/include/gtest/internal/*.h
@@ -55,4 +55,7 @@ firstTest : firstTest.o gtest_main.a
 	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
 onlineTest: onlineTest.o src/Cluster.o gtest_main.a
+	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+
+ellipse_gauss_test: ellipse_gauss_test.o gtest_main.a cluster_reader.hpp
 	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
