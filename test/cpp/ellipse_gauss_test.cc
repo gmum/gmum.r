@@ -46,10 +46,11 @@ TEST(EllipseGauss,real_test){
 
     Hartigan algorithm(numberOfClusters,0.0001, fits, m);
     
-    algorithm.loop();
+    //    algorithm.loop();
     std::vector<unsigned int> result;
-    algorithm.getFits(result);
-    double percentage = comparator.evaluateClustering(numberOfClusters,m,result,clustering);
+    // algorithm.getFits(result);
+    //  double percentage = comparator.evaluateClustering(numberOfClusters,m,result,clustering);
+    double percentage = comparator.evaluateClustering(numberOfClusters,m,fits,clustering);
     std::cout << "Percentage " << percentage << std::endl;
     EXPECT_GT(percentage, 0.9);
   }
