@@ -12,6 +12,9 @@ protected:
    * covariance matrix 
    */
   arma::mat covMat;
+  float _entropy;
+
+  virtual void calculateEntropy();
   void initializeCovarianceMatrix(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
   
   Cluster(int _count,arma::rowvec & _mean, arma::mat & covMat);
@@ -20,7 +23,7 @@ public:
   Cluster(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
   Cluster addPoint(arma::rowvec &point);
   Cluster removePoint(arma::rowvec &point);
-  virtual float entropy();
+  float entropy();
   int size();
   arma::rowvec initializeMean(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
   arma::rowvec getMean();
@@ -30,28 +33,28 @@ public:
 };
 
 class ClusterCovMat : public Cluster {
+  void calculateEntropy();
   arma::mat sigma;
 public:
   ClusterCovMat(arma::mat sigma, unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
-  float entropy();
 };
 
 class ClusterConstRadius : public Cluster {
+  void calculateEntropy();
   float r;
 public:
   ClusterConstRadius(float r, unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
-  float entropy();
 };
 
 class ClusterSpherical : public Cluster {
+  void calculateEntropy();
 public:
   ClusterSpherical(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
-  float entropy();
 };
 
 class ClusterDiagonal : public Cluster {
+  void calculateEntropy();
 public:
   ClusterDiagonal(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points);
-  float entropy();
 };
 #endif
