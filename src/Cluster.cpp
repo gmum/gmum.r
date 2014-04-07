@@ -1,16 +1,21 @@
 #include "Cluster.hpp"
+#include <cmath>
 
 Cluster::Cluster(int _count, arma::rowvec & _mean, arma::mat & _covMat):
-  count(_count),mean(_mean),covMat(_covMat){}
+  count(_count),mean(_mean),covMat(_covMat) {
+  calculateEntropy();
+}
 
 Cluster::Cluster() {}
 
 Cluster::Cluster(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points) {
   initializeMean(id, fits, points);
   initializeCovarianceMatrix(id, fits, points);
+  calculateEntropy();
 }
 
-arma::rowvec Cluster::initializeMean(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points) {
+arma::rowvec Cluster::initializeMean(unsigned int id, std::vector<unsigned int> &fits,
+				     arma::mat &points) {
   int dimention = points.n_cols;
   
   count = 0;
@@ -27,7 +32,8 @@ arma::rowvec Cluster::initializeMean(unsigned int id, std::vector<unsigned int> 
   return mean;
 }
 
-void Cluster::initializeCovarianceMatrix(unsigned int id, std::vector<unsigned int> &fits, arma::mat &points) {
+void Cluster::initializeCovarianceMatrix(unsigned int id, std::vector<unsigned int> &fits,
+					 arma::mat &points) {
   int dimension = points.n_cols;
 
   arma::rowvec m = mean;
@@ -59,10 +65,6 @@ Cluster Cluster::removePoint(arma::rowvec &point) {
   return Cluster(ncount,nmean,nCovMat);
 }
 
-float Cluster::entropy() {
-  return 0;
-}
-
 int Cluster::size() {
   return count;
 }
@@ -75,4 +77,44 @@ arma::mat Cluster::getCovMat() {
   return covMat;
 }
 
+float Cluster::entropy() {
+  return _entropy;
+}
+
 unsigned int Cluster::numberOfPoints = 0;
+
+/*
+ * entropy
+ */
+
+void Cluster::calculateEntropy() {
+  _entropy = count*log(2*M_PI*M_E)/2 + log(arma::det(covMat))/2;
+}
+
+ClusterCovMat::ClusterCovMat(arma::mat sigma, unsigned int id, std::vector<unsigned int> &fits,
+			     arma::mat &points) : Cluster(id,fits,points), sigma(sigma){}
+
+void ClusterCovMat::calculateEntropy() {
+  _entropy = count*log(2*M_PI)/2 + arma::trace(arma::inv(sigma)*covMat)/2 + log(arma::det(sigma))/2;
+}
+
+ClusterConstRadius::ClusterConstRadius(float r, unsigned int id, std::vector<unsigned int> &fits,
+				       arma::mat &points) : Cluster(id,fits,points), r(r) {}
+
+void ClusterConstRadius::calculateEntropy() {
+  _entropy = count*log(2*M_PI)/2 + arma::trace(covMat)/(2*r) + count*log(r)/2;
+}
+
+ClusterSpherical::ClusterSpherical(unsigned int id, std::vector<unsigned int> &fits,
+				   arma::mat &points) : Cluster(id,fits,points) {}
+
+void ClusterSpherical::calculateEntropy() {
+  _entropy = count*log(2*M_PI*M_E/count)/2 + count*log(arma::trace(covMat))/2;
+}
+
+ClusterDiagonal::ClusterDiagonal(unsigned int id, std::vector<unsigned int> &fits,
+				 arma::mat &points) : Cluster(id,fits,points) {}
+
+void ClusterDiagonal::calculateEntropy() {
+  _entropy = count*log(2*M_PI*M_E)/2 + log(arma::det(arma::diagmat(covMat)))/2;
+}
