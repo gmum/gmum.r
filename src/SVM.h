@@ -7,31 +7,47 @@
    
 // This struct will conatin all the necessery svm parameters and will be used in SVMConfig
 struct SVMParameters {
-  int cost;
+  	int cost;
 	int degree;
 	// TODO : rest of them	
+};
+
+struct SVMData {
+	// TODO: Data format
 };
  
 // Our "input" class containing SVM paramaters and data to be classified
 class SVMConfiguration  {
-public :
-	std::map<char*, char*> *data; // NOTE: This will be changed when we decide on a input data format
-  SVMParameters *params;
-		
+private :
+	SVMData *data; 
+  	SVMParameters params;
+public :	
 	SVMConfiguration ();
-	SVMConfiguration ( std::map<char*,char*>*, SVMParameters* ); 
+	SVMConfiguration ( SVMData*, SVMParameters ); 
+
+	void setData( SVMData*);
+	SVMData* getData();
+
+	void setParams( SVMParameters );
+	SVMParameters getParams();
 }; 
   
-
 // Our "output" class containing classification result
 class SVMResult {
-public : 
-	std::map<char*,char*> *result; // NOTE: This will be changed when we decide on a output data format
-  const char *message;
-	
+private :
+	SVMData *data; 
+  	std::string message;
+public : 	
 	SVMResult();
-  SVMResult(const char *message);
-	SVMResult( std::map<char*,char*>* ); 
+  	SVMResult( std::string );
+	SVMResult( SVMData* ); 
+	SVMResult( SVMData*, std::string );
+
+	void setResult( SVMData* );
+	SVMData* getResult();
+
+	void setMessage( std::string );
+	std::string getMessage();
 };
 
 // SVMHandler interface, all blocks will implement this class
@@ -59,10 +75,10 @@ class SVMClient {
 private :
   SVMFlowFactory flowFactory;
   std::vector<SVMHandler*> SVMHandlers;
-  const char* message;
+  std::string message;
 public :
   SVMClient();
-  SVMClient(const char* );
+  SVMClient( std::string );
   SVMResult run( SVMConfiguration );
 }; 
 
