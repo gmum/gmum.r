@@ -16,4 +16,4 @@ void initVectors(std::vector<ClusterType> &type,
 		 std::vector<float> &radius,
 		 std::list<Rcpp::List> clusters);
 
-void initAssignRandom(std::vector<unsigned int> &assignment, int nrOfPoints, int nrOfClusters);
+void initAssignRandom(std::vector<unsigned int> &assignment, unsigned int nrOfPoints, unsigned int nrOfClusters);
