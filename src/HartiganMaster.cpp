@@ -1,4 +1,4 @@
-#include "HartiganMaster.hpp"
+#include "HartiganMaster.h"
 
 RcppExport SEXP run(SEXP args) {
 
