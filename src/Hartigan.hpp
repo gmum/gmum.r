@@ -1,45 +1,18 @@
 #include <armadillo>
 #include <vector>
+#include <limits>
 #include "Cluster.hpp"
+#include "Algorithm.hpp"
 
 #ifndef HARTIGAN_HPP
 #define HARTIGAN_HPP
 
-class Hartigan {
-private:
-  std::vector<Cluster> clusters;
-  /*
-   * fits is a function. 
-   * fits : {index of x : x \in points} -> {index of y : y \in clusters}
-   * it is used to remember which cluster a point from dataset belong to.
-   */
-  std::vector<unsigned int> &fits;
-  /*
-   * dataset. A point is stored as a row.
-   */
-  arma::mat &points;
-  /*
-   * in hartigan algorithm a cluster is removed when its size
-   * is less than certain fraction of number of points in dataset.
-   * This fraction is the killThreshold (cluster gets 'killed'
-   * when threshold is reached).
-   */
-  const float killThreshold;
+class Hartigan : public Algorithm {
 public:
-  Hartigan(int numberOfClusters, float killThreshold,
-	   std::vector<unsigned int> &fits, arma::mat &points);
-  /*
-   *
-   */
-  void loop();
-  /*
-   *
-   */
-  int singleLoop();
-  /*
-   *
-   */
-  double entropy();
+  void loop(arma::mat &points, std::vector<unsigned int> &assignment,
+	    float killThreshold, std::vector<Cluster> &clusters);
+  int singleLoop(arma::mat &points, std::vector<unsigned int> &assignment, 
+		 float killThreshold, std::vector<Cluster> &clusters);
 };
 
 #endif
