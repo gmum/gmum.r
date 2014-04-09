@@ -14,7 +14,7 @@ RCPPARMAINCL :=		$(shell echo 'RcppArmadillo:::CxxFlags()' | $(R_HOME)/bin/R --v
 CXX := 			$(shell $(R_HOME)/bin/R CMD config CXX)
 CPPFLAGS := 		-Wall $(shell $(R_HOME)/bin/R CMD config CPPFLAGS) -isystem $(GTEST)/include
 CXXFLAGS := 		$(RCPPFLAGS) $(RCPPINCL) $(RCPPARMAINCL) $(RINSIDEINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -g -Wall -Wextra -pthread
-LDLIBS := 		$(RLDFLAGS) $(RRPATH) $(RBLAS) $(RLAPACK) $(RCPPLIBS) $(RINSIDELIBS) 
+LDLIBS := 		$(RLDFLAGS) $(RRPATH) $(RBLAS) $(RLAPACK) $(RCPPLIBS) $(RINSIDELIBS) -llapack -lblas
 
 
 USER_DIR = ../../src
@@ -57,5 +57,5 @@ firstTest : firstTest.o gtest_main.a
 onlineTest: onlineTest.o src/Cluster.o gtest_main.a
 	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
-ellipse_gauss_test: ellipse_gauss_test.o gtest_main.a cluster_reader.hpp clustering_comparator.hpp src/Hartigan.o src/Cluster.o
+ellipse_gauss_test: ellipse_gauss_test.o gtest_main.a cluster_reader.hpp clustering_comparator.hpp src/Hartigan.o src/Cluster.o src/random_assigment.o src/CEC.o
 	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@

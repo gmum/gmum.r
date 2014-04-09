@@ -2,6 +2,8 @@
 #include "cluster_reader.hpp"
 #include "clustering_comparator.hpp"
 #include "src/Hartigan.hpp"
+#include "src/random_assigment.hpp"
+#include "src/CEC.hpp"
 #include <vector>
 
 TEST(EllipseGauss,answer_cluster_same_length) {
@@ -29,29 +31,19 @@ TEST(EllipseGauss,real_test){
   
   ClusterReader clusterReader("EllipseGauss",2);
   unsigned int numberOfClusters = 4;
-  //clusterReader.readClustering();
-  //clusterReader.readPoints();
-  arma::mat m = clusterReader.getPointsInMatrix();
+  arma::mat points = clusterReader.getPointsInMatrix();
   clusterReader.getClustering(clustering);
   BestPermutationComparator comparator;
-  
   for (int x = 0 ; x < 20 ; ++x) {
-    int seed = time(NULL);
-    srand(seed);
-  
-    std::vector<unsigned int> fits;
-    fits.reserve(clustering.size());
-
-    for(unsigned int i = 0; i < m.n_rows; i++) fits[i] = rand()%numberOfClusters;
-
-    Hartigan algorithm(numberOfClusters,0.0001, fits, m);
-    
-        algorithm.loop();
-    std::vector<unsigned int> result;
-    // algorithm.getFits(result);
-    //
-    // double percentage = comparator.evaluateClustering(numberOfClusters,m,result,clustering);
-    double percentage = comparator.evaluateClustering(numberOfClusters,m,fits,clustering);
+    std::vector<unsigned int> assignment;
+    double killThreshold = 0.0001;
+    initAssignRandom(assignment, points.n_rows, numberOfClusters);
+    //CEC init
+    CEC *cec;
+    Hartigan hartigan;
+    cec = new CEC(points, assignment, killThreshold, &hartigan,numberOfClusters);
+    cec->loop();
+    double percentage = comparator.evaluateClustering(numberOfClusters,points,assignment,clustering);
     std::cout << "Percentage " << percentage << std::endl;
     EXPECT_GT(percentage, 0.9);
   }

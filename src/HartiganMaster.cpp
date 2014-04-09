@@ -1,4 +1,5 @@
 #include "HartiganMaster.hpp"
+#include "random_assigment.hpp"
 
 RcppExport SEXP run(SEXP args) {
 
@@ -92,12 +93,3 @@ void initVectors(std::vector<ClusterType> &type,
 }
 
 
-void initAssignRandom(std::vector<unsigned int> &assignment,
-		      unsigned int nrOfPoints,
-		      unsigned int nrOfClusters) {
-  int seed = time(NULL);
-  srand(seed);
-  assignment.reserve(nrOfPoints);
-
-  for(unsigned int i = 0; i < nrOfPoints; i++) assignment.push_back(rand()%nrOfClusters);
-}
