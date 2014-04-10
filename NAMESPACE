@@ -1,3 +1,5 @@
 useDynLib(gmum.r)
 export(hello_gmum)
 export(test_flow)
+
+export(svm)
