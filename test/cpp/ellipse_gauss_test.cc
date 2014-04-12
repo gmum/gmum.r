@@ -2,7 +2,7 @@
 #include "cluster_reader.hpp"
 #include "clustering_comparator.hpp"
 #include "src/Hartigan.hpp"
-#include "src/random_assigment.hpp"
+#include "src/random_assignment.hpp"
 #include "src/CEC.hpp"
 #include <vector>
 

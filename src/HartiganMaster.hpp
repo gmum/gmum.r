@@ -14,4 +14,32 @@ void initVectors(std::vector<ClusterType> &type,
 		 std::vector<float> &radius,
 		 std::list<Rcpp::List> clusters);
 
+struct CONST {
+  static const char* dataset;
+  static const char* nrOfClusters;
+  static const char* clusters;
+  struct CLUSTERS {
+    static const char* type;
+    static const char* covMat;
+    static const char* radius;
+    static const char* usual;
+    static const char* spherical;
+    static const char* diagonal;
+    static const char* constRadius;
+  };
+  static const char* killThreshold;
+};
 
+const char* CONST::dataset = "dataset";
+const char* CONST::nrOfClusters = "K";
+const char* CONST::clusters = "clusters";
+const char* CONST::killThreshold = "killThreshold";
+
+const char* CONST::CLUSTERS::type = "type";
+const char* CONST::CLUSTERS::covMat = "covMat";
+const char* CONST::CLUSTERS::radius = "radius";
+const char* CONST::CLUSTERS::usual = "usual";
+const char* CONST::CLUSTERS::spherical = "spherical";
+const char* CONST::CLUSTERS::diagonal = "diagonal";
+const char* CONST::CLUSTERS::constRadius = "constRadius";
+  

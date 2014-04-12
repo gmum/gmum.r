@@ -1,4 +1,4 @@
-#include "random_assigment.hpp"
+#include "random_assignment.hpp"
 #include <time.h>
 #include <stdlib.h>
 
