@@ -1,20 +1,18 @@
 ifndef GTEST
 $(error GTEST is not set, add to your .bashrc GTEST env. variable pointing to gtest directory without slash at the end)
-endif
+else
 
-# R, Rcpp, RcppArmadillo automatic path resolution
+# R, Rcpp, automatic path resolution
 R_HOME := 		$(shell R RHOME)
 RCPPFLAGS := 		$(shell $(R_HOME)/bin/R CMD config --cppflags)
 RLDFLAGS := 		$(shell $(R_HOME)/bin/R CMD config --ldflags)
 RCPPINCL := 		$(shell echo 'Rcpp:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)
 RCPPLIBS := 		$(shell echo 'Rcpp:::LdFlags()'  | $(R_HOME)/bin/R --vanilla --slave)
-RCPPARMAINCL :=		$(shell echo 'RcppArmadillo:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)	
-
 
 CXX := 			$(shell $(R_HOME)/bin/R CMD config CXX)
 CPPFLAGS := 		-Wall $(shell $(R_HOME)/bin/R CMD config CPPFLAGS) -isystem $(GTEST)/include
-CXXFLAGS := 		$(RCPPFLAGS) $(RCPPINCL) $(RCPPARMAINCL) $(RINSIDEINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -g -Wall -Wextra -pthread
-LDLIBS := 		$(RLDFLAGS) $(RRPATH) $(RBLAS) $(RLAPACK) $(RCPPLIBS) $(RINSIDELIBS) -llapack -lblas
+CXXFLAGS := 		$(RCPPFLAGS) $(RCPPINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -Wextra -pthread
+LDLIBS := 		$(RLDFLAGS) $(RCPPLIBS) $(RINSIDELIBS) -llapack -lblas -larmadillo
 
 
 USER_DIR = ../../src
@@ -26,8 +24,22 @@ GTEST_HEADERS = $(GTEST)/include/gtest/*.h \
 
 all : $(TESTS)
 
+echo :
+	@echo $(R_HOME)
+	@echo $(RCPPFLAGS)
+	@echo $(RLDFLAGS)
+	@echo $(RCPPINCL)
+	@echo $(RCPPLIBS)
+	@echo $(RCPPARMAINCL)
+	@echo $(CXX)
+	@echo $(CPPFLAGS)
+	@echo $(CXXFLAGS)
+	@echo $(LDLIBS)
+
 clean :
 	rm -f $(TESTS) gtest.a gtest_main.a *.o
+
+.PHONY : echo clean
 
 GTEST_SRCS_ = $(GTEST)/src/*.cc $(GTEST)/src/*.h $(GTEST_HEADERS)
 
@@ -59,3 +71,5 @@ onlineTest: onlineTest.o src/Cluster.o gtest_main.a
 
 ellipse_gauss_test: ellipse_gauss_test.o gtest_main.a cluster_reader.hpp clustering_comparator.hpp src/Hartigan.o src/Cluster.o src/random_assigment.o src/CEC.o
 	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+
+endif

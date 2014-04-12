@@ -15,9 +15,9 @@ protected:
   std::string folderName;
   std::vector<std::vector<double> > points;
   std::vector<unsigned int> clustering;
-  int dim;
+  unsigned int dim;
 public:
-  ClusterReader(const char * _name,int _dim);
+  ClusterReader(const char * _name,unsigned int _dim);
   void readPoints();
   void readClustering();
   
@@ -28,7 +28,7 @@ public:
   
 };
 
-ClusterReader::ClusterReader(const char * name, int _dim) {
+ClusterReader::ClusterReader(const char * name, unsigned int _dim) {
   folderName = std::string(name);
   dim = _dim;
 }
@@ -56,7 +56,7 @@ void ClusterReader::readPoints() {
       std::vector<double> currentVector;
       if (line.size() < dim) 
 	continue;
-      for (int i = 0 ; i < dim ; ++i) {
+      for (unsigned int i = 0 ; i < dim ; ++i) {
 	double x;
 	ss >> x ;
 	currentVector.push_back(x);
@@ -113,8 +113,8 @@ arma::mat ClusterReader::getPointsInMatrix() {
     readPoints();
   unsigned int n = points.size();
   arma::mat result(n,dim);
-  for (int i = 0 ; i <n ; ++i) {
-    for (int j = 0 ; j < dim ; ++j) {
+  for (unsigned int i = 0 ; i < n ; ++i) {
+    for (unsigned int j = 0 ; j < dim ; ++j) {
       result(i,j) = points[i][j];
     }
   } 
