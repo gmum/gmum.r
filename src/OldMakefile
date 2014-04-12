@@ -38,5 +38,5 @@ clean :
 %.o : %.cpp %.hpp
 	g++ $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -c
 
-hartigan.so : HartiganMaster.o Cluster.o Hartigan.o CEC.o random_assigment.o
+hartigan.so : HartiganMaster.o Cluster.o Hartigan.o CEC.o random_assignment.o
 	g++ -shared $^ $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) -o $@

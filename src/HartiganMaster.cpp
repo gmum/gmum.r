@@ -1,5 +1,5 @@
 #include "HartiganMaster.hpp"
-#include "random_assigment.hpp"
+#include "random_assignment.hpp"
 
 RcppExport SEXP run(SEXP args) {
 
@@ -9,13 +9,13 @@ RcppExport SEXP run(SEXP args) {
    */
   Rcpp::List list(args);
 
-  Rcpp::NumericMatrix proxyDataset = Rcpp::as<Rcpp::NumericMatrix>(list["dataset"]);
+  Rcpp::NumericMatrix proxyDataset = Rcpp::as<Rcpp::NumericMatrix>(list[CONST::dataset]);
   //reuses memory and avoids extra copy
   arma::mat points(proxyDataset.begin(), proxyDataset.nrow(), proxyDataset.ncol(), false);
 
   float killThreshold = 0.001;
-  if(list.containsElementNamed("killThreshold"))
-    killThreshold = Rcpp::as<float>(list["killThreshold"]);
+  if(list.containsElementNamed(CONST::killThreshold))
+    killThreshold = Rcpp::as<float>(list[CONST::killThreshold]);
 
   std::list<Rcpp::List> clusters;
   initClusters(clusters, list);
@@ -31,12 +31,10 @@ RcppExport SEXP run(SEXP args) {
   initAssignRandom(assignment, points.n_rows, clusters.size());
   
   //CEC init
-  CEC *cec;
   Hartigan hartigan;
-  cec = new CEC(points, assignment, killThreshold, &hartigan,
-		  type, radius, covMat);
+  CEC cec(points, assignment, killThreshold, &hartigan, type, radius, covMat);
 
-  cec->loop();
+  cec.loop();
 
   return Rcpp::List::create(assignment);
   END_RCPP;
@@ -44,15 +42,15 @@ RcppExport SEXP run(SEXP args) {
 
 void initClusters(std::list<Rcpp::List> &clusters, Rcpp::List &list) {
 
-  if(list.containsElementNamed("K")) {
+  if(list.containsElementNamed(CONST::nrOfClusters)) {
 
-    unsigned int nrOfClusters = Rcpp::as<int>(list["K"]);
+    unsigned int nrOfClusters = Rcpp::as<int>(list[CONST::nrOfClusters]);
     for(unsigned int i = 0; i < nrOfClusters; ++i)
-      clusters.push_back(Rcpp::List::create(Rcpp::Named("type") = "usual"));
+      clusters.push_back(Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = "usual"));
 
-  } else if(list.containsElementNamed("clusters")) {
+  } else if(list.containsElementNamed(CONST::clusters)) {
 
-    Rcpp::List desc = Rcpp::as<Rcpp::List>(list["clusters"]);
+    Rcpp::List desc = Rcpp::as<Rcpp::List>(list[CONST::clusters]);
     
     for(Rcpp::List::iterator it = desc.begin(); it != desc.end(); ++it)
       clusters.push_back(Rcpp::as<Rcpp::List>(*it));
@@ -72,22 +70,22 @@ void initVectors(std::vector<ClusterType> &type,
   for(std::list<Rcpp::List>::iterator it = clusters.begin();
       it != clusters.end(); ++it, ++i) {
 
-    std::string typeStr = Rcpp::as<std::string>((*it)["type"]);
+    std::string typeStr = Rcpp::as<std::string>((*it)[CONST::CLUSTERS::type]);
 
     if(typeStr.compare("usual")==0) type[i] = usual;
-    else if(typeStr.compare("covMat")==0) {
+    else if(typeStr.compare(CONST::CLUSTERS::covMat)==0) {
 
       type[i] = covMatrix;
-      Rcpp::NumericMatrix temp = Rcpp::as<Rcpp::NumericMatrix>((*it)["covMat"]);
+      Rcpp::NumericMatrix temp = Rcpp::as<Rcpp::NumericMatrix>((*it)[CONST::CLUSTERS::covMat]);
       covMat[i] = arma::mat(temp.begin(), temp.nrow(), temp.ncol());
 
-    } else if(typeStr.compare("constRadius")==0) {
+    } else if(typeStr.compare(CONST::CLUSTERS::constRadius)==0) {
 
       type[i] = constRadius;
-      radius[i] = Rcpp::as<float>((*it)["radius"]);
+      radius[i] = Rcpp::as<float>((*it)[CONST::CLUSTERS::radius]);
 
-    } else if(typeStr.compare("spherical")==0) type[i] = spherical;
-    else if(typeStr.compare("diagonal")==0) type[i] = diagonal;
+    } else if(typeStr.compare(CONST::CLUSTERS::spherical)==0) type[i] = spherical;
+    else if(typeStr.compare(CONST::CLUSTERS::diagonal)==0) type[i] = diagonal;
     //else must not happen
   }
 }
