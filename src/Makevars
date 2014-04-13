@@ -10,3 +10,4 @@ CXX := 			$(shell $(R_HOME)/bin/R CMD config CXX)
 CPPFLAGS := 		-Wall $(shell $(R_HOME)/bin/R CMD config CPPFLAGS)
 CXXFLAGS := 		$(RCPPFLAGS) $(RCPPINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -pthread -fpic
 LDLIBS := 		$(RLDFLAGS) $(RCPPLIBS) -larmadillo
+PKG_LIBS := 		$(LDLIBS)
