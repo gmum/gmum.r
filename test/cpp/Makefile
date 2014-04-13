@@ -2,18 +2,8 @@ ifndef GTEST
 $(error GTEST is not set, add to your .bashrc GTEST env. variable pointing to gtest directory without slash at the end)
 else
 
-# R, Rcpp, automatic path resolution
-R_HOME := 		$(shell R RHOME)
-RCPPFLAGS := 		$(shell $(R_HOME)/bin/R CMD config --cppflags)
-RLDFLAGS := 		$(shell $(R_HOME)/bin/R CMD config --ldflags)
-RCPPINCL := 		$(shell echo 'Rcpp:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)
-RCPPLIBS := 		$(shell echo 'Rcpp:::LdFlags()'  | $(R_HOME)/bin/R --vanilla --slave)
-
-CXX := 			$(shell $(R_HOME)/bin/R CMD config CXX)
-CPPFLAGS := 		-Wall $(shell $(R_HOME)/bin/R CMD config CPPFLAGS) -isystem $(GTEST)/include
-CXXFLAGS := 		$(RCPPFLAGS) $(RCPPINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -Wextra -pthread
-LDLIBS := 		$(RLDFLAGS) $(RCPPLIBS) $(RINSIDELIBS) -llapack -lblas -larmadillo
-
+include src/Makevars
+CXX := $(CXX) -isystem $(GTEST)/include
 
 USER_DIR = ../../src
 

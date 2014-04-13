@@ -1,15 +1,6 @@
-R_HOME := 		$(shell R RHOME)
-RCPPFLAGS := 		$(shell $(R_HOME)/bin/R CMD config --cppflags)
-RLDFLAGS := 		$(shell $(R_HOME)/bin/R CMD config --ldflags)
-RCPPINCL := 		$(shell echo 'Rcpp:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)
-RCPPLIBS := 		$(shell echo 'Rcpp:::LdFlags()'  | $(R_HOME)/bin/R --vanilla --slave)	
+include Makevars
 
-CXX := 			$(shell $(R_HOME)/bin/R CMD config CXX)
-CPPFLAGS := 		-Wall $(shell $(R_HOME)/bin/R CMD config CPPFLAGS)
-CXXFLAGS := 		$(RCPPFLAGS) $(RCPPINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -pthread -fpic
-LDLIBS := 		$(RLDFLAGS) $(RCPPLIBS)
-
-all : hartigan.so
+all : gmum.r.so
 
 echo :
 	@echo $(R_HOME)
@@ -36,7 +27,7 @@ clean :
 #	R CMD SHLIB $^
 
 %.o : %.cpp %.hpp
-	g++ $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -c
+	g++ $(CPPFLAGS) $(CXXFLAGS) $^ -c
 
-hartigan.so : HartiganMaster.o Cluster.o Hartigan.o CEC.o random_assignment.o
+gmum.r.so : HartiganMaster.o Cluster.o Hartigan.o CEC.o random_assignment.o
 	g++ -shared $^ $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) -o $@
