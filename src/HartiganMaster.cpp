@@ -1,6 +1,14 @@
 #include "HartiganMaster.hpp"
 #include "random_assignment.hpp"
 
+RcppExport SEXP hello_gmum() {
+    using namespace Rcpp ;
+    
+    CharacterVector x = CharacterVector::create( "hello", "gmum" )  ;
+
+    return x ;
+}
+
 RcppExport SEXP run(SEXP args) {
 
   BEGIN_RCPP;
@@ -46,7 +54,7 @@ void initClusters(std::list<Rcpp::List> &clusters, Rcpp::List &list) {
 
     unsigned int nrOfClusters = Rcpp::as<int>(list[CONST::nrOfClusters]);
     for(unsigned int i = 0; i < nrOfClusters; ++i)
-      clusters.push_back(Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = CONST::CLUSTER::usual));
+      clusters.push_back(Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = CONST::CLUSTERS::usual));
 
   } else if(list.containsElementNamed(CONST::clusters)) {
 
@@ -72,7 +80,7 @@ void initVectors(std::vector<ClusterType> &type,
 
     std::string typeStr = Rcpp::as<std::string>((*it)[CONST::CLUSTERS::type]);
 
-    if(typeStr.compare(CONST::CLUSTER::usual)==0) type[i] = usual;
+    if(typeStr.compare(CONST::CLUSTERS::usual)==0) type[i] = usual;
     else if(typeStr.compare(CONST::CLUSTERS::covMat)==0) {
 
       type[i] = covMatrix;
