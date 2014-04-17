@@ -5,6 +5,7 @@
 #include "src/random_assignment.hpp"
 #include "src/CEC.hpp"
 #include <vector>
+#include <armadillo>
 
 TEST(EllipseGauss,answer_cluster_same_length) {
   std::vector<unsigned int> clustering;
@@ -25,6 +26,26 @@ TEST(EllipseGauss,answer_cluster_same_length) {
   EXPECT_EQ(comparator.evaluateClustering(4,m,clustering,clustering),1.0);
   
 }
+#define EVAL(x) std::cout << #x << "() = " << x() << std::endl
+TEST(EllipseGaus,correct_clustering_no_loop) {
+    std::vector<unsigned int> clustering;
+  ClusterReader clusterReader("EllipseGauss",2);
+  unsigned int numberOfClusters = 4;
+  arma::mat points = clusterReader.getPointsInMatrix();
+  clusterReader.getClustering(clustering);
+  BestPermutationComparator comparator;
+         double killThreshold = 0.0001;
+    //CEC init
+    CEC *cec;
+    Hartigan hartigan;
+    cec = new CEC(points, clustering, killThreshold, &hartigan,numberOfClusters);
+    EVAL(cec->entropy);
+    EXPECT_EQ(cec->singleLoop(),0);
+    EVAL(cec->entropy);
+  
+}
+
+
 
 TEST(EllipseGauss,real_test){ 
   std::vector<unsigned int> clustering;
@@ -42,7 +63,11 @@ TEST(EllipseGauss,real_test){
     CEC *cec;
     Hartigan hartigan;
     cec = new CEC(points, assignment, killThreshold, &hartigan,numberOfClusters);
-    cec->loop();
+    // cec->loop();
+    
+    while(cec->singleLoop()) {
+      EVAL(cec->entropy);
+    }
     double percentage = comparator.evaluateClustering(numberOfClusters,points,assignment,clustering);
     std::cout << "Percentage " << percentage << std::endl;
     EXPECT_GT(percentage, 0.9);
