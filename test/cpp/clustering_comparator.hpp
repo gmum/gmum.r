@@ -11,15 +11,8 @@ public:
   virtual std::vector<unsigned int> computePermutation(unsigned int numberOfClusters, arma::mat & points, std::vector<unsigned int> & realFits, std::vector<unsigned int> & myFits) = 0;
 
   double correct(std::vector<unsigned int> f,std::vector<unsigned int> & realFits, std::vector<unsigned int> & myFits, unsigned int numberOfElements) {
-    //assert(realFits.size() == myFits.size() );
-    //    std::vector<unsigned int>::iterator rIt = realFits.begin(), mIt = myFits.begin();
-    int numberOfCorrect =0;
-    /*   int s = 0;
-    for(; rIt != realFits.end() && mIt != myFits.end() ; ++rIt, ++mIt) {
-      numberOfCorrect += ((*rIt) == f[*mIt]);
-      s+=1;
-      }*/
-    for (unsigned int i = 0 ; i < numberOfElements ; ++i) 
+   int numberOfCorrect =0;
+       for (unsigned int i = 0 ; i < numberOfElements ; ++i) 
       numberOfCorrect += ( realFits[i] == f[myFits[i]]);
     //    std::cout << "numberOfCorrect = " << numberOfCorrect << std::endl;
    
@@ -46,7 +39,7 @@ std::vector<unsigned int> BestPermutationComparator::computePermutation(unsigned
   double bestValue =  0.0;
   do {
     double currentValue = correct(current,realFits,myFits, points.n_rows);
-        std::cout << "Current value " << currentValue << std::endl;
+    // std::cout << "Current value " << currentValue << std::endl;
     if (bestValue < currentValue) {
       best = current;
       bestValue = currentValue;

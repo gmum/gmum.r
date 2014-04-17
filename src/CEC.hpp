@@ -25,4 +25,5 @@ public:
 
   void loop();
   int singleLoop();
+  float entropy();
 };

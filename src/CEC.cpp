@@ -51,3 +51,10 @@ void CEC::loop() {
 int CEC::singleLoop() {
   return algorithm->singleLoop(points, assignment, killThreshold, clusters);
 }
+
+float CEC::entropy() {
+  float s= 0.0;
+  for (std::vector<Cluster>::iterator it = clusters.begin() ; it!= clusters.end();++it )
+    s+= it->entropy();
+  return s;
+}
