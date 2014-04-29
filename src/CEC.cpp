@@ -1,7 +1,7 @@
 #include "CEC.hpp"
 
 CEC::CEC(arma::mat &points, std::vector<unsigned int> &assignment,
-	 float killThreshold, Algorithm *algorithm,
+	 float killThreshold, Algorithm &algorithm,
 	 std::vector<ClusterType> &type, std::vector<float> &radius,
 	 std::vector<arma::mat> &covMatrices)
   : assignment(assignment), points(points), algorithm(algorithm), killThreshold(killThreshold) {
@@ -34,7 +34,7 @@ CEC::CEC(arma::mat &points, std::vector<unsigned int> &assignment,
 }
 
 CEC::CEC(arma::mat &points, std::vector<unsigned int> &assignment,
-	 float killThreshold, Algorithm *algorithm, int numberOfClusters)
+	 float killThreshold, Algorithm &algorithm, int numberOfClusters)
   : assignment(assignment), points(points), algorithm(algorithm), killThreshold(killThreshold) {
 
   clusters.reserve(numberOfClusters);
@@ -45,11 +45,11 @@ CEC::CEC(arma::mat &points, std::vector<unsigned int> &assignment,
 }
 
 void CEC::loop() {
-  algorithm->loop(points, assignment, killThreshold, clusters);
+  algorithm.loop(points, assignment, killThreshold, clusters);
 }
 
 int CEC::singleLoop() {
-  return algorithm->singleLoop(points, assignment, killThreshold, clusters);
+  return algorithm.singleLoop(points, assignment, killThreshold, clusters);
 }
 
 float CEC::entropy() {
