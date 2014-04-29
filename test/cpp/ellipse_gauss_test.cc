@@ -26,6 +26,7 @@ TEST(EllipseGauss,answer_cluster_same_length) {
   EXPECT_EQ(comparator.evaluateClustering(4,m,clustering,clustering),1.0);
   
 }
+
 #define EVAL(x) std::cout << #x << "() = " << x() << std::endl
 TEST(EllipseGaus,correct_clustering_no_loop) {
     std::vector<unsigned int> clustering;
@@ -38,14 +39,12 @@ TEST(EllipseGaus,correct_clustering_no_loop) {
     //CEC init
     CEC *cec;
     Hartigan hartigan;
-    cec = new CEC(points, clustering, killThreshold, &hartigan,numberOfClusters);
+    cec = new CEC(points, clustering, killThreshold, hartigan,numberOfClusters);
     EVAL(cec->entropy);
     EXPECT_EQ(cec->singleLoop(),0);
     EVAL(cec->entropy);
   
 }
-
-
 
 TEST(EllipseGauss,real_test){ 
   std::vector<unsigned int> clustering;
@@ -62,7 +61,7 @@ TEST(EllipseGauss,real_test){
     //CEC init
     CEC *cec;
     Hartigan hartigan;
-    cec = new CEC(points, assignment, killThreshold, &hartigan,numberOfClusters);
+    cec = new CEC(points, assignment, killThreshold, hartigan,numberOfClusters);
     // cec->loop();
     
     while(cec->singleLoop()) {
