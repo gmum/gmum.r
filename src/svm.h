@@ -1,7 +1,7 @@
 #ifndef _LIBSVM_H
 #define _LIBSVM_H
 
-#define LIBSVM_VERSION 317
+#define LIBSVM_VERSION 311
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,11 +46,9 @@ struct svm_parameter
 	int probability; /* do probability estimates */
 };
 
-/*
 //
 // svm_model
-//
-*/ 
+// 
 struct svm_model
 {
 	struct svm_parameter param;	/* parameter */
@@ -61,7 +59,6 @@ struct svm_model
 	double *rho;		/* constants in decision functions (rho[k*(k-1)/2]) */
 	double *probA;		/* pariwise probability information */
 	double *probB;
-	int *sv_indices;        /* sv_indices[0,...,nSV-1] are values in [1,...,num_traning_data] to indicate SVs in the training set */
 
 	/* for classification only */
 
@@ -82,8 +79,6 @@ struct svm_model *svm_load_model(const char *model_file_name);
 int svm_get_svm_type(const struct svm_model *model);
 int svm_get_nr_class(const struct svm_model *model);
 void svm_get_labels(const struct svm_model *model, int *label);
-void svm_get_sv_indices(const struct svm_model *model, int *sv_indices);
-int svm_get_nr_sv(const struct svm_model *model);
 double svm_get_svr_probability(const struct svm_model *model);
 
 double svm_predict_values(const struct svm_model *model, const struct svm_node *x, double* dec_values);
