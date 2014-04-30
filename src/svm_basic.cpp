@@ -21,6 +21,15 @@ SVM_Parameters SVM_Configuration::getParams() {
   return this->params;
 }
 
+void SVM_Configuration::setFilename(std::string filename) {
+	this->filename = filename;
+}
+std::string SVM_Configuration::getFilename() {
+	return this->filename;
+}
+
+
+
 // SVM Result
   // Constructors
 SVM_Result::SVM_Result(){}

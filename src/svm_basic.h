@@ -2,9 +2,9 @@
 #define SVM_BASIC_H
 
 #include <string>
-#include <Rcpp.h>
+//#include <Rcpp.h>
 
-enum { LINEAR, POLY, RBF, SIGMOID, PRECOMPUTED }; // kernel type
+//enum { LINEAR, POLY, RBF, SIGMOID, PRECOMPUTED }; // kernel type
 enum { LIBSVM, SVMLIGHT }; // svm type
 
 // This struct will conatin all the necessery svm parameters and will be used in SVMConfig
@@ -32,7 +32,7 @@ struct SVM_Node {
 };
 
 struct SVM_Data {
-	SEXP r_data;		// raw data from R
+	//SEXP r_data;		// raw data from R
 	int length;	
 	double *target;	
 	struct svm_Node **data;
@@ -43,6 +43,8 @@ class SVM_Configuration  {
 private :
 	SVM_Data *data; 
   	SVM_Parameters params;
+  	std::string filename;
+
 public :	
 	SVM_Configuration ();
 	SVM_Configuration ( SVM_Data*, SVM_Parameters ); 
@@ -52,6 +54,9 @@ public :
 
 	void setParams( SVM_Parameters );
 	SVM_Parameters getParams();
+
+	void setFilename(std::string);
+	std::string getFilename();
 }; 
   
 // Our "output" class containing classification result
@@ -59,6 +64,7 @@ class SVM_Result {
 private :
 	SVM_Data *data; 
   	std::string message;
+  	std::string model_filename;
 public : 	
 	SVM_Result();
   	SVM_Result( std::string );
@@ -70,6 +76,9 @@ public :
 
 	void setMessage( std::string );
 	std::string getMessage();
+
+	void setModelFilename(std::string);
+	std::string getModelFilename();
 };
 
 #endif
