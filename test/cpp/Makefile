@@ -4,7 +4,8 @@ else
 
 include src/Makevars
 CXX := $(CXX) -isystem $(GTEST)/include
-
+CXXFLAGS := -g -O2 -s -pthread
+LDLIBS := -larmadillo
 USER_DIR = ../../src
 
 TESTS = ClusterTest firstTest onlineTest ellipse_gauss_test
@@ -14,6 +15,12 @@ GTEST_HEADERS = $(GTEST)/include/gtest/*.h \
 
 all : $(TESTS)
 
+debug:
+	@echo $(CXX)
+	@echo $(CXXFLAGS)
+	@echo $(CPPFLAGS)
+	@echo $(ARFLAGS)
+	@echo $(AR)
 echo :
 	@echo $(R_HOME)
 	@echo $(RCPPFLAGS)
@@ -47,19 +54,19 @@ gtest.a : gtest-all.o
 gtest_main.a : gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
 
-%.o : %.cc
-	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -c
+#%.o : %.cc
+#	$(CXX) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -c
 
-ClusterTest : ClusterTest.o src/Cluster.o gtest_main.a
-	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+ClusterTest : gtest_main.a 
+	$(CXX) ClusterTest.cc  src/Cluster.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
-firstTest : firstTest.o gtest_main.a
-	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+firstTest : gtest_main.a
+	$(CXX) firstTest.cc  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
-onlineTest: onlineTest.o src/Cluster.o gtest_main.a
-	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+onlineTest: gtest_main.a 
+	$(CXX) onlineTest.cc src/Cluster.hpp src/Cluster.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
-ellipse_gauss_test: ellipse_gauss_test.o gtest_main.a cluster_reader.hpp clustering_comparator.hpp src/Hartigan.o src/Cluster.o src/random_assignment.o src/CEC.o
-	$(CXX) $(RFLAGS) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+ellipse_gauss_test: gtest_main.a 
+	$(CXX) ellipse_gauss_test.cc src/CEC.hpp src/CEC.cpp src/Cluster.hpp src/Cluster.cpp src/Hartigan.hpp src/Hartigan.cpp src/random_assignment.hpp src/random_assignment.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 endif
