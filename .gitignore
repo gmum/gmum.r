@@ -1,8 +1,16 @@
+# Objects
 *.so
 *.o
-#R history files
+
+# R history files
 .RData
 .Rhistory
+.Rbuildignore
 
-#Vim files
+# Vim files
 *~
+*.swp
+
+# RStudio
+*.Rproj
+.Rproj.user
