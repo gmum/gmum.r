@@ -10,8 +10,13 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
-#include "LibSVMRunner.h"
+#include <Rcpp.h>
+
+#include "lib_svm_runner.h"
 #include "svm.h"
+#include "svm_basic.h"
+
+
 
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 void read_problem(const char *filename);
@@ -31,7 +36,7 @@ static int max_line_len;
 
 /* my stuff */
 void set_default();
-char model_file_name[] = "svm_model.p"; //name of the model to be safe
+ //name of the model to be safe
 
 LibSVMRunner::LibSVMRunner() {
 	// TODO Auto-generated constructor stub
@@ -42,19 +47,28 @@ LibSVMRunner::~LibSVMRunner() {
 	// TODO Auto-generated destructor stub
 }
 
-bool LibSVMRunner::canHandle() {
-	return true;
+
+SVM_Result LibSVMRunner::processRequest( SVM_Configuration config, SVM_Result result) {
+	processRequest(config.getFilename());
+	return result;
 }
 
-void LibSVMRunner::handleRequest(const char* input_file_name) {
+bool LibSVMRunner::canHandle( SVM_Configuration config) {
+  return true;
+}
+
+
+void LibSVMRunner::processRequest(std::string input_file_name) {
 	char my_filename[] = "a1a.txt";
 	set_default();
 	read_problem(my_filename);
-	handleRequest(param, prob);
+	processRequest(param, prob);
 }
 
-void LibSVMRunner::handleRequest(svm_parameter& parameter,
+void LibSVMRunner::processRequest(svm_parameter& parameter,
 		svm_problem& problem) {
+
+	char model_file_name[] = "svm_model.p";
 	const char *error_msg;
 
 	error_msg = svm_check_parameter(&prob, &param);
@@ -69,7 +83,6 @@ void LibSVMRunner::handleRequest(svm_parameter& parameter,
 	if (svm_save_model(model_file_name, model)) {
 		fprintf(stderr, "can't save model to file %s\n", model_file_name);
 		exit(1);
-
 	}
 	svm_free_and_destroy_model(&model);
 	svm_destroy_param(&param);
@@ -88,13 +101,17 @@ int max_nr_attr = 64;
 
 int predict_probability = 0;
 
+
+
 /*
  struct svm_model* model;
  static char *line = NULL;
  static int max_line_len;
  */
 
-void svm_predict(char* input_filename, char* model_filename,
+
+
+void LibSVMRunner::svm_predict(char* input_filename, char* model_filename,
 		char* output_filename) {
 	FILE *input, *output;
 
@@ -242,15 +259,6 @@ void predict(FILE *input, FILE *output) {
 		free(prob_estimates);
 }
 
-
-int main() {
-	const char *filename = "a1a.txt";
-
-	LibSVMRunner lib_svm_runner;
-	lib_svm_runner.handleRequest(filename);
-	svm_predict("a1a.txt", model_file_name, "output.txt");
-}
-
 void set_default() {
 	param.svm_type = C_SVC;
 	param.kernel_type = RBF;
@@ -388,4 +396,11 @@ void read_problem(const char *filename) {
 
 	fclose(fp);
 }
+
+
+
+
+
+
+
 
