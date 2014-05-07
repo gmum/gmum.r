@@ -2,13 +2,13 @@
 #define SVM_BASIC_H
 
 #include <string>
-#include <Rcpp.h>
+#include <RcppArmadillo.h>
 
 enum { LINEAR, POLY, RBF, SIGMOID, PRECOMPUTED }; // kernel type
 enum { LIBSVM, SVMLIGHT }; // svm type
 
 // This struct will conatin all the necessery svm parameters and will be used in SVMConfig
-struct SVM_Parameters {
+struct SVMParameters {
   	int svm_type;
 	int kernel_type;
 	int degree;		// for poly 
@@ -26,50 +26,48 @@ struct SVM_Parameters {
 	int probability; 	// do probability estimates 
 };
 
-struct SVM_Node {
-	int index;
-	double value;
-};
-
-struct SVM_Data {
-	SEXP r_data;		// raw data from R
-	int length;	
-	double *target;	
-	struct svm_Node **data;
+struct SVMData {
+	arma::mat data;		// armadillo matrix and vector (double)	
+	arma::vec target;	
+	int len;
 };
  
 // Our "input" class containing SVM paramaters and data to be classified
-class SVM_Configuration  {
+class SVMConfiguration  {
 private :
-	SVM_Data *data; 
-  	SVM_Parameters params;
+	SVMData *data; 
+  	SVMParameters params;
 public :	
-	SVM_Configuration ();
-	SVM_Configuration ( SVM_Data*, SVM_Parameters ); 
+	SVMConfiguration ();
+	SVMConfiguration ( SVMData*, SVMParameters ); 
 
-	void setData( SVM_Data*);
-	SVM_Data* getData();
+	void setData( SEXP, SEXP );
+	SVMData* getData();
 
-	void setParams( SVM_Parameters );
-	SVM_Parameters getParams();
+	void setParams( SVMParameters );
+	SVMParameters getParams();
+
+
 }; 
   
 // Our "output" class containing classification result
-class SVM_Result {
+class SVMResult {
 private :
-	SVM_Data *data; 
+	SVMData *data; 
   	std::string message;
 public : 	
-	SVM_Result();
-  	SVM_Result( std::string );
-	SVM_Result( SVM_Data* ); 
-	SVM_Result( SVM_Data*, std::string );
+	SVMResult();
+  	SVMResult( std::string );
+	SVMResult( SVMData* ); 
+	SVMResult( SVMData*, std::string );
 
-	void setResult( SVM_Data* );
-	SVM_Data* getResult();
+	void setResult( SVMData* );
+	SVMData* getResult();
 
 	void setMessage( std::string );
 	std::string getMessage();
 };
+
+
 
 #endif

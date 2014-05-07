@@ -2,44 +2,55 @@
 
 // SVM Configuration 
   // Constructors  
-SVM_Configuration::SVM_Configuration(){}
-SVM_Configuration::SVM_Configuration( SVM_Data *data, SVM_Parameters params ) {
+SVMConfiguration::SVMConfiguration(){}
+SVMConfiguration::SVMConfiguration( SVMData *data, SVMParameters params ) {
 	this->data = data;
   this->params = params;
 }
   // Getters and Setters
-void SVM_Configuration::setData( SVM_Data *data ) {
-  this->data = data;
+void SVMConfiguration::setData( SEXP x, SEXP y ) {
+  Rcpp::NumericMatrix xr(x); // Rccp matrix from R data
+  Rcpp::NumericVector yr(y); // Rcpp vector from R data
+  
+  arma::mat X( xr.begin(), xr.nrow(), xr.ncol(), false ); // reusing memory
+  arma::vec Y( yr.begin(), yr.size(), false ); 
+
+  SVMData data_struct;
+  data_struct.data = X;
+  data_struct.target = Y;
+  data_struct.len = Y.n_elem;
+
+  this->data = &data_struct;
 }
-SVM_Data* SVM_Configuration::getData() {
+SVMData* SVMConfiguration::getData() {
   return this->data;
 }
-void SVM_Configuration::setParams( SVM_Parameters params ) {
+void SVMConfiguration::setParams( SVMParameters params ) {
   this->params = params;
 }
-SVM_Parameters SVM_Configuration::getParams() {
+SVMParameters SVMConfiguration::getParams() {
   return this->params;
 }
 
 // SVM Result
   // Constructors
-SVM_Result::SVM_Result(){}
-SVM_Result::SVM_Result( std::string message ) {
+SVMResult::SVMResult(){}
+SVMResult::SVMResult( std::string message ) {
   this->message = message;
 }
-SVM_Result::SVM_Result( SVM_Data *data ) {
+SVMResult::SVMResult( SVMData *data ) {
 	this->data = data;
 }
   // Getters and Setters
-void SVM_Result::setResult( SVM_Data *data ) {
+void SVMResult::setResult( SVMData *data ) {
   this->data = data;
 }
-SVM_Data* SVM_Result::getResult() {
+SVMData* SVMResult::getResult() {
   return this->data;
 }
-void SVM_Result::setMessage( std::string message ) {
+void SVMResult::setMessage( std::string message ) {
   this->message = message;
 }
-std::string SVM_Result::getMessage() {
+std::string SVMResult::getMessage() {
   return this->message;
 }

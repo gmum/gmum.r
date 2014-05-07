@@ -4,10 +4,10 @@
 #include "svm_basic.h"
 
 // SVMHandler interface, all blocks will implement this class
-class SVM_Handler {
+class SVMHandler {
 public :
-	virtual SVM_Result processRequest( SVM_Configuration, SVM_Result ) = 0; 
-	virtual bool canHandle( SVM_Configuration ) = 0;
+	virtual SVMResult processRequest( SVMConfiguration, SVMResult ) = 0; 
+	virtual bool canHandle( SVMConfiguration ) = 0;
 };
 
 #endif
