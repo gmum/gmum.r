@@ -7,6 +7,7 @@
 #include "svm_client.h"
 
 #include <Rcpp.h>
+#include <R.h>
 #include <vector>
 
    

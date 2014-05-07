@@ -6,3 +6,6 @@
 
 #Vim files
 *~
+Debug
+.cproject
+.project
