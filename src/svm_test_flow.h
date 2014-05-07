@@ -12,19 +12,19 @@
    
 // ============= TEST CLASSES =================
 
-class TestSVMFlowFactory : public SVM_FlowFactory {
+class TestSVMFlowFactory : public SVMFlowFactory {
 public :
   TestSVMFlowFactory();
-  std::vector<SVM_Handler*> createSVMFlow( SVM_Configuration );
+  std::vector<SVMHandler*> createSVMFlow( SVMConfiguration );
 };
 
-class TestSVMRunner : public SVM_Handler {
-  SVM_Result processRequest( SVM_Configuration, SVM_Result );
-	bool canHandle( SVM_Configuration);
+class TestSVMRunner : public SVMHandler {
+  SVMResult processRequest( SVMConfiguration, SVMResult );
+	bool canHandle( SVMConfiguration);
 };
 
 // Something like that will probably be used as a last block in the chain
-SEXP dispatchMessage( SVM_Result );
+SEXP dispatchMessage( SVMResult );
 
 RcppExport SEXP testFlow( SEXP );
 
