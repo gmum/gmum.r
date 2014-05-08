@@ -20,7 +20,7 @@ CECEnergy<-function(dataSet,label,kind){
     energy<-0
     for (i in 1:k){
       means[i,] <- apply(dataSet[label == i,],2,mean)
-      covariances[i,,] <- cov(dataSet[label == i,])
+      covariances[i,,] <- ((length(dataSet[,1])-1)/length(dataSet[,1]))*cov(dataSet[label == i,])
       probab[i] <- length(dataSet[label == i,1])/length(dataSet[,1])
       energyArray[i]  <- energyOneCluster(kind=1, probab=probab[i], covariances=covariances[i,,],dim)
       energy <- energy + energyOneCluster(kind=1, probab=probab[i], covariances=covariances[i,,],dim)
@@ -28,25 +28,18 @@ CECEnergy<-function(dataSet,label,kind){
     list(means=means,covariances=covariances,energyArray=energyArray,energy=energy)
 }
 
-dataSet <- matrix(as.numeric(as.matrix(read.table("C:\\Users\\admin\\Google Dysk_new\\CEC_curve\\R_symulacje\\EllipseGauss.txt"),skipNul=TRUE)),ncol=2);
-label <- as.matrix(read.table("C:\\Users\\admin\\Google Dysk_new\\CEC_curve\\R_symulacje\\EllipseGauss_cluster_start.txt"))+1;
+#dataSet <- matrix(as.numeric(as.matrix(read.table("C:\\Users\\admin\\Dropbox\\CEC_plugin_R\\TESTY\\simple_1\\input.txt"),skipNul=TRUE)),ncol=2);
+#label <- as.matrix(read.table("C:\\Users\\admin\\Dropbox\\CEC_plugin_R\\TESTY\\simple_1\\cluster.txt"));
+
+dataSet <- matrix(as.numeric(as.matrix(read.table("C:\\Users\\admin\\Dropbox\\CEC_plugin_R\\TESTY\\mouse_1\\input.txt"),skipNul=TRUE)),ncol=2);
+label <- as.matrix(read.table("C:\\Users\\admin\\Dropbox\\CEC_plugin_R\\TESTY\\mouse_1\\cluster.txt"));
+
 
 CECEnergy(dataSet,label,1)
   
   
-  
-  #plot(dataSet,pch=20,col=label)
-
-
-
-
-means
-covariances
-probab
-
-energy
-
-energyArray
+#file.path("gmum.r\\test\\data\\simple_1\\input.txt", fsep = .Platform$file.sep)
+#plot(dataSet,pch=20,col=label)
 
 
 
