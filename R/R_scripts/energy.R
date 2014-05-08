@@ -2,6 +2,7 @@
 energyOneCluster <- function( kind, probab, covariances,dimOfData){ # Move this to separate function parameter passed 
   energy <- switch(kind,
   { # 1
+     
     energy = probab*( -log(probab)+0.5*log(det(covariances) ) +dimOfData*0.5*log(2*pi*exp(1)))
   },      
   { # 2
@@ -28,11 +29,22 @@ CECEnergy<-function(dataSet,label,kind){
     list(means=means,covariances=covariances,energyArray=energyArray,energy=energy)
 }
 
-#dataSet <- matrix(as.numeric(as.matrix(read.table("C:\\Users\\admin\\Dropbox\\CEC_plugin_R\\TESTY\\simple_1\\input.txt"),skipNul=TRUE)),ncol=2);
-#label <- as.matrix(read.table("C:\\Users\\admin\\Dropbox\\CEC_plugin_R\\TESTY\\simple_1\\cluster.txt"));
+dataPath = file.path("..","..","test","data")
+simplePath = file.path(dataPath,"simple_1")
+mousePath = file.path(dataPath,"mouse_1")
+ellipsePath = file.path(dataPath,"EllipseGauss")
+rpath = mousePath
+dataSetPath = file.path(rpath,"input.txt")
+labelPath = file.path(rpath,"cluster.txt")
 
-dataSet <- matrix(as.numeric(as.matrix(read.table("C:\\Users\\admin\\Dropbox\\CEC_plugin_R\\TESTY\\mouse_1\\input.txt"),skipNul=TRUE)),ncol=2);
-label <- as.matrix(read.table("C:\\Users\\admin\\Dropbox\\CEC_plugin_R\\TESTY\\mouse_1\\cluster.txt"));
+
+
+dataSet <- matrix(as.numeric(as.matrix(read.table(dataSetPath),skipNul=TRUE)),ncol=2);
+label <- as.matrix(read.table(labelPath));
+
+
+
+
 
 
 CECEnergy(dataSet,label,1)

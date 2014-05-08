@@ -93,7 +93,7 @@ unsigned int Cluster::numberOfPoints = 0;
 
 void Cluster::calculateEntropy() {
   float p = 1.0*count / numberOfPoints;
-  _entropy = N*log(2*M_PI*M_E)/2 + log(arma::det(covMat))/2 + p*((-log(p)));
+  _entropy = p* (N*log(2*M_PI*M_E)/2 + log(arma::det(covMat))/2 + (-log(p)));
 }
 
 ClusterCovMat::ClusterCovMat(arma::mat sigma, unsigned int id, std::vector<unsigned int> &assignment,
@@ -101,7 +101,7 @@ ClusterCovMat::ClusterCovMat(arma::mat sigma, unsigned int id, std::vector<unsig
 
 void ClusterCovMat::calculateEntropy() {
     float p = 1.0*count / numberOfPoints;
-  _entropy = N*log(2*M_PI)/2 + arma::trace(arma::inv(sigma)*covMat)/2 + N*log(arma::det(sigma))/2+  p*(-log(p));
+    _entropy =p*( N*log(2*M_PI)/2 + arma::trace(arma::inv(sigma)*covMat)/2 + N*log(arma::det(sigma))/2 -log(p));
 }
 
 ClusterConstRadius::ClusterConstRadius(float r, unsigned int id, std::vector<unsigned int> &assignment,
@@ -109,7 +109,7 @@ ClusterConstRadius::ClusterConstRadius(float r, unsigned int id, std::vector<uns
 
 void ClusterConstRadius::calculateEntropy() {
     float p = 1.0*count / numberOfPoints;
-    _entropy = N*log(2*M_PI)/2 + arma::trace(covMat)/(2*r) + N*log(r)/2 + p * (-log(p));
+    _entropy = p*(N*log(2*M_PI)/2 + arma::trace(covMat)/(2*r) + N*log(r)/2 -log(p));
 }
 
 ClusterSpherical::ClusterSpherical(unsigned int id, std::vector<unsigned int> &assignment,
@@ -117,7 +117,7 @@ ClusterSpherical::ClusterSpherical(unsigned int id, std::vector<unsigned int> &a
 
 void ClusterSpherical::calculateEntropy() {
       float p = 1.0*count / numberOfPoints;
-  _entropy = N*log(2*M_PI*M_E/N)/2 + N*log(arma::trace(covMat))/2 + p*(-log(p));
+      _entropy = p*(N*log(2*M_PI*M_E/N)/2 + N*log(arma::trace(covMat))/2 -log(p));
 }
 
 ClusterDiagonal::ClusterDiagonal(unsigned int id, std::vector<unsigned int> &assignment,
@@ -125,5 +125,5 @@ ClusterDiagonal::ClusterDiagonal(unsigned int id, std::vector<unsigned int> &ass
 
 void ClusterDiagonal::calculateEntropy() {
     float p = 1.0*count / numberOfPoints;
-    _entropy = N*log(2*M_PI*M_E)/2 + log(arma::det(arma::diagmat(covMat)))/2 + p*(-log(p));
+    _entropy = p*( N*log(2*M_PI*M_E)/2 + log(arma::det(arma::diagmat(covMat)))/2 -log(p));
 }
