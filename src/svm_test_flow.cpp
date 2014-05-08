@@ -4,20 +4,20 @@
 // ============= TEST CLASSES =================
 
 // TestSVMRunner
-SVM_Result TestSVMRunner::processRequest( SVM_Configuration config, SVM_Result result) {
+SVMResult TestSVMRunner::processRequest( SVMConfiguration config, SVMResult result) {
   return result;
 }
-bool TestSVMRunner::canHandle( SVM_Configuration) {
+bool TestSVMRunner::canHandle( SVMConfiguration) {
   return true;
 }
 
 // TestSVMFlowFactory
 TestSVMFlowFactory::TestSVMFlowFactory(){}
-std::vector<SVM_Handler*> TestSVMFlowFactory::createSVMFlow( SVM_Configuration config) {  
+std::vector<SVMHandler*> TestSVMFlowFactory::createSVMFlow( SVMConfiguration config) {  
   
   TestSVMRunner runner1;
   TestSVMRunner runner2;
-  std::vector<SVM_Handler*> handlers;
+  std::vector<SVMHandler*> handlers;
   handlers.push_back( &runner1 );
   handlers.push_back( &runner2 );
   
@@ -25,7 +25,7 @@ std::vector<SVM_Handler*> TestSVMFlowFactory::createSVMFlow( SVM_Configuration c
 }
 
 // Dispatch function
-SEXP dispatchMessage( SVM_Result result ) {
+SEXP dispatchMessage( SVMResult result ) {
   Rcpp::CharacterVector msg = Rcpp::CharacterVector::create( result.getMessage() )  ;
   return msg ;
 }
@@ -33,9 +33,9 @@ SEXP dispatchMessage( SVM_Result result ) {
 // TestFlow
 SEXP testFlow( SEXP x ) {
   std::string msg = Rcpp::as<std::string>(x);
-  SVM_Client client( msg );
-  SVM_Configuration config;
-  SVM_Result result = client.run(config);
+  SVMClient client( msg );
+  SVMConfiguration config;
+  SVMResult result = client.run(config);
   return dispatchMessage( result );
 }
 
