@@ -12,9 +12,11 @@ protected:
   std::string prefix();
   std::string inputPath();
   std::string clusterPath();
+  std::string energyPath();
   std::string folderName;
   std::vector<std::vector<double> > points;
   std::vector<unsigned int> clustering;
+  double energy;
   unsigned int dim;
 public:
   ClusterReader(const char * _name,unsigned int _dim);
@@ -23,12 +25,15 @@ public:
   
   void getPoints(std::vector<std::vector<double> > & out);
   void getClustering(std::vector<unsigned int> & out);
+  void readEnergy();
+  double getEnergy();
   arma::mat getPointsInMatrix();
   
   
 };
 
 ClusterReader::ClusterReader(const char * name, unsigned int _dim) {
+  energy = -1;
   folderName = std::string(name);
   dim = _dim;
 }
@@ -43,6 +48,10 @@ std::string ClusterReader::clusterPath() {
 
 std::string ClusterReader::inputPath() {
   return prefix() + "input.txt";
+}
+
+std::string ClusterReader::energyPath() {
+  return prefix()+ "energy.txt";
 }
 
 void ClusterReader::readPoints() {
@@ -93,6 +102,17 @@ void ClusterReader::readClustering() {
   std::cout << "Finished reading clusters. Read " << clustering.size() << std:: endl;
 }
 
+void ClusterReader::readEnergy() {
+  std::ifstream file(energyPath().c_str());
+  if(file.is_open()){
+    file >> energy;
+    file.close();
+  }
+  else {
+    std::cerr << "Failed to open " << energyPath() << std::endl;
+  }
+}
+
 void ClusterReader::getPoints(std::vector<std::vector<double> > & out) {
     if (points.size() == 0) 
       readPoints();
@@ -106,6 +126,12 @@ void ClusterReader::getClustering(std::vector<unsigned int> & out) {
     readClustering();
   for(std::vector<unsigned int>::iterator it = clustering.begin() ; it!= clustering.end(); ++it)
     out.push_back(*it);
+}
+
+double ClusterReader::getEnergy(){
+  if (energy == -1)
+    readEnergy();
+  return energy;
 }
 
 arma::mat ClusterReader::getPointsInMatrix() {
