@@ -2,6 +2,15 @@
 #include "svm_test_flow.h"
 
 // ============= TEST CLASSES =================
+SVMResult NormRunner::processRequest( SVMConfiguration config, SVMResult result ) {
+  arma::mat x = config.getData()->data;
+  double norm = arma::norm(x);
+  SVMData data;
+  data.norm = norm;
+  result.setData( &data );
+  return result; 
+}
+
 
 // TestSVMRunner
 SVMResult TestSVMRunner::processRequest( SVMConfiguration config, SVMResult result) {
@@ -44,14 +53,7 @@ SEXP testFlow( SEXP x ) {
   return dispatchMessage( result );
 }
 
-SVMResult NormRunner::processRequest( SVMConfiguration config, SVMResult result ) {
-  arma::mat x = config.getData()->data;
-  double norm = arma::norm(x);
-  SVMData data;
-  data.norm = norm;
-  result.setData( &data );
-  return result; 
-}
+
 
 bool NormRunner::canHandle( SVMConfiguration config ) {
   return true;

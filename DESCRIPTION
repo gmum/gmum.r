@@ -9,5 +9,6 @@ Description: More about what it does (maybe more than one line)
 License: MIT
 Depends:
     Rcpp (>= 0.10.4)
-LinkingTo: Rcpp
+LinkingTo: Rcpp, RcppArmadillo
+Imports: Rcpp (>= 0.11.0), RcppArmadillo (>= 0.2.0)
 NeedsCompilation: yes
