@@ -1,11 +1,13 @@
-#include <armadillo>
-#include <vector>
 
 #ifndef CLUSTER_HPP
 #define CLUSTER_HPP
 
+#include <armadillo>
+#include <vector>
+
 class Cluster {
 protected:
+  unsigned int N;
   int count;
   arma::rowvec mean;
   /*

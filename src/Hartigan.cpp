@@ -1,4 +1,5 @@
 #include "Hartigan.hpp"
+#include <cmath>
 
 void Hartigan::loop(arma::mat &points, std::vector<unsigned int> &assignment,
 		    float killThreshold, std::vector<Cluster> &clusters) {
@@ -21,7 +22,7 @@ int Hartigan::singleLoop(arma::mat &points, std::vector<unsigned int> &assignmen
 	Cluster &oldTarget = clusters[k];
 	Cluster newSource = clusters[source].removePoint(point);
 	Cluster newTarget = clusters[k].addPoint(point);
-	float oldEntropy = oldSource.entropy()+oldTarget.entropy();
+	float oldEntropy = oldSource.entropy()+oldTarget.entropy() ;
 	float newEntropy = newSource.entropy()+newTarget.entropy();
 
 	if(newEntropy < oldEntropy) {
