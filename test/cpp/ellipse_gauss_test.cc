@@ -54,15 +54,11 @@ TEST(EllipseGauss,real_test){
     while(cec->singleLoop()) {
       EVAL(cec->entropy);
     }
-    std::cout << "BEGIN" << std::endl;
-    for (std::vector<unsigned int>::iterator it = assignment.begin() ; it!= assignment.end() ; ++it) {
-      std::cout << *it << std::endl;
-    }
-    std::cout << "END" << std::endl;
+    
     double percentage = comparator.evaluateClustering(numberOfClusters,points,assignment,clustering);
     std::cout << "Percentage " << percentage << std::endl;
     // EXPECT_GT(percentage, 0.9);
-    numberOfTimesAcceptable += (percentage >= 0.9) || (cec->entropy(),clusterReader.getEnergy()*2.0);
+    numberOfTimesAcceptable += (percentage >= 0.9) || (cec->entropy(),clusterReader.getEnergy()*1.5);
     
     //  EXPECT_LT(cec->entropy(),clusterReader.getEnergy()*1.5);
 
