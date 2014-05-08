@@ -10,6 +10,7 @@
 # Vim files
 *~
 *.swp
+*.vimsession
 
 # RStudio
 *.Rproj
