@@ -6,9 +6,9 @@
 #include <vector>
 
 // Flow Factory
-class SVM_FlowFactory {
+class SVMFlowFactory {
 public :
-  std::vector<SVM_Handler*> createSVMFlow( SVM_Configuration );    
+  std::vector<SVMHandler*> createSVMFlow( SVMConfiguration );    
 };
 
 #endif

@@ -5,10 +5,10 @@
 #include "svm_basic.h"
 
 // Exemplary SVMRunner for LIBSVM
-class LIBSVM_Runner : public SVM_Handler{
+class LIBSVMRunner : public SVMHandler{
 public :
-	SVM_Result processRequest( SVM_Configuration, SVM_Result );
-	bool canHandle( SVM_Configuration);
+	SVMResult processRequest( SVMConfiguration, SVMResult );
+	bool canHandle( SVMConfiguration);
 };
 
 #endif

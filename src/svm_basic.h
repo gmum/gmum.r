@@ -2,15 +2,15 @@
 #define SVM_BASIC_H
 
 #include <string>
-#include <Rcpp.h>
+#include <RcppArmadillo.h>
 
-enum { LINEAR, POLY, RBF, SIGMOID, PRECOMPUTED }; // kernel type
-enum { LIBSVM, SVMLIGHT }; // svm type
+enum KernelType { LINEAR, POLY, RBF, SIGMOID, PRECOMPUTED }; // kernel type
+enum SVMType { LIBSVM, SVMLIGHT }; // svm type
 
 // This struct will conatin all the necessery svm parameters and will be used in SVMConfig
-struct SVM_Parameters {
-  	int svm_type;
-	int kernel_type;
+struct SVMParameters {
+  	SVMType svm_type;
+	KernelType kernel_type;
 	int degree;		// for poly 
 	double gamma;	// for poly/rbf/sigmoid 
 	double coef0;	// for poly/sigmoid 
@@ -26,50 +26,54 @@ struct SVM_Parameters {
 	int probability; 	// do probability estimates 
 };
 
-struct SVM_Node {
-	int index;
-	double value;
-};
-
-struct SVM_Data {
-	SEXP r_data;		// raw data from R
-	int length;	
-	double *target;	
-	struct svm_Node **data;
+struct SVMData {
+	arma::mat data;		// armadillo matrix and vector (double)	
+	arma::vec target;
+	double norm;	
+	int len;
 };
  
 // Our "input" class containing SVM paramaters and data to be classified
-class SVM_Configuration  {
+class SVMConfiguration  {
 private :
-	SVM_Data *data; 
-  	SVM_Parameters params;
+	SVMData *data; 
+  	SVMParameters params;
+  	std::string test;
 public :	
-	SVM_Configuration ();
-	SVM_Configuration ( SVM_Data*, SVM_Parameters ); 
+	SVMConfiguration ();
+	SVMConfiguration( std::string );
+	SVMConfiguration ( SVMData*, SVMParameters ); 
 
-	void setData( SVM_Data*);
-	SVM_Data* getData();
+	void setData( SEXP, SEXP );
+	SVMData* getData();
 
-	void setParams( SVM_Parameters );
-	SVM_Parameters getParams();
+	void setParams( SVMParameters );
+	SVMParameters getParams();
+
+	void setTest (std::string);
+	std::string getTest();
+
+
 }; 
   
 // Our "output" class containing classification result
-class SVM_Result {
+class SVMResult {
 private :
-	SVM_Data *data; 
+	SVMData *data; 
   	std::string message;
 public : 	
-	SVM_Result();
-  	SVM_Result( std::string );
-	SVM_Result( SVM_Data* ); 
-	SVM_Result( SVM_Data*, std::string );
+	SVMResult();
+  	SVMResult( std::string );
+	SVMResult( SVMData* ); 
+	SVMResult( SVMData*, std::string );
 
-	void setResult( SVM_Data* );
-	SVM_Data* getResult();
+	void setData( SVMData* );
+	SVMData* getData();
 
 	void setMessage( std::string );
 	std::string getMessage();
 };
+
+
 
 #endif
