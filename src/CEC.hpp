@@ -9,20 +9,21 @@ enum ClusterType {
 
 class CEC {
 private:
-  std::vector<Cluster> clusters;
+
   std::vector<unsigned int> &assignment;
   arma::mat &points;
-  Algorithm *algorithm;
+  Algorithm &algorithm;
   const float killThreshold;
 public:
   CEC(arma::mat &points, std::vector<unsigned int> &assignment, 
-      float killThreshold, Algorithm *algorithm,
+      float killThreshold, Algorithm &algorithm,
       std::vector<ClusterType> &type, std::vector<float> &radius,
       std::vector<arma::mat> &covMatrices);
 
   CEC(arma::mat &points, std::vector<unsigned int> &assignment,
-      float killThreshold, Algorithm *algorithm, int numberOfClusters);
-
+      float killThreshold, Algorithm &algorithm, int numberOfClusters);
+  // for debug purposes
+   std::vector<Cluster> clusters;
   void loop();
   int singleLoop();
   float entropy();

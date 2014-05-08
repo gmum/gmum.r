@@ -40,7 +40,7 @@ RcppExport SEXP run(SEXP args) {
   
   //CEC init
   Hartigan hartigan;
-  CEC cec(points, assignment, killThreshold, &hartigan, type, radius, covMat);
+  CEC cec(points, assignment, killThreshold, hartigan, type, radius, covMat);
 
   cec.loop();
 
