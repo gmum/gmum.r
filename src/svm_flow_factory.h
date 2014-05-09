@@ -7,8 +7,8 @@
 
 // Flow Factory
 class SVMFlowFactory {
-public :
-  std::vector<SVMHandler*> createSVMFlow( SVMConfiguration );    
+public:
+	std::vector<SVMHandler*> createSVMFlow(SVMConfiguration);
 };
 
 #endif
