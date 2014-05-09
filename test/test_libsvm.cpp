@@ -10,7 +10,6 @@ void test_libsvm(){
     //cout << "TEST1" << std::endl;
     //CharacterVector x = CharacterVector::create( "libsvm", "working" ) ;
 
-	char model_file_name[] = "svm_model.p";
 	std::string test_model_file_name = "svm_model.p";
 	std::string test_data = "a1a.txt";
 	std::string output_filename = "output.txt";
@@ -23,6 +22,6 @@ void test_libsvm(){
 	LibSVMRunner lib_svm_runner;
 	lib_svm_runner.processRequest(svm_config, svm_result);
 	svm_config.setPrediction(true);
-	lib_svm_runner.svm_predict(svm_config, svm_result);
+	lib_svm_runner.processRequest(svm_config, svm_result);
 //    return x ;
 }
