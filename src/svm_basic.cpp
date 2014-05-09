@@ -28,6 +28,29 @@ std::string SVM_Configuration::getFilename() {
 	return this->filename;
 }
 
+void SVM_Configuration::setModelFilename(std::string filename) {
+	this->model_filename = filename;
+}
+std::string SVM_Configuration::getModelFilename() {
+	return this->model_filename;
+}
+
+void SVM_Configuration::setOutputFilename(std::string filename) {
+	this->output_filename = filename;
+}
+std::string SVM_Configuration::getOutputFilename() {
+	return this->output_filename;
+}
+
+bool SVM_Configuration::isPrediction() {
+	return this->prediction;
+}
+
+void SVM_Configuration::setPrediction(bool prediction) {
+	this->prediction = prediction;
+}
+
+
 
 
 // SVM Result
@@ -52,3 +75,5 @@ void SVM_Result::setMessage( std::string message ) {
 std::string SVM_Result::getMessage() {
   return this->message;
 }
+
+

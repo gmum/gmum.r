@@ -16,27 +16,20 @@
 #include "svm.h"
 #include "svm_basic.h"
 
-
-
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
-void read_problem(const char *filename);
+void read_problem(const char *filename, svm_parameter& param);
 static char* readline(FILE *input);
 void exit_input_error(int line_num);
 void predict(FILE *input, FILE *output);
+svm_parameter get_default_params();
 
-struct svm_parameter param;		// set by parse_command_line
+//struct svm_parameter param;		// set by parse_command_line
 struct svm_problem prob;		// set by read_problem
 struct svm_model *model;
 struct svm_node *x_space;
-int cross_validation;
-int nr_fold;
 
 static char *line = NULL;
 static int max_line_len;
-
-/* my stuff */
-void set_default();
- //name of the model to be safe
 
 LibSVMRunner::LibSVMRunner() {
 	// TODO Auto-generated constructor stub
@@ -47,28 +40,29 @@ LibSVMRunner::~LibSVMRunner() {
 	// TODO Auto-generated destructor stub
 }
 
-
-SVM_Result LibSVMRunner::processRequest( SVM_Configuration config, SVM_Result result) {
-	processRequest(config.getFilename());
+SVM_Result LibSVMRunner::processRequest(SVM_Configuration config,
+		SVM_Result result) {
+	if (!config.isPrediction()) {
+		std::string s_filename = config.getFilename();
+		const char * filename = s_filename.c_str();
+		svm_parameter param = get_default_params();
+		read_problem(filename, param);
+		processRequest(config, result, param, prob);
+	} else {
+		svm_predict(config, result);
+	}
 	return result;
 }
 
-bool LibSVMRunner::canHandle( SVM_Configuration config) {
-  return true;
+bool LibSVMRunner::canHandle(SVM_Configuration config) {
+	return true;
 }
 
+void LibSVMRunner::processRequest(SVM_Configuration& config, SVM_Result& result,
+		svm_parameter& param, svm_problem& problem) {
 
-void LibSVMRunner::processRequest(std::string input_file_name) {
-	char my_filename[] = "a1a.txt";
-	set_default();
-	read_problem(my_filename);
-	processRequest(param, prob);
-}
+	const char * model_file_name = config.getModelFilename().c_str();
 
-void LibSVMRunner::processRequest(svm_parameter& parameter,
-		svm_problem& problem) {
-
-	char model_file_name[] = "svm_model.p";
 	const char *error_msg;
 
 	error_msg = svm_check_parameter(&prob, &param);
@@ -101,21 +95,19 @@ int max_nr_attr = 64;
 
 int predict_probability = 0;
 
-
-
 /*
  struct svm_model* model;
  static char *line = NULL;
  static int max_line_len;
  */
 
+void LibSVMRunner::svm_predict(SVM_Configuration& config, SVM_Result& result) {
 
-
-void LibSVMRunner::svm_predict(char* input_filename, char* model_filename,
-		char* output_filename) {
 	FILE *input, *output;
 
-	//struct svm_model* model;
+	const char * model_filename = config.getModelFilename().c_str();
+	const char * input_filename = config.getFilename().c_str();
+	const char * output_filename = config.getOutputFilename().c_str();
 
 	input = fopen(input_filename, "r");
 	if (input == NULL) {
@@ -259,7 +251,8 @@ void predict(FILE *input, FILE *output) {
 		free(prob_estimates);
 }
 
-void set_default() {
+struct svm_parameter get_default_params() {
+	svm_parameter param;
 	param.svm_type = C_SVC;
 	param.kernel_type = RBF;
 	param.degree = 3;
@@ -275,6 +268,7 @@ void set_default() {
 	param.nr_weight = 0;
 	param.weight_label = NULL;
 	param.weight = NULL;
+	return param;
 }
 
 void exit_input_error(int line_num) {
@@ -298,7 +292,7 @@ static char* readline(FILE *input) {
 	return line;
 }
 
-void read_problem(const char *filename) {
+void read_problem(const char *filename, svm_parameter& param) {
 	int elements, max_index, inst_max_index, i, j;
 	FILE *fp = fopen(filename, "r");
 	char *endptr;
@@ -396,11 +390,4 @@ void read_problem(const char *filename) {
 
 	fclose(fp);
 }
-
-
-
-
-
-
-
 

@@ -1,20 +1,16 @@
 #ifdef INSIDE
 #include <Rcpp.h>
 #include <RInside.h>                    // for the embedded R via RInside
+#include <iostream>
 
 #include "svm_basic.h"
 #include "lib_svm_runner.h"
+#include "test_libsvm.h"
 
 using namespace Rcpp;
 using namespace std;
 int main() {
-    using namespace Rcpp ;
-
-    CharacterVector x = CharacterVector::create( "foo", "bar" )  ;
-    NumericVector y   = NumericVector::create( 0.0, 1.0 ) ;
-    List z            = List::create( x, y ) ;
-
-
+    test_libsvm();
 	return 0;
 }
 #endif
