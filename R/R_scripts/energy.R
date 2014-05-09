@@ -33,19 +33,16 @@ dataPath = file.path("..","..","test","data")
 simplePath = file.path(dataPath,"simple_1")
 mousePath = file.path(dataPath,"mouse_1")
 ellipsePath = file.path(dataPath,"EllipseGauss")
-rpath = mousePath
+rpath = ellipsePath
 dataSetPath = file.path(rpath,"input.txt")
 labelPath = file.path(rpath,"cluster.txt")
 
 
 
 dataSet <- matrix(as.numeric(as.matrix(read.table(dataSetPath),skipNul=TRUE)),ncol=2);
+
 label <- as.matrix(read.table(labelPath));
-
-
-
-
-
+label <- label + (1 - min(label))
 
 CECEnergy(dataSet,label,1)
   
