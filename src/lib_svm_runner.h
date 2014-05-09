@@ -16,20 +16,18 @@
 #include "svm_basic.h"
 #include <Rcpp.h>
 
-class LibSVMRunner : public SVM_Handler {
+class LibSVMRunner: public SVM_Handler {
 public:
 	LibSVMRunner();
 	virtual ~LibSVMRunner();
 	void processRequest(std::string);
-	void processRequest(svm_parameter&, svm_problem&);
-	void svm_predict(char* input_filename, char* model_filename,
-			char* output_filename);
+	void processRequest(SVM_Configuration& config, SVM_Result& result,
+			svm_parameter&, svm_problem&);
+	void svm_predict(SVM_Configuration& config, SVM_Result& result);
 
-	SVM_Result processRequest( SVM_Configuration, SVM_Result);
-	bool canHandle( SVM_Configuration);
+	SVM_Result processRequest(SVM_Configuration, SVM_Result);
+	bool canHandle(SVM_Configuration);
 
 };
-
-
 
 #endif /* LIBSVMRUNNER_H_ */

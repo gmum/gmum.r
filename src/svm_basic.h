@@ -44,6 +44,9 @@ private :
 	SVM_Data *data; 
   	SVM_Parameters params;
   	std::string filename;
+  	std::string model_filename;
+  	std::string output_filename;
+  	bool prediction;
 
 public :	
 	SVM_Configuration ();
@@ -57,6 +60,15 @@ public :
 
 	void setFilename(std::string);
 	std::string getFilename();
+
+	void setModelFilename(std::string);
+	std::string getModelFilename();
+
+	void setOutputFilename(std::string);
+	std::string getOutputFilename();
+
+	void setPrediction(bool);
+	bool isPrediction();
 }; 
   
 // Our "output" class containing classification result
@@ -64,7 +76,7 @@ class SVM_Result {
 private :
 	SVM_Data *data; 
   	std::string message;
-  	std::string model_filename;
+
 public : 	
 	SVM_Result();
   	SVM_Result( std::string );
@@ -77,8 +89,7 @@ public :
 	void setMessage( std::string );
 	std::string getMessage();
 
-	void setModelFilename(std::string);
-	std::string getModelFilename();
+
 };
 
 #endif
