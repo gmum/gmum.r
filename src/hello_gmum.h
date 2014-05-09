@@ -1,5 +1,5 @@
-#ifndef _gmum-r_RCPP_HELLO_WORLD_H
-#define _gmum-r_RCPP_HELLO_WORLD_H
+#ifndef HELLO_GMUM_H
+#define HELLO_GMUM_H
 
 #include <Rcpp.h>
 
@@ -14,6 +14,6 @@
  * by .Call. See the thread http://thread.gmane.org/gmane.comp.lang.r.rcpp/649/focus=672
  * on Rcpp-devel for a misuse of RcppExport
  */
-RcppExport SEXP hello_gmum() ;
+RcppExport SEXP hello_gmum();
 
 #endif
