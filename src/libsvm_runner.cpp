@@ -10,9 +10,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
-#include <Rcpp.h>
 
-#include "lib_svm_runner.h"
+#include "libsvm_runner.h"
 #include "svm.h"
 #include "svm_basic.h"
 
@@ -40,8 +39,8 @@ LibSVMRunner::~LibSVMRunner() {
 	// TODO Auto-generated destructor stub
 }
 
-SVM_Result LibSVMRunner::processRequest(SVM_Configuration config,
-		SVM_Result result) {
+SVMResult LibSVMRunner::processRequest(SVMConfiguration config,
+		SVMResult result) {
 	if (!config.isPrediction()) {
 		std::string s_filename = config.getFilename();
 		const char * filename = s_filename.c_str();
@@ -54,11 +53,11 @@ SVM_Result LibSVMRunner::processRequest(SVM_Configuration config,
 	return result;
 }
 
-bool LibSVMRunner::canHandle(SVM_Configuration config) {
+bool LibSVMRunner::canHandle(SVMConfiguration config) {
 	return true;
 }
 
-void LibSVMRunner::processRequest(SVM_Configuration& config, SVM_Result& result,
+void LibSVMRunner::processRequest(SVMConfiguration& config, SVMResult& result,
 		svm_parameter& param, svm_problem& problem) {
 
 	const char * model_file_name = config.getModelFilename().c_str();
@@ -101,7 +100,7 @@ int predict_probability = 0;
  static int max_line_len;
  */
 
-void LibSVMRunner::svm_predict(SVM_Configuration& config, SVM_Result& result) {
+void LibSVMRunner::svm_predict(SVMConfiguration& config, SVMResult& result) {
 
 	FILE *input, *output;
 

@@ -2,8 +2,9 @@
 #include <vector>
 
 // SVMFlowFactory | At the moments returns empty vector<hanlder>
-std::vector<SVM_Handler*> SVM_FlowFactory::createSVMFlow( SVM_Configuration config ) {
-  std::vector<SVM_Handler*> handlers;
-  return handlers;
-  // TODO
+std::vector<SVMHandler*> SVMFlowFactory::createSVMFlow(
+		SVMConfiguration config) {
+	std::vector<SVMHandler*> handlers;
+	return handlers;
+	// TODO
 }
