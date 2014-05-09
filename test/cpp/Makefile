@@ -8,7 +8,7 @@ CXXFLAGS := -g -O2 -s -pthread
 LDLIBS := -larmadillo
 USER_DIR = ../../src
 
-TESTS = ClusterTest firstTest onlineTest ellipse_gauss_test simple_1_test
+TESTS = ClusterTest firstTest onlineTest ellipse_gauss_test simple_1_test mouse_1_test
 
 GTEST_HEADERS = $(GTEST)/include/gtest/*.h \
                 $(GTEST)/include/gtest/internal/*.h
@@ -68,6 +68,9 @@ onlineTest: gtest_main.a
 
 ellipse_gauss_test: gtest_main.a 
 	$(CXX) ellipse_gauss_test.cc src/CEC.hpp src/CEC.cpp src/Cluster.hpp src/Cluster.cpp src/Hartigan.hpp src/Hartigan.cpp src/random_assignment.hpp src/random_assignment.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+
+mouse_1_test: gtest_main.a 
+	$(CXX) mouse_1_test.cc src/CEC.hpp src/CEC.cpp src/Cluster.hpp src/Cluster.cpp src/Hartigan.hpp src/Hartigan.cpp src/random_assignment.hpp src/random_assignment.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 simple_1_test: gtest_main.a 
 	$(CXX) simple_1_test.cc src/CEC.hpp src/CEC.cpp src/Cluster.hpp src/Cluster.cpp src/Hartigan.hpp src/Hartigan.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
