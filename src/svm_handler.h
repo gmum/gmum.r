@@ -5,9 +5,9 @@
 
 // SVMHandler interface, all blocks will implement this class
 class SVMHandler {
-public :
-	virtual SVMResult processRequest( SVMConfiguration, SVMResult ) = 0; 
-	virtual bool canHandle( SVMConfiguration ) = 0;
+public:
+	virtual SVMResult processRequest(SVMConfiguration, SVMResult) = 0;
+	virtual bool canHandle(SVMConfiguration) = 0;
 };
 
 #endif
