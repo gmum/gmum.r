@@ -1,7 +1,6 @@
-#include <Rcpp.h>
 #include <R.h>
 #include "test_libsvm.h"
-#include "lib_svm_runner.h"
+#include "libsvm_runner.h"
 using namespace Rcpp ;
 
 // TestLibsvmm

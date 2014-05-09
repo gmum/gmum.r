@@ -1,10 +1,8 @@
-#ifdef INSIDE
-#include <Rcpp.h>
-#include <RInside.h>                    // for the embedded R via RInside
+#ifdef INSIDE                 // for the embedded R via RInside
 #include <iostream>
 
 #include "svm_basic.h"
-#include "lib_svm_runner.h"
+#include "libsvm_runner.h"
 #include "test_libsvm.h"
 
 using namespace Rcpp;
