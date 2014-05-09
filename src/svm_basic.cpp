@@ -1,79 +1,88 @@
 #include "svm_basic.h"
 
 // SVM Configuration 
-  // Constructors  
-SVM_Configuration::SVM_Configuration(){}
-SVM_Configuration::SVM_Configuration( SVM_Data *data, SVM_Parameters params ) {
+// Constructors  
+SVMConfiguration::SVMConfiguration() {
+}
+SVMConfiguration::SVMConfiguration(SVMData *data, SVMParameters params) {
 	this->data = data;
-  this->params = params;
+	this->params = params;
 }
-  // Getters and Setters
-void SVM_Configuration::setData( SVM_Data *data ) {
-  this->data = data;
+// Getters and Setters
+void SVMConfiguration::setData(SEXP x, SEXP y) {
+	Rcpp::NumericMatrix xr(x); // Rccp matrix from R data
+	Rcpp::NumericVector yr(y); // Rcpp vector from R data
+
+	arma::mat X(xr.begin(), xr.nrow(), xr.ncol(), false); // reusing memory
+	arma::vec Y(yr.begin(), yr.size(), false);
+
+	SVMData data_struct;
+	data_struct.data = X;
+	data_struct.target = Y;
+	data_struct.len = Y.n_elem;
+
+	this->data = &data_struct;
 }
-SVM_Data* SVM_Configuration::getData() {
-  return this->data;
+SVMData* SVMConfiguration::getData() {
+	return this->data;
 }
-void SVM_Configuration::setParams( SVM_Parameters params ) {
-  this->params = params;
+void SVMConfiguration::setParams(SVMParameters params) {
+	this->params = params;
 }
-SVM_Parameters SVM_Configuration::getParams() {
-  return this->params;
+SVMParameters SVMConfiguration::getParams() {
+	return this->params;
 }
 
-void SVM_Configuration::setFilename(std::string filename) {
+void SVMConfiguration::setFilename(std::string filename) {
 	this->filename = filename;
 }
-std::string SVM_Configuration::getFilename() {
+std::string SVMConfiguration::getFilename() {
 	return this->filename;
 }
 
-void SVM_Configuration::setModelFilename(std::string filename) {
+void SVMConfiguration::setModelFilename(std::string filename) {
 	this->model_filename = filename;
 }
-std::string SVM_Configuration::getModelFilename() {
+std::string SVMConfiguration::getModelFilename() {
 	return this->model_filename;
 }
 
-void SVM_Configuration::setOutputFilename(std::string filename) {
+void SVMConfiguration::setOutputFilename(std::string filename) {
 	this->output_filename = filename;
 }
-std::string SVM_Configuration::getOutputFilename() {
+std::string SVMConfiguration::getOutputFilename() {
 	return this->output_filename;
 }
 
-bool SVM_Configuration::isPrediction() {
+bool SVMConfiguration::isPrediction() {
 	return this->prediction;
 }
 
-void SVM_Configuration::setPrediction(bool prediction) {
+void SVMConfiguration::setPrediction(bool prediction) {
 	this->prediction = prediction;
 }
 
-
-
-
 // SVM Result
-  // Constructors
-SVM_Result::SVM_Result(){}
-SVM_Result::SVM_Result( std::string message ) {
-  this->message = message;
+// Constructors
+SVMResult::SVMResult() {
 }
-SVM_Result::SVM_Result( SVM_Data *data ) {
+SVMResult::SVMResult(std::string message) {
+	this->message = message;
+}
+SVMResult::SVMResult(SVMData *data) {
 	this->data = data;
 }
-  // Getters and Setters
-void SVM_Result::setResult( SVM_Data *data ) {
-  this->data = data;
+// Getters and Setters
+void SVMResult::setResult(SVMData *data) {
+	this->data = data;
 }
-SVM_Data* SVM_Result::getResult() {
-  return this->data;
+SVMData* SVMResult::getResult() {
+	return this->data;
 }
-void SVM_Result::setMessage( std::string message ) {
-  this->message = message;
+void SVMResult::setMessage(std::string message) {
+	this->message = message;
 }
-std::string SVM_Result::getMessage() {
-  return this->message;
+std::string SVMResult::getMessage() {
+	return this->message;
 }
-
 

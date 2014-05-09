@@ -6,18 +6,18 @@
 #include "svm_basic.h"
 #include <vector>
 
-class SVM_Client {
-private :
-  SVM_FlowFactory flowFactory;
-  std::vector<SVM_Handler*> SVM_Handlers;
-  std::string message;
-public :
-  SVM_Client();
-  SVM_Client( std::string );
-  SVM_Result run( SVM_Configuration );
+class SVMClient {
+private:
+	SVMFlowFactory flowFactory;
+	std::vector<SVMHandler*> SVMHandlers;
+	std::string message;
+public:
+	SVMClient();
+	SVMClient(std::string);
+	SVMResult run(SVMConfiguration);
 
-  void setMessage( std::string );
-  std::string getMessage();
-}; 
+	void setMessage(std::string);
+	std::string getMessage();
+};
 
 #endif

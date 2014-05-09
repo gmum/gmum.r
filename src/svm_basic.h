@@ -2,14 +2,17 @@
 #define SVM_BASIC_H
 
 #include <string>
-//#include <Rcpp.h>
+#include <RcppArmadillo.h>
 
-//enum { LINEAR, POLY, RBF, SIGMOID, PRECOMPUTED }; // kernel type
-enum { LIBSVM, SVMLIGHT }; // svm type
+//enum KernelType { LINEAR, POLY, RBF, SIGMOID, PRECOMPUTED }; // kernel type
+enum {
+	LIBSVM, SVMLIGHT
+};
+// svm type
 
 // This struct will conatin all the necessery svm parameters and will be used in SVMConfig
-struct SVM_Parameters {
-  	int svm_type;
+struct SVMParameters {
+	int svm_type;
 	int kernel_type;
 	int degree;		// for poly 
 	double gamma;	// for poly/rbf/sigmoid 
@@ -26,37 +29,31 @@ struct SVM_Parameters {
 	int probability; 	// do probability estimates 
 };
 
-struct SVM_Node {
-	int index;
-	double value;
+struct SVMData {
+	arma::mat data;		// armadillo matrix and vector (double)	
+	arma::vec target;
+	int len;
 };
 
-struct SVM_Data {
-	//SEXP r_data;		// raw data from R
-	int length;	
-	double *target;	
-	struct svm_Node **data;
-};
- 
 // Our "input" class containing SVM paramaters and data to be classified
-class SVM_Configuration  {
-private :
-	SVM_Data *data; 
-  	SVM_Parameters params;
-  	std::string filename;
-  	std::string model_filename;
-  	std::string output_filename;
-  	bool prediction;
+class SVMConfiguration {
+private:
+	SVMData *data;
+	SVMParameters params;
+	std::string filename;
+	std::string model_filename;
+	std::string output_filename;
+	bool prediction;
 
-public :	
-	SVM_Configuration ();
-	SVM_Configuration ( SVM_Data*, SVM_Parameters ); 
+public:
+	SVMConfiguration();
+	SVMConfiguration(SVMData*, SVMParameters);
 
-	void setData( SVM_Data*);
-	SVM_Data* getData();
+	void setData(SEXP, SEXP);
+	SVMData* getData();
 
-	void setParams( SVM_Parameters );
-	SVM_Parameters getParams();
+	void setParams(SVMParameters);
+	SVMParameters getParams();
 
 	void setFilename(std::string);
 	std::string getFilename();
@@ -69,26 +66,25 @@ public :
 
 	void setPrediction(bool);
 	bool isPrediction();
-}; 
-  
+};
+
 // Our "output" class containing classification result
-class SVM_Result {
-private :
-	SVM_Data *data; 
-  	std::string message;
+class SVMResult {
+private:
+	SVMData *data;
+	std::string message;
 
-public : 	
-	SVM_Result();
-  	SVM_Result( std::string );
-	SVM_Result( SVM_Data* ); 
-	SVM_Result( SVM_Data*, std::string );
+public:
+	SVMResult();
+	SVMResult(std::string);
+	SVMResult(SVMData*);
+	SVMResult(SVMData*, std::string);
 
-	void setResult( SVM_Data* );
-	SVM_Data* getResult();
+	void setResult(SVMData*);
+	SVMData* getResult();
 
-	void setMessage( std::string );
+	void setMessage(std::string);
 	std::string getMessage();
-
 
 };
 
