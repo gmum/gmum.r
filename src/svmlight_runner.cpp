@@ -3,6 +3,11 @@
 #include <string>
 #include <vector>
 
+extern "C" {
+    #include "includes/svmlight/svm_common.h"
+    #include "includes/svmlight/svm_learn.h"
+}
+
 #include "svmlight_runner.h"
 #include "utils.h"
 
@@ -27,6 +32,9 @@ bool SVMLightRunner::canHandle( SVMConfiguration data ) {
     return true;
 }
 
+/**
+ *  processSVMLightFiles description.
+ */
 std::string SVMLightRunner::processSVMLightFiles(
     std::string training_file,
     std::string test_file

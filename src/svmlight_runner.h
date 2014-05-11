@@ -1,4 +1,4 @@
-/// svmlight_runner.h
+/// @file svmlight_runner.h
 
 #ifndef SVMLIGHTRUNNER_H
 #define SVMLIGHTRUNNER_H
@@ -9,11 +9,14 @@
 #define SVMLightRunner_temp_model_file "svmlightrunner_temp_model_file"
 #define SVMLightRunner_temp_output_file "svmlightrunner_temp_output_file"
 
+/// SVMLight implementation of SVMHandler
 class SVMLightRunner : public SVMHandler {
 
 public :
 
+    /// Default constructor
     SVMLightRunner();
+    /// Default destructor
     ~SVMLightRunner();
 
     SVMResult processRequest( SVMConfiguration, SVMResult );
