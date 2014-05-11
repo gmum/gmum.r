@@ -15,3 +15,7 @@
 # RStudio
 *.Rproj
 .Rproj.user
+Debug
+.cproject
+.project
+.settings

@@ -7,17 +7,17 @@
 #include <vector>
 
 class SVMClient {
-private :
-  SVMFlowFactory flowFactory;
-  std::vector<SVMHandler*> SVMHandlers;
-  std::string message;
-public :
-  SVMClient();
-  SVMClient( std::string );
-  SVMResult run( SVMConfiguration );
+private:
+	SVMFlowFactory flowFactory;
+	std::vector<SVMHandler*> SVMHandlers;
+	std::string message;
+public:
+	SVMClient();
+	SVMClient(std::string);
+	SVMResult run(SVMConfiguration);
 
-  void setMessage( std::string );
-  std::string getMessage();
-}; 
+	void setMessage(std::string);
+	std::string getMessage();
+};
 
 #endif
