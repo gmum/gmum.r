@@ -73,10 +73,10 @@ SVMResult::SVMResult(SVMData *data) {
 	this->data = data;
 }
 // Getters and Setters
-void SVMResult::setResult(SVMData *data) {
+void SVMResult::setData(SVMData *data) {
 	this->data = data;
 }
-SVMData* SVMResult::getResult() {
+SVMData* SVMResult::getData() {
 	return this->data;
 }
 void SVMResult::setMessage(std::string message) {

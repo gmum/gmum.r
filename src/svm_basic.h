@@ -5,15 +5,15 @@
 #include <RcppArmadillo.h>
 
 //enum KernelType { LINEAR, POLY, RBF, SIGMOID, PRECOMPUTED }; // kernel type
-enum {
-	LIBSVM, SVMLIGHT
-};
-// svm type
+enum SVMType { LIBSVM, SVMLIGHT }; // svm type
+enum Preprocess { TWOE, VK, NONE, NORM };	// NORM is solely for test purposes
 
 // This struct will conatin all the necessery svm parameters and will be used in SVMConfig
 struct SVMParameters {
-	int svm_type;
-	int kernel_type;
+	SVMType svm_type;
+	//KernelType kernel_type;
+	Preprocess preprocess;
+
 	int degree;		// for poly 
 	double gamma;	// for poly/rbf/sigmoid 
 	double coef0;	// for poly/sigmoid 
@@ -80,8 +80,8 @@ public:
 	SVMResult(SVMData*);
 	SVMResult(SVMData*, std::string);
 
-	void setResult(SVMData*);
-	SVMData* getResult();
+	void setData(SVMData*);
+	SVMData* getData();
 
 	void setMessage(std::string);
 	std::string getMessage();
