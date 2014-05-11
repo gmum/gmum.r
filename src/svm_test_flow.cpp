@@ -11,20 +11,33 @@ bool TestSVMRunner::canHandle(SVMConfiguration) {
 	return true;
 }
 
+// SVMResult NormRunner::processRequest( SVMConfiguration config, SVMResult result ) {
+//   arma::mat x = config.getData()->data;
+//   double norm = arma::norm(x);
+//   SVMData data;
+//   data.norm = norm;
+//   result.setData( &data );
+//   return result; 
+// }
+
+bool NormRunner::canHandle( SVMConfiguration config ) {
+  return true;
+}
+
 // TestSVMFlowFactory
-TestSVMFlowFactory::TestSVMFlowFactory() {
-}
-std::vector<SVMHandler*> TestSVMFlowFactory::createSVMFlow(
-		SVMConfiguration config) {
+// TestSVMFlowFactory::TestSVMFlowFactory() {
+// }
+// std::vector<SVMHandler*> TestSVMFlowFactory::createSVMFlow(
+// 		SVMConfiguration config) {
 
-	TestSVMRunner runner1;
-	TestSVMRunner runner2;
-	std::vector<SVMHandler*> handlers;
-	handlers.push_back(&runner1);
-	handlers.push_back(&runner2);
+// 	TestSVMRunner runner1;
+// 	TestSVMRunner runner2;
+// 	std::vector<SVMHandler*> handlers;
+// 	handlers.push_back(&runner1);
+// 	handlers.push_back(&runner2);
 
-	return handlers;
-}
+// 	return handlers;
+// }
 
 // Dispatch function
 SEXP dispatchMessage(SVMResult result) {
@@ -32,6 +45,11 @@ SEXP dispatchMessage(SVMResult result) {
 			result.getMessage());
 	return msg;
 }
+
+// SEXP dispatchDouble ( SVMResult result ) {
+//   double norm = result.getData()->norm;
+//   return Rcpp::wrap( norm );
+// }
 
 // TestFlow
 SEXP testFlow(SEXP x) {
