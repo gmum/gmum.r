@@ -18,7 +18,7 @@ protected:
     for(std::vector<unsigned int>::iterator it = clustering.begin();it!=clustering.end() ; ++it) {
       *it -= min;
     }
-    numberOfClusters = 2;
+    numberOfClusters = 3;
     std::cout << "initialized data" << std::endl;
   }
   std::vector<unsigned int> clustering;
@@ -31,12 +31,11 @@ TEST_F(Mouse1Test,IsEnergyCorrect) {
   double killThreshold = 0.0001;
   BestPermutationComparator comparator;
   int t = 20;
-  int numberOfTimesAcceptable = 0;
+  int numberOfTimesAcceptable = 0;  
+  std::cout << "Should get energy : " << energy;
   for (int i = 0 ; i < t ; ++i) {
     std::vector<unsigned int> assignment;
     initAssignRandom( assignment, points.n_rows, numberOfClusters);
-    std::cout << points.n_rows << std::endl;
-    std::cout << points.n_cols << std::endl;
     CEC * cec;
     Hartigan hartigan;
   
@@ -44,8 +43,8 @@ TEST_F(Mouse1Test,IsEnergyCorrect) {
     cec->loop();
     double percentage = comparator.evaluateClustering(numberOfClusters,points,assignment,clustering);
     std::cout << "Percentage " << percentage << std::endl;
-    numberOfTimesAcceptable += (percentage >= 0.9) || (cec->entropy(),energy*1.5);
-    
+    std::cout << "Energy " << cec->entropy() << std::endl;
+    numberOfTimesAcceptable += (percentage >= 0.9) || (cec->entropy() < energy*1.5);
   }  
   EXPECT_GT(numberOfTimesAcceptable , t/2);
 }
