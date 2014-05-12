@@ -1,3 +1,4 @@
-useDynLib(gmum.r)
+export(hello_gmum)
+export(svmlight_process_files)
 export(test_flow)
 export(test_libsvm)

@@ -10,32 +10,36 @@ enum {
 };
 // svm type
 
-// This struct will conatin all the necessery svm parameters and will be used in SVMConfig
+
+/** @brief 
+ * This struct will contain all the necessary svm parameters and will be used
+ * in SVMConfiguration
+ */
 struct SVMParameters {
 	int svm_type;
 	int kernel_type;
-	int degree;		// for poly 
-	double gamma;	// for poly/rbf/sigmoid 
-	double coef0;	// for poly/sigmoid 
+	int degree;		///< for poly 
+	double gamma;	///< for poly/rbf/sigmoid 
+	double coef0;	///< for poly/sigmoid 
 
 	//these are for training only 
-	double cache_size; 	// in MB 
-	double eps;			// stopping criteria 
-	double C;			// for C_SVC, EPSILON_SVR and NU_SVR 
-	int nr_weight;		// for C_SVC 
-	int *weight_label;	// for C_SVC 
-	double* weight;		// for C_SVC 
-	int shrinking;		// use the shrinking heuristics 
-	int probability; 	// do probability estimates 
+	double cache_size; 	///< in MB 
+	double eps;			///< stopping criteria 
+	double C;			///< for C_SVC, EPSILON_SVR and NU_SVR 
+	int nr_weight;		///< for C_SVC 
+	int *weight_label;	///< for C_SVC 
+	double* weight;		///< for C_SVC 
+	int shrinking;		///< use the shrinking heuristics 
+	int probability; 	///< do probability estimates 
 };
 
 struct SVMData {
-	arma::mat data;		// armadillo matrix and vector (double)	
+	arma::mat data;		///< armadillo matrix and vector (double)	
 	arma::vec target;
 	int len;
 };
 
-// Our "input" class containing SVM paramaters and data to be classified
+/// Our "input" class containing SVM paramaters and data to be classified
 class SVMConfiguration {
 private:
 	SVMData *data;
@@ -68,7 +72,7 @@ public:
 	bool isPrediction();
 };
 
-// Our "output" class containing classification result
+/// Our "output" class containing classification result
 class SVMResult {
 private:
 	SVMData *data;

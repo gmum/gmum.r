@@ -1,12 +1,24 @@
+# Objects
 *.so
 *.o
-#R history files
+
+# R history files
 .RData
 .Rhistory
+.Rbuildignore
 
-#Vim files
+# Vim files
 *~
+*.swp
+*.vimsession
+
+# RStudio
+*.Rproj
+.Rproj.user
 Debug
 .cproject
 .project
 .settings
+
+# Generated documentation
+doc

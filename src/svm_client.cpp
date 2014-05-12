@@ -10,8 +10,10 @@ SVMClient::SVMClient(std::string message) {
 	this->message = message;
 }
 
-// Main client function, it uses FlowFactory to get a certain work flow
-// and runs processRequest(c,r) function on each block returing last result
+/**
+ * It uses FlowFactory to get a certain work flow and runs processRequest(c,r)
+ * function on each block returing last result
+ */
 SVMResult SVMClient::run(SVMConfiguration config) {
 	SVMResult result(this->message);
 
