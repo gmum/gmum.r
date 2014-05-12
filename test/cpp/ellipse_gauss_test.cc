@@ -58,7 +58,7 @@ TEST(EllipseGauss,real_test){
     double percentage = comparator.evaluateClustering(numberOfClusters,points,assignment,clustering);
     std::cout << "Percentage " << percentage << std::endl;
     // EXPECT_GT(percentage, 0.9);
-    numberOfTimesAcceptable += (percentage >= 0.9) || (cec->entropy(),clusterReader.getEnergy()*1.5);
+    numberOfTimesAcceptable += (percentage >= 0.9) || (cec->entropy() < clusterReader.getEnergy()*1.5);
     
     //  EXPECT_LT(cec->entropy(),clusterReader.getEnergy()*1.5);
 
