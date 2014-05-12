@@ -21,7 +21,7 @@ clean :
 
 .PHONY : clean echo #R-standalone
 
-#R-standalone : HartiganMaster.cpp
+#R-standalone : cec_module.cpp
 #	export PKG_LIBS=$(LINK_PATH)
 #	export PKG_CXXFLAGS=$(INCL_PATH)
 #	R CMD SHLIB $^
@@ -29,5 +29,5 @@ clean :
 %.o : %.cpp %.hpp
 	g++ $(CPPFLAGS) $(CXXFLAGS) $^ -c
 
-gmum.r.so : HartiganMaster.o Cluster.o Hartigan.o CEC.o random_assignment.o
+gmum.r.so : cec_module.o Cluster.o Hartigan.o CEC.o random_assignment.o
 	g++ -shared $^ $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) -o $@

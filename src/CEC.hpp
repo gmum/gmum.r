@@ -22,9 +22,12 @@ public:
 
   CEC(arma::mat &points, std::vector<unsigned int> &assignment,
       float killThreshold, Algorithm &algorithm, int numberOfClusters);
+
   // for debug purposes
-   std::vector<Cluster> clusters;
+  std::vector<Cluster> clusters;
   void loop();
   int singleLoop();
   float entropy();
+
+  std::string test();
 };
