@@ -1,0 +1,44 @@
+# Project related configuration options
+#--------------------------------------
+PROJECT_NAME = "GMUM.R"
+
+# Light red color theme
+#----------------------
+# 0-359. gmum page has 0 hue.
+HTML_COLORSTYLE_HUE = 0
+# 0-255. gmum page has 62.2% of saturation, so 0.622*255=158.61.
+HTML_COLORSTYLE_SAT = 158.61
+# 0-240. gmum page has 60.6% of lightness, so 0.606*240=145.44
+HTML_COLORSTYLE_GAMMA = 60
+
+
+# Input
+#-------
+INPUT = . ../README.md
+RECURSIVE = YES
+EXCLUDE_PATTERNS = */includes/*
+# Temporary LibSVM files...
+EXCLUDE_PATTERNS += svm.h svm.cpp
+
+# Output
+#-------
+OUTPUT_DIRECTORY = ../doc
+HTML_OUTPUT = .
+DOXYFILE_ENCODING = UTF-8
+
+# Output settings
+#----------------
+GENERATE_HTML = YES
+GENERATE_LATEX = NO
+USE_MDFILE_AS_MAINPAGE = README.md
+INHERIT_DOCS = YES
+
+# UML Diagrams
+#-------------
+HAVE_DOT = YES
+UML_LOOK = YES
+CLASS_GRAPH = NO
+COLLABORATION_GRAPH = YES
+GENERATE_LEGEND = YES
+# Hide fancy long namespace paths
+HIDE_SCOPE_NAMES = YES

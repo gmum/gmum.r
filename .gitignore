@@ -19,3 +19,6 @@ Debug
 .cproject
 .project
 .settings
+
+# Generated documentation
+doc

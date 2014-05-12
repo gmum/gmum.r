@@ -10,6 +10,7 @@
 
 using namespace std;
 
+/// @todo   Remove this method
 string gmum::execute_command( string command ) {
     char* cmd = (char*) command.c_str();
     FILE* pipe = popen(cmd, "r");

@@ -3,10 +3,12 @@
 
 #include "svm_basic.h"
 
-// SVMHandler interface, all blocks will implement this class
+/// Abstract SVM-handling interface -- all blocks will implement this class
 class SVMHandler {
 public:
+    /// Perform tasks based on SVMConfiguration and return SVMResult
 	virtual SVMResult processRequest(SVMConfiguration, SVMResult) = 0;
+    /// Determine if provided SVMConfiguration can be processed
 	virtual bool canHandle(SVMConfiguration) = 0;
 };
 

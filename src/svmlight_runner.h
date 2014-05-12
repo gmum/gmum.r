@@ -1,4 +1,9 @@
-/// @file svmlight_runner.h
+/**
+ * @file        svmlight_runner.h
+ * @brief       SVMLight implementation class of SVMHandler -- headers
+ * @author      Konrad Talik <konradtalik@gmail.com>
+ * @copyright   MIT
+ */
 
 #ifndef SVMLIGHTRUNNER_H
 #define SVMLIGHTRUNNER_H
@@ -9,7 +14,7 @@
 #define SVMLightRunner_temp_model_file "svmlightrunner_temp_model_file"
 #define SVMLightRunner_temp_output_file "svmlightrunner_temp_output_file"
 
-/// SVMLight implementation of SVMHandler
+/// SVMLight library implementation of SVMHandler
 class SVMLightRunner : public SVMHandler {
 
 public :
@@ -18,11 +23,10 @@ public :
     SVMLightRunner();
     /// Default destructor
     ~SVMLightRunner();
-
+    // Documented in the parent class
     SVMResult processRequest( SVMConfiguration, SVMResult );
-
+    // Documented in the parent class
     bool canHandle( SVMConfiguration );
-
     /// Train, test and store results
     std::string processSVMLightFiles(
         std::string training_file,
@@ -31,13 +35,10 @@ public :
 
 protected :
 
-    /// `svm_learn` wrapper
+    /// SVMLight's command line `svm_learn` equivalent
     std::string librarySVMLearn( std::string arguments );
-    /// `svm_classify` wrapper
+    /// SVMLight's ommand line `svm_classify` equivalent
     std::string librarySVMClassify( std::string arguments );
 };
-
-/// Temporary exemplary method available from within R workspace
-RcppExport SEXP svmlight_process_files( SEXP, SEXP );
 
 #endif

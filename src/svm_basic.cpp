@@ -1,14 +1,19 @@
 #include "svm_basic.h"
 
 // SVM Configuration 
-// Constructors  
+
+/// @name Constructors
+/// @{
 SVMConfiguration::SVMConfiguration() {
 }
 SVMConfiguration::SVMConfiguration(SVMData *data, SVMParameters params) {
 	this->data = data;
 	this->params = params;
 }
-// Getters and Setters
+/// @}
+
+/// @name Getters and setters
+/// @{
 void SVMConfiguration::setData(SEXP x, SEXP y) {
 	Rcpp::NumericMatrix xr(x); // Rccp matrix from R data
 	Rcpp::NumericVector yr(y); // Rcpp vector from R data
@@ -53,6 +58,7 @@ void SVMConfiguration::setOutputFilename(std::string filename) {
 std::string SVMConfiguration::getOutputFilename() {
 	return this->output_filename;
 }
+/// @}
 
 bool SVMConfiguration::isPrediction() {
 	return this->prediction;
@@ -63,7 +69,8 @@ void SVMConfiguration::setPrediction(bool prediction) {
 }
 
 // SVM Result
-// Constructors
+/// @name Constructors
+/// @{
 SVMResult::SVMResult() {
 }
 SVMResult::SVMResult(std::string message) {
@@ -72,7 +79,10 @@ SVMResult::SVMResult(std::string message) {
 SVMResult::SVMResult(SVMData *data) {
 	this->data = data;
 }
-// Getters and Setters
+/// @}
+
+/// @name Getters and Setters
+/// @{
 void SVMResult::setResult(SVMData *data) {
 	this->data = data;
 }
@@ -85,4 +95,4 @@ void SVMResult::setMessage(std::string message) {
 std::string SVMResult::getMessage() {
 	return this->message;
 }
-
+/// @}

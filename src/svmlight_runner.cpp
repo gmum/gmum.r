@@ -1,4 +1,11 @@
-/// svmlight_runner.cpp
+/**
+ * @file        svmlight_runner.cpp
+ * @brief       SVMLight implementation class of SVMHandler -- definitions
+ * @author      Konrad Talik <konradtalik@gmail.com>
+ * @copyright   MIT
+ */
+
+
 
 #include <string>
 #include <vector>
@@ -18,22 +25,28 @@ SVMLightRunner::SVMLightRunner() {
 SVMLightRunner::~SVMLightRunner() {
 }
 
+// Documented in the parent class
 SVMResult SVMLightRunner::processRequest(
     SVMConfiguration data,
     SVMResult result
 ) {
-    // TODO
+    /// @todo Content
     return result;
 }
 
-// NOTE: Empty!
+// Documented in the parent class
 bool SVMLightRunner::canHandle( SVMConfiguration data ) {
-    // TODO
+    /// @todo Content
     return true;
 }
 
 /**
- *  processSVMLightFiles description.
+ * This method is using training_file and test_file to perform one simple
+ * SVMLight task: train and test. Result is an output of SVMLight's
+ * `svm_classify` command.
+ * @param   training_file   a file with a training data in SVMLight-familiar
+ *                          format
+ * @param   test_file       a file with a test data in SVMLight-familiar format
  */
 std::string SVMLightRunner::processSVMLightFiles(
     std::string training_file,
@@ -59,25 +72,33 @@ std::string SVMLightRunner::processSVMLightFiles(
     return results;
 }
 
-/** @defgroup library Library methods/scripts wrappers
- *  Those methods are explicit library wrappers
- *  @{
+/** @name Library functionalities wrappers
+ *  Below methods are direct library functionalities wrappers. They are
+ *  designed to perform the same actions as corresponding command do.
  */
+/// @{
 
+/**
+ * @param   arguments   command line arguments of `svm_learn` command
+ */
 std::string SVMLightRunner::librarySVMLearn( std::string arguments ) {
     std::string command = "svm_learn ";
     command += arguments;
     return gmum::execute_command( command );
 }
 
+/**
+ * @param   arguments   command line arguments of `svm_classify` command
+ */
 std::string SVMLightRunner::librarySVMClassify( std::string arguments ) {
     std::string command = "svm_classify ";
     command += arguments;
     return gmum::execute_command( command );
 }
 
-/**@}*/
+/// @}
 
+/**
 SEXP svmlight_process_files(
     SEXP training_file,
     SEXP test_file
@@ -92,4 +113,4 @@ SEXP svmlight_process_files(
     //Rcpp::CharacterVector x = Rcpp::CharacterVector::create(results);
     std::vector< std::string > results_vector = gmum::split_lines(results);
     return Rcpp::wrap(results_vector);
-}
+}*/
