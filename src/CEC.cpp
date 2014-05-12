@@ -5,7 +5,8 @@ CEC::CEC(arma::mat &points, std::vector<unsigned int> &assignment,
 	 std::vector<ClusterType> &type, std::vector<float> &radius,
 	 std::vector<arma::mat> &covMatrices)
   : assignment(assignment), points(points), algorithm(algorithm), killThreshold(killThreshold) {
-    Cluster::numberOfPoints = points.n_rows;
+
+  Cluster::numberOfPoints = points.n_rows;
   clusters.reserve(type.size());
 
   for(unsigned int i = 0; i < type.size(); i++) {
@@ -29,15 +30,14 @@ CEC::CEC(arma::mat &points, std::vector<unsigned int> &assignment,
     }
     clusters.push_back(cluster);
   }
-
-
 }
 
 CEC::CEC(arma::mat &points, std::vector<unsigned int> &assignment,
 	 float killThreshold, Algorithm &algorithm, int numberOfClusters)
   : assignment(assignment), points(points), algorithm(algorithm), killThreshold(killThreshold) {
-Cluster::numberOfPoints = points.n_rows;
-   clusters.reserve(numberOfClusters);
+
+  Cluster::numberOfPoints = points.n_rows;
+  clusters.reserve(numberOfClusters);
   for(int i = 0; i < numberOfClusters; i++)
     clusters.push_back(Cluster(i, assignment, points));
 
@@ -57,4 +57,8 @@ float CEC::entropy() {
   for (std::vector<Cluster>::iterator it = clusters.begin() ; it!= clusters.end();++it )
     s+= it->entropy();
   return s;
+}
+
+std::string CEC::test() {
+  return "bla bla";
 }
