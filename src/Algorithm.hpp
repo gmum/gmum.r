@@ -7,6 +7,7 @@ public:
 		    float killThreshold, std::vector<Cluster> &clusters)=0;
   virtual int singleLoop(arma::mat &points, std::vector<unsigned int> &assignment,
 			 float killThreshold, std::vector<Cluster> &clusters)=0;
+  virtual ~Algorithm() {};
 };
 
 #endif
