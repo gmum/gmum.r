@@ -1,4 +1,5 @@
 #include "Cluster.hpp"
+#include <RcppArmadillo.h>
 #include <cmath>
 
 Cluster::Cluster(int _count, arma::rowvec & _mean, arma::mat & _covMat):
