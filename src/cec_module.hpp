@@ -51,5 +51,6 @@ RCPP_MODULE(cec) {
     .method("loop", &CEC::loop)
     .method("singleLoop", &CEC::singleLoop)
     .method("entropy", &CEC::entropy)
+    .method("getAssignment", &CEC::getAssignment)
     ;
 }
