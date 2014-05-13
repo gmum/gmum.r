@@ -57,15 +57,15 @@ TEST(OnlineFormulas,AddPoint){
       
     }
     
-     for (int j = 0 ; j < dim; ++j){
-       for (int k = 0; k < dim ; ++k){
-	 EXPECT_LT(std::abs(covOnlineDifference(j,k)),acceptableDifference ) << " at position (" << j << "," << k <<  ")" << "differs by more than " << acceptableDifference ;
-	 	 EXPECT_LT(std::abs(covInitDifference(j,k)),acceptableDifference) << " at position (" << j << "," << k <<  ")" << "differs by more than " << acceptableDifference ;
+    for (int j = 0 ; j < dim; ++j){
+      for (int k = 0; k < dim ; ++k){
+	EXPECT_LT(std::abs(covOnlineDifference(j,k)),acceptableDifference ) << " at position (" << j << "," << k <<  ")" << "differs by more than " << acceptableDifference ;
+	EXPECT_LT(std::abs(covInitDifference(j,k)),acceptableDifference) << " at position (" << j << "," << k <<  ")" << "differs by more than " << acceptableDifference ;
 	 
       }
-     }
+    }
  
-   }  
+  }  
   
 }
 
@@ -120,15 +120,15 @@ TEST(OnlineFormulas,removePoint){
       
     }
     
-     for (int j = 0 ; j < dim; ++j){
-       for (int k = 0; k < dim ; ++k){
-	 EXPECT_LT(std::abs(covOnlineDifference(j,k)),acceptableDifference ) << " at position (" << j << "," << k <<  ")" << "differs by more than " << acceptableDifference ;
-	 	 EXPECT_LT(std::abs(covInitDifference(j,k)),acceptableDifference) << " at position (" << j << "," << k <<  ")" << "differs by more than " << acceptableDifference ;
+    for (int j = 0 ; j < dim; ++j){
+      for (int k = 0; k < dim ; ++k){
+	EXPECT_LT(std::abs(covOnlineDifference(j,k)),acceptableDifference ) << " at position (" << j << "," << k <<  ")" << "differs by more than " << acceptableDifference ;
+	EXPECT_LT(std::abs(covInitDifference(j,k)),acceptableDifference) << " at position (" << j << "," << k <<  ")" << "differs by more than " << acceptableDifference ;
 	 
       }
-     }
+    }
  
-   }  
+  }  
   
 }
 
