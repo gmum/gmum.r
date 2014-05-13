@@ -1,17 +1,16 @@
-#include "HartiganMaster.hpp"
+#include "cec_module.hpp"
 #include "random_assignment.hpp"
 
 RcppExport SEXP hello_gmum() {
-    using namespace Rcpp ;
+  using namespace Rcpp ;
     
-    CharacterVector x = CharacterVector::create( "hello", "gmum" )  ;
+  CharacterVector x = CharacterVector::create( "hello", "gmum" )  ;
 
-    return x ;
+  return x ;
 }
 
-RcppExport SEXP run(SEXP args) {
+CEC* CEC__new(SEXP args) {
 
-  BEGIN_RCPP;
   /*
    * arguments processing 
    */
@@ -19,7 +18,8 @@ RcppExport SEXP run(SEXP args) {
 
   Rcpp::NumericMatrix proxyDataset = Rcpp::as<Rcpp::NumericMatrix>(list[CONST::dataset]);
   //reuses memory and avoids extra copy
-  arma::mat points(proxyDataset.begin(), proxyDataset.nrow(), proxyDataset.ncol(), false);
+  arma::mat *points = new arma::mat(proxyDataset.begin(), proxyDataset.nrow(),
+				    proxyDataset.ncol(), false);
 
   float killThreshold = 0.001;
   if(list.containsElementNamed(CONST::killThreshold))
@@ -35,17 +35,13 @@ RcppExport SEXP run(SEXP args) {
   initVectors(type, covMat, radius, clusters);
 
   //random assignment into clusters
-  std::vector<unsigned int> assignment;
-  initAssignRandom(assignment, points.n_rows, clusters.size());
+  std::vector<unsigned int> *assignment = new std::vector<unsigned int>();
+  initAssignRandom(*assignment, points->n_rows, clusters.size());
   
-  //CEC init
-  Hartigan hartigan;
-  CEC cec(points, assignment, killThreshold, hartigan, type, radius, covMat);
-
-  cec.loop();
-
-  return Rcpp::List::create(assignment);
-  END_RCPP;
+  //CEC creation
+  Hartigan *hartigan = new Hartigan();
+  return new CEC(points, assignment, killThreshold,
+		 hartigan, type, radius, covMat);
 }
 
 void initClusters(std::list<Rcpp::List> &clusters, Rcpp::List &list) {
@@ -97,5 +93,3 @@ void initVectors(std::vector<ClusterType> &type,
     //else must not happen
   }
 }
-
-

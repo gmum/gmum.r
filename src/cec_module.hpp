@@ -5,7 +5,7 @@
 #include <list>
 #include <vector>
 
-RcppExport SEXP run(SEXP args);
+CEC* CEC__new(SEXP args);
 
 void initClusters(std::list<Rcpp::List> &clusters, Rcpp::List &list);
 
@@ -43,3 +43,14 @@ const char* CONST::CLUSTERS::spherical = "spherical";
 const char* CONST::CLUSTERS::diagonal = "diagonal";
 const char* CONST::CLUSTERS::constRadius = "constRadius";
   
+RCPP_MODULE(cec) {
+  using namespace Rcpp;
+  class_<CEC>("cec")
+    .factory(CEC__new)
+    .method("test", &CEC::test)
+    .method("loop", &CEC::loop)
+    .method("singleLoop", &CEC::singleLoop)
+    .method("entropy", &CEC::entropy)
+    .method("getAssignment", &CEC::getAssignment)
+    ;
+}
