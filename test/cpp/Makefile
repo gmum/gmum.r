@@ -4,8 +4,9 @@ else
 
 include src/Makevars
 CXX := $(CXX) -isystem $(GTEST)/include
-CXXFLAGS := -g -O2 -s -pthread
-LDLIBS := -larmadillo
+CPPFLAGS := $(PKG_CPPFLAGS)
+CXXFLAGS := $(PKG_CXXFLAGS) -g -O2 -s -pthread
+LDLIBS := $(PKG_LIBS) $(LDLIBS) -larmadillo
 USER_DIR = ../../src
 
 TESTS = ClusterTest firstTest onlineTest ellipse_gauss_test simple_1_test mouse_1_test
