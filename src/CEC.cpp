@@ -1,9 +1,9 @@
 #include "CEC.hpp"
-
-CEC::CEC(arma::mat *points, std::vector<unsigned int> *assignment,
-	 float killThreshold, Algorithm *algorithm,
-	 std::vector<ClusterType> type, std::vector<float> radius,
-	 std::vector<arma::mat> covMatrices)
+CEC::CEC(boost::shared_ptr<arma::mat> points, 
+	 boost::shared_ptr<std::vector<unsigned int> > assignment, 
+	 boost::shared_ptr<Algorithm> algorithm,
+	 float killThreshold, std::vector<ClusterType> type,
+	 std::vector<float> radius, std::vector<arma::mat> covMatrices)
   : assignment(assignment), points(points), algorithm(algorithm), killThreshold(killThreshold) {
 
   Cluster::numberOfPoints = points->n_rows;
@@ -32,16 +32,16 @@ CEC::CEC(arma::mat *points, std::vector<unsigned int> *assignment,
   }
 }
 
-CEC::CEC(arma::mat *points, std::vector<unsigned int> *assignment,
-	 float killThreshold, Algorithm *algorithm, int numberOfClusters)
+CEC::CEC(boost::shared_ptr<arma::mat> points, 
+	 boost::shared_ptr<std::vector<unsigned int> > assignment, 
+	 boost::shared_ptr<Algorithm> algorithm,
+	 float killThreshold, int numberOfClusters)
   : assignment(assignment), points(points), algorithm(algorithm), killThreshold(killThreshold) {
 
   Cluster::numberOfPoints = points->n_rows;
   clusters.reserve(numberOfClusters);
   for(int i = 0; i < numberOfClusters; i++)
     clusters.push_back(Cluster(i, *assignment, *points));
-
-  
 }
 
 void CEC::loop() {
@@ -65,10 +65,4 @@ std::vector<unsigned int> CEC::getAssignment() {
 
 std::string CEC::test() {
   return "bla bla";
-}
-
-CEC::~CEC() {
-  delete points;
-  delete assignment;
-  delete algorithm;
 }

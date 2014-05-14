@@ -4,6 +4,7 @@
 #include "CEC.hpp"
 #include <list>
 #include <vector>
+#include <boost/smart_ptr.hpp>
 
 CEC* CEC__new(SEXP args);
 
