@@ -18,8 +18,8 @@ CEC* CEC__new(SEXP args) {
 
   Rcpp::NumericMatrix proxyDataset = Rcpp::as<Rcpp::NumericMatrix>(list[CONST::dataset]);
   //reuses memory and avoids extra copy
-  arma::mat *points = new arma::mat(proxyDataset.begin(), proxyDataset.nrow(),
-				    proxyDataset.ncol(), false);
+  boost::shared_ptr<arma::mat> points(new arma::mat(proxyDataset.begin(), proxyDataset.nrow(),
+						   proxyDataset.ncol(), false));
 
   float killThreshold = 0.001;
   if(list.containsElementNamed(CONST::killThreshold))
@@ -35,13 +35,13 @@ CEC* CEC__new(SEXP args) {
   initVectors(type, covMat, radius, clusters);
 
   //random assignment into clusters
-  std::vector<unsigned int> *assignment = new std::vector<unsigned int>();
+  boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
   initAssignRandom(*assignment, points->n_rows, clusters.size());
   
   //CEC creation
-  Hartigan *hartigan = new Hartigan();
-  return new CEC(points, assignment, killThreshold,
-		 hartigan, type, radius, covMat);
+  boost::shared_ptr<Hartigan> hartigan(new Hartigan());
+  return new CEC(points, assignment, hartigan,
+		 killThreshold, type, radius, covMat);
 }
 
 void initClusters(std::list<Rcpp::List> &clusters, Rcpp::List &list) {
