@@ -6,6 +6,7 @@
 #include "src/CEC.hpp"
 #include <vector>
 #include <armadillo>
+#include <boost/smart_ptr.hpp>
 
 TEST(EllipseGauss,answer_cluster_same_length) {
   std::vector<unsigned int> clustering;
@@ -34,7 +35,7 @@ TEST(EllipseGauss,real_test){
   
   ClusterReader clusterReader("EllipseGauss",2);
   unsigned int numberOfClusters = 4;
-  arma::mat *points = new arma::mat(clusterReader.getPointsInMatrix());
+  boost::shared_ptr<arma::mat> points(new arma::mat(clusterReader.getPointsInMatrix()));
   clusterReader.getClustering(clustering);
   BestPermutationComparator comparator;
 
@@ -42,25 +43,24 @@ TEST(EllipseGauss,real_test){
   
   int t = 20;
   for (int x = 0 ; x <t ; ++x) {
-    std::vector<unsigned int> *assignment = new std::vector<unsigned int>();
+    boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
     double killThreshold = 0.0001;
     initAssignRandom(*assignment, points->n_rows, numberOfClusters);
     //CEC init
-    CEC *cec;
-    Hartigan *hartigan = new Hartigan();
-    cec = new CEC(points, assignment, killThreshold, hartigan,numberOfClusters);
-    // cec->loop();
+    boost::shared_ptr<Hartigan> hartigan(new Hartigan());
+    CEC cec(points, assignment, hartigan, killThreshold, numberOfClusters);
+    // cec.loop();
     
-    while(cec->singleLoop()) {
-      EVAL(cec->entropy);
+    while(cec.singleLoop()) {
+      EVAL(cec.entropy);
     }
     
     double percentage = comparator.evaluateClustering(numberOfClusters,*points,*assignment,clustering);
     std::cout << "Percentage " << percentage << std::endl;
     // EXPECT_GT(percentage, 0.9);
-    numberOfTimesAcceptable += (percentage >= 0.9) || (cec->entropy() < clusterReader.getEnergy()*1.5);
+    numberOfTimesAcceptable += (percentage >= 0.9) || (cec.entropy() < clusterReader.getEnergy()*1.5);
     
-    //  EXPECT_LT(cec->entropy(),clusterReader.getEnergy()*1.5);
+    //  EXPECT_LT(cec.entropy(),clusterReader.getEnergy()*1.5);
 
   }
   EXPECT_GT(numberOfTimesAcceptable , t/2);
