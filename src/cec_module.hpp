@@ -15,6 +15,8 @@ void initVectors(std::vector<ClusterType> &type,
 		 std::vector<float> &radius,
 		 std::list<Rcpp::List> clusters);
 
+unsigned int CECpredict(CEC*, std::vector<float>);
+
 struct CONST {
   static const char* dataset;
   static const char* nrOfClusters;
@@ -48,10 +50,12 @@ RCPP_MODULE(cec) {
   using namespace Rcpp;
   class_<CEC>("cec")
     .factory(CEC__new)
-    .method("test", &CEC::test)
     .method("loop", &CEC::loop)
     .method("singleLoop", &CEC::singleLoop)
     .method("entropy", &CEC::entropy)
-    .method("getAssignment", &CEC::getAssignment)
+    .method("y", &CEC::getAssignment)
+    .method("centers", &CEC::centers)
+    .method("cov", &CEC::cov)
+    .method("predict", &CECpredict)
     ;
 }

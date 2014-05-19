@@ -1,4 +1,5 @@
 #include "CEC.hpp"
+
 CEC::CEC(boost::shared_ptr<arma::mat> points, 
 	 boost::shared_ptr<std::vector<unsigned int> > assignment, 
 	 boost::shared_ptr<Algorithm> algorithm,
@@ -63,6 +64,18 @@ std::vector<unsigned int> CEC::getAssignment() {
   return *assignment;
 }
 
-std::string CEC::test() {
-  return "bla bla";
+std::vector<arma::rowvec> CEC::centers() {
+  std::vector<arma::rowvec> array;
+  array.reserve(clusters.size());
+  for(int i=0; i<clusters.size(); ++i) array.push_back(clusters[i].getMean());
+  return array;
+}
+
+std::vector<arma::mat> CEC::cov() {
+  std::vector<arma::mat> array;
+  array.reserve(clusters.size());
+
+  for(int i=0; i<clusters.size(); ++i) array.push_back(clusters[i].getCovMat());
+
+  return array;
 }

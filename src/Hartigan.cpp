@@ -56,7 +56,7 @@ int Hartigan::singleLoop(arma::mat &points, std::vector<unsigned int> &assignmen
 		  if(l != source) {
 		    Cluster &oldTarget = clusters[l];
 		    Cluster newTarget = clusters[l].addPoint(pointToAssign);
-		    float entropyChange = oldTarget.entropy() - newTarget.entropy();
+		    float entropyChange = newTarget.entropy() - oldTarget.entropy();
 		    if(entropyChange < minEntropyChange){
 		      minEntropyChange = entropyChange;
 		      minEntropyChangeElementIndex = l;

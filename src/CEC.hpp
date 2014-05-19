@@ -33,6 +33,6 @@ public:
   int singleLoop();
   float entropy();
   std::vector<unsigned int> getAssignment();
-
-  std::string test();
+  std::vector<arma::rowvec> centers();
+  std::vector<arma::mat> cov();
 };
