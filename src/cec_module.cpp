@@ -1,14 +1,6 @@
 #include "cec_module.hpp"
 #include "random_assignment.hpp"
 
-RcppExport SEXP hello_gmum() {
-  using namespace Rcpp ;
-    
-  CharacterVector x = CharacterVector::create( "hello", "gmum" )  ;
-
-  return x ;
-}
-
 CEC* CEC__new(SEXP args) {
 
   /*
@@ -92,4 +84,25 @@ void initVectors(std::vector<ClusterType> &type,
     else if(typeStr.compare(CONST::CLUSTERS::diagonal)==0) type[i] = diagonal;
     //else must not happen
   }
+}
+
+unsigned int CECpredict(CEC *cec, std::vector<float> vec) {
+  arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
+
+  int assign = 0;
+  float minEntropyChange = std::numeric_limits<float>::max();
+  
+  for(int i=0; i<cec->clusters.size(); ++i) {
+
+    Cluster &oldCluster = cec->clusters[i];
+    Cluster newCluster = cec->clusters[i].addPoint(x);
+    float entropyChange = newCluster.entropy() - oldCluster.entropy();
+
+    if(entropyChange < minEntropyChange) {
+      minEntropyChange = entropyChange;
+      assign = i;
+    }
+  }
+
+  return assign;
 }
