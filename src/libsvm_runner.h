@@ -11,7 +11,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <time.h>
-#include "svm.h"
+#include "libsvm/svm.h"
 #include "svm_handler.h"
 #include "svm_basic.h"
 
@@ -24,8 +24,14 @@ public:
 			svm_parameter&, svm_problem&);
 	void svm_predict(SVMConfiguration& config, SVMResult& result);
 
+	/*public interface
+	 *
+	 */
 	SVMResult processRequest(SVMConfiguration, SVMResult);
 	bool canHandle(SVMConfiguration);
+
+private:
+	void armaToLibSVM(SVMData &data);
 
 };
 

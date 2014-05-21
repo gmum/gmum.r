@@ -12,7 +12,6 @@
 #include <errno.h>
 
 #include "libsvm_runner.h"
-#include "svm.h"
 #include "svm_basic.h"
 
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
@@ -47,6 +46,7 @@ SVMResult LibSVMRunner::processRequest(SVMConfiguration config,
 		svm_parameter param = get_default_params();
 		read_problem(filename, param);
 		processRequest(config, result, param, prob);
+
 	} else {
 		svm_predict(config, result);
 	}
@@ -84,6 +84,9 @@ void LibSVMRunner::processRequest(SVMConfiguration& config, SVMResult& result,
 	free(x_space);
 	free(line);
 }
+
+
+
 
 /*
  * Prediction
