@@ -1,3 +1,1 @@
 useDynLib(gmum.r)
-export(test_flow)
-export(test_libsvm)

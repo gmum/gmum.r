@@ -3,10 +3,17 @@
 
 #include <string>
 #include <RcppArmadillo.h>
+#include <R.h>
 
 //enum KernelType { LINEAR, POLY, RBF, SIGMOID, PRECOMPUTED }; // kernel type
-enum SVMType { LIBSVM, SVMLIGHT }; // svm type
-enum Preprocess { TWOE, VK, NONE, NORM };	// NORM is solely for test purposes
+enum SVMType {
+	LIBSVM, SVMLIGHT
+};
+// svm type
+enum Preprocess {
+	TWOE, VK, NONE, NORM
+};
+// NORM is solely for test purposes
 
 // This struct will conatin all the necessery svm parameters and will be used in SVMConfig
 struct SVMParameters {
@@ -29,29 +36,34 @@ struct SVMParameters {
 	int probability; 	// do probability estimates 
 };
 
-struct SVMData {
-	arma::mat data;		// armadillo matrix and vector (double)	
-	arma::vec target;
-	int len;
-};
-
 // Our "input" class containing SVM paramaters and data to be classified
 class SVMConfiguration {
 private:
-	SVMData *data;
+
 	SVMParameters params;
-	std::string filename;
-	std::string model_filename;
-	std::string output_filename;
+	// std::string filename;
+	// std::string model_filename;
+	// std::string output_filename;
+
 	bool prediction;
 
 public:
+
+	arma::mat data;		// armadillo matrix and vector (double)
+	arma::vec target;
+	arma::vec result;
+
 	SVMConfiguration();
-	SVMConfiguration(SVMData*, SVMParameters);
+	SVMConfiguration(SVMParameters, bool);
 
-	void setData(SEXP, SEXP);
-	SVMData* getData();
-
+	void createParams(
+			std::string,
+			std::string,
+			std::string,
+			int,
+			double,
+			double
+	);
 	void setParams(SVMParameters);
 	SVMParameters getParams();
 
@@ -68,24 +80,5 @@ public:
 	bool isPrediction();
 };
 
-// Our "output" class containing classification result
-class SVMResult {
-private:
-	SVMData *data;
-	std::string message;
-
-public:
-	SVMResult();
-	SVMResult(std::string);
-	SVMResult(SVMData*);
-	SVMResult(SVMData*, std::string);
-
-	void setData(SVMData*);
-	SVMData* getData();
-
-	void setMessage(std::string);
-	std::string getMessage();
-
-};
 
 #endif
