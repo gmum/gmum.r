@@ -1,5 +1,4 @@
 #include "svm_client.h"
-#include <vector>
 
 // SVMClient
 SVMClient::SVMClient() {
@@ -12,16 +11,14 @@ SVMClient::SVMClient(std::string message) {
 
 // Main client function, it uses FlowFactory to get a certain work flow
 // and runs processRequest(c,r) function on each block returing last result
-SVMResult SVMClient::run(SVMConfiguration config) {
-	SVMResult result(this->message);
+void SVMClient::run(SVMConfiguration *config) {
 
 	SVMHandlers = flowFactory.createSVMFlow(config);
 
 	for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
 			iter != SVMHandlers.end(); ++iter) {
-		result = (*iter)->processRequest(config, result);
+		(*iter)->processRequest(config);
 	}
-	return result;
 }
 
 void SVMClient::setMessage(std::string) {
