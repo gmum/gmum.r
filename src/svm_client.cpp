@@ -12,12 +12,10 @@ SVMClient::SVMClient(std::string message) {
 // Main client function, it uses FlowFactory to get a certain work flow
 // and runs processRequest(c,r) function on each block returing last result
 void SVMClient::run(SVMConfiguration *config) {
-
 	SVMHandlers = flowFactory.createSVMFlow(config);
-
 	for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
 			iter != SVMHandlers.end(); ++iter) {
-		(*iter)->processRequest(config);
+		(*iter)->processRequest(*config);
 	}
 }
 

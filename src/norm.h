@@ -17,8 +17,8 @@ class NormRunner: public SVMHandler {
 public:
 	NormRunner();
 	virtual ~NormRunner();
-	void processRequest(SVMConfiguration *config);
-	bool canHandle(SVMConfiguration *config);
+	void processRequest(SVMConfiguration &config);
+	bool canHandle(SVMConfiguration &config);
 };
 
 #endif
