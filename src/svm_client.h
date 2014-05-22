@@ -14,7 +14,7 @@ private:
 public:
 	SVMClient();
 	SVMClient(std::string);
-	SVMResult run(SVMConfiguration);
+	void run(SVMConfiguration*);
 
 	void setMessage(std::string);
 	std::string getMessage();

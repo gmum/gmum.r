@@ -15,23 +15,23 @@
 #include "svm_handler.h"
 #include "svm_basic.h"
 
+
 class LibSVMRunner: public SVMHandler {
 public:
 	LibSVMRunner();
 	virtual ~LibSVMRunner();
 	void processRequest(std::string);
-	void processRequest(SVMConfiguration& config, SVMResult& result,
-			svm_parameter&, svm_problem&);
-	void svm_predict(SVMConfiguration& config, SVMResult& result);
+	void processRequest(SVMConfiguration& config, svm_parameter&, svm_problem&);
+	void svm_predict(SVMConfiguration& config);
 
 	/*public interface
 	 *
 	 */
-	SVMResult processRequest(SVMConfiguration, SVMResult);
-	bool canHandle(SVMConfiguration);
+	void processRequest(SVMConfiguration&);
+	bool canHandle(SVMConfiguration&);
 
 private:
-	void armaToLibSVM(SVMData &data);
+	void armaToLibSVM(SVMConfiguration &data);
 
 };
 

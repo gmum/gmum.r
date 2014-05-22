@@ -21,14 +21,13 @@ void test_libsvm(){
 	svm_config.setFilename(test_data);
 	svm_config.setPrediction(false); // training model
 	svm_config.setOutputFilename(output_filename);
-	SVMResult SVMResult;
 
 	/* SVM TRAINING
 	 *
 	 */
 	LibSVMRunner lib_svm_runner;
-	lib_svm_runner.processRequest(svm_config, SVMResult);
+	lib_svm_runner.processRequest(svm_config);
 	svm_config.setPrediction(true);
-	lib_svm_runner.processRequest(svm_config, SVMResult);
+	lib_svm_runner.processRequest(svm_config);
 //    return x ;
 }
