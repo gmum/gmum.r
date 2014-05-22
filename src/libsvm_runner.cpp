@@ -38,26 +38,24 @@ LibSVMRunner::~LibSVMRunner() {
 	// TODO Auto-generated destructor stub
 }
 
-SVMResult LibSVMRunner::processRequest(SVMConfiguration config,
-		SVMResult result) {
+void LibSVMRunner::processRequest(SVMConfiguration& config) {
 	if (!config.isPrediction()) {
 		std::string s_filename = config.getFilename();
 		const char * filename = s_filename.c_str();
 		svm_parameter param = get_default_params();
 		read_problem(filename, param);
-		processRequest(config, result, param, prob);
+		processRequest(config, param, prob);
 
 	} else {
-		svm_predict(config, result);
+		svm_predict(config);
 	}
-	return result;
 }
 
-bool LibSVMRunner::canHandle(SVMConfiguration config) {
+bool LibSVMRunner::canHandle(SVMConfiguration& config) {
 	return true;
 }
 
-void LibSVMRunner::processRequest(SVMConfiguration& config, SVMResult& result,
+void LibSVMRunner::processRequest(SVMConfiguration& config,
 		svm_parameter& param, svm_problem& problem) {
 
 	const char * model_file_name = config.getModelFilename().c_str();
@@ -85,9 +83,6 @@ void LibSVMRunner::processRequest(SVMConfiguration& config, SVMResult& result,
 	free(line);
 }
 
-
-
-
 /*
  * Prediction
  */
@@ -103,7 +98,7 @@ int predict_probability = 0;
  static int max_line_len;
  */
 
-void LibSVMRunner::svm_predict(SVMConfiguration& config, SVMResult& result) {
+void LibSVMRunner::svm_predict(SVMConfiguration& config) {
 
 	FILE *input, *output;
 
