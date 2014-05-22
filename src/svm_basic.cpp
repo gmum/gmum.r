@@ -32,26 +32,26 @@ SVMParameters SVMConfiguration::getParams() {
 	return this->params;
 }
 
-//void SVMConfiguration::setFilename(std::string filename) {
-//	this->filename = filename;
-//}
-//std::string SVMConfiguration::getFilename() {
-//	return this->filename;
-//}
-//
-//void SVMConfiguration::setModelFilename(std::string filename) {
-//	this->model_filename = filename;
-//}
-//std::string SVMConfiguration::getModelFilename() {
-//	return this->model_filename;
-//}
-//
-//void SVMConfiguration::setOutputFilename(std::string filename) {
-//	this->output_filename = filename;
-//}
-//std::string SVMConfiguration::getOutputFilename() {
-//	return this->output_filename;
-//}
+void SVMConfiguration::setFilename(std::string filename) {
+	this->filename = filename;
+}
+std::string SVMConfiguration::getFilename() {
+	return this->filename;
+}
+
+void SVMConfiguration::setModelFilename(std::string filename) {
+	this->model_filename = filename;
+}
+std::string SVMConfiguration::getModelFilename() {
+	return this->model_filename;
+}
+
+void SVMConfiguration::setOutputFilename(std::string filename) {
+	this->output_filename = filename;
+}
+std::string SVMConfiguration::getOutputFilename() {
+	return this->output_filename;
+}
 
 bool SVMConfiguration::isPrediction() {
 	return this->prediction;

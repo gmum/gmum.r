@@ -7,8 +7,8 @@
 class SVMHandler {
 public:
 	//virtual ~SVMHandler();
-	virtual void processRequest(SVMConfiguration*) = 0;
-	virtual bool canHandle(SVMConfiguration*) = 0;
+	virtual void processRequest(SVMConfiguration&) = 0;
+	virtual bool canHandle(SVMConfiguration&) = 0;
 };
 
 #endif

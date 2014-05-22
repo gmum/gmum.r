@@ -11,21 +11,27 @@
 #include <sstream>
 #include <cstdlib>
 #include <time.h>
-#include "svm.h"
+#include "libsvm/svm.h"
 #include "svm_handler.h"
 #include "svm_basic.h"
+
 
 class LibSVMRunner: public SVMHandler {
 public:
 	LibSVMRunner();
 	virtual ~LibSVMRunner();
 	void processRequest(std::string);
-	void processRequest(SVMConfiguration& config, SVMResult& result,
-			svm_parameter&, svm_problem&);
-	void svm_predict(SVMConfiguration& config, SVMResult& result);
+	void processRequest(SVMConfiguration& config, svm_parameter&, svm_problem&);
+	void svm_predict(SVMConfiguration& config);
 
-	SVMResult processRequest(SVMConfiguration, SVMResult);
-	bool canHandle(SVMConfiguration);
+	/*public interface
+	 *
+	 */
+	void processRequest(SVMConfiguration&);
+	bool canHandle(SVMConfiguration&);
+
+private:
+	void armaToLibSVM(SVMConfiguration &data);
 
 };
 
