@@ -46,14 +46,14 @@ int main() {
 	for(int i = 0; i < 2; i++) {
 		mat[i] = (double *) malloc(2 * sizeof(double));
 		for(int j = 0; j < 2; j++) {
-			mat[i][j] = i+j;
+			mat[i][j] = (double) i+j;
 		}
 	}
 	int rows, cols;
 	rows = cols = 2;
 	svm_node ** node = sparsify(mat, rows, cols);
 	printf("%d", node[1][0].index);
-	printf("%d", node[1][1].value);
+	printf("%f", node[1][0].value);
 	return 0;
 }
 #endif
