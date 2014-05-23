@@ -39,13 +39,13 @@ LibSVMRunner::~LibSVMRunner() {
 }
 
 void LibSVMRunner::processRequest(SVMConfiguration& config) {
+
 	if (!config.isPrediction()) {
 		std::string s_filename = config.getFilename();
 		const char * filename = s_filename.c_str();
 		svm_parameter param = get_default_params();
 		read_problem(filename, param);
 		processRequest(config, param, prob);
-
 	} else {
 		svm_predict(config);
 	}
@@ -97,6 +97,43 @@ int predict_probability = 0;
  static char *line = NULL;
  static int max_line_len;
  */
+
+/*
+ * Armadillo format to libsvm format
+ */
+struct svm_node ** LibSVMRunner::armatlib(arma::mat x) {
+	int r = x.n_rows;
+	int c = x.n_cols;
+	struct svm_node** sparse;
+	int i, ii, count;
+
+	sparse = (struct svm_node **) malloc(r * sizeof(struct svm_node *));
+	/* iterate over rows */
+	for (i = 0; i < r; i++) {
+		/* determine nr. of non-zero elements */
+		/* iterate over columns */
+		for (count = ii = 0; ii < c; ii++)
+			if (x(i, ii) != 0)
+				count++;
+
+		/* allocate memory for column elements */
+		sparse[i] = (struct svm_node *) malloc(
+				(count + 1) * sizeof(struct svm_node));
+
+		/* set column elements */
+		for (count = ii = 0; ii < c; ii++)
+			if (x(i, ii) != 0) {
+				sparse[i][count].index = ii + 1;
+				sparse[i][count].value = x(i, ii);
+				count++;
+			}
+
+		/* set termination element */
+		sparse[i][count].index = -1;
+	}
+
+	return sparse;
+}
 
 void LibSVMRunner::svm_predict(SVMConfiguration& config) {
 

@@ -5,7 +5,7 @@
 SVMConfiguration::SVMConfiguration() {
 	this->prediction = true;
 }
-SVMConfiguration::SVMConfiguration( SVMParameters params, bool prediction ) {
+SVMConfiguration::SVMConfiguration(SVMParameters params, bool prediction) {
 	this->params = params;
 	this->prediction = prediction;
 }
@@ -46,6 +46,14 @@ std::string SVMConfiguration::getModelFilename() {
 	return this->model_filename;
 }
 
+void SVMConfiguration::setData(arma::mat data) {
+	this->data = data;
+}
+
+arma::mat SVMConfiguration::getData() {
+	return this->data;
+}
+
 void SVMConfiguration::setOutputFilename(std::string filename) {
 	this->output_filename = filename;
 }
@@ -61,24 +69,17 @@ void SVMConfiguration::setPrediction(bool prediction) {
 	this->prediction = prediction;
 }
 
-void SVMConfiguration::createParams(
-		std::string kernel_type,
-		std::string svm_type,
-		std::string preprocess,
-		int degree,
-		double gamma,
-		double coef0
-){
+void SVMConfiguration::createParams(std::string kernel_type,
+		std::string svm_type, std::string preprocess, int degree, double gamma,
+		double coef0) {
 	SVMParameters params;
-	if ( preprocess == "norm" ) {
+	if (preprocess == "norm") {
 		Preprocess prep = NORM;
 		params.preprocess = prep;
-	}
-	else {
+	} else {
 		Preprocess prep = NONE;
 		params.preprocess = prep;
 	}
-
 
 	this->setParams(params);
 

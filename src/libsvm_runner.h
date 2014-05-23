@@ -11,7 +11,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <time.h>
-#include "libsvm/svm.h"
+#include "svm.h"
 #include "svm_handler.h"
 #include "svm_basic.h"
 
@@ -21,8 +21,8 @@ public:
 	LibSVMRunner();
 	virtual ~LibSVMRunner();
 	void processRequest(std::string);
-	void processRequest(SVMConfiguration& config, svm_parameter&, svm_problem&);
-	void svm_predict(SVMConfiguration& config);
+	void processRequest(SVMConfiguration&, svm_parameter&, svm_problem&);
+	void svm_predict(SVMConfiguration&);
 
 	/*public interface
 	 *
@@ -31,7 +31,7 @@ public:
 	bool canHandle(SVMConfiguration&);
 
 private:
-	void armaToLibSVM(SVMConfiguration &data);
+	svm_node ** armatlib(arma::mat);
 
 };
 

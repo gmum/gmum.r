@@ -1,0 +1,32 @@
+* installing *source* package ‘gmum.r’ ...
+** libs
+g++ -I/usr/share/R/include -DNDEBUG -Wall   -I"/home/sacherus/R/x86_64-pc-linux-gnu-library/3.0/Rcpp/include"  -I/usr/share/R/include -I/home/sacherus/R/x86_64-pc-linux-gnu-library/3.0/Rcpp/include -I"/home/sacherus/R/x86_64-pc-linux-gnu-library/3.0/RcppArmadillo/include"	  -O3 -pipe -g -g -pthread -fpic -fpic  -O3 -pipe  -g  -c svm.cpp -o svm.o
+svm.cpp:1150:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+svm.cpp:2243:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+svm.cpp:2259:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+svm.cpp: In function ‘svm_model* svm_load_model(const char*)’:
+svm.cpp:2490:26: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’, declared with attribute warn_unused_result [-Wunused-result]
+svm.cpp:2493:27: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’, declared with attribute warn_unused_result [-Wunused-result]
+svm.cpp:2510:27: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’, declared with attribute warn_unused_result [-Wunused-result]
+svm.cpp:2527:35: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’, declared with attribute warn_unused_result [-Wunused-result]
+svm.cpp:2529:35: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’, declared with attribute warn_unused_result [-Wunused-result]
+svm.cpp:2531:35: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’, declared with attribute warn_unused_result [-Wunused-result]
+svm.cpp:2533:38: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’, declared with attribute warn_unused_result [-Wunused-result]
+svm.cpp:2535:31: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’, declared with attribute warn_unused_result [-Wunused-result]
+svm.cpp:2540:38: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’, declared with attribute warn_unused_result [-Wunused-result]
+svm.cpp:2545:39: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’, declared with attribute warn_unused_result [-Wunused-result]
+svm.cpp:2550:40: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’, declared with attribute warn_unused_result [-Wunused-result]
+svm.cpp:2555:40: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’, declared with attribute warn_unused_result [-Wunused-result]
+svm.cpp:2560:37: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’, declared with attribute warn_unused_result [-Wunused-result]
+g++ -shared -o gmum.r.so hello_gmum.o libsvm_runner.o main.o norm.o svm.o svm_basic.o svm_client.o svm_flow_factory.o svm_wrapper_module.o test_libsvm.o -llapack -lblas -L/usr/lib/R/lib -lR -L/usr/lib/R/lib -lR
+installing to /home/sacherus/gmumr/gmum.r/..Rcheck/gmum.r/libs
+** R
+** inst
+** preparing package for lazy loading
+** help
+Warning: /home/sacherus/gmumr/gmum.r/man/gmum-utils-package.Rd:31: All text must be in a section
+Warning: /home/sacherus/gmumr/gmum.r/man/gmum-utils-package.Rd:32: All text must be in a section
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded
+* DONE (gmum.r)

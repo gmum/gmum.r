@@ -44,11 +44,9 @@ private:
 	std::string filename;
 	std::string model_filename;
 	std::string output_filename;
-
 	bool prediction;
 
 public:
-
 	arma::mat data;		// armadillo matrix and vector (double)
 	arma::vec target;
 	arma::vec result;
@@ -56,14 +54,11 @@ public:
 	SVMConfiguration();
 	SVMConfiguration(SVMParameters, bool);
 
-	void createParams(
-			std::string,
-			std::string,
-			std::string,
-			int,
-			double,
-			double
-	);
+	arma::mat getData();
+	void setData(arma::mat);
+
+	void createParams(std::string, std::string, std::string, int, double,
+			double);
 	void setParams(SVMParameters);
 	SVMParameters getParams();
 
@@ -79,6 +74,5 @@ public:
 	void setPrediction(bool);
 	bool isPrediction();
 };
-
 
 #endif
