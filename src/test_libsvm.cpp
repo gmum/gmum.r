@@ -1,14 +1,12 @@
 #include <R.h>
 #include "test_libsvm.h"
 #include "libsvm_runner.h"
-using namespace Rcpp ;
+using namespace Rcpp;
+using namespace arma;
 
 // TestLibsvmm
 void test_libsvm(){
     using namespace Rcpp ;
-    //cout << "TEST1" << std::endl;
-    //CharacterVector x = CharacterVector::create( "libsvm", "working" ) ;
-
 
     /*
      * Settings parameters
@@ -21,7 +19,6 @@ void test_libsvm(){
 	svm_config.setFilename(test_data);
 	svm_config.setPrediction(false); // training model
 	svm_config.setOutputFilename(output_filename);
-
 	/* SVM TRAINING
 	 *
 	 */
@@ -30,4 +27,15 @@ void test_libsvm(){
 	svm_config.setPrediction(true);
 	lib_svm_runner.processRequest(svm_config);
 //    return x ;
+}
+
+void test_libsvm_arma() {
+	SVMConfiguration svm_config;
+	mat A;
+	A << 0 << 0 << endr << 1 << 1 << endr;
+	svm_config.setPrediction(false); // training model
+	svm_config.setData(A);
+
+	LibSVMRunner lib_svm_runner;
+	lib_svm_runner.processRequest(svm_config);
 }
