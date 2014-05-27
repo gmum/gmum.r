@@ -5,5 +5,5 @@
 
 
 void test_libsvm();
-
+void test_libsvm_arma();
 #endif

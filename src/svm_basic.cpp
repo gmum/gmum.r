@@ -3,34 +3,11 @@
 // SVM Configuration 
 // Constructors  
 SVMConfiguration::SVMConfiguration() {
+	this->prediction = false;
+	SVMConfiguration::setDefaultParams();
 }
-SVMConfiguration::SVMConfiguration(SVMData *data, SVMParameters params) {
-	this->data = data;
-	this->params = params;
-}
-// Getters and Setters
-void SVMConfiguration::setData(SEXP x, SEXP y) {
-	Rcpp::NumericMatrix xr(x); // Rccp matrix from R data
-	Rcpp::NumericVector yr(y); // Rcpp vector from R data
-
-	arma::mat X(xr.begin(), xr.nrow(), xr.ncol(), false); // reusing memory
-	arma::vec Y(yr.begin(), yr.size(), false);
-
-	SVMData data_struct;
-	data_struct.data = X;
-	data_struct.target = Y;
-	data_struct.len = Y.n_elem;
-
-	this->data = &data_struct;
-}
-SVMData* SVMConfiguration::getData() {
-	return this->data;
-}
-void SVMConfiguration::setParams(SVMParameters params) {
-	this->params = params;
-}
-SVMParameters SVMConfiguration::getParams() {
-	return this->params;
+SVMConfiguration::SVMConfiguration(bool prediction) {
+	this->prediction = prediction;
 }
 
 void SVMConfiguration::setFilename(std::string filename) {
@@ -45,6 +22,14 @@ void SVMConfiguration::setModelFilename(std::string filename) {
 }
 std::string SVMConfiguration::getModelFilename() {
 	return this->model_filename;
+}
+
+void SVMConfiguration::setData(arma::mat data) {
+	this->data = data;
+}
+
+arma::mat SVMConfiguration::getData() {
+	return this->data;
 }
 
 void SVMConfiguration::setOutputFilename(std::string filename) {
@@ -62,27 +47,31 @@ void SVMConfiguration::setPrediction(bool prediction) {
 	this->prediction = prediction;
 }
 
-// SVM Result
-// Constructors
-SVMResult::SVMResult() {
+void SVMConfiguration::createParams(std::string kernel_type,
+		std::string svm_type, std::string preprocess, int degree, double gamma,
+		double coef0) {
+	if (preprocess == "norm") {
+		Preprocess prep = NORM;
+		this->preprocess = prep;
+	} else {
+		Preprocess prep = NONE;
+		this->preprocess = prep;
+	}
 }
-SVMResult::SVMResult(std::string message) {
-	this->message = message;
-}
-SVMResult::SVMResult(SVMData *data) {
-	this->data = data;
-}
-// Getters and Setters
-void SVMResult::setResult(SVMData *data) {
-	this->data = data;
-}
-SVMData* SVMResult::getResult() {
-	return this->data;
-}
-void SVMResult::setMessage(std::string message) {
-	this->message = message;
-}
-std::string SVMResult::getMessage() {
-	return this->message;
+
+void SVMConfiguration::setDefaultParams() {
+	svm_type = LIBSVM;
+	//kernel_type = RBF;
+	degree = 3;
+	gamma = 0;	// 1/num_features
+	coef0 = 0;
+	cache_size = 100;
+	C = 1;
+	eps = 1e-3;
+	shrinking = 1;
+	probability = 0;
+	nr_weight = 0;
+	weight_label = NULL;
+	weight = NULL;
 }
 
