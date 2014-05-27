@@ -57,8 +57,7 @@ public:
 	arma::mat getData();
 	void setData(arma::mat);
 
-	void createParams(std::string, std::string, std::string, int, double,
-			double);
+	void createParams(std::string, std::string, std::string, int, double, double);
 	void setParams(SVMParameters);
 	SVMParameters getParams();
 
