@@ -25,8 +25,8 @@ void SVMClient::run() {
 }
 
 void SVMClient::createFlow() {
-	SVMType svm_type = config.getParams().svm_type;
-	Preprocess preprocess = config.getParams().preprocess;
+	SVMType svm_type = config.svm_type;
+	Preprocess preprocess = config.preprocess;
 	std::vector<SVMHandler*> handlers;
 
 	//	switch (svm_type) {
