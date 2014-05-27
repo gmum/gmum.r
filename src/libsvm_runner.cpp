@@ -12,7 +12,6 @@
 #include <errno.h>
 
 #include "libsvm_runner.h"
-#include "svm.h"
 #include "svm_basic.h"
 
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
@@ -39,25 +38,24 @@ LibSVMRunner::~LibSVMRunner() {
 	// TODO Auto-generated destructor stub
 }
 
-SVMResult LibSVMRunner::processRequest(SVMConfiguration config,
-		SVMResult result) {
+void LibSVMRunner::processRequest(SVMConfiguration& config) {
+
 	if (!config.isPrediction()) {
 		std::string s_filename = config.getFilename();
 		const char * filename = s_filename.c_str();
 		svm_parameter param = get_default_params();
 		read_problem(filename, param);
-		processRequest(config, result, param, prob);
+		processRequest(config, param, prob);
 	} else {
-		svm_predict(config, result);
+		svm_predict(config);
 	}
-	return result;
 }
 
-bool LibSVMRunner::canHandle(SVMConfiguration config) {
+bool LibSVMRunner::canHandle(SVMConfiguration& config) {
 	return true;
 }
 
-void LibSVMRunner::processRequest(SVMConfiguration& config, SVMResult& result,
+void LibSVMRunner::processRequest(SVMConfiguration& config,
 		svm_parameter& param, svm_problem& problem) {
 
 	const char * model_file_name = config.getModelFilename().c_str();
@@ -100,7 +98,44 @@ int predict_probability = 0;
  static int max_line_len;
  */
 
-void LibSVMRunner::svm_predict(SVMConfiguration& config, SVMResult& result) {
+/*
+ * Armadillo format to libsvm format
+ */
+struct svm_node ** LibSVMRunner::armatlib(arma::mat x) {
+	int r = x.n_rows;
+	int c = x.n_cols;
+	struct svm_node** sparse;
+	int i, ii, count;
+
+	sparse = (struct svm_node **) malloc(r * sizeof(struct svm_node *));
+	/* iterate over rows */
+	for (i = 0; i < r; i++) {
+		/* determine nr. of non-zero elements */
+		/* iterate over columns */
+		for (count = ii = 0; ii < c; ii++)
+			if (x(i, ii) != 0)
+				count++;
+
+		/* allocate memory for column elements */
+		sparse[i] = (struct svm_node *) malloc(
+				(count + 1) * sizeof(struct svm_node));
+
+		/* set column elements */
+		for (count = ii = 0; ii < c; ii++)
+			if (x(i, ii) != 0) {
+				sparse[i][count].index = ii + 1;
+				sparse[i][count].value = x(i, ii);
+				count++;
+			}
+
+		/* set termination element */
+		sparse[i][count].index = -1;
+	}
+
+	return sparse;
+}
+
+void LibSVMRunner::svm_predict(SVMConfiguration& config) {
 
 	FILE *input, *output;
 

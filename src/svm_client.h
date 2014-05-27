@@ -2,22 +2,20 @@
 #define SVM_CLIENT_H
 
 #include "svm_handler.h"
-#include "svm_flow_factory.h"
 #include "svm_basic.h"
+#include "norm.h"
 #include <vector>
 
 class SVMClient {
 private:
-	SVMFlowFactory flowFactory;
 	std::vector<SVMHandler*> SVMHandlers;
-	std::string message;
+	SVMConfiguration config;
+	void createFlow();
 public:
-	SVMClient();
-	SVMClient(std::string);
-	SVMResult run(SVMConfiguration);
-
-	void setMessage(std::string);
-	std::string getMessage();
+	SVMConfiguration getConfig();
+	arma::vec getResult();
+	SVMClient(SVMConfiguration*);
+	void run();
 };
 
 #endif

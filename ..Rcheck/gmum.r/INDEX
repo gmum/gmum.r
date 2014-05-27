@@ -1,0 +1,8 @@
+gmum-utils-package      What the package does (short line)
+hello_gmum              Description Hello gmum call! Details Prints out
+                        "Hello Gmum"
+rcpp_hello_world        Simple function using Rcpp
+test_flow               Description Testing architecture flow Details
+                        On success it should print out the argument.
+test_libsvm             Description Hello gmum call! Details Prints out
+                        "Hello Gmum"

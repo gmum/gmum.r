@@ -1043,10 +1043,10 @@ bool Solver_NU::be_shrunk(int i, double Gmax1, double Gmax2, double Gmax3,
 }
 
 void Solver_NU::do_shrinking() {
-	double Gmax1 = -INF;// max { -y_i * grad(f)_i | y_i = +1, i in I_up(\alpha) }
-	double Gmax2 = -INF;// max { y_i * grad(f)_i | y_i = +1, i in I_low(\alpha) }
-	double Gmax3 = -INF;// max { -y_i * grad(f)_i | y_i = -1, i in I_up(\alpha) }
-	double Gmax4 = -INF;// max { y_i * grad(f)_i | y_i = -1, i in I_low(\alpha) }
+	double Gmax1 = -INF; // max { -y_i * grad(f)_i | y_i = +1, i in I_up(\alpha) }
+	double Gmax2 = -INF; // max { y_i * grad(f)_i | y_i = +1, i in I_low(\alpha) }
+	double Gmax3 = -INF; // max { -y_i * grad(f)_i | y_i = -1, i in I_up(\alpha) }
+	double Gmax4 = -INF; // max { y_i * grad(f)_i | y_i = -1, i in I_low(\alpha) }
 
 	// find maximal violating pair first
 	int i;
