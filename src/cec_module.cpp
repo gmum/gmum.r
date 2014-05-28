@@ -96,6 +96,16 @@ void initVectors(std::vector<ClusterType> &type,
   }
 }
 
+std::list<float> CECpredict(CEC* cec, std::vector<float> vec, bool general) {
+  arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
+  std::list<float> out;
+
+  if(general)
+    for(int i=0; i<cec->clusters.size(); ++i) out.push_back(cec->clusters[i].predict(x));
+
+  return out;
+}
+
 unsigned int CECpredict(CEC *cec, std::vector<float> vec) {
   arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
 
