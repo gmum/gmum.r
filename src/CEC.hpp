@@ -2,15 +2,19 @@
 #include "Algorithm.hpp"
 #include <armadillo>
 #include <vector>
+#include <list>
 #include <boost/smart_ptr.hpp>
 
+#ifndef CEC_HPP
+#define CEC_HPP
+
 enum ClusterType {
-  usual, covMatrix, constRadius, spherical, diagonal
+  standard, full, diagonal, spherical, fsphere
 };
 
 class CEC {
 private:
-
+  TotalResult result;
   boost::shared_ptr<std::vector<unsigned int> > assignment;
   boost::shared_ptr<arma::mat> points;
   boost::shared_ptr<Algorithm> algorithm;
@@ -30,9 +34,14 @@ public:
   // for debug purposes
   std::vector<Cluster> clusters;
   void loop();
-  int singleLoop();
+  void singleLoop();
   float entropy();
   std::vector<unsigned int> getAssignment();
   std::vector<arma::rowvec> centers();
   std::vector<arma::mat> cov();
+  unsigned int iters();
+  std::list<unsigned int> getNrOfClusters();
+  std::list<float> getEnergy();
 };
+
+#endif

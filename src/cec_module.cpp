@@ -30,8 +30,18 @@ CEC* CEC__new(SEXP args) {
   boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
   initAssignRandom(*assignment, points->n_rows, clusters.size());
   
+  bool logNrOfClusters, logEnergy;
+
+  if(list.containsElementNamed(CONST::nclusters) && Rcpp::as<bool>(list(CONST::nclusters)))
+    logNrOfClusters = true;
+  else logNrOfClusters = false;
+
+  if(list.containsElementNamed(CONST::energy) && Rcpp::as<bool>(list(CONST::energy)))
+    logEnergy = true;
+  else logEnergy = false;
+
   //CEC creation
-  boost::shared_ptr<Hartigan> hartigan(new Hartigan());
+  boost::shared_ptr<Hartigan> hartigan(new Hartigan(logNrOfClusters, logEnergy));
   return new CEC(points, assignment, hartigan,
 		 killThreshold, type, radius, covMat);
 }
@@ -42,7 +52,7 @@ void initClusters(std::list<Rcpp::List> &clusters, Rcpp::List &list) {
 
     unsigned int nrOfClusters = Rcpp::as<int>(list[CONST::nrOfClusters]);
     for(unsigned int i = 0; i < nrOfClusters; ++i)
-      clusters.push_back(Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = CONST::CLUSTERS::usual));
+      clusters.push_back(Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = CONST::CLUSTERS::standard));
 
   } else if(list.containsElementNamed(CONST::clusters)) {
 
@@ -68,16 +78,16 @@ void initVectors(std::vector<ClusterType> &type,
 
     std::string typeStr = Rcpp::as<std::string>((*it)[CONST::CLUSTERS::type]);
 
-    if(typeStr.compare(CONST::CLUSTERS::usual)==0) type[i] = usual;
-    else if(typeStr.compare(CONST::CLUSTERS::covMat)==0) {
+    if(typeStr.compare(CONST::CLUSTERS::standard)==0) type[i] = standard;
+    else if(typeStr.compare(CONST::CLUSTERS::full)==0) {
 
-      type[i] = covMatrix;
-      Rcpp::NumericMatrix temp = Rcpp::as<Rcpp::NumericMatrix>((*it)[CONST::CLUSTERS::covMat]);
+      type[i] = full;
+      Rcpp::NumericMatrix temp = Rcpp::as<Rcpp::NumericMatrix>((*it)[CONST::CLUSTERS::full]);
       covMat[i] = arma::mat(temp.begin(), temp.nrow(), temp.ncol());
 
-    } else if(typeStr.compare(CONST::CLUSTERS::constRadius)==0) {
+    } else if(typeStr.compare(CONST::CLUSTERS::fsphere)==0) {
 
-      type[i] = constRadius;
+      type[i] = fsphere;
       radius[i] = Rcpp::as<float>((*it)[CONST::CLUSTERS::radius]);
 
     } else if(typeStr.compare(CONST::CLUSTERS::spherical)==0) type[i] = spherical;
