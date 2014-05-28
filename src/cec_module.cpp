@@ -8,14 +8,28 @@ CEC* CEC__new(SEXP args) {
    */
   Rcpp::List list(args);
 
+  if(!list.containsElementNamed(CONST::dataset))
+    Rcpp::stop("dataset is required!");
+
   Rcpp::NumericMatrix proxyDataset = Rcpp::as<Rcpp::NumericMatrix>(list[CONST::dataset]);
   //reuses memory and avoids extra copy
   boost::shared_ptr<arma::mat> points(new arma::mat(proxyDataset.begin(), proxyDataset.nrow(),
 						   proxyDataset.ncol(), false));
 
   float killThreshold = 0.001;
-  if(list.containsElementNamed(CONST::killThreshold))
+  int k = 1;
+  if(list.containsElementNamed(CONST::nrOfClusters)) {
+    k = Rcpp::as<int>(list[CONST::nrOfClusters]);
+    if(k <= 0) 
+	   Rcpp::stop("Number of clusters should be a positive integer!");
+	if(proxyDataset.nrow() < k) 
+	   Rcpp::stop("Size of dataset cannot be less than number of clusters!");
+  }
+  if(list.containsElementNamed(CONST::killThreshold)) {
     killThreshold = Rcpp::as<float>(list[CONST::killThreshold]);
+    if(killThreshold > 1.0/k)
+	  Rcpp::stop("KillThreshold is too hight");
+  }
 
   std::list<Rcpp::List> clusters;
   initClusters(clusters, list);
@@ -60,6 +74,11 @@ void initClusters(std::list<Rcpp::List> &clusters, Rcpp::List &list) {
     
     for(Rcpp::List::iterator it = desc.begin(); it != desc.end(); ++it)
       clusters.push_back(Rcpp::as<Rcpp::List>(*it));
+  } else {
+    unsigned int nrOfClusters = 10;
+    
+    for(unsigned int i = 0; i < nrOfClusters; ++i)
+      clusters.push_back(Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = CONST::CLUSTERS::usual));
   }
 }
 
