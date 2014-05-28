@@ -1,6 +1,7 @@
 #include <armadillo>
 #include <vector>
 #include <limits>
+#include <cmath>
 #include "Cluster.hpp"
 #include "Algorithm.hpp"
 
@@ -9,10 +10,11 @@
 
 class Hartigan : public Algorithm {
 public:
-  void loop(arma::mat &points, std::vector<unsigned int> &assignment,
-	    float killThreshold, std::vector<Cluster> &clusters);
-  int singleLoop(arma::mat &points, std::vector<unsigned int> &assignment, 
-		 float killThreshold, std::vector<Cluster> &clusters);
+  Hartigan(bool logNrOfClusters, bool logEnergy);
+  TotalResult loop(arma::mat &points, std::vector<unsigned int> &assignment,
+		   float killThreshold, std::vector<Cluster> &clusters);
+  SingleResult singleLoop(arma::mat &points, std::vector<unsigned int> &assignment, 
+			  float killThreshold, std::vector<Cluster> &clusters);
 };
 
 #endif

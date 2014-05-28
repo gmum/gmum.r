@@ -36,7 +36,8 @@ public:
 
 class ClusterCovMat : public Cluster {
   void calculateEntropy();
-  arma::mat sigma;
+  arma::mat invSigma;
+  float sigmaDet;
 public:
   ClusterCovMat(arma::mat sigma, unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
 };
