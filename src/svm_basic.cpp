@@ -1,45 +1,77 @@
 #include "svm_basic.h"
 
 // SVM Configuration 
-  // Constructors  
-SVM_Configuration::SVM_Configuration(){}
-SVM_Configuration::SVM_Configuration( SVM_Data *data, SVM_Parameters params ) {
-	this->data = data;
-  this->params = params;
+// Constructors  
+SVMConfiguration::SVMConfiguration() {
+	this->prediction = false;
+	SVMConfiguration::setDefaultParams();
 }
-  // Getters and Setters
-void SVM_Configuration::setData( SVM_Data *data ) {
-  this->data = data;
-}
-SVM_Data* SVM_Configuration::getData() {
-  return this->data;
-}
-void SVM_Configuration::setParams( SVM_Parameters params ) {
-  this->params = params;
-}
-SVM_Parameters SVM_Configuration::getParams() {
-  return this->params;
+SVMConfiguration::SVMConfiguration(bool prediction) {
+	this->prediction = prediction;
 }
 
-// SVM Result
-  // Constructors
-SVM_Result::SVM_Result(){}
-SVM_Result::SVM_Result( std::string message ) {
-  this->message = message;
+void SVMConfiguration::setFilename(std::string filename) {
+	this->filename = filename;
 }
-SVM_Result::SVM_Result( SVM_Data *data ) {
+std::string SVMConfiguration::getFilename() {
+	return this->filename;
+}
+
+void SVMConfiguration::setModelFilename(std::string filename) {
+	this->model_filename = filename;
+}
+std::string SVMConfiguration::getModelFilename() {
+	return this->model_filename;
+}
+
+void SVMConfiguration::setData(arma::mat data) {
 	this->data = data;
 }
-  // Getters and Setters
-void SVM_Result::setResult( SVM_Data *data ) {
-  this->data = data;
+
+arma::mat SVMConfiguration::getData() {
+	return this->data;
 }
-SVM_Data* SVM_Result::getResult() {
-  return this->data;
+
+void SVMConfiguration::setOutputFilename(std::string filename) {
+	this->output_filename = filename;
 }
-void SVM_Result::setMessage( std::string message ) {
-  this->message = message;
+std::string SVMConfiguration::getOutputFilename() {
+	return this->output_filename;
 }
-std::string SVM_Result::getMessage() {
-  return this->message;
+
+bool SVMConfiguration::isPrediction() {
+	return this->prediction;
 }
+
+void SVMConfiguration::setPrediction(bool prediction) {
+	this->prediction = prediction;
+}
+
+void SVMConfiguration::createParams(std::string kernel_type,
+		std::string svm_type, std::string preprocess, int degree, double gamma,
+		double coef0) {
+	if (preprocess == "norm") {
+		Preprocess prep = NORM;
+		this->preprocess = prep;
+	} else {
+		Preprocess prep = NONE;
+		this->preprocess = prep;
+	}
+}
+
+void SVMConfiguration::setDefaultParams() {
+	svm_type = LIBSVM;
+	//kernel_type = RBF;
+	degree = 3;
+	gamma = 0;	// 1/num_features
+	coef0 = 0;
+	cache_size = 100;
+	C = 1;
+	eps = 1e-3;
+	shrinking = 1;
+	probability = 0;
+	nr_weight = 0;
+	weight_label = NULL;
+	weight = NULL;
+}
+

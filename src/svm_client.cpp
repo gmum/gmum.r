@@ -1,32 +1,74 @@
 #include "svm_client.h"
-#include <vector>
 
 // SVMClient
-SVM_Client::SVM_Client() {
-  flowFactory = SVM_FlowFactory();
+SVMClient::SVMClient(SVMConfiguration *config) {
+	SVMConfiguration current_config = *config;
+	this->config = current_config;
 }
-SVM_Client::SVM_Client( std::string message ) {
-  flowFactory = SVM_FlowFactory();
-  this->message = message;
+
+SVMConfiguration SVMClient::getConfig() {
+	return SVMClient::config;
+}
+
+arma::vec SVMClient::getResult() {
+	return SVMClient::config.result;
 }
 
 // Main client function, it uses FlowFactory to get a certain work flow
 // and runs processRequest(c,r) function on each block returing last result
-SVM_Result SVM_Client::run( SVM_Configuration config) {
-  SVM_Result result(this->message);  
-  
-  SVM_Handlers = flowFactory.createSVMFlow( config );
-  
-  for ( std::vector<SVM_Handler*>::iterator iter = SVM_Handlers.begin() ; iter != SVM_Handlers.end() ; ++iter ) {
-    result = (*iter)->processRequest( config, result );
-  }
-  return result;
+void SVMClient::run() {
+	SVMClient::createFlow();
+	for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
+			iter != SVMHandlers.end(); ++iter) {
+		(*iter)->processRequest(config);
+	}
 }
 
-void SVM_Client::setMessage( std::string ) {
-	this->message = message;
+void SVMClient::createFlow() {
+	SVMType svm_type = config.svm_type;
+	Preprocess preprocess = config.preprocess;
+	std::vector<SVMHandler*> handlers;
+
+	//	switch (svm_type) {
+	//		case LIBSVM: {
+	//			LibSVMRunner runner;
+	//			handlers.push_back(&runner);
+	//			break;
+	//		}
+	//		case SVMLIGHT : {	SVMLightRunner runner;		// Wating for svm light runner implementation
+	//			handlers.push_back( &runner );
+	//			break;
+	//		}
+	//		default: {
+	//			LibSVMRunner runner;				// dafault will be libsvm
+	//			handlers.push_back(&runner);
+	//			break;
+	//		}
+	//	}
+
+	switch (preprocess) {
+	// case TWOE :	{	TwoeSVMPostprocessor post_runner;
+	// 				TwoeSVMPreprocessor pre_runner;
+	// 				handles.insert( handlers.bedin(), pre_runner );
+	// 				handlers.push_back( post_runner );
+	// 				break;
+	// 			}
+
+	case VK:
+		break; // TODO
+
+	case NONE:
+		break;
+
+	case NORM: {
+		NormRunner norm_runner;
+		handlers.push_back(&norm_runner);
+		break;
+	}
+	default:
+		break;
+	}
+
+	this->SVMHandlers = handlers;
 }
 
-std::string SVM_Client::getMessage() {
-	return this->message;
-}

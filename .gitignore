@@ -1,2 +1,12 @@
 *.so
 *.o
+#R history files
+.RData
+.Rhistory
+
+#Vim files
+*~
+Debug
+.cproject
+.project
+.settings

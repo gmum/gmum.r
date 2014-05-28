@@ -17,12 +17,12 @@ using namespace Rcpp;
 // For more on using Rcpp click the Help button on the editor toolbar
 
 //// [[Rcpp::export]]
-SVM_Result TwoeSVMPreprocessor::processRequest( SVM_Configuration data, SVM_Result result ) {
+void TwoeSVMPreprocessor::processRequest( SVMConfiguration data ) {
   // TODO
-  return result;
+  return;
 }
 
-bool TwoeSVMPreprocessor::canHandle( SVM_Configuration data ) {
+bool TwoeSVMPreprocessor::canHandle( SVMConfiguration data ) {
   // TODO
 return true;
 }

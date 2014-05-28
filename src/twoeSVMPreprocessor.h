@@ -15,7 +15,7 @@ using namespace Rcpp;
 
 //// [[Rcpp::export]]
 //2eSVM Preprocessor
-class TwoeSVMPreprocessor : public SVM_Handler{
+class TwoeSVMPreprocessor : public SVMHandler{
   protected:    
     arma::mat covPosMat;
     arma::mat covNegMat;
@@ -34,8 +34,8 @@ class TwoeSVMPreprocessor : public SVM_Handler{
     arma::mat mappingNeg(arma::mat &transMatrix,arma::mat &negMatrix);
     
   public :
-    SVM_Result processRequest( SVM_Configuration, SVM_Result );
-    bool canHandle( SVM_Configuration);
+    void processRequest( SVMConfiguration );
+    bool canHandle( SVMConfiguration);
     TwoeSVMPreprocessor(arma::mat &matrix);
     void makePreprocessor();
 };
