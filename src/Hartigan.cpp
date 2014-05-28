@@ -1,13 +1,22 @@
 #include "Hartigan.hpp"
-#include <cmath>
 
-void Hartigan::loop(arma::mat &points, std::vector<unsigned int> &assignment,
-		    float killThreshold, std::vector<Cluster> &clusters) {
-  while(singleLoop(points, assignment, killThreshold, clusters) > 0);
+Hartigan::Hartigan(bool logNrOfClusters, bool logEnergy) : Algorithm(logNrOfClusters, logEnergy) {}
+
+TotalResult Hartigan::loop(arma::mat &points, std::vector<unsigned int> &assignment,
+			   float killThreshold, std::vector<Cluster> &clusters) {
+  TotalResult result;
+  SingleResult sr;
+
+  do {
+    sr = singleLoop(points, assignment, killThreshold, clusters);
+    result.append(sr, logNrOfClusters, logEnergy);
+  } while(sr.switched > 0);
+
+  return result;
 }
 
-int Hartigan::singleLoop(arma::mat &points, std::vector<unsigned int> &assignment, 
-			 float killThreshold, std::vector<Cluster> &clusters) {
+SingleResult Hartigan::singleLoop(arma::mat &points, std::vector<unsigned int> &assignment, 
+				  float killThreshold, std::vector<Cluster> &clusters) {
 
   int switched = 0;  //numer of points who has been moved to another cluster
 
@@ -30,7 +39,7 @@ int Hartigan::singleLoop(arma::mat &points, std::vector<unsigned int> &assignmen
 	  clusters[k] = newTarget;
 	  switched++;
 
-	  //point moved from cluster source to k  - update assignment
+	  //point moved from cluster source to k - update assignment
 	  assignment[i] = k;
 
 	  //if cluster has number of members lower than threshold, remove the cluster
@@ -56,7 +65,7 @@ int Hartigan::singleLoop(arma::mat &points, std::vector<unsigned int> &assignmen
 		  if(l != source) {
 		    Cluster &oldTarget = clusters[l];
 		    Cluster newTarget = clusters[l].addPoint(pointToAssign);
-		    float entropyChange = oldTarget.entropy() - newTarget.entropy();
+		    float entropyChange = newTarget.entropy() - oldTarget.entropy();
 		    if(entropyChange < minEntropyChange){
 		      minEntropyChange = entropyChange;
 		      minEntropyChangeElementIndex = l;
@@ -82,5 +91,9 @@ int Hartigan::singleLoop(arma::mat &points, std::vector<unsigned int> &assignmen
       }  //for iterates clusters
   }  //for iterates points
 
-  return switched;
+  float energy = 0;
+  if(logEnergy)
+    for(int i=0; i<clusters.size(); ++i) energy += clusters[i].entropy();
+
+  return SingleResult(switched, clusters.size(), energy);
 }

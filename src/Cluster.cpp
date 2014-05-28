@@ -1,6 +1,4 @@
 #include "Cluster.hpp"
-#include <RcppArmadillo.h>
-#include <cmath>
 
 Cluster::Cluster(int _count, arma::rowvec & _mean, arma::mat & _covMat):
   count(_count),mean(_mean),covMat(_covMat) {
@@ -86,6 +84,14 @@ float Cluster::entropy() {
   return _entropy;
 }
 
+float Cluster::predict(arma::rowvec x) {
+  float constMultiplier = sqrt(1.0/(pow(2*M_PI, x.n_cols)*arma::det(covMat)));
+  float scalar = arma::as_scalar((x-mean)*arma::inv(covMat)*((x-mean).t()));
+  float exponens = exp(-0.5*scalar);
+
+  return constMultiplier*exponens;
+}
+
 unsigned int Cluster::numberOfPoints = 0;
 
 /*
@@ -98,11 +104,14 @@ void Cluster::calculateEntropy() {
 }
 
 ClusterCovMat::ClusterCovMat(arma::mat sigma, unsigned int id, std::vector<unsigned int> &assignment,
-			     arma::mat &points) : Cluster(id,assignment,points), sigma(sigma){}
+			     arma::mat &points) : Cluster(id,assignment,points) {
+  sigmaDet = arma::det(sigma);
+  invSigma = arma::inv(sigma);
+}
 
 void ClusterCovMat::calculateEntropy() {
     float p = 1.0*count / numberOfPoints;
-    _entropy =p*( N*log(2*M_PI)/2 + arma::trace(arma::inv(sigma)*covMat)/2 + N*log(arma::det(sigma))/2 -log(p));
+    _entropy =p*( N*log(2*M_PI)/2 + arma::trace(invSigma*covMat)/2 + N*log(sigmaDet)/2 -log(p));
 }
 
 ClusterConstRadius::ClusterConstRadius(float r, unsigned int id, std::vector<unsigned int> &assignment,

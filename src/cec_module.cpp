@@ -1,14 +1,6 @@
 #include "cec_module.hpp"
 #include "random_assignment.hpp"
 
-RcppExport SEXP hello_gmum() {
-  using namespace Rcpp ;
-    
-  CharacterVector x = CharacterVector::create( "hello", "gmum" )  ;
-
-  return x ;
-}
-
 CEC* CEC__new(SEXP args) {
 
   /*
@@ -38,8 +30,18 @@ CEC* CEC__new(SEXP args) {
   boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
   initAssignRandom(*assignment, points->n_rows, clusters.size());
   
+  bool logNrOfClusters, logEnergy;
+
+  if(list.containsElementNamed(CONST::nclusters) && Rcpp::as<bool>(list(CONST::nclusters)))
+    logNrOfClusters = true;
+  else logNrOfClusters = false;
+
+  if(list.containsElementNamed(CONST::energy) && Rcpp::as<bool>(list(CONST::energy)))
+    logEnergy = true;
+  else logEnergy = false;
+
   //CEC creation
-  boost::shared_ptr<Hartigan> hartigan(new Hartigan());
+  boost::shared_ptr<Hartigan> hartigan(new Hartigan(logNrOfClusters, logEnergy));
   return new CEC(points, assignment, hartigan,
 		 killThreshold, type, radius, covMat);
 }
@@ -50,7 +52,7 @@ void initClusters(std::list<Rcpp::List> &clusters, Rcpp::List &list) {
 
     unsigned int nrOfClusters = Rcpp::as<int>(list[CONST::nrOfClusters]);
     for(unsigned int i = 0; i < nrOfClusters; ++i)
-      clusters.push_back(Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = CONST::CLUSTERS::usual));
+      clusters.push_back(Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = CONST::CLUSTERS::standard));
 
   } else if(list.containsElementNamed(CONST::clusters)) {
 
@@ -76,20 +78,51 @@ void initVectors(std::vector<ClusterType> &type,
 
     std::string typeStr = Rcpp::as<std::string>((*it)[CONST::CLUSTERS::type]);
 
-    if(typeStr.compare(CONST::CLUSTERS::usual)==0) type[i] = usual;
-    else if(typeStr.compare(CONST::CLUSTERS::covMat)==0) {
+    if(typeStr.compare(CONST::CLUSTERS::standard)==0) type[i] = standard;
+    else if(typeStr.compare(CONST::CLUSTERS::full)==0) {
 
-      type[i] = covMatrix;
-      Rcpp::NumericMatrix temp = Rcpp::as<Rcpp::NumericMatrix>((*it)[CONST::CLUSTERS::covMat]);
+      type[i] = full;
+      Rcpp::NumericMatrix temp = Rcpp::as<Rcpp::NumericMatrix>((*it)[CONST::CLUSTERS::full]);
       covMat[i] = arma::mat(temp.begin(), temp.nrow(), temp.ncol());
 
-    } else if(typeStr.compare(CONST::CLUSTERS::constRadius)==0) {
+    } else if(typeStr.compare(CONST::CLUSTERS::fsphere)==0) {
 
-      type[i] = constRadius;
+      type[i] = fsphere;
       radius[i] = Rcpp::as<float>((*it)[CONST::CLUSTERS::radius]);
 
     } else if(typeStr.compare(CONST::CLUSTERS::spherical)==0) type[i] = spherical;
     else if(typeStr.compare(CONST::CLUSTERS::diagonal)==0) type[i] = diagonal;
     //else must not happen
   }
+}
+
+std::list<float> CECpredict(CEC* cec, std::vector<float> vec, bool general) {
+  arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
+  std::list<float> out;
+
+  if(general)
+    for(int i=0; i<cec->clusters.size(); ++i) out.push_back(cec->clusters[i].predict(x));
+
+  return out;
+}
+
+unsigned int CECpredict(CEC *cec, std::vector<float> vec) {
+  arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
+
+  int assign = 0;
+  float minEntropyChange = std::numeric_limits<float>::max();
+  
+  for(int i=0; i<cec->clusters.size(); ++i) {
+
+    Cluster &oldCluster = cec->clusters[i];
+    Cluster newCluster = cec->clusters[i].addPoint(x);
+    float entropyChange = newCluster.entropy() - oldCluster.entropy();
+
+    if(entropyChange < minEntropyChange) {
+      minEntropyChange = entropyChange;
+      assign = i;
+    }
+  }
+
+  return assign;
 }

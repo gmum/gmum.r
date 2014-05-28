@@ -1,4 +1,5 @@
 #include "CEC.hpp"
+
 CEC::CEC(boost::shared_ptr<arma::mat> points, 
 	 boost::shared_ptr<std::vector<unsigned int> > assignment, 
 	 boost::shared_ptr<Algorithm> algorithm,
@@ -12,20 +13,20 @@ CEC::CEC(boost::shared_ptr<arma::mat> points,
   for(unsigned int i = 0; i < type.size(); i++) {
     Cluster cluster;
     switch(type[i]) {
-    case usual:
+    case standard:
       cluster = Cluster(i, *assignment, *points);
       break;
-    case covMatrix:
+    case full:
       cluster = ClusterCovMat(covMatrices[i], i, *assignment, *points);
       break;
-    case constRadius:
-      cluster = ClusterConstRadius(radius[i], i, *assignment, *points);
+    case diagonal:
+      cluster = ClusterDiagonal(i, *assignment, *points);
       break;
     case spherical:
       cluster = ClusterSpherical(i, *assignment, *points);
       break;
-    case diagonal:
-      cluster = ClusterDiagonal(i, *assignment, *points);
+    case fsphere:
+      cluster = ClusterConstRadius(radius[i], i, *assignment, *points);
       break;
     }
     clusters.push_back(cluster);
@@ -45,11 +46,11 @@ CEC::CEC(boost::shared_ptr<arma::mat> points,
 }
 
 void CEC::loop() {
-  algorithm->loop(*points, *assignment, killThreshold, clusters);
+  result = algorithm->loop(*points, *assignment, killThreshold, clusters);
 }
 
-int CEC::singleLoop() {
-  return algorithm->singleLoop(*points, *assignment, killThreshold, clusters);
+void CEC::singleLoop() {
+  algorithm->singleLoop(*points, *assignment, killThreshold, clusters);
 }
 
 float CEC::entropy() {
@@ -63,6 +64,30 @@ std::vector<unsigned int> CEC::getAssignment() {
   return *assignment;
 }
 
-std::string CEC::test() {
-  return "bla bla";
+std::vector<arma::rowvec> CEC::centers() {
+  std::vector<arma::rowvec> array;
+  array.reserve(clusters.size());
+  for(int i=0; i<clusters.size(); ++i) array.push_back(clusters[i].getMean());
+  return array;
+}
+
+std::vector<arma::mat> CEC::cov() {
+  std::vector<arma::mat> array;
+  array.reserve(clusters.size());
+
+  for(int i=0; i<clusters.size(); ++i) array.push_back(clusters[i].getCovMat());
+
+  return array;
+}
+
+unsigned int CEC::iters() {
+  return result.iterations;
+}
+
+std::list<unsigned int> CEC::getNrOfClusters() {
+  return result.nrOfClusters;
+}
+
+std::list<float> CEC::getEnergy() {
+  return result.energy;
 }
