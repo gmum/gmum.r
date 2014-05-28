@@ -1,9 +1,9 @@
+#include <armadillo>
+#include <vector>
+#include <cmath>
 
 #ifndef CLUSTER_HPP
 #define CLUSTER_HPP
-
-#include <armadillo>
-#include <vector>
 
 class Cluster {
 protected:
@@ -30,6 +30,7 @@ public:
   arma::rowvec initializeMean(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
   arma::rowvec getMean();
   arma::mat getCovMat();
+  float predict(arma::rowvec);
 
   static unsigned int numberOfPoints;
 };

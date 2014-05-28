@@ -15,6 +15,7 @@ void initVectors(std::vector<ClusterType> &type,
 		 std::vector<float> &radius,
 		 std::list<Rcpp::List> clusters);
 
+std::list<float> CECpredict(CEC*, std::vector<float>, bool);
 unsigned int CECpredict(CEC*, std::vector<float>);
 
 struct CONST {
@@ -59,6 +60,10 @@ const char* CONST::CLUSTERS::fsphere = "fsphere";
   
 RCPP_MODULE(cec) {
   using namespace Rcpp;
+
+  std::list<float> (*predict_1)(CEC*, std::vector<float>, bool) = CECpredict;
+  unsigned int (*predict_2)(CEC*, std::vector<float>) = CECpredict;
+
   class_<CEC>("cec")
     .factory(CEC__new)
     .method("loop", &CEC::loop)
@@ -67,7 +72,8 @@ RCPP_MODULE(cec) {
     .method("y", &CEC::getAssignment)
     .method("centers", &CEC::centers)
     .method("cov", &CEC::cov)
-    .method("predict", &CECpredict)
+    .method("predict", predict_1)
+    .method("predict", predict_2)
     .method("log.ncluster", &CEC::getNrOfClusters)
     .method("log.energy", &CEC::getEnergy)
     .method("log.iters", &CEC::iters)

@@ -1,5 +1,4 @@
 #include "Cluster.hpp"
-#include <cmath>
 
 Cluster::Cluster(int _count, arma::rowvec & _mean, arma::mat & _covMat):
   count(_count),mean(_mean),covMat(_covMat) {
@@ -83,6 +82,14 @@ arma::mat Cluster::getCovMat() {
 
 float Cluster::entropy() {
   return _entropy;
+}
+
+float Cluster::predict(arma::rowvec x) {
+  float constMultiplier = sqrt(1.0/(pow(2*M_PI, x.n_cols)*arma::det(covMat)));
+  float scalar = arma::as_scalar((x-mean)*arma::inv(covMat)*((x-mean).t()));
+  float exponens = exp(-0.5*scalar);
+
+  return constMultiplier*exponens;
 }
 
 unsigned int Cluster::numberOfPoints = 0;
