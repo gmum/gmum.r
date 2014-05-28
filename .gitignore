@@ -1,5 +1,7 @@
 *.so
 *.o
+..Rcheck/
+
 #R history files
 .RData
 .Rhistory
