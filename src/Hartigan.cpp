@@ -1,99 +1,102 @@
 #include "Hartigan.hpp"
 
-Hartigan::Hartigan(bool logNrOfClusters, bool logEnergy) : Algorithm(logNrOfClusters, logEnergy) {}
+namespace gmum {
 
-TotalResult Hartigan::loop(arma::mat &points, std::vector<unsigned int> &assignment,
-			   float killThreshold, std::vector<Cluster> &clusters) {
-  TotalResult result;
-  SingleResult sr;
+  Hartigan::Hartigan(bool logNrOfClusters, bool logEnergy) : Algorithm(logNrOfClusters, logEnergy) {}
 
-  do {
-    sr = singleLoop(points, assignment, killThreshold, clusters);
-    result.append(sr, logNrOfClusters, logEnergy);
-  } while(sr.switched > 0);
+  TotalResult Hartigan::loop(arma::mat &points, std::vector<unsigned int> &assignment,
+			     float killThreshold, std::vector<Cluster> &clusters) {
+    TotalResult result;
+    SingleResult sr;
 
-  return result;
-}
+    do {
+      sr = singleLoop(points, assignment, killThreshold, clusters);
+      result.append(sr, logNrOfClusters, logEnergy);
+    } while(sr.switched > 0);
 
-SingleResult Hartigan::singleLoop(arma::mat &points, std::vector<unsigned int> &assignment, 
-				  float killThreshold, std::vector<Cluster> &clusters) {
+    return result;
+  }
 
-  int switched = 0;  //numer of points who has been moved to another cluster
+  SingleResult Hartigan::singleLoop(arma::mat &points, std::vector<unsigned int> &assignment, 
+				    float killThreshold, std::vector<Cluster> &clusters) {
 
-  for(unsigned int i = 0; i < Cluster::numberOfPoints; i++) {
-    unsigned int source = assignment[i];
-    arma::rowvec point = points.row(i);
+    int switched = 0;  //numer of points who has been moved to another cluster
 
-    for(unsigned int k = 0; k < clusters.size(); k++)
-      if(k != source) {
+    for(unsigned int i = 0; i < Cluster::numberOfPoints; i++) {
+      unsigned int source = assignment[i];
+      arma::rowvec point = points.row(i);
 
-	Cluster &oldSource = clusters[source];
-	Cluster &oldTarget = clusters[k];
-	Cluster newSource = clusters[source].removePoint(point);
-	Cluster newTarget = clusters[k].addPoint(point);
-	float oldEntropy = oldSource.entropy()+oldTarget.entropy() ;
-	float newEntropy = newSource.entropy()+newTarget.entropy();
+      for(unsigned int k = 0; k < clusters.size(); k++)
+	if(k != source) {
 
-	if(newEntropy < oldEntropy) {
-	  clusters[source] = newSource;
-	  clusters[k] = newTarget;
-	  switched++;
+	  Cluster &oldSource = clusters[source];
+	  Cluster &oldTarget = clusters[k];
+	  Cluster newSource = clusters[source].removePoint(point);
+	  Cluster newTarget = clusters[k].addPoint(point);
+	  float oldEntropy = oldSource.entropy()+oldTarget.entropy() ;
+	  float newEntropy = newSource.entropy()+newTarget.entropy();
 
-	  //point moved from cluster source to k - update assignment
-	  assignment[i] = k;
+	  if(newEntropy < oldEntropy) {
+	    clusters[source] = newSource;
+	    clusters[k] = newTarget;
+	    switched++;
 
-	  //if cluster has number of members lower than threshold, remove the cluster
-	  //threshold is fraction of all points
-	  if(clusters[source].size() < killThreshold*Cluster::numberOfPoints) {
+	    //point moved from cluster source to k - update assignment
+	    assignment[i] = k;
 
-	    //delete cluster
-	    clusters.erase(clusters.begin() + source);
+	    //if cluster has number of members lower than threshold, remove the cluster
+	    //threshold is fraction of all points
+	    if(clusters[source].size() < killThreshold*Cluster::numberOfPoints) {
 
-	    //assign points of erased cluster
-	    for(unsigned int j = 0; j < Cluster::numberOfPoints; j++) {
+	      //delete cluster
+	      clusters.erase(clusters.begin() + source);
 
-	      //find point of deleted cluster
-	      if(assignment[j] == source) {
+	      //assign points of erased cluster
+	      for(unsigned int j = 0; j < Cluster::numberOfPoints; j++) {
+
+		//find point of deleted cluster
+		if(assignment[j] == source) {
 	
-		arma::rowvec pointToAssign = points.row(j);
-		int minEntropyChangeElementIndex = -1;
-		Cluster minEntropyChangeCluster;
-		float minEntropyChange = std::numeric_limits<float>::max();
+		  arma::rowvec pointToAssign = points.row(j);
+		  int minEntropyChangeElementIndex = -1;
+		  Cluster minEntropyChangeCluster;
+		  float minEntropyChange = std::numeric_limits<float>::max();
 		
-		//find the best cluster to assign the point to it 
-		for(unsigned int l = 0; l < clusters.size(); l++){
-		  if(l != source) {
-		    Cluster &oldTarget = clusters[l];
-		    Cluster newTarget = clusters[l].addPoint(pointToAssign);
-		    float entropyChange = newTarget.entropy() - oldTarget.entropy();
-		    if(entropyChange < minEntropyChange){
-		      minEntropyChange = entropyChange;
-		      minEntropyChangeElementIndex = l;
-		      minEntropyChangeCluster = newTarget;						
+		  //find the best cluster to assign the point to it 
+		  for(unsigned int l = 0; l < clusters.size(); l++){
+		    if(l != source) {
+		      Cluster &oldTarget = clusters[l];
+		      Cluster newTarget = clusters[l].addPoint(pointToAssign);
+		      float entropyChange = newTarget.entropy() - oldTarget.entropy();
+		      if(entropyChange < minEntropyChange){
+			minEntropyChange = entropyChange;
+			minEntropyChangeElementIndex = l;
+			minEntropyChangeCluster = newTarget;						
+		      }
 		    }
 		  }
-		}
 		
-		//assert(minEntropyChangeElementIndex > -1);
-		clusters[minEntropyChangeElementIndex] = minEntropyChangeCluster;
-		assignment[j] = minEntropyChangeElementIndex;
+		  //assert(minEntropyChangeElementIndex > -1);
+		  clusters[minEntropyChangeElementIndex] = minEntropyChangeCluster;
+		  assignment[j] = minEntropyChangeElementIndex;
 
-	      } else if(assignment[j] > source) assignment[j]--;
-	      //number of clusters is expected to be small in comparison to number
-	      //of data points. When you remove a cluster you decrease assignment of all
-	      //points belonging to clusters with higher position in vector, in order
-	      //to keep assignment adequate.
-	    }			  
+		} else if(assignment[j] > source) assignment[j]--;
+		//number of clusters is expected to be small in comparison to number
+		//of data points. When you remove a cluster you decrease assignment of all
+		//points belonging to clusters with higher position in vector, in order
+		//to keep assignment adequate.
+	      }			  
+	    }
+
+	    break; //point was switched so we'll stop the clusters loop and we'll check the next point
 	  }
+	}  //for iterates clusters
+    }  //for iterates points
 
-	  break; //point was switched so we'll stop the clusters loop and we'll check the next point
-	}
-      }  //for iterates clusters
-  }  //for iterates points
+    float energy = 0;
+    if(logEnergy)
+      for(int i=0; i<clusters.size(); ++i) energy += clusters[i].entropy();
 
-  float energy = 0;
-  if(logEnergy)
-    for(int i=0; i<clusters.size(); ++i) energy += clusters[i].entropy();
-
-  return SingleResult(switched, clusters.size(), energy);
+    return SingleResult(switched, clusters.size(), energy);
+  }
 }
