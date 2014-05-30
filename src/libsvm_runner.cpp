@@ -31,7 +31,6 @@ static int max_line_len;
 
 LibSVMRunner::LibSVMRunner() {
 	// TODO Auto-generated constructor stub
-
 }
 
 LibSVMRunner::~LibSVMRunner() {
@@ -41,10 +40,17 @@ LibSVMRunner::~LibSVMRunner() {
 void LibSVMRunner::processRequest(SVMConfiguration& config) {
 
 	if (!config.isPrediction()) {
-		std::string s_filename = config.getFilename();
-		const char * filename = s_filename.c_str();
 		svm_parameter param = get_default_params();
-		read_problem(filename, param);
+		if (config.getFilename().empty()) {
+			prob.l = config.target.n_rows;
+			svm_node** node = armatlib(config.data);
+			prob.y = vectlib(config.target);
+			prob.x = node;
+		} else {
+			std::string s_filename = config.getFilename();
+			const char * filename = s_filename.c_str();
+			read_problem(filename, param);
+		}
 		processRequest(config, param, prob);
 	} else {
 		svm_predict(config);
@@ -99,7 +105,7 @@ int predict_probability = 0;
  */
 
 /*
- * Armadillo format to libsvm format
+ * Armadillo matrix format to libsvm format
  */
 struct svm_node ** LibSVMRunner::armatlib(arma::mat x) {
 	int r = x.n_rows;
@@ -133,6 +139,19 @@ struct svm_node ** LibSVMRunner::armatlib(arma::mat x) {
 	}
 
 	return sparse;
+}
+
+
+/*
+ * Vector with target to lisvm format
+ */
+double * LibSVMRunner::vectlib(arma::vec target) {
+	double* return_target;
+	return_target = Malloc(double, target.n_rows);
+	for (unsigned int i = 0; i < target.n_rows; i++) {
+		return_target[i] = target(i);
+	}
+	return return_target;
 }
 
 void LibSVMRunner::svm_predict(SVMConfiguration& config) {
@@ -288,7 +307,7 @@ void predict(FILE *input, FILE *output) {
 struct svm_parameter get_default_params() {
 	svm_parameter param;
 	param.svm_type = C_SVC;
-	param.kernel_type = RBF;
+	param.kernel_type = LINEAR;
 	param.degree = 3;
 	param.gamma = 0;	// 1/num_features
 	param.coef0 = 0;
