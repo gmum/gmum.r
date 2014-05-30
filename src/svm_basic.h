@@ -41,7 +41,7 @@ class SVMConfiguration {
 private:
 
 	SVMParameters params;
-	std::string filename;
+	std::string filename; //filename with data
 	std::string model_filename;
 	std::string output_filename;
 	bool prediction;
@@ -73,6 +73,7 @@ public:
 
 	void setPrediction(bool);
 	bool isPrediction();
+
 };
 
 #endif

@@ -3,7 +3,7 @@
 // SVM Configuration 
 // Constructors  
 SVMConfiguration::SVMConfiguration() {
-	this->prediction = true;
+	this->prediction = false;
 }
 SVMConfiguration::SVMConfiguration(SVMParameters params, bool prediction) {
 	this->params = params;
