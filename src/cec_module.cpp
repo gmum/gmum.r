@@ -41,26 +41,7 @@ namespace gmum {
     std::vector<float> radius;
     initVectors(type, covMat, radius, clusters);
 
-    //random assignment into clusters
-    boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
-
-    Assignment assignmentType = random;
-    if(list.containsElementNamed(CONST::CLUSTERS::init)) {
-      std::string init = Rcpp::as<std::string>(list(CONST::CLUSTERS::init));
-      if(init.compare(CONST::CLUSTERS::random)==0) assignmentType = random;
-      else if(init.compare(CONST::CLUSTERS::kmeanspp)==0) assignmentType = kmeanspp;
-      else Rcpp::stop(std::string("cannot recognize ")+init);
-    }
-
-    switch(assignmentType) {
-    case random:
-      initAssignRandom(*assignment, points->n_rows, clusters.size());
-      break;
-    case kmeanspp:
-      initAssignKmeanspp(*assignment, *points, points->n_rows, clusters.size());
-      break;
-    }
-  
+    //logging options
     bool logNrOfClusters, logEnergy;
 
     if(list.containsElementNamed(CONST::nclusters) && Rcpp::as<bool>(list(CONST::nclusters)))
@@ -71,11 +52,51 @@ namespace gmum {
       logEnergy = true;
     else logEnergy = false;
 
+
+    //number of starts
+    unsigned int nstart = 20;
+    if(list.containsElementNamed(CONST::nstart)) {
+      unsigned int temp = Rcpp::as<unsigned int>(list[CONST::nstart]);
+      if(temp == 0 || temp > 1e+4) Rcpp::stop(std::string(CONST::nstart)+" is out of bounds");
+      else nstart = temp;
+    }
+
+    //type of random assignment
+    Assignment assignmentType = random;
+    if(list.containsElementNamed(CONST::CLUSTERS::init)) {
+      std::string init = Rcpp::as<std::string>(list(CONST::CLUSTERS::init));
+      if(init.compare(CONST::CLUSTERS::random)==0) assignmentType = random;
+      else if(init.compare(CONST::CLUSTERS::kmeanspp)==0) assignmentType = kmeanspp;
+      else Rcpp::stop(std::string("cannot recognize ")+init);
+    }
+
     //CEC creation
+    boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
     boost::shared_ptr<Hartigan> hartigan(new Hartigan(logNrOfClusters, logEnergy));
-    return new CEC(points, assignment, hartigan,
-		   killThreshold, type, radius, covMat);
+
+    randomAssignment(assignmentType, *assignment, *points, clusters.size());
+    CEC *currentCEC = new CEC(points, assignment, hartigan,
+			      killThreshold, type, radius, covMat);
+    currentCEC->loop();
+    --nstart;
+
+    for(; nstart>0; --nstart) {
+
+      randomAssignment(assignmentType, *assignment, *points, clusters.size());
+      CEC *nextCEC = new CEC(points, assignment, hartigan,
+			     killThreshold, type, radius, covMat);
+      nextCEC->loop();
+
+      if(nextCEC->entropy() < currentCEC->entropy()) {
+	delete currentCEC;
+	currentCEC = nextCEC;
+      }
+    }
+
+    return currentCEC;
   }
+
+
 
   void initClusters(std::list<Rcpp::List> &clusters, Rcpp::List &list) {
 
@@ -93,9 +114,12 @@ namespace gmum {
 	nrOfClusters = Rcpp::as<int>(list[CONST::nrOfClusters]);
     
       for(unsigned int i = 0; i < nrOfClusters; ++i)
-	clusters.push_back(Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = CONST::CLUSTERS::standard));
+	clusters.push_back(Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = 
+					      CONST::CLUSTERS::standard));
     }
   }
+
+
 
   void initVectors(std::vector<ClusterType> &type, 
 		   std::vector<arma::mat> &covMat,
@@ -130,6 +154,24 @@ namespace gmum {
     }
   }
 
+
+
+  void randomAssignment(Assignment assignmentType, std::vector<unsigned int> &assignment,
+			arma::mat &points, int nrOfClusters) {
+
+    switch(assignmentType) {
+    case random:
+      initAssignRandom(assignment, points.n_rows, nrOfClusters);
+      break;
+    case kmeanspp:
+      initAssignKmeanspp(assignment, points, points.n_rows, nrOfClusters);
+      break;
+    }
+  
+  }
+
+
+
   std::list<float> CECpredict(CEC* cec, std::vector<float> vec, bool general) {
     arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
     std::list<float> out;
@@ -139,6 +181,8 @@ namespace gmum {
 
     return out;
   }
+
+
 
   unsigned int CECpredict(CEC *cec, std::vector<float> vec) {
     arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);

@@ -48,8 +48,9 @@ namespace gmum {
       selected.pop_front();
     }
 
-    //assign point
-    for(unsigned int i=0; i<nrOfPoints; ++i) assignment.push_back(findNearest(i, centers, points));
+    //assign points
+    for(unsigned int i=0; i<nrOfPoints; ++i)
+      assignment.push_back(findNearest(i, centers, points));
 
   }
 

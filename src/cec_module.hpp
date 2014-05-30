@@ -10,18 +10,6 @@
 
 namespace gmum {
 
-  CEC* CEC__new(SEXP args);
-
-  void initClusters(std::list<Rcpp::List> &clusters, Rcpp::List &list);
-
-  void initVectors(std::vector<ClusterType> &type, 
-		   std::vector<arma::mat> &covMat,
-		   std::vector<float> &radius,
-		   std::list<Rcpp::List> clusters);
-
-  std::list<float> CECpredict(CEC*, std::vector<float>, bool);
-  unsigned int CECpredict(CEC*, std::vector<float>);
-
   struct CONST {
     static const char* dataset;
     static const char* nrOfClusters;
@@ -54,6 +42,23 @@ namespace gmum {
     kmeanspp, random
   };
 
+
+  CEC* CEC__new(SEXP args);
+
+  void initClusters(std::list<Rcpp::List> &clusters, Rcpp::List &list);
+
+  void initVectors(std::vector<ClusterType> &type, 
+		   std::vector<arma::mat> &covMat,
+		   std::vector<float> &radius,
+		   std::list<Rcpp::List> clusters);
+
+  void randomAssignment(Assignment assignmentType, std::vector<unsigned int> &assignment,
+			arma::mat &points, int nrOfClusters);
+
+  std::list<float> CECpredict(CEC*, std::vector<float>, bool);
+  unsigned int CECpredict(CEC*, std::vector<float>);
+
+
   const char* CONST::dataset = "x";
   const char* CONST::nrOfClusters = "k";
   const char* CONST::clusters = "params.mix";
@@ -77,6 +82,7 @@ namespace gmum {
   const char* CONST::CLUSTERS::covMat = "params.cov";
   const char* CONST::CLUSTERS::radius = "params.r";
   
+
   RCPP_MODULE(cec) {
     using namespace Rcpp;
 
