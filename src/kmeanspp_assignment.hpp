@@ -16,6 +16,9 @@ namespace gmum {
     unsigned int pointNumber;
     float distance;
     Pair(unsigned int n) : pointNumber(n), distance(0) {}
+    bool operator<(Pair p) {
+      return distance >= p.distance;
+    }
   };
 
   void initAssignKmeanspp(std::vector<unsigned int> &assignment,
