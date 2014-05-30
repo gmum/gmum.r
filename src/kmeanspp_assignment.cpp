@@ -22,6 +22,7 @@ namespace gmum {
     else {
       boost::random::uniform_int_distribution<> uniform(0,section-1);
       unsigned int k=0;
+      //nrOfPoints > section
       for(; k<nrOfPoints-section; k+=section) {
 	unsigned int target = k+uniform(gen);
 	selected.push_back(target);
@@ -37,8 +38,8 @@ namespace gmum {
     --nrOfClusters;
 
     //choose other centers
-    float bernouli_p = 0.8;
-    boost::random::bernoulli_distribution<> bernoulli(bernouli_p);
+    float bernoulli_p = 0.8;
+    boost::random::bernoulli_distribution<> bernoulli(bernoulli_p);
 
     for(; nrOfClusters > 0; --nrOfClusters) {
       calculateDistance(centers, selected, points);
@@ -56,20 +57,57 @@ namespace gmum {
 			 std::list<Pair> &selected,
 			 arma::mat &points) {
 
+    for(std::list<Pair>::iterator it=selected.begin(); it != selected.end(); ++it) {
+      arma::rowvec point = points.row(it->pointNumber);
+      float distance = std::numeric_limits<float>::max();
+
+      for(unsigned int i=0; i<centers.size(); ++i) {
+	arma::rowvec vec = points.row(centers[i]) - point;
+	float tempDist = arma::as_scalar(vec*vec.t());
+	if(distance > tempDist) distance = tempDist;
+      }
+
+      it->distance = distance;
+    }
+
+    selected.sort();
   }
 
   std::list<Pair>::iterator choose(boost::random::bernoulli_distribution<> &bernoulli,
 			      boost::random::mt19937 &gen,
 			      std::list<Pair> &selected) {
 
-    return selected.begin();
+    std::list<Pair>::iterator it = selected.begin();
+    for(; !bernoulli(gen) && it != selected.end(); ++it);
+
+    if(it == selected.end()) {
+      it = selected.end();
+      --it;
+    }
+
+    return it;
   }
 
   unsigned int findNearest(unsigned int i, 
 			   std::vector<unsigned int> &centers,
 			   arma::mat &points) {
 
-    return i;
+    arma::rowvec point = points.row(i);
+    float distance = std::numeric_limits<float>::max();
+    unsigned int nearest = -1;
+
+    for(unsigned int i=0; i<centers.size(); ++i) {
+
+      arma::rowvec vec = points.row(centers[i]) - point;
+      float tempDist = arma::as_scalar(vec*vec.t());
+
+      if(distance > tempDist) {
+	distance = tempDist;
+	nearest = i;
+      }
+    }
+
+    return nearest;
   }
 
 }
