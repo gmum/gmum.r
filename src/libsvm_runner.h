@@ -31,8 +31,8 @@ public:
 	bool canHandle(SVMConfiguration&);
 
 private:
-	svm_node ** armatlib(arma::mat);
-
+	svm_node ** armatlib(arma::mat); // arma to libsvm standard
+	double *	vectlib(arma::vec); //arma vector to lisvm
 };
 
 #endif /* LIBSVMRUNNER_H_ */
