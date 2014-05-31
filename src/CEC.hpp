@@ -34,7 +34,7 @@ namespace gmum {
 	float killThreshold, int numberOfClusters);
 
     // for debug purposes
-    std::vector<Cluster> clusters;
+    std::vector<boost::shared_ptr<Cluster> > clusters;
     void loop();
     void singleLoop();
     float entropy();

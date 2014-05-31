@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include <armadillo>
 #include "src/Cluster.hpp"
-
+using  namespace gmum;
 class ClusterTest : public ::testing::Test {
 protected:
   virtual void SetUp() {

@@ -29,7 +29,7 @@ TEST(OnlineFormulas,AddPoint){
   }
   
   
-  Cluster m = Cluster(id,fits,initMatrix);
+  boost::shared_ptr<Cluster> m(new Cluster(id,fits,initMatrix));
   // Dodajemy element o indeksie i  
   for (int i = beg ; i < n-1 ; ++i){
     

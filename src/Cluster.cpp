@@ -54,20 +54,22 @@ namespace gmum {
     covMat = out;
   }
 
-  Cluster Cluster::addPoint(arma::rowvec &point) {
+  boost::shared_ptr<Cluster> Cluster::addPoint(arma::rowvec &point) {
     int ncount = count+1;
     arma::rowvec nmean =  (count*mean + point)/(ncount);
     arma::rowvec  r = mean - point;
     arma::mat nCovMat = (1.0*count/ncount)*(covMat +(r.t() * r)/ncount);
-    return Cluster(ncount,nmean,nCovMat);
+    //    return Cluster(ncount,nmean,nCovMat);
+    return createInstance(ncount,nmean,nCovMat);
   }
 
-  Cluster Cluster::removePoint(arma::rowvec &point) {
+  boost::shared_ptr<Cluster> Cluster::removePoint(arma::rowvec &point) {
     int ncount = count -1;
     arma::rowvec nmean = (count*mean - point)/ncount;
     arma::rowvec r = mean -point;
     arma::mat nCovMat = (1.0*count/ncount)*(covMat - (r.t()*r)/ncount);
-    return Cluster(ncount,nmean,nCovMat);
+    //    return Cluster(ncount,nmean,nCovMat);
+    return createInstance(ncount,nmean,nCovMat);
   }
 
   int Cluster::size() {
@@ -124,8 +126,11 @@ namespace gmum {
     _entropy = p*(N*log(2*M_PI)/2 + arma::trace(covMat)/(2*r) + N*log(r)/2 -log(p));
   }
 
-  ClusterSpherical::ClusterSpherical(unsigned int id, std::vector<unsigned int> &assignment,
-				     arma::mat &points) : Cluster(id,assignment,points) {}
+  ClusterSpherical::ClusterSpherical(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points) : Cluster() {
+    covMatComputed = false;
+    initializeMean(id,assignment,points);
+    
+}
 
   void ClusterSpherical::calculateEntropy() {
     float p = 1.0*count / numberOfPoints;
@@ -139,5 +144,42 @@ namespace gmum {
     float p = 1.0*count / numberOfPoints;
     _entropy = p*( N*log(2*M_PI*M_E)/2 + log(arma::det(arma::diagmat(covMat)))/2 -log(p));
   }
+  /*
+    New contructors
+   */
+  
+  ClusterCovMat::ClusterCovMat(int _count,arma::rowvec & _mean, arma::mat & covMat) :
+    Cluster(_count,_mean,covMat){}
+  ClusterConstRadius::ClusterConstRadius(int _count,arma::rowvec & _mean, arma::mat & covMat) :
+    Cluster(_count,_mean,covMat){}
+  ClusterSpherical::ClusterSpherical(int _count,arma::rowvec & _mean, arma::mat & covMat) :
+    Cluster(_count,_mean,covMat){}
 
+  ClusterDiagonal::ClusterDiagonal(int _count,arma::rowvec & _mean, arma::mat & covMat) :
+    Cluster(_count,_mean,covMat){}
+  /*
+   * CreateInstance 
+
+   */
+  boost::shared_ptr<Cluster> Cluster::createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat) {
+    return boost::shared_ptr<Cluster>(new Cluster(_count,_mean,covMat));
+  }
+   
+  boost::shared_ptr<Cluster> ClusterCovMat::createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat) {
+      return boost::shared_ptr<Cluster>(new ClusterCovMat(_count,_mean,covMat));
+  
+}
+
+  boost::shared_ptr<Cluster> ClusterConstRadius::createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat) {
+      return boost::shared_ptr<Cluster>(new ClusterConstRadius(_count,_mean,covMat));
+  }
+
+  boost::shared_ptr<Cluster> ClusterSpherical::createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat) {
+      return boost::shared_ptr<Cluster>(new ClusterSpherical(_count,_mean,covMat));
+  }
+
+  boost::shared_ptr<Cluster> ClusterDiagonal::createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat) {
+      return boost::shared_ptr<Cluster>(new ClusterDiagonal(_count,_mean,covMat));
+  }
+   
 }

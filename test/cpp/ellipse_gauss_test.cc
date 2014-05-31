@@ -8,7 +8,7 @@
 #include <vector>
 #include <armadillo>
 #include <boost/smart_ptr.hpp>
-
+using namespace gmum;
 TEST(EllipseGauss,answer_cluster_same_length) {
   std::vector<unsigned int> clustering;
   std::vector<std::vector<double> > points;
