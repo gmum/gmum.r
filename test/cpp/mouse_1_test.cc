@@ -7,7 +7,7 @@
 #include <vector>
 #include <armadillo>
 #include <boost/smart_ptr.hpp>
-
+using namespace gmum;
 class Mouse1Test : public ::testing::Test {
 protected:
   Mouse1Test() {

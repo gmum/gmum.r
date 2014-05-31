@@ -5,7 +5,7 @@ namespace gmum {
   Hartigan::Hartigan(bool logNrOfClusters, bool logEnergy) : Algorithm(logNrOfClusters, logEnergy) {}
 
   TotalResult Hartigan::loop(arma::mat &points, std::vector<unsigned int> &assignment,
-			     float killThreshold, std::vector<Cluster> &clusters) {
+			     float killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters) {
     TotalResult result;
     SingleResult sr;
 
@@ -18,7 +18,7 @@ namespace gmum {
   }
 
   SingleResult Hartigan::singleLoop(arma::mat &points, std::vector<unsigned int> &assignment, 
-				    float killThreshold, std::vector<Cluster> &clusters) {
+				    float killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters) {
 
     int switched = 0;  //numer of points who has been moved to another cluster
 
@@ -29,12 +29,12 @@ namespace gmum {
       for(unsigned int k = 0; k < clusters.size(); k++)
 	if(k != source) {
 
-	  Cluster &oldSource = clusters[source];
-	  Cluster &oldTarget = clusters[k];
-	  Cluster newSource = clusters[source].removePoint(point);
-	  Cluster newTarget = clusters[k].addPoint(point);
-	  float oldEntropy = oldSource.entropy()+oldTarget.entropy() ;
-	  float newEntropy = newSource.entropy()+newTarget.entropy();
+	  boost::shared_ptr<Cluster> oldSource = clusters[source];
+	  boost::shared_ptr<Cluster> oldTarget = clusters[k];
+	  boost::shared_ptr<Cluster> newSource = clusters[source]->removePoint(point);
+	  boost::shared_ptr<Cluster> newTarget = clusters[k]->addPoint(point);
+	  float oldEntropy = oldSource->entropy()+oldTarget->entropy() ;
+	  float newEntropy = newSource->entropy()+newTarget->entropy();
 
 	  if(newEntropy < oldEntropy) {
 	    clusters[source] = newSource;
@@ -46,7 +46,7 @@ namespace gmum {
 
 	    //if cluster has number of members lower than threshold, remove the cluster
 	    //threshold is fraction of all points
-	    if(clusters[source].size() < killThreshold*Cluster::numberOfPoints) {
+	    if(clusters[source]->size() < killThreshold*Cluster::numberOfPoints) {
 
 	      //delete cluster
 	      clusters.erase(clusters.begin() + source);
@@ -59,15 +59,15 @@ namespace gmum {
 	
 		  arma::rowvec pointToAssign = points.row(j);
 		  int minEntropyChangeElementIndex = -1;
-		  Cluster minEntropyChangeCluster;
+		  boost::shared_ptr<Cluster> minEntropyChangeCluster;
 		  float minEntropyChange = std::numeric_limits<float>::max();
 		
 		  //find the best cluster to assign the point to it 
 		  for(unsigned int l = 0; l < clusters.size(); l++){
 		    if(l != source) {
-		      Cluster &oldTarget = clusters[l];
-		      Cluster newTarget = clusters[l].addPoint(pointToAssign);
-		      float entropyChange = newTarget.entropy() - oldTarget.entropy();
+		      boost::shared_ptr<Cluster> oldTarget = clusters[l];
+		      boost::shared_ptr<Cluster> newTarget = clusters[l]->addPoint(pointToAssign);
+		      float entropyChange = newTarget->entropy() - oldTarget->entropy();
 		      if(entropyChange < minEntropyChange){
 			minEntropyChange = entropyChange;
 			minEntropyChangeElementIndex = l;
@@ -95,7 +95,7 @@ namespace gmum {
 
     float energy = 0;
     if(logEnergy)
-      for(int i=0; i<clusters.size(); ++i) energy += clusters[i].entropy();
+      for(int i=0; i<clusters.size(); ++i) energy += clusters[i]->entropy();
 
     return SingleResult(switched, clusters.size(), energy);
   }
