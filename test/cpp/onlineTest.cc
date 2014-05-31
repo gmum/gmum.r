@@ -4,7 +4,8 @@
 #include <armadillo>
 #include <vector>
 #include "src/Cluster.hpp"
-
+#include <boost/shared_ptr.hpp>
+using namespace gmum;
 
 TEST(OnlineFormulas,AddPoint){
   //arma_rng::set_seed(0);
@@ -42,14 +43,14 @@ TEST(OnlineFormulas,AddPoint){
 
 
     arma::rowvec point(data.row(i));
-    m = m.addPoint(point);
+    m = m->addPoint(point);
     Cluster tmp(id,fits,tmpMatrix);
-    arma::rowvec  meanOnlineDifference = m.getMean() - realM;
+    arma::rowvec  meanOnlineDifference = m->getMean() - realM;
     arma::mat meanInitDifference = realM - tmp.getMean();
-    arma::mat covOnlineDifference = m.getCovMat() - covariance;
+    arma::mat covOnlineDifference = m->getCovMat() - covariance;
     arma::mat covInitDifference = covariance - tmp.getCovMat();
   
-    EXPECT_EQ(m.size(),tmp.size());
+    EXPECT_EQ(m->size(),tmp.size());
     
     for (int j = 0 ; j < dim; ++j){
       EXPECT_LT(std::abs(meanOnlineDifference(j)),acceptableDifference) << "at position" << j << " means differ by more than " << acceptableDifference;
@@ -92,7 +93,7 @@ TEST(OnlineFormulas,removePoint){
   }
   
   
-  Cluster m = Cluster(id,fits,initMatrix);
+  boost::shared_ptr<Cluster> m(new Cluster(id,fits,initMatrix));
   // Dodajemy element o indeksie i  
   for (int i = n-1 ; i > end ; --i){
     
@@ -105,14 +106,14 @@ TEST(OnlineFormulas,removePoint){
 
 
     arma::rowvec point(data.row(i));
-    m = m.removePoint(point);
+    m = m->removePoint(point);
     Cluster tmp(id,fits,tmpMatrix);
-    arma::rowvec  meanOnlineDifference = m.getMean() - realM;
+    arma::rowvec  meanOnlineDifference = m->getMean() - realM;
     arma::mat meanInitDifference = realM - tmp.getMean();
-    arma::mat covOnlineDifference = m.getCovMat() - covariance;
+    arma::mat covOnlineDifference = m->getCovMat() - covariance;
     arma::mat covInitDifference = covariance - tmp.getCovMat();
   
-    EXPECT_EQ(m.size(),tmp.size());
+    EXPECT_EQ(m->size(),tmp.size());
     
     for (int j = 0 ; j < dim; ++j){
       EXPECT_LT(std::abs(meanOnlineDifference(j)),acceptableDifference) << "at position" << j << " means differ by more than " << acceptableDifference;

@@ -6,7 +6,7 @@
 #include <vector>
 #include <armadillo>
 #include <boost/smart_ptr.hpp>
-
+using namespace gmum;
 TEST(Simple_1,IsEnergyCorrect) {
   boost::shared_ptr<std::vector<unsigned int> > clustering(new std::vector<unsigned int>());
   ClusterReader clusterReader("simple_1",2);
@@ -18,13 +18,13 @@ TEST(Simple_1,IsEnergyCorrect) {
 
   boost::shared_ptr<arma::mat> points(new arma::mat(clusterReader.getPointsInMatrix()));
   double killThreshold = 0.0001;
-  boost::shared_ptr<Hartigan> hartigan(new Hartigan());
+  boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
   CEC cec(points,clustering, hartigan, killThreshold, 1);
 
   std::cout << cec.entropy() << std::endl;
   std::cout << clusterReader.getEnergy() << std::endl;
-  std::cout << " mean : " << cec.clusters[0].getMean() << std::endl;
+  std::cout << " mean : " << cec.clusters[0]->getMean() << std::endl;
   std::cout << clusterReader.getEnergy() << std::endl;
-  std::cout << " cov : " << cec.clusters[0].getCovMat() << std::endl;
+  std::cout << " cov : " << cec.clusters[0]->getCovMat() << std::endl;
   EXPECT_LT(std::abs(cec.entropy() - clusterReader.getEnergy()) , 1e-4);
 }
