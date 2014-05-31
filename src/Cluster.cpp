@@ -166,8 +166,7 @@ namespace gmum {
   }
    
   boost::shared_ptr<Cluster> ClusterCovMat::createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat) {
-      return boost::shared_ptr<Cluster>(new ClusterCovMat(_count,_mean,covMat));
-  
+      return boost::shared_ptr<Cluster>(new ClusterCovMat(_count,_mean,covMat));  
 }
 
   boost::shared_ptr<Cluster> ClusterConstRadius::createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat) {
