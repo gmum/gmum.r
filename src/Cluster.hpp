@@ -23,7 +23,8 @@ namespace gmum {
     void initializeCovarianceMatrix(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
   
     Cluster(int _count,arma::rowvec & _mean, arma::mat & covMat);
-    virtual boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat);
+    template<class T> boost::shared_ptr<Cluster>
+    createInstance(T *instance, int _count,arma::rowvec & _mean, arma::mat & covMat);
   public:
     Cluster();
     Cluster(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
@@ -42,7 +43,6 @@ namespace gmum {
     void calculateEntropy();
     arma::mat invSigma;
     float sigmaDet;
-    boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat);
   public:
     ClusterCovMat(const arma::mat & invSigma, float sigmaDet, int _count,arma::rowvec & _mean, arma::mat & covMat);
     ClusterCovMat(const arma::mat & sigma, unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
@@ -51,7 +51,6 @@ namespace gmum {
   class ClusterConstRadius : public Cluster {
     void calculateEntropy();
     float r;
-    virtual boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat);
   public:
     ClusterConstRadius(float r, int _count,arma::rowvec & _mean, arma::mat & covMat);
     ClusterConstRadius(float r, unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
@@ -59,7 +58,6 @@ namespace gmum {
 
   class ClusterSpherical : public Cluster {
     void calculateEntropy();
-    boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat);
   public:
     ClusterSpherical(int _count,arma::rowvec & _mean, arma::mat & covMat);
     ClusterSpherical(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
@@ -67,7 +65,6 @@ namespace gmum {
 
   class ClusterDiagonal : public Cluster {
     void calculateEntropy();
-    virtual boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat);
   public:
     ClusterDiagonal(int _count,arma::rowvec & _mean, arma::mat & covMat);
     ClusterDiagonal(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
@@ -80,8 +77,6 @@ namespace gmum {
     bool computedCovMat;
     void computeCovMatTrace(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
   public:
-    
-  
     
   };
 
