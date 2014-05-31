@@ -38,7 +38,7 @@ TEST_F(Mouse1Test,IsEnergyCorrect) {
   for (int i = 0 ; i < t ; ++i) {
     boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
     initAssignRandom(*assignment, points->n_rows, numberOfClusters);
-    boost::shared_ptr<Hartigan> hartigan(new Hartigan());
+    boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
     CEC cec(points, clustering, hartigan, killThreshold, numberOfClusters);
 
     cec.loop();
