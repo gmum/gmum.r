@@ -48,33 +48,7 @@ namespace gmum {
     ClusterCovMat(const arma::mat & sigma, unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
   };
 
-  class ClusterConstRadius : public ClusterOnlyTrace {
-    void calculateEntropy();
-    float r;
-    virtual boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean);
-  public:
-    ClusterConstRadius(float r, int _count,arma::rowvec & _mean, arma::mat & covMat);
-    ClusterConstRadius(float r, unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
-  };
-
-
-  class ClusterSpherical : public ClusterOnlyTrace {
-    void calculateEntropy();
-    boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean);
-  public:
-    ClusterSpherical(int _count,arma::rowvec & _mean, arma::mat & covMat);
-    ClusterSpherical(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
-  };
-
-  class ClusterDiagonal : public Cluster {
-    void calculateEntropy();
-    virtual boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat);
-  public:
-    ClusterDiagonal(int _count,arma::rowvec & _mean, arma::mat & covMat);
-    ClusterDiagonal(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
-  };
-
-  class ClusterOnlyTrace : public Cluster {
+    class ClusterOnlyTrace : public Cluster {
   protected:
 
     
@@ -93,6 +67,34 @@ namespace gmum {
     // for test purposes
     double getCovMatTrace();
   };
+
+
+  class ClusterConstRadius : public ClusterOnlyTrace {
+    void calculateEntropy();
+    float r;
+    virtual boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean, double _covMatTrace);
+  public:
+    ClusterConstRadius(float r, int _count,arma::rowvec & _mean, double _covMatTrace);
+    ClusterConstRadius(float r, unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
+  };
+
+
+  class ClusterSpherical : public ClusterOnlyTrace {
+    void calculateEntropy();
+    boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean, double _covMatTrace);
+  public:
+    ClusterSpherical(int _count,arma::rowvec & _mean, double _covMatTrace);
+    ClusterSpherical(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
+  };
+
+  class ClusterDiagonal : public Cluster {
+    void calculateEntropy();
+    virtual boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat);
+  public:
+    ClusterDiagonal(int _count,arma::rowvec & _mean, arma::mat & covMat);
+    ClusterDiagonal(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
+  };
+
 
 
 
