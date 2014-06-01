@@ -6,7 +6,7 @@ energyOneCluster <- function( kind, probab, covariances,dimOfData){ # Move this 
     energy = probab*( -log(probab)+0.5*log(det(covariances) ) +dimOfData*0.5*log(2*pi*exp(1)))
   },      
   { # 2
-    energy = 1
+    energy = probab*( -log(probab)+0.5*dimOfData*log(tr(covariances) ) +dimOfData*0.5*log(2*pi*exp(1)/dimOfData))
   })
   return(energy)
 }
