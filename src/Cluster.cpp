@@ -119,15 +119,14 @@ namespace gmum {
   }
 
   ClusterConstRadius::ClusterConstRadius(float r, unsigned int id, std::vector<unsigned int> &assignment,
-					 arma::mat &points) : Cluster(id,assignment,points), r(r) {}
+					 arma::mat &points) : ClusterOnlyTrace(id,assignment,points), r(r) {}
 
   void ClusterConstRadius::calculateEntropy() {
     float p = 1.0*count / numberOfPoints;
     _entropy = p*(N*log(2*M_PI)/2 + covMatTrace/(2*r) + N*log(r)/2 -log(p));
   }
 
-  ClusterSpherical::ClusterSpherical(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points) : Cluster() {
-    initializeMean(id,assignment,points);
+  ClusterSpherical::ClusterSpherical(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points) : ClusterOnlyTrace(id,assignment,points) {
     
 }
 
@@ -151,12 +150,12 @@ namespace gmum {
     Cluster(_count,_mean,covMat), invSigma(_invSigma), sigmaDet(_sigmaDet){
 
 }
-  ClusterConstRadius::ClusterConstRadius(float r,int _count,arma::rowvec & _mean, arma::mat & covMat) :
-    Cluster(_count,_mean,covMat), r(r){ 
+  ClusterConstRadius::ClusterConstRadius(float r,int _count,arma::rowvec & _mean, double _covMatTrace) :
+    ClusterOnlyTrace(_count,_mean,_covMatTrace), r(r){ 
     
 }
-  ClusterSpherical::ClusterSpherical(int _count,arma::rowvec & _mean, arma::mat & covMat) :
-    Cluster(_count,_mean,covMat){}
+  ClusterSpherical::ClusterSpherical(int _count,arma::rowvec & _mean, double  _covMatTrace) :
+    ClusterOnlyTrace(_count,_mean,_covMatTrace){}
 
   ClusterDiagonal::ClusterDiagonal(int _count,arma::rowvec & _mean, arma::mat & covMat) :
     Cluster(_count,_mean,covMat){}
@@ -172,12 +171,12 @@ namespace gmum {
     return boost::shared_ptr<Cluster>(new ClusterCovMat(invSigma,sigmaDet,_count,_mean,covMat));  
 }
 
-  boost::shared_ptr<Cluster> ClusterConstRadius::createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat) {
-    return boost::shared_ptr<Cluster>(new ClusterConstRadius(r,_count,_mean,covMat));
+  boost::shared_ptr<Cluster> ClusterConstRadius::createInstance(int _count,arma::rowvec & _mean, double _covMatTrace) {
+    return boost::shared_ptr<Cluster>(new ClusterConstRadius(r,_count,_mean,_covMatTrace));
   }
 
-  boost::shared_ptr<Cluster> ClusterSpherical::createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat) {
-      return boost::shared_ptr<Cluster>(new ClusterSpherical(_count,_mean,covMat));
+  boost::shared_ptr<Cluster> ClusterSpherical::createInstance(int _count,arma::rowvec & _mean, double _covMatTrace) {
+    return boost::shared_ptr<Cluster>(new ClusterSpherical(_count,_mean,_covMatTrace));
   }
 
   boost::shared_ptr<Cluster> ClusterDiagonal::createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat) {
