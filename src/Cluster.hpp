@@ -27,13 +27,13 @@ namespace gmum {
   public:
     Cluster();
     Cluster(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
-    boost::shared_ptr<Cluster> addPoint(arma::rowvec &point);
-    boost::shared_ptr<Cluster> removePoint(arma::rowvec &point);
+    virtual boost::shared_ptr<Cluster> addPoint(arma::rowvec &point);
+    virtual boost::shared_ptr<Cluster> removePoint(arma::rowvec &point);
     float entropy();
     int size();
     arma::rowvec initializeMean(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
     arma::rowvec getMean();
-    arma::mat getCovMat();
+    virtual arma::mat getCovMat();
     float predict(arma::rowvec);
     static unsigned int numberOfPoints;
   };
@@ -75,14 +75,21 @@ namespace gmum {
 
   class ClusterOnlyTrace : public Cluster {
   protected:
-    virtual void calculateEntropy() = 0;
+
     float covMatTrace;
-    bool computedCovMat;
-    void computeCovMatTrace(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
+    bool _computedCovMat;
+    void computeCovMatTrace();
+    void computeCovMatTrace(unsigned int id, std::vector<unsigned int> &assignment,const arma::mat &points);
+    virtual boost::shared_ptr<ClusterOnlyTrace> createInstance(int _count,const arma::rowvec & _mean, float _covMatTrace);
   public:
+    ClusterOnlyTrace(int _count,const arma::rowvec & _mean, float _covMatTrace);
+    ClusterOnlyTrace(unsigned int id, std::vector<unsigned int> & assignment, arma::mat & points);
     
-  
-    
+    virtual boost::shared_ptr<Cluster> addPoint(arma::rowvec &point);
+    virtual boost::shared_ptr<Cluster> removePoint(arma::rowvec &point);
+    bool computedCovMat();
+    // for test purposes
+    float getCovMatTrace();
   };
 
 }

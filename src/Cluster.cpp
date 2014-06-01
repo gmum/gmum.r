@@ -183,5 +183,58 @@ namespace gmum {
   boost::shared_ptr<Cluster> ClusterDiagonal::createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat) {
       return boost::shared_ptr<Cluster>(new ClusterDiagonal(_count,_mean,covMat));
   }
-   
+  
+  void ClusterOnlyTrace::computeCovMatTrace(unsigned int id, std::vector<unsigned int> &assignment,const arma::mat &points) {
+      
+    covMatTrace = 0.0;
+    for(unsigned int i = 0; i < points.n_rows; i++)
+      if(assignment[i] == id) {
+	arma::rowvec point = points.row(i);
+	arma::rowvec tmp = point-mean;
+	covMatTrace += (dot(tmp,tmp))/(count);
+      }
+  }
+
+  ClusterOnlyTrace::ClusterOnlyTrace(int _count, const arma::rowvec & _mean, float _covMatTrace){
+    covMatTrace = _covMatTrace;
+    count = _count;
+    mean = _mean;
+    _computedCovMat = false;
+  }
+
+  ClusterOnlyTrace::ClusterOnlyTrace(unsigned int id, std::vector<unsigned int> & assignment, arma::mat & points){
+    initializeMean(id,assignment,points);
+    computeCovMatTrace(id,assignment,points);
+    _computedCovMat = false;
+  }
+  
+  boost::shared_ptr<Cluster> ClusterOnlyTrace::addPoint(arma::rowvec & point) {
+    int ncount = count+1;
+    arma::rowvec nmean =  (count*mean + point)/(ncount);
+    arma::rowvec  r = nmean - point;
+    arma::rowvec meanDiff = mean - nmean;
+    float ntrace = ((covMatTrace + dot(meanDiff,meanDiff))*count  + dot(r,r))/ncount;
+    return createInstance(ncount,nmean,ntrace);
+  }
+
+  boost::shared_ptr<Cluster> ClusterOnlyTrace::removePoint(arma::rowvec & point) {
+    int ncount = count -1;
+    arma::rowvec nmean = (count*mean - point)/(ncount);
+    arma::rowvec meanDiff = mean - nmean;
+    arma::rowvec  r = nmean - point;
+    float ntrace = ((covMatTrace + dot(meanDiff,meanDiff))*count  - dot(r,r))/ncount;
+    return createInstance(ncount,nmean,ntrace);
+  }
+  
+  bool ClusterOnlyTrace::computedCovMat() {
+    return _computedCovMat;
+  }
+
+  float ClusterOnlyTrace::getCovMatTrace(){ 
+    return covMatTrace;
+  }
+
+   boost::shared_ptr<ClusterOnlyTrace> ClusterOnlyTrace::createInstance(int _count,const arma::rowvec & _mean, float _covMatTrace) {
+    return boost::shared_ptr<ClusterOnlyTrace>(new ClusterOnlyTrace(_count,_mean,_covMatTrace));
+  }
 }
