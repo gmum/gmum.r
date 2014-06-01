@@ -12,10 +12,30 @@ private:
 	SVMConfiguration config;
 	void createFlow();
 public:
-	SVMConfiguration getConfig();
-	arma::vec getResult();
 	SVMClient(SVMConfiguration*);
+
+	void setX( arma::mat );
+	void setY( arma::vec );
+
+	arma::mat getX();
+	arma::vec getY();
+	arma::vec getPrediction();
+
+	std::string getLibrary();
+	std::string getKernel();
+	std::string getPreprocess();
+
+	double getCacheSize();
+	int getDegree();
+	double getGamma();
+	double getCoef0();
+	double getC();
+	double getEps();
+	bool isShrinking();
+	bool isProbability();
+
 	void run();
+	void predict( arma::mat );
 };
 
 #endif
