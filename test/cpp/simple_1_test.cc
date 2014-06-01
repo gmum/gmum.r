@@ -7,7 +7,10 @@
 #include <armadillo>
 #include <boost/smart_ptr.hpp>
 using namespace gmum;
+
+#define SHOW(x) std::cout << #x << " = " << x << std::endl
 TEST(Simple_1,IsEnergyCorrect) {
+  std::cout.precision(21);
   boost::shared_ptr<std::vector<unsigned int> > clustering(new std::vector<unsigned int>());
   ClusterReader clusterReader("simple_1",2);
   clusterReader.getClustering(*clustering);
@@ -24,6 +27,8 @@ TEST(Simple_1,IsEnergyCorrect) {
   std::cout << cec.entropy() << std::endl;
   std::cout << clusterReader.getEnergy() << std::endl;
   std::cout << " mean : " << cec.clusters[0]->getMean() << std::endl;
+  SHOW(cec.clusters[0]->getMean().n_rows );
+  SHOW(cec.clusters[0]->getMean().n_cols); 
   std::cout << clusterReader.getEnergy() << std::endl;
   std::cout << " cov : " << cec.clusters[0]->getCovMat() << std::endl;
   EXPECT_LT(std::abs(cec.entropy() - clusterReader.getEnergy()) , 1e-4);

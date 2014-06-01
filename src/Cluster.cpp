@@ -1,7 +1,8 @@
 #include "Cluster.hpp"
 
 namespace gmum {
-
+  //#define D(x) std::cout << #x << " = " << x << std::endl
+  #define D(x) 
   Cluster::Cluster(int _count, arma::rowvec & _mean, arma::mat & _covMat):
     count(_count),mean(_mean),covMat(_covMat) {
     N = covMat.n_cols;
@@ -55,6 +56,7 @@ namespace gmum {
   }
 
   boost::shared_ptr<Cluster> Cluster::addPoint(arma::rowvec &point) {
+    
     int ncount = count+1;
     arma::rowvec nmean =  (count*mean + point)/(ncount);
     arma::rowvec  r = mean - point;
@@ -119,7 +121,9 @@ namespace gmum {
   }
 
   ClusterConstRadius::ClusterConstRadius(float r, unsigned int id, std::vector<unsigned int> &assignment,
-					 arma::mat &points) : ClusterOnlyTrace(id,assignment,points), r(r) {}
+					 arma::mat &points) : ClusterOnlyTrace(id,assignment,points), r(r) {
+    calculateEntropy();
+}
 
   void ClusterConstRadius::calculateEntropy() {
     float p = 1.0*count / numberOfPoints;
@@ -127,12 +131,19 @@ namespace gmum {
   }
 
   ClusterSpherical::ClusterSpherical(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points) : ClusterOnlyTrace(id,assignment,points) {
-    
+    calculateEntropy();
 }
 
   void ClusterSpherical::calculateEntropy() {
     float p = 1.0*count / numberOfPoints;
+    D(N);
+    D(covMatTrace);
+    D(log(covMatTrace));
+    D(p);
+    
     _entropy = p*(N*log(2*M_PI*M_E/N)/2 + N*log(covMatTrace)/2 -log(p));
+    D(_entropy);
+    D(entropy());
   }
 
   ClusterDiagonal::ClusterDiagonal(unsigned int id, std::vector<unsigned int> &assignment,
@@ -150,15 +161,18 @@ namespace gmum {
     Cluster(_count,_mean,covMat), invSigma(_invSigma), sigmaDet(_sigmaDet){
 
 }
-  ClusterConstRadius::ClusterConstRadius(float r,int _count,arma::rowvec & _mean, double _covMatTrace) :
+  ClusterConstRadius::ClusterConstRadius(float r,int _count,const arma::rowvec & _mean, double _covMatTrace) :
     ClusterOnlyTrace(_count,_mean,_covMatTrace), r(r){ 
-    
+    calculateEntropy();
 }
-  ClusterSpherical::ClusterSpherical(int _count,arma::rowvec & _mean, double  _covMatTrace) :
-    ClusterOnlyTrace(_count,_mean,_covMatTrace){}
+  ClusterSpherical::ClusterSpherical(int _count, const arma::rowvec & _mean, double  _covMatTrace) :
+    ClusterOnlyTrace(_count,_mean,_covMatTrace){
+    calculateEntropy();
+}
 
   ClusterDiagonal::ClusterDiagonal(int _count,arma::rowvec & _mean, arma::mat & covMat) :
-    Cluster(_count,_mean,covMat){}
+    Cluster(_count,_mean,covMat){
+  }
   /*
    * CreateInstance 
 
@@ -171,12 +185,12 @@ namespace gmum {
     return boost::shared_ptr<Cluster>(new ClusterCovMat(invSigma,sigmaDet,_count,_mean,covMat));  
 }
 
-  boost::shared_ptr<Cluster> ClusterConstRadius::createInstance(int _count,arma::rowvec & _mean, double _covMatTrace) {
-    return boost::shared_ptr<Cluster>(new ClusterConstRadius(r,_count,_mean,_covMatTrace));
+  boost::shared_ptr<ClusterOnlyTrace> ClusterConstRadius::createInstance(int _count,const arma::rowvec & _mean, double _covMatTrace) {
+    return boost::shared_ptr<ClusterOnlyTrace>(new ClusterConstRadius(r,_count,_mean,_covMatTrace));
   }
 
-  boost::shared_ptr<Cluster> ClusterSpherical::createInstance(int _count,arma::rowvec & _mean, double _covMatTrace) {
-    return boost::shared_ptr<Cluster>(new ClusterSpherical(_count,_mean,_covMatTrace));
+  boost::shared_ptr<ClusterOnlyTrace> ClusterSpherical::createInstance(int _count,const arma::rowvec & _mean, double _covMatTrace) {
+    return boost::shared_ptr<ClusterOnlyTrace>(new ClusterSpherical(_count,_mean,_covMatTrace));
   }
 
   boost::shared_ptr<Cluster> ClusterDiagonal::createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat) {
@@ -196,15 +210,17 @@ namespace gmum {
     covMatTrace /= count;
   }
 
-  ClusterOnlyTrace::ClusterOnlyTrace(int _count, const arma::rowvec & _mean, float _covMatTrace){
+  ClusterOnlyTrace::ClusterOnlyTrace(int _count, const arma::rowvec & _mean, double _covMatTrace){
     covMatTrace = _covMatTrace;
     count = _count;
     mean = _mean;
+    N = mean.n_cols;
     _computedCovMat = false;
   }
 
   ClusterOnlyTrace::ClusterOnlyTrace(unsigned int id, std::vector<unsigned int> & assignment, arma::mat & points){
     initializeMean(id,assignment,points);
+    N = points.n_cols;
     computeCovMatTrace(id,assignment,points);
     _computedCovMat = false;
   }
@@ -214,7 +230,7 @@ namespace gmum {
     arma::rowvec nmean =  (count*mean + point)/(ncount);
     arma::rowvec  r = nmean - point;
     arma::rowvec meanDiff = mean - nmean;
-    float ntrace = ((covMatTrace + dot(meanDiff,meanDiff))*count  + dot(r,r))/ncount;
+    double ntrace = ((covMatTrace + dot(meanDiff,meanDiff))*count  + dot(r,r))/ncount;
     return createInstance(ncount,nmean,ntrace);
   }
 
@@ -223,7 +239,7 @@ namespace gmum {
     arma::rowvec nmean = (count*mean - point)/(ncount);
     arma::rowvec meanDiff = mean - nmean;
     arma::rowvec  r = nmean - point;
-    float ntrace = ((covMatTrace + dot(meanDiff,meanDiff))*count  - dot(r,r))/ncount;
+    double ntrace = ((covMatTrace + dot(meanDiff,meanDiff))*count  - dot(r,r))/ncount;
     return createInstance(ncount,nmean,ntrace);
   }
   
@@ -235,7 +251,7 @@ namespace gmum {
     return covMatTrace;
   }
 
-   boost::shared_ptr<ClusterOnlyTrace> ClusterOnlyTrace::createInstance(int _count,const arma::rowvec & _mean, float _covMatTrace) {
+   boost::shared_ptr<ClusterOnlyTrace> ClusterOnlyTrace::createInstance(int _count,const arma::rowvec & _mean, double _covMatTrace) {
     return boost::shared_ptr<ClusterOnlyTrace>(new ClusterOnlyTrace(_count,_mean,_covMatTrace));
   }
 }
