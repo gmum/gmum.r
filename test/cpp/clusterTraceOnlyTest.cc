@@ -9,7 +9,7 @@ using namespace gmum;
 
 TEST(TraceOnly,AddPoint){
   //arma_rng::set_seed(0);
-  int n = 100;
+  int n = 10000;
   int dim = 2;
   int beg = dim+1;
   double acceptableDifference = 1e-6;
@@ -50,9 +50,11 @@ TEST(TraceOnly,AddPoint){
     Cluster tmp(id,fits,tmpMatrix);
     arma::rowvec  meanOnlineDifference = upref->getMean() - realM;
     float traceDiff = upref->getCovMatTrace() - arma::trace(covariance);
+    float relativeError = std::abs(traceDiff/arma::trace(covariance));
   
     EXPECT_EQ(m->size(),tmp.size());
     EXPECT_LT(std::abs(traceDiff),acceptableDifference);
+    std::cout << i << " : " << relativeError << std::endl;
     for (int j = 0 ; j < dim; ++j){
       EXPECT_LT(std::abs(meanOnlineDifference(j)),acceptableDifference) << "at position" << j << " means differ by more than " << acceptableDifference;
       
@@ -104,7 +106,8 @@ TEST(TraceOnly,removePoint){
     ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m.get());   
  arma::rowvec  meanOnlineDifference = upref->getMean() - realM;
     float traceDiff = upref->getCovMatTrace() - arma::trace(covariance);
-  
+        float relativeError = std::abs(traceDiff/arma::trace(covariance));
+	std::cout << i << " " << relativeError << std::endl;
     EXPECT_EQ(m->size(),tmp.size());
     EXPECT_LT(std::abs(traceDiff), acceptableDifference);
     for (int j = 0 ; j < dim; ++j){

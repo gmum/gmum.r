@@ -123,7 +123,7 @@ namespace gmum {
 
   void ClusterConstRadius::calculateEntropy() {
     float p = 1.0*count / numberOfPoints;
-    _entropy = p*(N*log(2*M_PI)/2 + arma::trace(covMat)/(2*r) + N*log(r)/2 -log(p));
+    _entropy = p*(N*log(2*M_PI)/2 + covMatTrace/(2*r) + N*log(r)/2 -log(p));
   }
 
   ClusterSpherical::ClusterSpherical(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points) : Cluster() {
@@ -133,7 +133,7 @@ namespace gmum {
 
   void ClusterSpherical::calculateEntropy() {
     float p = 1.0*count / numberOfPoints;
-    _entropy = p*(N*log(2*M_PI*M_E/N)/2 + N*log(arma::trace(covMat))/2 -log(p));
+    _entropy = p*(N*log(2*M_PI*M_E/N)/2 + N*log(covMatTrace)/2 -log(p));
   }
 
   ClusterDiagonal::ClusterDiagonal(unsigned int id, std::vector<unsigned int> &assignment,
@@ -191,8 +191,10 @@ namespace gmum {
       if(assignment[i] == id) {
 	arma::rowvec point = points.row(i);
 	arma::rowvec tmp = point-mean;
-	covMatTrace += (dot(tmp,tmp))/(count);
+	//covMatTrace += (dot(tmp,tmp))/(count);
+	covMatTrace += dot(tmp,tmp);
       }
+    covMatTrace /= count;
   }
 
   ClusterOnlyTrace::ClusterOnlyTrace(int _count, const arma::rowvec & _mean, float _covMatTrace){
@@ -230,7 +232,7 @@ namespace gmum {
     return _computedCovMat;
   }
 
-  float ClusterOnlyTrace::getCovMatTrace(){ 
+  double ClusterOnlyTrace::getCovMatTrace(){ 
     return covMatTrace;
   }
 
