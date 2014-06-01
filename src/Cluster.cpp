@@ -99,7 +99,7 @@ namespace gmum {
   }
 
   unsigned int Cluster::numberOfPoints = 0;
-
+  void Cluster::computeCovarianceMatrix(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points) {}
   /*
    * entropy
    */
@@ -251,7 +251,12 @@ namespace gmum {
     return covMatTrace;
   }
 
-   boost::shared_ptr<ClusterOnlyTrace> ClusterOnlyTrace::createInstance(int _count,const arma::rowvec & _mean, double _covMatTrace) {
-    return boost::shared_ptr<ClusterOnlyTrace>(new ClusterOnlyTrace(_count,_mean,_covMatTrace));
-  }
+  //  boost::shared_ptr<ClusterOnlyTrace> ClusterOnlyTrace::createInstance(int _count,const arma::rowvec & _mean, double _covMatTrace) {
+  //   return boost::shared_ptr<ClusterOnlyTrace>(new ClusterOnlyTrace(_count,_mean,_covMatTrace));
+  // }
+
+    void ClusterOnlyTrace::computeCovarianceMatrix(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points) {
+      initializeCovarianceMatrix(id,assignment,points);
+      _computedCovMat = true;
+    }
 }

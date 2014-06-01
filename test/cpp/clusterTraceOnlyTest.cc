@@ -32,7 +32,7 @@ TEST(TraceOnly,AddPoint){
   ASSERT_TRUE(true);
  
  
-  boost::shared_ptr<Cluster> m(new ClusterOnlyTrace(id,fits,initMatrix));
+  boost::shared_ptr<Cluster> m(new ClusterSpherical(id,fits,initMatrix));
   // Dodajemy element o indeksie i  
   for (int i = beg ; i < n-1 ; ++i){
     
@@ -87,7 +87,7 @@ TEST(TraceOnly,removePoint){
   }
   
   
-  boost::shared_ptr<Cluster> m(new ClusterOnlyTrace(id,fits,initMatrix));
+  boost::shared_ptr<Cluster> m(new ClusterSpherical(id,fits,initMatrix));
   // Dodajemy element o indeksie i  
   for (int i = n-1 ; i > end ; --i){
     
