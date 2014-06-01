@@ -33,18 +33,24 @@ dataPath = file.path("..","..","test","data")
 simplePath = file.path(dataPath,"simple_1")
 mousePath = file.path(dataPath,"mouse_1")
 ellipsePath = file.path(dataPath,"EllipseGauss")
-rpath = ellipsePath
+rpath = mousePath
 dataSetPath = file.path(rpath,"input.txt")
-labelPath = file.path(rpath,"cluster.txt")
+labelPathPrzemek = file.path(rpath,"cluster.txt")
+labelPathMy = file.path(rpath,"our_clusters.txt")
 
 
 
 dataSet <- matrix(as.numeric(as.matrix(read.table(dataSetPath),skipNul=TRUE)),ncol=2);
 
-label <- as.matrix(read.table(labelPath));
-label <- label + (1 - min(label))
+labelPrzemek <- as.matrix(read.table(labelPathPrzemek));
+print(min(labelPrzemek))
+labelPrzemek<- labelPrzemek + (1 - min(labelPrzemek))
+labelMy <- as.matrix(read.table(labelPathMy));
+print (min(labelMy))
+labelMy<- labelMy + (1 - min(labelMy))
 
-CECEnergy(dataSet,label,1)
+print(CECEnergy(dataSet,labelPrzemek,1))
+print(CECEnergy(dataSet,labelMy,1))
   
   
 #file.path("gmum.r\\test\\data\\simple_1\\input.txt", fsep = .Platform$file.sep)

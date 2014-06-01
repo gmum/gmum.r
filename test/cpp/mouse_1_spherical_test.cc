@@ -29,6 +29,8 @@ protected:
   int numberOfClusters;
 };
 
+#define SHOW_CLUSTERING
+
 TEST_F(Mouse1SphericalTest,IsEnergyCorrect) {
   double killThreshold = 0.0001;
   BestPermutationComparator comparator;
@@ -52,6 +54,13 @@ TEST_F(Mouse1SphericalTest,IsEnergyCorrect) {
     std::cout << "Percentage " << percentage << std::endl;
     std::cout << "Energy " << cec.entropy() << std::endl;
     numberOfTimesAcceptable += (percentage >= 0.9) || (cec.entropy() < energy*1.5);
+    #ifdef SHOW_CLUSTERING
+    std::cout << "BEGIN" << std::endl;
+    for (std::vector<unsigned int>::iterator it = assignment->begin() ; it!=assignment->end() ; ++it)
+      std::cout << *it << std::endl;
+    std::cout << "END" << std::endl;
+    #endif
+
   }  
   EXPECT_GT(numberOfTimesAcceptable , t/2);
 }
