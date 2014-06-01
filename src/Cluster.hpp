@@ -48,18 +48,19 @@ namespace gmum {
     ClusterCovMat(const arma::mat & sigma, unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
   };
 
-  class ClusterConstRadius : public Cluster {
+  class ClusterConstRadius : public ClusterOnlyTrace {
     void calculateEntropy();
     float r;
-    virtual boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat);
+    virtual boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean);
   public:
     ClusterConstRadius(float r, int _count,arma::rowvec & _mean, arma::mat & covMat);
     ClusterConstRadius(float r, unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
   };
 
-  class ClusterSpherical : public Cluster {
+
+  class ClusterSpherical : public ClusterOnlyTrace {
     void calculateEntropy();
-    boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat);
+    boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean);
   public:
     ClusterSpherical(int _count,arma::rowvec & _mean, arma::mat & covMat);
     ClusterSpherical(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
@@ -76,7 +77,8 @@ namespace gmum {
   class ClusterOnlyTrace : public Cluster {
   protected:
 
-    float covMatTrace;
+    
+    double covMatTrace;
     bool _computedCovMat;
     void computeCovMatTrace();
     void computeCovMatTrace(unsigned int id, std::vector<unsigned int> &assignment,const arma::mat &points);
@@ -89,8 +91,10 @@ namespace gmum {
     virtual boost::shared_ptr<Cluster> removePoint(arma::rowvec &point);
     bool computedCovMat();
     // for test purposes
-    float getCovMatTrace();
+    double getCovMatTrace();
   };
+
+
 
 }
 
