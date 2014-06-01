@@ -9,7 +9,7 @@ CXXFLAGS := $(PKG_CXXFLAGS) -g -O2 -s -pthread
 LDLIBS := $(PKG_LIBS) $(LDLIBS) -O1 -larmadillo -O1 -llapack -lblas
 USER_DIR = ../../src
 
-TESTS = ClusterTest firstTest onlineTest ellipse_gauss_test simple_1_test mouse_1_test
+TESTS = ClusterTest firstTest onlineTest ellipse_gauss_test simple_1_test mouse_1_test clusterTraceOnlyTest
 
 GTEST_HEADERS = $(GTEST)/include/gtest/*.h \
                 $(GTEST)/include/gtest/internal/*.h
@@ -66,6 +66,9 @@ firstTest : gtest_main.a
 
 onlineTest: gtest_main.a 
 	$(CXX) onlineTest.cc src/Cluster.hpp src/Cluster.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+
+clusterTraceOnlyTest: gtest_main.a 
+	$(CXX) clusterTraceOnlyTest.cc src/Cluster.hpp src/Cluster.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 ellipse_gauss_test: gtest_main.a 
 	$(CXX) ellipse_gauss_test.cc src/CEC.hpp src/CEC.cpp src/Cluster.hpp src/Cluster.cpp src/Hartigan.hpp src/Hartigan.cpp src/random_assignment.hpp src/random_assignment.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
