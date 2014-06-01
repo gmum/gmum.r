@@ -56,9 +56,9 @@ namespace gmum {
     bool _computedCovMat;
     void computeCovMatTrace();
     void computeCovMatTrace(unsigned int id, std::vector<unsigned int> &assignment,const arma::mat &points);
-    virtual boost::shared_ptr<ClusterOnlyTrace> createInstance(int _count,const arma::rowvec & _mean, float _covMatTrace);
+    virtual boost::shared_ptr<ClusterOnlyTrace> createInstance(int _count,const arma::rowvec & _mean, double _covMatTrace);
   public:
-    ClusterOnlyTrace(int _count,const arma::rowvec & _mean, float _covMatTrace);
+    ClusterOnlyTrace(int _count,const arma::rowvec & _mean, double _covMatTrace);
     ClusterOnlyTrace(unsigned int id, std::vector<unsigned int> & assignment, arma::mat & points);
     
     virtual boost::shared_ptr<Cluster> addPoint(arma::rowvec &point);
@@ -72,18 +72,18 @@ namespace gmum {
   class ClusterConstRadius : public ClusterOnlyTrace {
     void calculateEntropy();
     float r;
-    virtual boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean, double _covMatTrace);
+    virtual boost::shared_ptr<ClusterOnlyTrace> createInstance(int _count,const arma::rowvec & _mean, double _covMatTrace);
   public:
-    ClusterConstRadius(float r, int _count,arma::rowvec & _mean, double _covMatTrace);
+    ClusterConstRadius(float r, int _count,const arma::rowvec & _mean, double _covMatTrace);
     ClusterConstRadius(float r, unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
   };
 
 
   class ClusterSpherical : public ClusterOnlyTrace {
     void calculateEntropy();
-    boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean, double _covMatTrace);
+    boost::shared_ptr<ClusterOnlyTrace> createInstance(int _count,const arma::rowvec & _mean, double _covMatTrace);
   public:
-    ClusterSpherical(int _count,arma::rowvec & _mean, double _covMatTrace);
+    ClusterSpherical(int _count,const arma::rowvec & _mean, double _covMatTrace);
     ClusterSpherical(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
   };
 

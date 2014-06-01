@@ -64,3 +64,66 @@ TEST_F(Mouse1SphericalTest,IsEnergyCorrect) {
   }  
   EXPECT_GT(numberOfTimesAcceptable , t/2);
 }
+
+
+TEST_F(Mouse1SphericalTest,StartingFromCorrectAssignment) {
+  double killThreshold = 0.0001;
+  BestPermutationComparator comparator;
+  int t = 1;
+  int numberOfTimesAcceptable = 0;  
+  std::cout << "Should get energy : " << energy;
+  for (int i = 0 ; i < t ; ++i) {
+    boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
+    for (std::vector<unsigned int>::iterator it = clustering->begin();it!=clustering->end(); ++it)
+      assignment->push_back(*it);
+    //    initAssignRandom(*assignment, points->n_rows, numberOfClusters);
+    boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
+    std::vector<ClusterType> types;
+    std::vector<float> radius;
+    std::vector<arma::mat> covMatrices;
+    for (int i = 0 ; i < numberOfClusters ; ++i){
+      types.push_back(spherical);
+    }
+    CEC cec(points, assignment, hartigan, killThreshold, types,radius,covMatrices);
+
+    cec.loop();
+    double percentage = comparator.evaluateClustering(numberOfClusters,*points,*assignment,*clustering);
+    std::cout << "Percentage " << percentage << std::endl;
+    std::cout << "Energy " << cec.entropy() << std::endl;
+    numberOfTimesAcceptable += (percentage >= 0.9) || (cec.entropy() < energy*1.5);
+    #ifdef SHOW_CLUSTERING
+    std::cout << "BEGIN" << std::endl;
+    for (std::vector<unsigned int>::iterator it = assignment->begin() ; it!=assignment->end() ; ++it)
+      std::cout << *it << std::endl;
+    std::cout << "END" << std::endl;
+    #endif
+
+  }  
+  EXPECT_GT(numberOfTimesAcceptable , t ==1 ?  0.9 : t/2);
+}
+// TEST_F(Mouse1SphericalTest,NormalIsEnergyCorrect) {
+//     double killThreshold = 0.0001;
+//   BestPermutationComparator comparator;
+//   int t = 20;
+//   int numberOfTimesAcceptable = 0;  
+//   std::cout << "Should get energy : " << energy;
+//   for (int i = 0 ; i < t ; ++i) {
+//     boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
+//     initAssignRandom(*assignment, points->n_rows, numberOfClusters);
+//     boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
+//     CEC cec(points, assignment, hartigan, killThreshold, numberOfClusters);
+
+//     cec.loop();
+//     double percentage = comparator.evaluateClustering(numberOfClusters,*points,*assignment,*clustering);
+//     std::cout << "Percentage " << percentage << std::endl;
+//     std::cout << "Energy " << cec.entropy() << std::endl;
+//     numberOfTimesAcceptable += (percentage >= 0.9) || (cec.entropy() < energy*1.5);
+//         #ifdef SHOW_CLUSTERING
+//     std::cout << "BEGIN" << std::endl;
+//     for (std::vector<unsigned int>::iterator it = assignment->begin() ; it!=assignment->end() ; ++it)
+//       std::cout << *it << std::endl;
+//     std::cout << "END" << std::endl;
+//     #endif
+//   }  
+//   EXPECT_GT(numberOfTimesAcceptable , t/2);
+// }

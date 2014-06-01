@@ -33,6 +33,7 @@ namespace gmum {
       }
       clusters.push_back(cluster);
     }
+
   }
 
   CEC::CEC(boost::shared_ptr<arma::mat> points, 
@@ -57,8 +58,9 @@ namespace gmum {
 
   float CEC::entropy() {
     float s= 0.0;
-    for (std::vector<boost::shared_ptr<Cluster> >::iterator it = clusters.begin() ; it!= clusters.end();++it )
+    for (std::vector<boost::shared_ptr<Cluster> >::iterator it = clusters.begin() ; it!= clusters.end();++it ){
       s+= (*it)->entropy();
+    }
     return s;
   }
 
