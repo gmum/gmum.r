@@ -13,6 +13,7 @@ protected:
   std::string inputPath();
   std::string clusterPath();
   std::string energyPath();
+  std::string dimensionPath();
   std::string folderName;
   std::vector<std::vector<double> > points;
   std::vector<unsigned int> clustering;
@@ -20,14 +21,18 @@ protected:
   unsigned int dim;
 public:
   ClusterReader(const char * _name,unsigned int _dim);
+  ClusterReader(const char * _name);
   void readPoints();
   void readClustering();
-  
+  void readDimension();
+
   void getPoints(std::vector<std::vector<double> > & out);
   void getClustering(std::vector<unsigned int> & out);
   void readEnergy();
   double getEnergy();
+  double getDimension();
   arma::mat getPointsInMatrix();
+ 
   
   
 };
@@ -36,6 +41,12 @@ ClusterReader::ClusterReader(const char * name, unsigned int _dim) {
   energy = -1;
   folderName = std::string(name);
   dim = _dim;
+}
+
+ClusterReader::ClusterReader(const char * name){
+  energy = -1;
+  folderName = std::string(name);
+  readDimension();
 }
 
 std::string ClusterReader::prefix() {
@@ -53,6 +64,12 @@ std::string ClusterReader::inputPath() {
 std::string ClusterReader::energyPath() {
   return prefix()+ "energy.txt";
 }
+
+std::string ClusterReader::dimensionPath() {
+  return prefix()+"dimension.txt";
+}
+
+
 
 void ClusterReader::readPoints() {
   std::cout << " read points " << std::endl;
@@ -113,6 +130,16 @@ void ClusterReader::readEnergy() {
   }
 }
 
+void ClusterReader::readDimension() {
+  std::ifstream file(dimensionPath().c_str());
+  if(file.is_open()){
+    file >> dim;
+    file.close();
+  }
+  else {
+    std::cerr << "Failed to open " << energyPath() << std::endl;
+  }
+}
 void ClusterReader::getPoints(std::vector<std::vector<double> > & out) {
     if (points.size() == 0) 
       readPoints();
@@ -132,6 +159,10 @@ double ClusterReader::getEnergy(){
   if (energy == -1)
     readEnergy();
   return energy;
+}
+
+double ClusterReader::getDimension(){ 
+  return dim;
 }
 
 arma::mat ClusterReader::getPointsInMatrix() {
