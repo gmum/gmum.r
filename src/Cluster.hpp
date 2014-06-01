@@ -36,6 +36,7 @@ namespace gmum {
     virtual arma::mat getCovMat();
     float predict(arma::rowvec);
     static unsigned int numberOfPoints;
+    virtual void computeCovarianceMatrix(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
   };
 
   class ClusterCovMat : public Cluster {
@@ -56,8 +57,9 @@ namespace gmum {
     bool _computedCovMat;
     void computeCovMatTrace();
     void computeCovMatTrace(unsigned int id, std::vector<unsigned int> &assignment,const arma::mat &points);
-    virtual boost::shared_ptr<ClusterOnlyTrace> createInstance(int _count,const arma::rowvec & _mean, double _covMatTrace);
+    virtual boost::shared_ptr<ClusterOnlyTrace> createInstance(int _count,const arma::rowvec & _mean, double _covMatTrace) = 0;
   public:
+     virtual void computeCovarianceMatrix(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
     ClusterOnlyTrace(int _count,const arma::rowvec & _mean, double _covMatTrace);
     ClusterOnlyTrace(unsigned int id, std::vector<unsigned int> & assignment, arma::mat & points);
     
