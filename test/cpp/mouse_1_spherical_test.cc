@@ -8,11 +8,11 @@
 #include <armadillo>
 #include <boost/smart_ptr.hpp>
 using namespace gmum;
-class Mouse1Test : public ::testing::Test {
+class Mouse1SphericalTest : public ::testing::Test {
 protected:
-  Mouse1Test() {
+  Mouse1SphericalTest() {
     clustering.reset(new std::vector<unsigned int>());
-    ClusterReader clusterReader("mouse_1",2);
+    ClusterReader clusterReader("mouse_1_spherical",2);
     clusterReader.getClustering(*clustering);
     points.reset(new arma::mat(clusterReader.getPointsInMatrix()));
     energy = clusterReader.getEnergy();
@@ -29,7 +29,7 @@ protected:
   int numberOfClusters;
 };
 
-TEST_F(Mouse1Test,IsEnergyCorrect) {
+TEST_F(Mouse1SphericalTest,IsEnergyCorrect) {
   double killThreshold = 0.0001;
   BestPermutationComparator comparator;
   int t = 20;
@@ -39,7 +39,13 @@ TEST_F(Mouse1Test,IsEnergyCorrect) {
     boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
     initAssignRandom(*assignment, points->n_rows, numberOfClusters);
     boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
-    CEC cec(points, assignment, hartigan, killThreshold, numberOfClusters);
+    std::vector<ClusterType> types;
+    std::vector<float> radius;
+    std::vector<arma::mat> covMatrices;
+    for (int i = 0 ; i < numberOfClusters ; ++i){
+      types.push_back(spherical);
+    }
+    CEC cec(points, assignment, hartigan, killThreshold, types,radius,covMatrices);
 
     cec.loop();
     double percentage = comparator.evaluateClustering(numberOfClusters,*points,*assignment,*clustering);
