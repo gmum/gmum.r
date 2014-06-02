@@ -49,7 +49,7 @@ boost::shared_ptr<arma::mat> points(new arma::mat(clusterReader.getPointsInMatri
     std::vector<float> radius;
     std::vector<arma::mat> covMatrices;
     for (int i = 0 ; i < numberOfClusters ; ++i){
-      types.push_back(spherical);
+      types.push_back(sphere);
     }
  for (int i = 0 ; i < times ; ++i) {
     boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
