@@ -24,7 +24,7 @@ namespace gmum {
       case diagonal:
 	cluster = boost::shared_ptr<Cluster>(new ClusterDiagonal(i, *assignment, *points));
 	break;
-      case spherical:
+      case sphere:
 	cluster = boost::shared_ptr<Cluster>(new ClusterSpherical(i, *assignment, *points));
 	break;
       case fsphere:
