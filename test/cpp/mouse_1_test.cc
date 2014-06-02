@@ -7,7 +7,7 @@
 #include <vector>
 #include <armadillo>
 #include <boost/smart_ptr.hpp>
-
+using namespace gmum;
 class Mouse1Test : public ::testing::Test {
 protected:
   Mouse1Test() {
@@ -29,6 +29,8 @@ protected:
   int numberOfClusters;
 };
 
+#define SHOW_CLUSTERING
+
 TEST_F(Mouse1Test,IsEnergyCorrect) {
   double killThreshold = 0.0001;
   BestPermutationComparator comparator;
@@ -38,14 +40,20 @@ TEST_F(Mouse1Test,IsEnergyCorrect) {
   for (int i = 0 ; i < t ; ++i) {
     boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
     initAssignRandom(*assignment, points->n_rows, numberOfClusters);
-    boost::shared_ptr<Hartigan> hartigan(new Hartigan());
-    CEC cec(points, clustering, hartigan, killThreshold, numberOfClusters);
+    boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
+    CEC cec(points, assignment, hartigan, killThreshold, numberOfClusters);
 
     cec.loop();
     double percentage = comparator.evaluateClustering(numberOfClusters,*points,*assignment,*clustering);
     std::cout << "Percentage " << percentage << std::endl;
     std::cout << "Energy " << cec.entropy() << std::endl;
     numberOfTimesAcceptable += (percentage >= 0.9) || (cec.entropy() < energy*1.5);
+        #ifdef SHOW_CLUSTERING
+    std::cout << "BEGIN" << std::endl;
+    for (std::vector<unsigned int>::iterator it = assignment->begin() ; it!=assignment->end() ; ++it)
+      std::cout << *it << std::endl;
+    std::cout << "END" << std::endl;
+    #endif
   }  
   EXPECT_GT(numberOfTimesAcceptable , t/2);
 }

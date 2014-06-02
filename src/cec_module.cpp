@@ -177,7 +177,7 @@ namespace gmum {
     std::list<float> out;
 
     if(general)
-      for(int i=0; i<cec->clusters.size(); ++i) out.push_back(cec->clusters[i].predict(x));
+      for(int i=0; i<cec->clusters.size(); ++i) out.push_back(cec->clusters[i]->predict(x));
 
     return out;
   }
@@ -192,9 +192,9 @@ namespace gmum {
   
     for(int i=0; i<cec->clusters.size(); ++i) {
 
-      Cluster &oldCluster = cec->clusters[i];
-      Cluster newCluster = cec->clusters[i].addPoint(x);
-      float entropyChange = newCluster.entropy() - oldCluster.entropy();
+      boost::shared_ptr<Cluster> oldCluster = cec->clusters[i];
+      boost::shared_ptr<Cluster> newCluster = cec->clusters[i]->addPoint(x);
+      float entropyChange = newCluster->entropy() - oldCluster->entropy();
 
       if(entropyChange < minEntropyChange) {
 	minEntropyChange = entropyChange;

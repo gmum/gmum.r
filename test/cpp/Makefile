@@ -6,10 +6,10 @@ include src/Makevars
 CXX := $(CXX) -isystem $(GTEST)/include
 CPPFLAGS := $(PKG_CPPFLAGS)
 CXXFLAGS := $(PKG_CXXFLAGS) -g -O2 -s -pthread
-LDLIBS := $(PKG_LIBS) $(LDLIBS) -larmadillo
+LDLIBS := $(PKG_LIBS) $(LDLIBS) -O1 -larmadillo -O1 -llapack -lblas
 USER_DIR = ../../src
 
-TESTS = ClusterTest firstTest onlineTest ellipse_gauss_test simple_1_test mouse_1_test
+TESTS = ClusterTest firstTest onlineTest ellipse_gauss_test simple_1_test mouse_1_test clusterTraceOnlyTest mouse_1_spherical_test big_data_tests.cc
 
 GTEST_HEADERS = $(GTEST)/include/gtest/*.h \
                 $(GTEST)/include/gtest/internal/*.h
@@ -67,13 +67,22 @@ firstTest : gtest_main.a
 onlineTest: gtest_main.a 
 	$(CXX) onlineTest.cc src/Cluster.hpp src/Cluster.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
+clusterTraceOnlyTest: gtest_main.a 
+	$(CXX) clusterTraceOnlyTest.cc src/Cluster.hpp src/Cluster.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+
 ellipse_gauss_test: gtest_main.a 
 	$(CXX) ellipse_gauss_test.cc src/CEC.hpp src/CEC.cpp src/Cluster.hpp src/Cluster.cpp src/Hartigan.hpp src/Hartigan.cpp src/random_assignment.hpp src/random_assignment.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 mouse_1_test: gtest_main.a 
 	$(CXX) mouse_1_test.cc src/CEC.hpp src/CEC.cpp src/Cluster.hpp src/Cluster.cpp src/Hartigan.hpp src/Hartigan.cpp src/random_assignment.hpp src/random_assignment.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
+mouse_1_spherical_test: gtest_main.a 
+	$(CXX) mouse_1_spherical_test.cc src/CEC.hpp src/CEC.cpp src/Cluster.hpp src/Cluster.cpp src/Hartigan.hpp src/Hartigan.cpp src/random_assignment.hpp src/random_assignment.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+
 simple_1_test: gtest_main.a 
 	$(CXX) simple_1_test.cc src/CEC.hpp src/CEC.cpp src/Cluster.hpp src/Cluster.cpp src/Hartigan.hpp src/Hartigan.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+
+big_data_tests: gtest_main.a 
+	$(CXX) big_data_tests.cc src/CEC.hpp src/CEC.cpp src/Cluster.hpp src/Cluster.cpp src/Hartigan.hpp src/Hartigan.cpp src/random_assignment.hpp src/random_assignment.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 endif

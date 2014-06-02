@@ -13,26 +13,27 @@ namespace gmum {
     clusters.reserve(type.size());
 
     for(unsigned int i = 0; i < type.size(); i++) {
-      Cluster cluster;
+      boost::shared_ptr<Cluster> cluster;
       switch(type[i]) {
       case standard:
-	cluster = Cluster(i, *assignment, *points);
+	cluster = boost::shared_ptr<Cluster>(new Cluster(i, *assignment, *points));
 	break;
       case full:
-	cluster = ClusterCovMat(covMatrices[i], i, *assignment, *points);
+	cluster = boost::shared_ptr<Cluster>(new ClusterCovMat(covMatrices[i], i, *assignment, *points));
 	break;
       case diagonal:
-	cluster = ClusterDiagonal(i, *assignment, *points);
+	cluster = boost::shared_ptr<Cluster>(new ClusterDiagonal(i, *assignment, *points));
 	break;
       case spherical:
-	cluster = ClusterSpherical(i, *assignment, *points);
+	cluster = boost::shared_ptr<Cluster>(new ClusterSpherical(i, *assignment, *points));
 	break;
       case fsphere:
-	cluster = ClusterConstRadius(radius[i], i, *assignment, *points);
+	cluster = boost::shared_ptr<Cluster>(new ClusterConstRadius(radius[i], i, *assignment, *points));
 	break;
       }
       clusters.push_back(cluster);
     }
+
   }
 
   CEC::CEC(boost::shared_ptr<arma::mat> points, 
@@ -44,7 +45,7 @@ namespace gmum {
     Cluster::numberOfPoints = points->n_rows;
     clusters.reserve(numberOfClusters);
     for(int i = 0; i < numberOfClusters; i++)
-      clusters.push_back(Cluster(i, *assignment, *points));
+      clusters.push_back(boost::shared_ptr<Cluster>(new Cluster(i, *assignment, *points)));
   }
 
   void CEC::loop() {
@@ -57,8 +58,9 @@ namespace gmum {
 
   float CEC::entropy() {
     float s= 0.0;
-    for (std::vector<Cluster>::iterator it = clusters.begin() ; it!= clusters.end();++it )
-      s+= it->entropy();
+    for (std::vector<boost::shared_ptr<Cluster> >::iterator it = clusters.begin() ; it!= clusters.end();++it ){
+      s+= (*it)->entropy();
+    }
     return s;
   }
 
@@ -69,7 +71,7 @@ namespace gmum {
   std::vector<arma::rowvec> CEC::centers() {
     std::vector<arma::rowvec> array;
     array.reserve(clusters.size());
-    for(int i=0; i<clusters.size(); ++i) array.push_back(clusters[i].getMean());
+    for(int i=0; i<clusters.size(); ++i) array.push_back(clusters[i]->getMean());
     return array;
   }
 
@@ -77,7 +79,7 @@ namespace gmum {
     std::vector<arma::mat> array;
     array.reserve(clusters.size());
 
-    for(int i=0; i<clusters.size(); ++i) array.push_back(clusters[i].getCovMat());
+    for(int i=0; i<clusters.size(); ++i) array.push_back(clusters[i]->getCovMat());
 
     return array;
   }
