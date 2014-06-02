@@ -183,7 +183,6 @@ namespace gmum {
 	it != clusters.end(); ++it, ++i) {
 
       std::string typeStr = Rcpp::as<std::string>((*it)[CONST::CLUSTERS::type]);
-      std::cout << typeStr << std::endl;
 
       if(typeStr.compare(CONST::CLUSTERS::standard)==0) type[i] = standard;
       else if(typeStr.compare(CONST::CLUSTERS::full)==0) {
