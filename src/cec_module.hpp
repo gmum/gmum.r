@@ -102,6 +102,7 @@ namespace gmum {
       .method("log.ncluster", &CEC::getNrOfClusters)
       .method("log.energy", &CEC::getEnergy)
       .method("log.iters", &CEC::iters)
+      .method("clustering",&CEC::getAssignment)
       ;
   }
 }
