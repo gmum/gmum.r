@@ -1,9 +1,9 @@
-#include "Cluster.hpp"
-#include "Algorithm.hpp"
-#include <armadillo>
+#include <RcppArmadillo.h>
 #include <vector>
 #include <list>
 #include <boost/smart_ptr.hpp>
+#include "Cluster.hpp"
+#include "Algorithm.hpp"
 
 #ifndef CEC_HPP
 #define CEC_HPP
