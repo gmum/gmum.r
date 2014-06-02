@@ -1,6 +1,6 @@
 #include <vector>
 #include <list>
-#include <armadillo>
+#include <RcppArmadillo.h>
 #include <time.h>
 #include <stdlib.h>
 #include <boost/random/mersenne_twister.hpp>

@@ -1,5 +1,4 @@
-#include <Rcpp.h>
-#include <armadillo>
+#include <RcppArmadillo.h>
 #include "Hartigan.hpp"
 #include "CEC.hpp"
 #include "random_assignment.hpp"
