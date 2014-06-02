@@ -23,8 +23,6 @@ namespace gmum {
     std::list<Rcpp::List> clusters;
     initClusters(clusters, list);
 
-    std::cout << clusters.size() << std::endl;
-
     if(points->n_rows < clusters.size()) 
       Rcpp::stop("Size of dataset cannot be less than number of clusters!");
 
@@ -40,8 +38,6 @@ namespace gmum {
     std::vector<arma::mat> covMat;
     std::vector<float> radius;
     initVectors(type, covMat, radius, clusters);
-
-    std::cout << "after vectors init" << std::endl;
 
     //logging options
     bool logNrOfClusters, logEnergy;
