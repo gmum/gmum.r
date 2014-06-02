@@ -45,7 +45,7 @@ TEST_F(Mouse1SphericalTest,IsEnergyCorrect) {
     std::vector<float> radius;
     std::vector<arma::mat> covMatrices;
     for (int i = 0 ; i < numberOfClusters ; ++i){
-      types.push_back(spherical);
+      types.push_back(sphere);
     }
     CEC cec(points, assignment, hartigan, killThreshold, types,radius,covMatrices);
 
@@ -82,7 +82,7 @@ TEST_F(Mouse1SphericalTest,StartingFromCorrectAssignment) {
     std::vector<float> radius;
     std::vector<arma::mat> covMatrices;
     for (int i = 0 ; i < numberOfClusters ; ++i){
-      types.push_back(spherical);
+      types.push_back(sphere);
     }
     CEC cec(points, assignment, hartigan, killThreshold, types,radius,covMatrices);
 
