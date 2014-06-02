@@ -139,10 +139,10 @@ namespace gmum {
 	  typeList = Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = 
 					CONST::CLUSTERS::diagonal);
 
-	} else if(type.compare(CONST::CLUSTERS::spherical)==0) {
+	} else if(type.compare(CONST::CLUSTERS::sphere)==0) {
 
 	  typeList = Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = 
-					CONST::CLUSTERS::spherical);
+					CONST::CLUSTERS::sphere);
 
 	} else if(type.compare(CONST::CLUSTERS::fsphere)==0) {
 
@@ -192,7 +192,7 @@ namespace gmum {
 	type[i] = fsphere;
 	radius[i] = Rcpp::as<float>((*it)[CONST::CLUSTERS::radius]);
 
-      } else if(typeStr.compare(CONST::CLUSTERS::spherical)==0) type[i] = spherical;
+      } else if(typeStr.compare(CONST::CLUSTERS::sphere)==0) type[i] = sphere;
       else if(typeStr.compare(CONST::CLUSTERS::diagonal)==0) type[i] = diagonal;
       else Rcpp::stop("you must specify cluster's type");
 

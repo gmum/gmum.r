@@ -24,7 +24,7 @@ namespace gmum {
       static const char* standard;
       static const char* full;
       static const char* diagonal;
-      static const char* spherical;
+      static const char* sphere;
       static const char* fsphere;
 
       static const char* init;
@@ -74,7 +74,7 @@ namespace gmum {
   const char* CONST::CLUSTERS::standard = "std";
   const char* CONST::CLUSTERS::full = "full";
   const char* CONST::CLUSTERS::diagonal = "diagonal";
-  const char* CONST::CLUSTERS::spherical = "spherical";
+  const char* CONST::CLUSTERS::sphere = "sphere";
   const char* CONST::CLUSTERS::fsphere = "fsphere";
 
   const char* CONST::CLUSTERS::init = "method.init";
