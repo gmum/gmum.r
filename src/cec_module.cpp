@@ -16,24 +16,22 @@ namespace gmum {
     //reuses memory and avoids extra copy
     boost::shared_ptr<arma::mat> points(new arma::mat(proxyDataset.begin(), proxyDataset.nrow(),
 						      proxyDataset.ncol(), false));
-
-    float killThreshold = 0.001;
-    int k = 1;
-    if(list.containsElementNamed(CONST::nrOfClusters)) {
-      k = Rcpp::as<int>(list[CONST::nrOfClusters]);
-      if(k <= 0) 
-	Rcpp::stop("Number of clusters should be a positive integer!");
-      if(proxyDataset.nrow() < k) 
-	Rcpp::stop("Size of dataset cannot be less than number of clusters!");
-    }
-    if(list.containsElementNamed(CONST::killThreshold)) {
-      killThreshold = Rcpp::as<float>(list[CONST::killThreshold]);
-      if(killThreshold > 1.0/k)
-	Rcpp::stop(std::string(CONST::killThreshold)+" is too hight");
-    }
-
+    /*
+     * read predefined clusters or creates standard description
+     * in standard number or number specified by user
+     */
     std::list<Rcpp::List> clusters;
     initClusters(clusters, list);
+
+    if(points->n_rows < clusters.size()) 
+      Rcpp::stop("Size of dataset cannot be less than number of clusters!");
+
+    float killThreshold = CONST::killThresholdInit;
+    if(list.containsElementNamed(CONST::killThreshold)) {
+      killThreshold = Rcpp::as<float>(list[CONST::killThreshold]);
+      if(killThreshold > 1.0/clusters.size())
+	Rcpp::stop(std::string(CONST::killThreshold)+" is too hight");
+    }
 
     //vectors init
     std::vector<ClusterType> type;
@@ -51,7 +49,6 @@ namespace gmum {
     if(list.containsElementNamed(CONST::energy) && Rcpp::as<bool>(list(CONST::energy)))
       logEnergy = true;
     else logEnergy = false;
-
 
     //number of starts
     unsigned int nstart = 20;
@@ -75,8 +72,10 @@ namespace gmum {
     boost::shared_ptr<Hartigan> hartigan(new Hartigan(logNrOfClusters, logEnergy));
 
     randomAssignment(assignmentType, *assignment, *points, clusters.size());
+
     CEC *currentCEC = new CEC(points, assignment, hartigan,
 			      killThreshold, type, radius, covMat);
+
     currentCEC->loop();
     --nstart;
 
@@ -103,15 +102,19 @@ namespace gmum {
     if(list.containsElementNamed(CONST::clusters)) {
 
       Rcpp::List desc = Rcpp::as<Rcpp::List>(list[CONST::clusters]);
-    
+
       for(Rcpp::List::iterator it = desc.begin(); it != desc.end(); ++it)
 	clusters.push_back(Rcpp::as<Rcpp::List>(*it));
 
     } else {
 
-      unsigned int nrOfClusters = 10;
-      if(list.containsElementNamed(CONST::nrOfClusters))
-	nrOfClusters = Rcpp::as<int>(list[CONST::nrOfClusters]);
+      unsigned int nrOfClusters = CONST::nrOfClustersInit;
+      if(list.containsElementNamed(CONST::nrOfClusters)) {
+	int temp = Rcpp::as<int>(list[CONST::nrOfClusters]);
+	if(temp <= 0)
+	  Rcpp::stop("Number of clusters should be a positive integer!");
+	else nrOfClusters = temp;
+      }
     
       for(unsigned int i = 0; i < nrOfClusters; ++i)
 	clusters.push_back(Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = 
@@ -124,7 +127,7 @@ namespace gmum {
   void initVectors(std::vector<ClusterType> &type, 
 		   std::vector<arma::mat> &covMat,
 		   std::vector<float> &radius,
-		   std::list<Rcpp::List> clusters) {
+		   std::list<Rcpp::List> &clusters) {
 
     type.resize(clusters.size());
     covMat.resize(clusters.size());
@@ -150,7 +153,8 @@ namespace gmum {
 
       } else if(typeStr.compare(CONST::CLUSTERS::spherical)==0) type[i] = spherical;
       else if(typeStr.compare(CONST::CLUSTERS::diagonal)==0) type[i] = diagonal;
-      //else must not happen
+      else Rcpp::stop("you must specify cluster's type");
+
     }
   }
 
