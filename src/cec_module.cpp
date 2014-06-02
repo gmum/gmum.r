@@ -116,9 +116,52 @@ namespace gmum {
 	else nrOfClusters = temp;
       }
     
+      Rcpp::List typeList;
+      if(list.containsElementNamed(CONST::CLUSTERS::type)) {
+	std::string type = Rcpp::as<std::string>(list[CONST::CLUSTERS::type]);
+
+	if(type.compare(CONST::CLUSTERS::standard)==0) {
+
+	  typeList = Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = 
+					CONST::CLUSTERS::standard);
+
+	} else if(type.compare(CONST::CLUSTERS::full)==0) {
+
+	  if(!list.containsElementNamed(CONST::CLUSTERS::covMat))
+	    Rcpp::stop("cavariance matrix required");
+
+	  Rcpp::NumericMatrix covMat = Rcpp::as<Rcpp::NumericMatrix>(list[CONST::CLUSTERS::covMat]);
+
+	  typeList = Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = 
+					CONST::CLUSTERS::full,
+					Rcpp::Named(CONST::CLUSTERS::covMat) = covMat);
+
+	} else if(type.compare(CONST::CLUSTERS::diagonal)==0) {
+
+	  typeList = Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = 
+					CONST::CLUSTERS::diagonal);
+
+	} else if(type.compare(CONST::CLUSTERS::spherical)==0) {
+
+	  typeList = Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = 
+					CONST::CLUSTERS::spherical);
+
+	} else if(type.compare(CONST::CLUSTERS::fsphere)==0) {
+
+	  if(!list.containsElementNamed(CONST::CLUSTERS::radius))
+	    Rcpp::stop("radius required");
+
+	  float radius = Rcpp::as<float>(list[CONST::CLUSTERS::radius]);
+	  typeList = Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = 
+					CONST::CLUSTERS::fsphere,
+					Rcpp::Named(CONST::CLUSTERS::radius) = radius);
+
+	} else Rcpp::stop("cannot recognise cluster type");
+
+      }
+
       for(unsigned int i = 0; i < nrOfClusters; ++i)
-	clusters.push_back(Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = 
-					      CONST::CLUSTERS::standard));
+	clusters.push_back(typeList);
     }
   }
 
