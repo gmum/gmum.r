@@ -113,7 +113,7 @@ namespace gmum {
 
 
 
-  ClusterOnlyTrace::ClusterOnlyTrace(int _count, const arma::rowvec & _mean, double _covMatTrace){
+  ClusterOnlyTrace::ClusterOnlyTrace(int _count, const arma::rowvec & _mean, double _covMatTrace) {
     covMatTrace = _covMatTrace;
     count = _count;
     mean = _mean;
@@ -121,7 +121,7 @@ namespace gmum {
     _computedCovMat = false;
   }
 
-  ClusterOnlyTrace::ClusterOnlyTrace(unsigned int id, std::vector<unsigned int> & assignment, arma::mat & points){
+  ClusterOnlyTrace::ClusterOnlyTrace(unsigned int id, std::vector<unsigned int> & assignment, arma::mat & points) {
     initializeMean(id,assignment,points);
     N = points.n_cols;
     computeCovMatTrace(id,assignment,points);
@@ -143,7 +143,7 @@ namespace gmum {
   
   template<class T> boost::shared_ptr<Cluster>
   ClusterOnlyTrace::createInstance(T* instance, int _count, const arma::rowvec & _mean, double _covMatTrace) {
-    return boost::shared_ptr<ClusterOnlyTrace>(new T(_count,_mean,_covMatTrace));
+    return boost::shared_ptr<Cluster>(new T(_count,_mean,_covMatTrace));
   }
 
   boost::shared_ptr<Cluster> ClusterOnlyTrace::addPoint(arma::rowvec & point) {
