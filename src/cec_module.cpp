@@ -23,6 +23,8 @@ namespace gmum {
     std::list<Rcpp::List> clusters;
     initClusters(clusters, list);
 
+    std::cout << clusters.size() << std::endl;
+
     if(points->n_rows < clusters.size()) 
       Rcpp::stop("Size of dataset cannot be less than number of clusters!");
 
@@ -38,6 +40,8 @@ namespace gmum {
     std::vector<arma::mat> covMat;
     std::vector<float> radius;
     initVectors(type, covMat, radius, clusters);
+
+    std::cout << "after vectors init" << std::endl;
 
     //logging options
     bool logNrOfClusters, logEnergy;
@@ -116,15 +120,13 @@ namespace gmum {
 	else nrOfClusters = temp;
       }
     
-      Rcpp::List typeList;
+      Rcpp::List typeList = Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = 
+					       CONST::CLUSTERS::standard);
       if(list.containsElementNamed(CONST::CLUSTERS::type)) {
 	std::string type = Rcpp::as<std::string>(list[CONST::CLUSTERS::type]);
 
 	if(type.compare(CONST::CLUSTERS::standard)==0) {
-
-	  typeList = Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = 
-					CONST::CLUSTERS::standard);
-
+	  //nothing but recognises
 	} else if(type.compare(CONST::CLUSTERS::full)==0) {
 
 	  if(!list.containsElementNamed(CONST::CLUSTERS::covMat))
@@ -181,6 +183,7 @@ namespace gmum {
 	it != clusters.end(); ++it, ++i) {
 
       std::string typeStr = Rcpp::as<std::string>((*it)[CONST::CLUSTERS::type]);
+      std::cout << typeStr << std::endl;
 
       if(typeStr.compare(CONST::CLUSTERS::standard)==0) type[i] = standard;
       else if(typeStr.compare(CONST::CLUSTERS::full)==0) {
