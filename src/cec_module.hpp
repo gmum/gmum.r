@@ -36,6 +36,9 @@ namespace gmum {
       static const char* radius;
 
     };
+
+    static const unsigned int nrOfClustersInit;
+    static const float killThresholdInit;
   };
 
   enum Assignment{
@@ -50,7 +53,7 @@ namespace gmum {
   void initVectors(std::vector<ClusterType> &type, 
 		   std::vector<arma::mat> &covMat,
 		   std::vector<float> &radius,
-		   std::list<Rcpp::List> clusters);
+		   std::list<Rcpp::List> &clusters);
 
   void randomAssignment(Assignment assignmentType, std::vector<unsigned int> &assignment,
 			arma::mat &points, int nrOfClusters);
@@ -82,6 +85,8 @@ namespace gmum {
   const char* CONST::CLUSTERS::covMat = "params.cov";
   const char* CONST::CLUSTERS::radius = "params.r";
   
+  const unsigned int CONST::nrOfClustersInit = 10;
+  const float CONST::killThresholdInit = 1e-4;
 
   RCPP_MODULE(cec) {
     using namespace Rcpp;

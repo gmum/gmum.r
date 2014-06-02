@@ -57,18 +57,18 @@ namespace gmum {
   boost::shared_ptr<Cluster> Cluster::addPoint(arma::rowvec &point) {
     int ncount = count+1;
     arma::rowvec nmean =  (count*mean + point)/(ncount);
-    arma::rowvec  r = mean - point;
+    arma::rowvec r = mean - point;
     arma::mat nCovMat = (1.0*count/ncount)*(covMat +(r.t() * r)/ncount);
-    //    return Cluster(ncount,nmean,nCovMat);
+
     return createInstance(this, ncount,nmean,nCovMat);
   }
 
   boost::shared_ptr<Cluster> Cluster::removePoint(arma::rowvec &point) {
-    int ncount = count -1;
+    int ncount = count-1;
     arma::rowvec nmean = (count*mean - point)/ncount;
-    arma::rowvec r = mean -point;
+    arma::rowvec r = mean - point;
     arma::mat nCovMat = (1.0*count/ncount)*(covMat - (r.t()*r)/ncount);
-    //    return Cluster(ncount,nmean,nCovMat);
+
     return createInstance(this, ncount,nmean,nCovMat);
   }
 
@@ -146,7 +146,7 @@ namespace gmum {
 
 
   ClusterSpherical::ClusterSpherical(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points)
-    : Cluster() {
+    : Cluster(id,assignment,points) {
     initializeMean(id,assignment,points);
   }
 
