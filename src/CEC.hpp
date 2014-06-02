@@ -11,7 +11,7 @@
 namespace gmum {
 
   enum ClusterType {
-    standard, full, diagonal, spherical, fsphere
+    standard, full, diagonal, sphere, fsphere
   };
 
   class CEC {
