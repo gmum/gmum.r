@@ -7,12 +7,12 @@
 #include <boost/shared_ptr.hpp>
 using namespace gmum;
 
-TEST(OnlineFormulas,AddPoint){
+TEST(TraceOnly,AddPoint){
   //arma_rng::set_seed(0);
-  int n = 100;
+  int n = 10000;
   int dim = 2;
   int beg = dim+1;
-  double acceptableDifference = 1e-10;
+  double acceptableDifference = 1e-6;
   
   std::vector<unsigned int> fits;
   unsigned id = 1;
@@ -29,8 +29,10 @@ TEST(OnlineFormulas,AddPoint){
     }
   }
   
-  
-  boost::shared_ptr<Cluster> m(new Cluster(id,fits,initMatrix));
+  ASSERT_TRUE(true);
+ 
+ 
+  boost::shared_ptr<Cluster> m(new ClusterSpherical(id,fits,initMatrix));
   // Dodajemy element o indeksie i  
   for (int i = beg ; i < n-1 ; ++i){
     
@@ -41,41 +43,33 @@ TEST(OnlineFormulas,AddPoint){
     arma::mat covariance= cov(tmpMatrix,1);
     arma::mat realM = mean(tmpMatrix);
 
-
+    
     arma::rowvec point(data.row(i));
     m = m->addPoint(point);
+    ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m.get());
     Cluster tmp(id,fits,tmpMatrix);
-    arma::rowvec  meanOnlineDifference = m->getMean() - realM;
-    arma::mat meanInitDifference = realM - tmp.getMean();
-    arma::mat covOnlineDifference = m->getCovMat() - covariance;
-    arma::mat covInitDifference = covariance - tmp.getCovMat();
+    arma::rowvec  meanOnlineDifference = upref->getMean() - realM;
+    float traceDiff = upref->getCovMatTrace() - arma::trace(covariance);
+    float relativeError = std::abs(traceDiff/arma::trace(covariance));
   
     EXPECT_EQ(m->size(),tmp.size());
-    
+    EXPECT_LT(std::abs(traceDiff),acceptableDifference);
+    std::cout << i << " : " << relativeError << std::endl;
     for (int j = 0 ; j < dim; ++j){
       EXPECT_LT(std::abs(meanOnlineDifference(j)),acceptableDifference) << "at position" << j << " means differ by more than " << acceptableDifference;
-      EXPECT_LT(std::abs(meanInitDifference(j)),acceptableDifference) << "at position" << j << " means differ by more than " << acceptableDifference;
       
     }
-    
-    for (int j = 0 ; j < dim; ++j){
-      for (int k = 0; k < dim ; ++k){
-	EXPECT_LT(std::abs(covOnlineDifference(j,k)),acceptableDifference ) << " at position (" << j << "," << k <<  ")" << "differs by more than " << acceptableDifference ;
-	EXPECT_LT(std::abs(covInitDifference(j,k)),acceptableDifference) << " at position (" << j << "," << k <<  ")" << "differs by more than " << acceptableDifference ;
-	 
-      }
-    }
  
-  }  
+  }
   
 }
 
-TEST(OnlineFormulas,removePoint){
+TEST(TraceOnly,removePoint){
   //arma_rng::set_seed(0);
   int n = 100;
   int dim = 2;
   int end = dim+1;
-  double acceptableDifference = 1e-10;
+  double acceptableDifference = 1e-6;
   
   std::vector<unsigned int> fits;
   unsigned id = 1;
@@ -93,7 +87,7 @@ TEST(OnlineFormulas,removePoint){
   }
   
   
-  boost::shared_ptr<Cluster> m(new Cluster(id,fits,initMatrix));
+  boost::shared_ptr<Cluster> m(new ClusterSpherical(id,fits,initMatrix));
   // Dodajemy element o indeksie i  
   for (int i = n-1 ; i > end ; --i){
     
@@ -108,28 +102,21 @@ TEST(OnlineFormulas,removePoint){
     arma::rowvec point(data.row(i));
     m = m->removePoint(point);
     Cluster tmp(id,fits,tmpMatrix);
-    arma::rowvec  meanOnlineDifference = m->getMean() - realM;
-    arma::mat meanInitDifference = realM - tmp.getMean();
-    arma::mat covOnlineDifference = m->getCovMat() - covariance;
-    arma::mat covInitDifference = covariance - tmp.getCovMat();
-  
+
+    ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m.get());   
+ arma::rowvec  meanOnlineDifference = upref->getMean() - realM;
+    float traceDiff = upref->getCovMatTrace() - arma::trace(covariance);
+        float relativeError = std::abs(traceDiff/arma::trace(covariance));
+	std::cout << i << " " << relativeError << std::endl;
     EXPECT_EQ(m->size(),tmp.size());
-    
+    EXPECT_LT(std::abs(traceDiff), acceptableDifference);
     for (int j = 0 ; j < dim; ++j){
       EXPECT_LT(std::abs(meanOnlineDifference(j)),acceptableDifference) << "at position" << j << " means differ by more than " << acceptableDifference;
-      EXPECT_LT(std::abs(meanInitDifference(j)),acceptableDifference) << "at position" << j << " means differ by more than " << acceptableDifference;
-      
     }
     
-    for (int j = 0 ; j < dim; ++j){
-      for (int k = 0; k < dim ; ++k){
-	EXPECT_LT(std::abs(covOnlineDifference(j,k)),acceptableDifference ) << " at position (" << j << "," << k <<  ")" << "differs by more than " << acceptableDifference ;
-	EXPECT_LT(std::abs(covInitDifference(j,k)),acceptableDifference) << " at position (" << j << "," << k <<  ")" << "differs by more than " << acceptableDifference ;
-	 
-      }
-    }
  
-  }  
+   }
+  ASSERT_TRUE(true);
   
 }
 

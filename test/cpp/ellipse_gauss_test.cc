@@ -4,10 +4,11 @@
 #include "src/Hartigan.hpp"
 #include "src/random_assignment.hpp"
 #include "src/CEC.hpp"
+#include "src/Algorithm.hpp"
 #include <vector>
 #include <armadillo>
 #include <boost/smart_ptr.hpp>
-
+using namespace gmum;
 TEST(EllipseGauss,answer_cluster_same_length) {
   std::vector<unsigned int> clustering;
   std::vector<std::vector<double> > points;
@@ -28,6 +29,7 @@ TEST(EllipseGauss,answer_cluster_same_length) {
 
 
 #define EVAL(x) std::cout << #x << "() = " << x() << std::endl
+#define SHOW(x) std::cout << #x << " = " << x << std::endl
 
 
 TEST(EllipseGauss,real_test){ 
@@ -47,14 +49,11 @@ TEST(EllipseGauss,real_test){
     double killThreshold = 0.0001;
     initAssignRandom(*assignment, points->n_rows, numberOfClusters);
     //CEC init
-    boost::shared_ptr<Hartigan> hartigan(new Hartigan());
+    boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
     CEC cec(points, assignment, hartigan, killThreshold, numberOfClusters);
     // cec.loop();
-    
-    while(cec.singleLoop()) {
-      EVAL(cec.entropy);
-    }
-    
+    SingleResult sr;
+    cec.loop();
     double percentage = comparator.evaluateClustering(numberOfClusters,*points,*assignment,clustering);
     std::cout << "Percentage " << percentage << std::endl;
     // EXPECT_GT(percentage, 0.9);
