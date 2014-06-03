@@ -35,3 +35,9 @@ dataset.xor <- function() {
     ncol=3,
     nrow=4)
 }
+
+check.trained <- function(object) {
+  if ( object$trained ) {
+    warning("You are changing parameters of a trained model, remember to train it again before prediction.")
+  }
+}

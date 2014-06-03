@@ -4,8 +4,10 @@
 SVMClient::SVMClient(SVMConfiguration *config) {
 	SVMConfiguration current_config = *config;
 	this->config = current_config;
+	trained = false;
 }
 
+// Setters
 void SVMClient::setX( arma::mat x ){
 	config.data = x;
 }
@@ -13,6 +15,42 @@ void SVMClient::setY( arma::vec y ){
 	config.target = y;
 }
 
+void SVMClient::setLibrary(std::string library){
+	config.setLibrary(library);
+}
+void SVMClient::setKernel(std::string kernel){
+	config.setKernel(kernel);
+}
+void SVMClient::setPreprocess(std::string prep){
+	config.setPreprocess(prep);
+}
+
+void SVMClient::setCacheSize(double cache) {
+	config.cache_size = cache;
+}
+void SVMClient::setDegree(int degree){
+	config.degree = degree;
+}
+void SVMClient::setGamma(double gamma){
+	config.gamma = gamma;
+}
+void SVMClient::setCoef0(double coef0 ){
+	config.coef0 = coef0;
+}
+void SVMClient::setC(double C){
+	config.C = C;
+}
+void SVMClient::setEps(double eps){
+	config.eps = eps;
+}
+void SVMClient::setShrinking(int sh){
+	config.shrinking = sh;
+}
+void SVMClient::setProbability(int prob){
+	config.probability = prob;
+}
+
+// Getters
 arma::mat SVMClient::getX(){
 	return config.data;
 }
@@ -68,14 +106,19 @@ bool SVMClient::isProbability(){
 
 
 
-// Main client function, it uses FlowFactory to get a certain work flow
-// and runs processRequest(c,r) function on each block returing last result
+// Runners
 void SVMClient::run() {
 	SVMClient::createFlow();
 	for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
 			iter != SVMHandlers.end(); ++iter) {
 		(*iter)->processRequest(config);
 	}
+}
+
+void SVMClient::train() {
+	config.setPrediction(false);
+	run();
+	trained = true;
 }
 
 void SVMClient::predict( arma::mat problem ) {
