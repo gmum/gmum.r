@@ -38,6 +38,7 @@ namespace gmum {
 
     static const unsigned int nrOfClustersInit;
     static const float killThresholdInit;
+    static const unsigned int nstartInit;
   };
 
   enum Assignment{
@@ -86,6 +87,7 @@ namespace gmum {
   
   const unsigned int CONST::nrOfClustersInit = 10;
   const float CONST::killThresholdInit = 1e-4;
+  const unsigned int CONST::nstartInit = 20;
 
   RCPP_MODULE(cec) {
     using namespace Rcpp;
