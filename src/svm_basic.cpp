@@ -95,7 +95,7 @@ void SVMConfiguration::setPreprocess( std::string preprocess ) {
 		this->preprocess = TWOE;
 	}
 	else if ( preprocess == "none" ) {
-		this->prediction = NONE;
+		this->preprocess = NONE;
 	}
 }
 

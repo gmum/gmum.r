@@ -38,8 +38,22 @@ RCPP_MODULE(svm_wrapper) {
 	class_<SVMClient>("SVMClient")
 			.constructor<SVMConfiguration*>()
 
+			.field("trained", &SVMClient::trained)
+
 			.method("setX", &SVMClient::setX)
 			.method("setY", &SVMClient::setY)
+
+			.method("setLibrary",&SVMClient::setLibrary)
+			.method("setKernel", &SVMClient::setKernel)
+			.method("setPreprocess",&SVMClient::setPreprocess)
+			.method("setCache",&SVMClient::setCacheSize)
+			.method("setDegree",&SVMClient::setDegree)
+			.method("setGamma",&SVMClient::setGamma)
+			.method("setCoef0",&SVMClient::setCoef0)
+			.method("setC",&SVMClient::setC)
+			.method("setEps",&SVMClient::setEps)
+			.method("setShirnking",&SVMClient::setShrinking)
+			.method("setProbability",&SVMClient::setProbability)
 
 			.method("getX", &SVMClient::getX)
 			.method("getY", &SVMClient::getY)
@@ -48,7 +62,6 @@ RCPP_MODULE(svm_wrapper) {
 			.method("getLibrary", &SVMClient::getLibrary)
 			.method("getKernel", &SVMClient::getKernel)
 			.method("getPreprocess", &SVMClient::getPreprocess)
-
 			.method("getCache", &SVMClient::getCacheSize)
 			.method("getDegree", &SVMClient::getDegree)
 			.method("getGamma", &SVMClient::getGamma)
@@ -58,7 +71,9 @@ RCPP_MODULE(svm_wrapper) {
 			.method("isShrinking", &SVMClient::isShrinking)
 			.method("isProbability", &SVMClient::isProbability)
 
-			.method("run", &SVMClient::run)
+
+
+			.method("train", &SVMClient::train)
 			.method("predict", &SVMClient::predict)
 			;
 
