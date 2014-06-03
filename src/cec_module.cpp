@@ -51,7 +51,7 @@ namespace gmum {
     else logEnergy = false;
 
     //number of starts
-    unsigned int nstart = 20;
+    unsigned int nstart = CONST::nstartInit;
     if(list.containsElementNamed(CONST::nstart)) {
       unsigned int temp = Rcpp::as<unsigned int>(list[CONST::nstart]);
       if(temp == 0 || temp > 1e+4) Rcpp::stop(std::string(CONST::nstart)+" is out of bounds");
