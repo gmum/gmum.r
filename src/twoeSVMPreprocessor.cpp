@@ -26,22 +26,23 @@ bool TwoeSVMPreprocessor::canHandle(SVMConfiguration& data) {
 }
 
 arma::mat TwoeSVMPreprocessor::posMat(arma::mat &matrix) {
-    covPosMat = arma::mat();
-
+    arma::mat covPosMat;
+	int insertion = 0;
     for (unsigned int i = 0; i < matrix.n_rows; i++) {
-        if (matrix(i, matrix.n_cols) == 1)
-            covPosMat.insert_rows(i, matrix.submat(i, 0, i, matrix.n_cols - 1));
-    }
-
+		 if (matrix(i, matrix.n_cols-1) == 1){
+			covPosMat.insert_rows(insertion++, matrix.submat(i, 0, i, matrix.n_cols - 1));		
+		 }
+	}
     return covPosMat;
 }
 
+
 arma::mat TwoeSVMPreprocessor::negMat(arma::mat &matrix) {
     covNegMat = arma::mat();
-
+	int insertions = 0;
     for (unsigned int i = 0; i < matrix.n_rows; i++) {
-        if (matrix(i, matrix.n_cols) == -1)
-            covNegMat.insert_rows(i, matrix.submat(i, 0, i, matrix.n_cols - 1));
+        if (matrix(i, matrix.n_cols - 1) == -1)
+            covNegMat.insert_rows(insertions++, matrix.submat(i, 0, i, matrix.n_cols - 1));
     }
 
     return covNegMat;
@@ -69,7 +70,7 @@ arma::mat TwoeSVMPreprocessor::mappingPos(arma::mat &transMatrix,
     //arma::mat preprocessorPos;
     if (transMatrix.is_square()) {
         tmpMatrix = inv(transMatrix);
-        tmpMatrix = sqrt(tmpMatrix);
+        tmpMatrix = sqrtMat(tmpMatrix);
         preprocessorPos = tmpMatrix * posMatrix;
     }
 
@@ -86,7 +87,7 @@ arma::mat TwoeSVMPreprocessor::mappingNeg(arma::mat &transMatrix,
         diagonalMatrix = arma::mat(transMatrix.n_cols, transMatrix.n_cols,
                 arma::fill::zeros);
         tmpMatrix = inv(transMatrix);
-        tmpMatrix = sqrt(tmpMatrix);
+        tmpMatrix = sqrtMat(tmpMatrix);
         preprocessorNeg = tmpMatrix * negMatrix;
     }
 
