@@ -39,9 +39,10 @@ LibSVMRunner::~LibSVMRunner() {
 
 void LibSVMRunner::processRequest(SVMConfiguration& config) {
 
+
 //	Training
 	if (!config.isPrediction()) {
-		svm_parameter param = get_default_params();
+		svm_parameter param = configuration_to_problem(config);
 		if (config.getFilename().empty()) {
 			prob.l = config.target.n_rows;
 			svm_node** node = armatlib(config.data);
