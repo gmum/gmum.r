@@ -4,6 +4,7 @@
 #R history files
 .RData
 .Rhistory
+..Rcheck
 
 #Vim files
 *~
