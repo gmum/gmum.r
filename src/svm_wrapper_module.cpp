@@ -17,11 +17,14 @@ RCPP_MODULE(svm_wrapper) {
 			//.method("setData",&SVMConfiguration::setData)
 			.field("data", &SVMConfiguration::data)
 			.field("result", &SVMConfiguration::result)
+			.field("C", &SVMConfiguration::C)
 			.method("createParams", &SVMConfiguration::createParams)
 			;
 	class_<SVMClient>("SVMClient")
-			.constructor()
+			.constructor<SVMConfiguration*>()
 			.method("run", &SVMClient::run)
+			.method("getConfig", &SVMClient::getConfig)
+			.method("getResult", &SVMClient::getResult)
 			;
 
 }
