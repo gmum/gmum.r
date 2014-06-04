@@ -1,7 +1,7 @@
 # mod <- Module("svm_wrapper")
 loadModule('svm_wrapper', TRUE)
 
-breast_cancer.path = "breast_cancer.data"
+breast_cancer.path = "./data/svm/breast_cancer.data"
 
 #print.svm <- NULL
 
