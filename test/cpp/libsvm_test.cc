@@ -52,7 +52,27 @@ TEST(LibsvmTest, ArmaTrainingArmaPrediction) {
 	svm_config.setPrediction(false); // training model
 	svm_config.data = A;
 	svm_config.target = b;
-	svm_config.setModelFilename("bika.txt");
+	svm_config.setModelFilename("svm_test_model.txt");
+	LibSVMRunner lib_svm_runner;
+	lib_svm_runner.processRequest(svm_config);
+
+	svm_config.setPrediction(true);
+	lib_svm_runner.processRequest(svm_config);
+
+	ASSERT_EQ(-1.0, svm_config.result[0]);
+	ASSERT_EQ(1.0, svm_config.result[1]);
+}
+
+TEST(LibsvmTest, ArmaTrainingArmaPredictionConfigModel) {
+
+	SVMConfiguration svm_config;
+	mat A;
+	A << 0 << 0 << endr << 1 << 1 << endr;
+	vec b;
+	b << -1 << 1;
+	svm_config.setPrediction(false); // training model
+	svm_config.data = A;
+	svm_config.target = b;
 	LibSVMRunner lib_svm_runner;
 	lib_svm_runner.processRequest(svm_config);
 
