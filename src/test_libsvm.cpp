@@ -45,8 +45,28 @@ void test_libsvm_arma() {
 	lib_svm_runner.processRequest(svm_config);
 
 	svm_config.setPrediction(true);
-	svm_config.setFilename("moj_test.txt");
+	svm_config.setFilename("test.txt");
 	svm_config.setOutputFilename(output_filename);
 
 	lib_svm_runner.processRequest(svm_config);
+}
+
+void test_libsvm_arma_arma() {
+	SVMConfiguration svm_config;
+	mat A;
+	A << 0 << 0 << endr << 1 << 1 << endr;
+	vec b;
+	b << -1 << 1;
+	svm_config.setPrediction(false); // training model
+	svm_config.data = A;
+	svm_config.target = b;
+	svm_config.setModelFilename("bika.txt");
+	LibSVMRunner lib_svm_runner;
+	lib_svm_runner.processRequest(svm_config);
+
+	svm_config.setPrediction(true);
+	lib_svm_runner.processRequest(svm_config);
+
+	printf("%f", svm_config.result[0]);
+	printf("%f", svm_config.result[1]);
 }
