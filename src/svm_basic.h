@@ -30,10 +30,13 @@ private:
 	std::string error_msg; //if something went wrong, there is msg with error
 
 public:
-	SVMType svm_type;
-	//KernelType kernel_type;
+	//this is SVM ADDITIONAL type!!!!!!!
+	SVMType our_svm_type;
+	//Kernel type in svm format
+	int kernel_type;
 	Preprocess preprocess;
 
+	int svm_type; //enum { C_SVC, NU_SVC, ONE_CLASS, EPSILON_SVR, NU_SVR };	/* svm_type */
 	int degree;		// for poly
 	double gamma;	// for poly/rbf/sigmoid
 	double coef0;	// for poly/sigmoid
@@ -47,6 +50,11 @@ public:
 	double* weight;		// for C_SVC
 	int shrinking;		// use the shrinking heuristics
 	int probability; 	// do probability estimates
+
+	/* Not neccessery */
+	double nu;	/* for NU_SVC, ONE_CLASS, and NU_SVR */
+	double p;	/* for EPSILON_SVR */
+
 
 	arma::mat data;		// armadillo matrix and vector (double)
 	arma::vec target;
