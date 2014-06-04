@@ -31,7 +31,6 @@ static int max_line_len;
 
 LibSVMRunner::LibSVMRunner() {
 	// TODO Auto-generated constructor stub
-
 }
 
 LibSVMRunner::~LibSVMRunner() {
@@ -40,14 +39,31 @@ LibSVMRunner::~LibSVMRunner() {
 
 void LibSVMRunner::processRequest(SVMConfiguration& config) {
 
+//	Training
 	if (!config.isPrediction()) {
-		std::string s_filename = config.getFilename();
-		const char * filename = s_filename.c_str();
 		svm_parameter param = get_default_params();
-		read_problem(filename, param);
-		processRequest(config, param, prob);
+		if (config.getFilename().empty()) {
+			prob.l = config.target.n_rows;
+			svm_node** node = armatlib(config.data);
+			prob.y = vectlib(config.target);
+			prob.x = node;
+		} else {
+			std::string s_filename = config.getFilename();
+			const char * filename = s_filename.c_str();
+			read_problem(filename, param);
+		}
+//		Real training using svm
+		if (config.getModelFilename().empty()) {
+			save_model_to_config(config, param, prob);
+		} else {
+			save_model_to_file(config, param, prob);
+		}
 	} else {
-		svm_predict(config);
+		if (config.getFilename().empty()) {
+			arma_prediction(config);
+		} else {
+			file_prediction(config);
+		}
 	}
 }
 
@@ -55,7 +71,34 @@ bool LibSVMRunner::canHandle(SVMConfiguration& config) {
 	return true;
 }
 
-void LibSVMRunner::processRequest(SVMConfiguration& config,
+bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
+		svm_parameter& param, svm_problem& problem) {
+
+	const char *error_msg;
+
+	error_msg = svm_check_parameter(&prob, &param);
+
+	if (error_msg) {
+		fprintf(stderr, "ERROR: %s\n", error_msg);
+		return false;
+	}
+
+	model = svm_train(&prob, &param);
+
+//	if (svm_save_model(model_file_name, model)) {
+//		fprintf(stderr, "can't save model to file %s\n", model_file_name);
+//		exit(1);
+//	}
+	svm_free_and_destroy_model(&model);
+	svm_destroy_param(&param);
+	free(prob.y);
+	free(prob.x);
+	free(x_space);
+	free(line);
+	return true;
+}
+
+void LibSVMRunner::save_model_to_file(SVMConfiguration& config,
 		svm_parameter& param, svm_problem& problem) {
 
 	const char * model_file_name = config.getModelFilename().c_str();
@@ -99,7 +142,7 @@ int predict_probability = 0;
  */
 
 /*
- * Armadillo format to libsvm format
+ * Armadillo matrix format to libsvm format
  */
 struct svm_node ** LibSVMRunner::armatlib(arma::mat x) {
 	int r = x.n_rows;
@@ -135,7 +178,19 @@ struct svm_node ** LibSVMRunner::armatlib(arma::mat x) {
 	return sparse;
 }
 
-void LibSVMRunner::svm_predict(SVMConfiguration& config) {
+/*
+ * Vector with target to lisvm format
+ */
+double * LibSVMRunner::vectlib(arma::vec target) {
+	double* return_target;
+	return_target = Malloc(double, target.n_rows);
+	for (unsigned int i = 0; i < target.n_rows; i++) {
+		return_target[i] = target(i);
+	}
+	return return_target;
+}
+
+void LibSVMRunner::file_prediction(SVMConfiguration& config) {
 
 	FILE *input, *output;
 
@@ -173,6 +228,7 @@ void LibSVMRunner::svm_predict(SVMConfiguration& config) {
 	}
 
 	predict(input, output);
+
 }
 
 void predict(FILE *input, FILE *output) {
@@ -288,7 +344,7 @@ void predict(FILE *input, FILE *output) {
 struct svm_parameter get_default_params() {
 	svm_parameter param;
 	param.svm_type = C_SVC;
-	param.kernel_type = RBF;
+	param.kernel_type = LINEAR;
 	param.degree = 3;
 	param.gamma = 0;	// 1/num_features
 	param.coef0 = 0;
@@ -423,5 +479,76 @@ void read_problem(const char *filename, svm_parameter& param) {
 		}
 
 	fclose(fp);
+}
+
+void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
+	struct svm_model* m;
+	struct svm_node ** train;
+	arma::mat training_mat = config.data;
+	int training_examples = training_mat.n_rows;
+	const char * model_filename = config.getModelFilename().c_str();
+
+//	TODO: READ MODEL FROM PARAMETERS
+	if ((m = svm_load_model(model_filename)) == 0) {
+		fprintf(stderr, "can't open model file %s\n", model_filename);
+		exit(1);
+	}
+
+	train = armatlib(config.data);
+	double* ret = Malloc(double, training_examples);
+
+	for (int i = 0; i < training_examples; i++)
+		ret[i] = svm_predict(m, train[i]);
+
+	/* TODO: CLEAN MEMORY IN BETTER WAY THINK OF OTHER PARAMETERS
+	 * Clean memory:
+	 * -array matrix
+	 * -model
+	 */
+	for (int i = 0; i < training_examples; i++)
+		free(train[i]);
+	free(train);
+
+	svm_free_and_destroy_model(&m);
+
+	arma::vec ret_vec(ret, training_examples);
+	config.result = ret_vec;
+
+	/* set up model */
+//    m.l        = *totnSV;
+//    m.nr_class = *nclasses;
+//    m.sv_coef  = (double **) malloc (m.nr_class * sizeof(double*));
+//    for (i = 0; i < m.nr_class - 1; i++) {
+//      m.sv_coef[i] = (double *) malloc (m.l * sizeof (double));
+//      memcpy (m.sv_coef[i], coefs + i*m.l, m.l * sizeof (double));
+//    }
+//
+//    if (*sparsemodel > 0)
+//	m.SV   = transsparse(v, *r, rowindex, colindex);
+//    else
+//	m.SV   = sparsify(v, *r, *c);
+//
+//    m.rho      = rho;
+//    m.probA    = probA;
+//    m.probB    = probB;
+//    m.label    = labels;
+//    m.nSV      = nSV;
+	/* set up parameter */
+//    m.param.svm_type    = *svm_type;
+//    m.param.kernel_type = *kernel_type;
+//    m.param.degree      = *degree;
+//    m.param.gamma       = *gamma;
+//    m.param.coef0       = *coef0;
+//    m.param.probability = *compprob;
+//
+//    m.free_sv           = 1;
+//
+//    /* create sparse training matrix */
+//    if (*sparsex > 0)
+//	train = transsparse(x, *xr, xrowindex, xcolindex);
+//    else
+//	train = sparsify(x, *xr, *c);
+	/* call svm-predict-function for each x-row, possibly using probability
+	 estimator, if requested */
 }
 
