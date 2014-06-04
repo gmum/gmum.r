@@ -22,10 +22,12 @@ enum Preprocess {
 class SVMConfiguration {
 private:
 
-	std::string filename;
+	std::string filename; //filename with data
 	std::string model_filename;
 	std::string output_filename;
 	bool prediction;
+
+	std::string error_msg; //if something went wrong, there is msg with error
 
 public:
 	SVMType svm_type;
@@ -73,6 +75,7 @@ public:
 
 	void setPrediction(bool);
 	bool isPrediction();
+
 };
 
 #endif
