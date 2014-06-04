@@ -68,7 +68,7 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 }
 
 bool LibSVMRunner::canHandle(SVMConfiguration& config) {
-	return true;
+	return config.our_svm_type == LIBSVM;
 }
 
 bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
@@ -124,6 +124,26 @@ void LibSVMRunner::save_model_to_file(SVMConfiguration& config,
 	free(prob.x);
 	free(x_space);
 	free(line);
+}
+
+svm_parameter LibSVMRunner::configuration_to_problem(SVMConfiguration& config) {
+	svm_parameter param;
+	param.svm_type = config.svm_type;
+	param.kernel_type = config.kernel_type;
+	param.degree = config.degree;
+	param.gamma = config.gamma;	// 1/num_features
+	param.coef0 = config.coef0;
+	param.nu = config.nu;
+	param.cache_size = config.cache_size;
+	param.C = config.C;
+	param.eps = config.eps;
+	param.p = config.p;
+	param.shrinking = config.shrinking;
+	param.probability = config.probability;
+	param.nr_weight = config.nr_weight;
+	param.weight_label = config.weight_label;
+	param.weight = config.weight;
+	return param;
 }
 
 /*
@@ -230,6 +250,8 @@ void LibSVMRunner::file_prediction(SVMConfiguration& config) {
 	predict(input, output);
 
 }
+
+
 
 void predict(FILE *input, FILE *output) {
 	int correct = 0;

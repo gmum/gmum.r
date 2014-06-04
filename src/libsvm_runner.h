@@ -33,6 +33,7 @@ private:
 	svm_node ** armatlib(arma::mat); // arma to libsvm standard
 	double *	vectlib(arma::vec); //arma vector to lisvm
 	void arma_prediction(SVMConfiguration&);
+	svm_parameter configuration_to_problem(SVMConfiguration&);
 };
 
 #endif /* LIBSVMRUNNER_H_ */
