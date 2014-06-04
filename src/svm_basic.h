@@ -5,9 +5,9 @@
 #include <RcppArmadillo.h>
 #include <R.h>
 
-//enum KernelType {
-//	LINEAR, POLY, RBF, SIGMOID, PRECOMPUTED
-//};
+enum KernelType {
+	_LINEAR, _POLY, _RBF, _SIGMOID // _PRECOMPUTED
+};
 
 enum SVMType {
 	LIBSVM, SVMLIGHT
@@ -31,7 +31,7 @@ private:
 
 public:
 	SVMType svm_type;
-	//KernelType kernel_type;
+	KernelType kernel_type;
 	Preprocess preprocess;
 
 	int degree;		// for poly
@@ -75,6 +75,11 @@ public:
 
 	void setPrediction(bool);
 	bool isPrediction();
+
+	void setWeights( Rcpp::NumericVector );
+	void setLibrary( std::string );
+	void setKernel( std::string );
+	void setPreprocess( std::string );
 
 };
 

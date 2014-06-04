@@ -59,9 +59,49 @@ void SVMConfiguration::createParams(std::string kernel_type,
 	}
 }
 
+void SVMConfiguration::setWeights( Rcpp::NumericVector weights ) {
+	this->nr_weight = weights.size();
+	this->weight = new double[nr_weight];
+
+	for (int i = 0; i < nr_weight; i++) {
+		weight[i] = weights(1);
+	}
+}
+
+void SVMConfiguration::setLibrary( std::string library ) {
+	if ( library == "libsvm" ) {
+		this->svm_type = LIBSVM;
+	}
+	// else if
+}
+
+void SVMConfiguration::setKernel( std::string kernel ) {
+	if ( kernel == "linear" ) {
+		this->kernel_type = _LINEAR;
+	}
+	else if ( kernel == "poly" ) {
+		this->kernel_type = _POLY;
+	}
+	else if ( kernel == "rbf" ) {
+		this->kernel_type = _RBF;
+	}
+	else if ( kernel == "sigmoid" ) {
+		this->kernel_type = _SIGMOID;
+	}
+}
+
+void SVMConfiguration::setPreprocess( std::string preprocess ) {
+	if ( preprocess ==  "2e" ) {
+		this->preprocess = TWOE;
+	}
+	else if ( preprocess == "none" ) {
+		this->preprocess = NONE;
+	}
+}
+
 void SVMConfiguration::setDefaultParams() {
 	svm_type = LIBSVM;
-	//kernel_type = RBF;
+	kernel_type = _RBF;
 	degree = 3;
 	gamma = 0;	// 1/num_features
 	coef0 = 0;
