@@ -46,6 +46,8 @@ private:
 	std::string output_filename;
 	bool prediction;
 
+	std::string error_msg; //if something went wrong, there is msg with error
+
 public:
 	arma::mat data;		// armadillo matrix and vector (double)
 	arma::vec target;
