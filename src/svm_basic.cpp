@@ -4,32 +4,10 @@
 // Constructors  
 SVMConfiguration::SVMConfiguration() {
 	this->prediction = false;
+	SVMConfiguration::setDefaultParams();
 }
-SVMConfiguration::SVMConfiguration(SVMParameters params, bool prediction) {
-	this->params = params;
+SVMConfiguration::SVMConfiguration(bool prediction) {
 	this->prediction = prediction;
-}
-// Getters and Setters
-//void SVMConfiguration::setData(SEXP x, SEXP y) {
-//	Rcpp::NumericMatrix xr(x); // Rccp matrix from R data
-//	Rcpp::NumericVector yr(y); // Rcpp vector from R data
-//
-//	arma::mat X(xr.begin(), xr.nrow(), xr.ncol(), false); // reusing memory
-//	arma::vec Y(yr.begin(), yr.size(), false);
-//
-//	SVMData data_struct;
-//	data_struct.data = X;
-//	data_struct.target = Y;
-//	data_struct.len = Y.n_elem;
-//
-//	this->data = &data_struct;
-//}
-
-void SVMConfiguration::setParams(SVMParameters params) {
-	this->params = params;
-}
-SVMParameters SVMConfiguration::getParams() {
-	return this->params;
 }
 
 void SVMConfiguration::setFilename(std::string filename) {
@@ -72,16 +50,28 @@ void SVMConfiguration::setPrediction(bool prediction) {
 void SVMConfiguration::createParams(std::string kernel_type,
 		std::string svm_type, std::string preprocess, int degree, double gamma,
 		double coef0) {
-	SVMParameters params;
 	if (preprocess == "norm") {
 		Preprocess prep = NORM;
-		params.preprocess = prep;
+		this->preprocess = prep;
 	} else {
 		Preprocess prep = NONE;
-		params.preprocess = prep;
+		this->preprocess = prep;
 	}
+}
 
-	this->setParams(params);
-
+void SVMConfiguration::setDefaultParams() {
+	svm_type = LIBSVM;
+	//kernel_type = RBF;
+	degree = 3;
+	gamma = 0;	// 1/num_features
+	coef0 = 0;
+	cache_size = 100;
+	C = 1;
+	eps = 1e-3;
+	shrinking = 1;
+	probability = 0;
+	nr_weight = 0;
+	weight_label = NULL;
+	weight = NULL;
 }
 
