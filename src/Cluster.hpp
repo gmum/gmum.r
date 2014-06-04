@@ -2,6 +2,7 @@
 #include <vector>
 #include <cmath>
 #include <boost/smart_ptr.hpp>
+#include "exceptions.hpp"
 
 #ifndef CLUSTER_HPP
 #define CLUSTER_HPP

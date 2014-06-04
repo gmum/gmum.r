@@ -4,6 +4,7 @@
 #include <boost/smart_ptr.hpp>
 #include "Cluster.hpp"
 #include "Algorithm.hpp"
+#include "exceptions.hpp"
 
 #ifndef CEC_HPP
 #define CEC_HPP
