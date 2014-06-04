@@ -83,19 +83,28 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 		fprintf(stderr, "ERROR: %s\n", error_msg);
 		return false;
 	}
+	int* nr = Malloc(int, sizeof(int));
+	int* nclasses = Malloc(int, sizeof(int));
 
+	*nr = model->l;
+	*nclasses = model->nr_class;
 	model = svm_train(&prob, &param);
+	config.nr_class = model->nr_class;
+	config.l = model->nr_class;
+	//TODO: don't keep support vectors as svm node, remember when Staszek wasn't happy about it?
+	for (int i = 0; i < config.nr_class-1; i++)
+	    memcpy (config.sv_coef + i * *nr, model->sv_coef[i],  *nr * sizeof (double));
+	memcpy (config.rho, model->rho, config.nr_class * (config.nr_class - 1)/2 * sizeof(double));
+	svm_get_sv_indices(model, config.sv_indices);
 
-//	if (svm_save_model(model_file_name, model)) {
-//		fprintf(stderr, "can't save model to file %s\n", model_file_name);
-//		exit(1);
-//	}
-	svm_free_and_destroy_model(&model);
+	if (config.svm_type < 2) {
+	    memcpy (config.label, model->label, *nclasses * sizeof(int));
+	    memcpy (config.nSV, model->nSV, *nclasses * sizeof(int));
+	}
+
 	svm_destroy_param(&param);
-	free(prob.y);
-	free(prob.x);
-	free(x_space);
-	free(line);
+	svm_free_and_destroy_model(&model);
+
 	return true;
 }
 
