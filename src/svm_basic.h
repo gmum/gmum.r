@@ -30,6 +30,9 @@ private:
 	std::string error_msg; //if something went wrong, there is msg with error
 
 public:
+
+//	Params
+
 	//this is SVM ADDITIONAL type!!!!!!!
 	SVMType our_svm_type;
 	//Kernel type in svm format
@@ -51,11 +54,17 @@ public:
 	int shrinking;		// use the shrinking heuristics
 	int probability; 	// do probability estimates
 
-	/* Not neccessery */
+	/*TODO: Not neccessery? */
 	double nu;	/* for NU_SVC, ONE_CLASS, and NU_SVR */
 	double p;	/* for EPSILON_SVR */
 
+//	End of params
 
+//	Model parameters
+	double **sv_coef;	/* coefficients for SVs in decision functions (sv_coef[k-1][l]) */
+	double *rho;		/* constants in decision functions (rho[k*(k-1)/2]) */
+
+//
 	arma::mat data;		// armadillo matrix and vector (double)
 	arma::vec target;
 	arma::vec result;
