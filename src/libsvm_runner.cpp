@@ -86,21 +86,32 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 	int* nr = Malloc(int, sizeof(int));
 	int* nclasses = Malloc(int, sizeof(int));
 
-	*nr = model->l;
-	*nclasses = model->nr_class;
 	model = svm_train(&prob, &param);
+	*nr = model->l; //support vectors
+	*nclasses = model->nr_class;
 	config.nr_class = model->nr_class;
 	config.l = model->nr_class;
 	//TODO: don't keep support vectors as svm node, remember when Staszek wasn't happy about it?
-	for (int i = 0; i < config.nr_class-1; i++)
-	    memcpy (config.sv_coef + i * *nr, model->sv_coef[i],  *nr * sizeof (double));
+	config.sv_coef = (double **) malloc (model->nr_class * sizeof(double*));
+	for (int i = 0; i < config.nr_class-1; i++) {
+		config.sv_coef[i] = (double *) malloc (model->l * sizeof (double));
+	    memcpy (config.sv_coef[i * config.l], model->sv_coef[i],  config.l * sizeof (double*));
+	}
+
+	config.rho = (double *) malloc (config.nr_class * (config.nr_class - 1)/2 * sizeof(double));
 	memcpy (config.rho, model->rho, config.nr_class * (config.nr_class - 1)/2 * sizeof(double));
+
+	config.sv_indices =(double*) malloc( config.l * sizeof(double));
 	svm_get_sv_indices(model, config.sv_indices);
 
 	if (config.svm_type < 2) {
+		config.label = (int *) malloc ( *nclasses * sizeof(int) );
+		config.nSV = (int *) malloc ( *nclasses * sizeof(int) );
 	    memcpy (config.label, model->label, *nclasses * sizeof(int));
 	    memcpy (config.nSV, model->nSV, *nclasses * sizeof(int));
 	}
+
+
 
 	svm_destroy_param(&param);
 	svm_free_and_destroy_model(&model);
