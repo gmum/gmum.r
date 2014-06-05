@@ -133,7 +133,7 @@ void SVMClient::predict( arma::mat problem ) {
 }
 
 void SVMClient::createFlow() {
-	SVMType svm_type = config.svm_type;
+	SVMType svm_type = config.our_svm_type;
 	Preprocess preprocess = config.preprocess;
 	std::vector<SVMHandler*> handlers;
 
