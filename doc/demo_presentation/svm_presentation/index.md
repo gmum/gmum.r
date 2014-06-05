@@ -29,11 +29,11 @@ mode        : selfcontained # {standalone, draft}
 --- .class #id 
 ## Zespół
 
-* Piotr Kowenzowski - projekt architektury, libSVM
-* Kamil Kuś, Agnieszka Pocha, później Mateusz Bruno-Kamiński - 2eSVM
+* Piotr Kowenzowski - libSVM
+* Kamil Kuś, Agnieszka Pocha <-> Mateusz Bruno-Kamiński - 2eSVM
 * Konrad Talik - Git Master, SVMLight
 * Igor Sieradzki - architektura, interfejs R
-* Stanisław Jastrzębski - Nadzorca
+* Stanisław Jastrzębski - Nadzorca, projekt architektury
 
 --- .class #id 
 ## Architektura 

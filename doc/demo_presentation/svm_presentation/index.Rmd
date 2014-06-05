@@ -27,15 +27,6 @@ mode        : selfcontained # {standalone, draft}
 * funkcje pomocniczne
 
 --- .class #id 
-## Zespół
-
-* Piotr Kowenzowski - libSVM
-* Kamil Kuś, Agnieszka Pocha <-> Mateusz Bruno-Kamiński - 2eSVM
-* Konrad Talik - Git Master, SVMLight
-* Igor Sieradzki - architektura, interfejs R
-* Stanisław Jastrzębski - Nadzorca, projekt architektury
-
---- .class #id 
 ## Architektura 
 
 <img width='100%' src='assets/img/diagram.png' />
