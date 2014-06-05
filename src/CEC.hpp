@@ -15,6 +15,7 @@ namespace gmum {
   };
 
   class CEC {
+    
   private:
     TotalResult result;
     boost::shared_ptr<std::vector<unsigned int> > assignment;
@@ -44,6 +45,9 @@ namespace gmum {
     unsigned int iters();
     std::list<unsigned int> getNrOfClusters();
     std::list<float> getEnergy();
+    
+    boost::shared_ptr<arma::mat> getPtrToPoints() const;
+    boost::shared_ptr<std::vector<unsigned int> > getPtrToAssignement() const;
   };
 
 }
