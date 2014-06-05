@@ -79,5 +79,8 @@ void SVMConfiguration::setDefaultParams() {
 //	Probably not necessery
 	nu = 0.5;
 	p = 0.1;
+
+// Model parameters
+
 }
 
