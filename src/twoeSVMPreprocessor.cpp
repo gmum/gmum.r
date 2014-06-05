@@ -17,6 +17,20 @@ using namespace Rcpp;
 //// [[Rcpp::export]]
 void TwoeSVMPreprocessor::processRequest(SVMConfiguration& data) {
     // TODO
+	arma::mat workingMat = data.getData();
+	
+	arma::mat pos = computeCovPosMat(posMat(workingMat));
+	arma::mat neg = computeCovNegMat(negMat(workingMat));
+	
+	arma::mat mapPos = mappingPos(computeTransMat(pos,neg),posMat(workingMat));
+	arma::mat mapNeg = mappingNeg(computeTransMat(pos,neg),negMat(workingMat));
+	
+	//Union on pos and neg matrix
+	mapPos.insert_rows(0,mapNeg);
+	mapPos.print();
+	
+	data.setData(mapPos);
+	
     return;
 }
 
