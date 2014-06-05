@@ -20,16 +20,14 @@ enum Preprocess {
 
 // Our "input" class containing SVM paramaters and data to be classified
 class SVMConfiguration {
-private:
 
+public:
 	std::string filename; //filename with data
 	std::string model_filename;
 	std::string output_filename;
 	bool prediction;
 
 	std::string error_msg; //if something went wrong, there is msg with error
-
-public:
 
 //	Params
 
