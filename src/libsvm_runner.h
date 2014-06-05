@@ -20,9 +20,10 @@ class LibSVMRunner: public SVMHandler {
 public:
 	LibSVMRunner();
 	virtual ~LibSVMRunner();
-	void save_model_to_file(SVMConfiguration&, svm_parameter&, svm_problem&);
+	void save_model_to_file(SVMConfiguration&, svm_parameter*, svm_problem&);
 	void file_prediction(SVMConfiguration&);
-	bool save_model_to_config(SVMConfiguration&, svm_parameter&, svm_problem&);
+	bool save_model_to_config(SVMConfiguration&, svm_parameter*, svm_problem&);
+	svm_model* load_model_from_config(SVMConfiguration&, svm_parameter*);
 	/*public interface
 	 *
 	 */
@@ -33,7 +34,7 @@ private:
 	svm_node ** armatlib(arma::mat); // arma to libsvm standard
 	double *	vectlib(arma::vec); //arma vector to lisvm
 	void arma_prediction(SVMConfiguration&);
-	svm_parameter configuration_to_problem(SVMConfiguration&);
+	svm_parameter* configuration_to_problem(SVMConfiguration&);
 };
 
 #endif /* LIBSVMRUNNER_H_ */
