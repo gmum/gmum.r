@@ -20,18 +20,24 @@ enum Preprocess {
 
 // Our "input" class containing SVM paramaters and data to be classified
 class SVMConfiguration {
-private:
 
-	std::string filename;
+public:
+	std::string filename; //filename with data
 	std::string model_filename;
 	std::string output_filename;
 	bool prediction;
 
-public:
-	SVMType svm_type;
-	//KernelType kernel_type;
+	std::string error_msg; //if something went wrong, there is msg with error
+
+//	Params
+
+	//this is SVM ADDITIONAL type!!!!!!!
+	SVMType our_svm_type;
+	//Kernel type in svm format
+	int kernel_type;
 	Preprocess preprocess;
 
+	int svm_type; //enum { C_SVC, NU_SVC, ONE_CLASS, EPSILON_SVR, NU_SVR };	/* svm_type */
 	int degree;		// for poly
 	double gamma;	// for poly/rbf/sigmoid
 	double coef0;	// for poly/sigmoid
@@ -46,6 +52,28 @@ public:
 	int shrinking;		// use the shrinking heuristics
 	int probability; 	// do probability estimates
 
+	/*TODO: neccessery? check what are they doing */
+	double nu; /* for NU_SVC, ONE_CLASS, and NU_SVR */
+	double p; /* for EPSILON_SVR */
+
+//	End of params
+
+//	libsvm Model parameters
+	int l;
+	int nr_class; /* number of classes, = 2 in regression/one class svm */
+	//TODO: don't keep support vectors as svm node, remember when Staszek wasn't happy about it?
+	struct svm_node **SV; /* SVs (SV[l]) */
+	double **sv_coef; /* coefficients for SVs in decision functions (sv_coef[k-1][l]) */
+	double *rho; /* constants in decision functions (rho[k*(k-1)/2]) */
+	int *sv_indices; /* sv_indices[0,...,nSV-1] are values in [1,...,num_traning_data] to indicate SVs in the training set */
+
+	/* for classification only */
+
+	int *label; /* label of each class (label[k]) */
+	int *nSV; /* number of SVs for each class (nSV[k]) */
+	/* nSV[0] + nSV[1] + ... + nSV[k-1] = l */
+
+	//
 	arma::mat data;		// armadillo matrix and vector (double)
 	arma::vec target;
 	arma::vec result;
@@ -73,6 +101,7 @@ public:
 
 	void setPrediction(bool);
 	bool isPrediction();
+
 };
 
 #endif
