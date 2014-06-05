@@ -1,4 +1,5 @@
 #include "svm_basic.h"
+#include "svm.h"
 
 // SVM Configuration 
 // Constructors  
@@ -100,8 +101,9 @@ void SVMConfiguration::setPreprocess( std::string preprocess ) {
 }
 
 void SVMConfiguration::setDefaultParams() {
-	svm_type = LIBSVM;
-	kernel_type = _RBF;
+	our_svm_type = LIBSVM;
+	svm_type = C_SVC;
+	kernel_type = LINEAR;
 	degree = 3;
 	gamma = 0;	// 1/num_features
 	coef0 = 0;
@@ -113,5 +115,11 @@ void SVMConfiguration::setDefaultParams() {
 	nr_weight = 0;
 	weight_label = NULL;
 	weight = NULL;
+
+//	Probably not necessery
+	nu = 0.5;
+	p = 0.1;
+
+
 }
 
