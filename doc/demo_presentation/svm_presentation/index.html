@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GMUM.r Demo Presentation</title>
+  <meta charset="utf-8">
+  <meta name="description" content="GMUM.r Demo Presentation">
+  <meta name="author" content="Igor Sieradzki">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>GMUM.r Demo Presentation</h1>
+    <h2>SVM Group</h2>
+    <p>Igor Sieradzki<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Moduł SVM</h2>
+  </hgroup>
+  <article data-timings="">
+    <h1>Idea</h1>
+
+<ul>
+<li><p>Pakiet umożliwiający korzystanie z wielu różnych dystrybucji SVM</p></li>
+<li><p>Typowy interfejs języka R</p></li>
+<li><p>Informacje o modelu</p></li>
+<li><p>parametryzacja</p></li>
+<li><p>uczenie wieloklasowe</p></li>
+<li><p>funkcje pomocniczne</p></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Zespół</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Piotr Kowenzowski - projekt architektury, libSVM</li>
+<li>Kamil Kuś, Agnieszka Pocha, później Mateusz Bruno-Kamiński - 2eSVM</li>
+<li>Konrad Talik - Git Master, SVMLight</li>
+<li>Igor Sieradzki - architektura, interfejs R</li>
+<li>Stanisław Jastrzębski - Nadzorca</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Architektura</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img width='100%' src='assets/img/diagram.png' /></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Interfejs R</h2>
+  </hgroup>
+  <article data-timings="">
+    <h1>Główna funkcja</h1>
+
+<pre><code class="R">SVM &lt;- function(x = svm.breast_cancer.x(), 
+                y = svm.breast_cancer.y(),
+                lib = &quot;libsvm&quot;,
+                kernel = &quot;rbf&quot;,
+                prep = &quot;none&quot;,
+                mclass = &quot;none&quot;,
+                C = 1,
+                gamma = 0,
+                coef0 = 0,
+                degree = 3,
+                shrinking = TRUE,
+                probability = FALSE,
+                cweights = NULL,
+                sweights = NULL,
+                cache_size = 100,
+                tol = 1e-3 ) 
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Interfejs R</h2>
+  </hgroup>
+  <article data-timings="">
+    <h1>Wczytywanie zbioru Danych</h1>
+
+<pre><code class="R">  load.dataset &lt;- function( object, x ) {
+    object$setX( x[,c( seq(1, ncol(x) - 1,1))] )
+    object$setY( x[,c(ncol(x))] )
+  }
+
+  &gt; model = SVM()
+  &gt; load_dataset(model, dataset)
+</code></pre>
+
+<h1>Zmiany Parametrów</h1>
+
+<pre><code class="R">params.svm.C &lt;- function(object, x) {
+    check.trained(object)
+    object$setC(x)
+  }
+
+  &gt; params.C(model,100)
+  or
+  &gt; model$setC( 100 )
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Interfejs R</h2>
+  </hgroup>
+  <article data-timings="">
+    <h1>Print</h1>
+
+<pre><code class="R">  print.svm &lt;- function(x) {
+    print(sprintf(&quot;SVM object with: library: %s, kernel: %s, preprocess: %s, C: %.1f, 
+                   gamma: %.3f, coef0: %.3f, degree: %d&quot;,
+                  x$getLibrary(),
+                  x$getKernel(),
+                  x$getPreprocess(),
+                  x$getC(),
+                  x$getGamma(),
+                  x$getCoef0(),
+                  x$getDegree() ))
+  }
+
+  &gt; print(model)
+  [1] &quot;SVM object with: library: libsvm, kernel: rbf, preprocess: none, C: 1.0,
+      gamma: 0.000, coef0: 0.000, degree: 3&quot;
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Interfejs R</h2>
+  </hgroup>
+  <article data-timings="">
+    <h1>Plot</h1>
+
+<pre><code class="R">    plot.svm &lt;- function(object, dim1 = 1, dim2 = 2) {
+    x = object$getX()
+    if (dim1 &gt; ncol(x) || dim2 &gt; ncol(x)) {
+      stop(&quot;Too large dimensions&quot;)
+    }
+    plot2d.svm(object,dim1,dim2)
+  }
+
+  &gt; plot(model, 2, 3)
+
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Plot BreastCancer, wymiary: 2,3</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img height='80%' src='assets/img/plot.png' /></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Interfejs R</h2>
+  </hgroup>
+  <article data-timings="">
+    <h1>Train</h1>
+
+<pre><code class="R">  train.svm &lt;- function(object) {
+    object$train()
+  }
+
+  &gt; train(model)
+</code></pre>
+
+<h1>Predict</h1>
+
+<pre><code class="R">  predict.svm &lt;- function(object, x) {
+    object$predict(x)
+    prediction = object$getPrediction()
+    prediction
+  }
+
+  &gt; prediction = predict(model, test_data)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Koniec</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Moduł SVM'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Zespół'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Architektura'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Interfejs R'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='Interfejs R'>
+         5
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=6 title='Interfejs R'>
+         6
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=7 title='Interfejs R'>
+         7
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=8 title='Plot BreastCancer, wymiary: 2,3'>
+         8
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=9 title='Interfejs R'>
+         9
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=10 title='Koniec'>
+         10
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
