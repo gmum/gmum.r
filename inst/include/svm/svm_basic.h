@@ -5,9 +5,11 @@
 #include <RcppArmadillo.h>
 #include <R.h>
 
+
 enum KernelType {
 	_LINEAR, _POLY, _RBF, _SIGMOID // _PRECOMPUTED
 };
+
 
 enum SVMType {
 	LIBSVM, SVMLIGHT
@@ -20,8 +22,8 @@ enum Preprocess {
 
 // Our "input" class containing SVM paramaters and data to be classified
 class SVMConfiguration {
-private:
 
+public:
 	std::string filename; //filename with data
 	std::string model_filename;
 	std::string output_filename;
@@ -29,9 +31,9 @@ private:
 
 	std::string error_msg; //if something went wrong, there is msg with error
 
-public:
-	SVMType svm_type;
-	KernelType kernel_type;
+	SVMType our_svm_type;
+	int svm_type;
+	int kernel_type;
 	Preprocess preprocess;
 
 	int degree;		// for poly
@@ -47,6 +49,26 @@ public:
 	double* weight;		// for C_SVC
 	int shrinking;		// use the shrinking heuristics
 	int probability; 	// do probability estimates
+	
+	//	libsvm Model parameters
+	int l;
+	int nr_class; /* number of classes, = 2 in regression/one class svm */
+	//TODO: don't keep support vectors as svm node, remember when Staszek wasn't happy about it?
+	struct svm_node **SV; /* SVs (SV[l]) */
+	double **sv_coef; /* coefficients for SVs in decision functions (sv_coef[k-1][l]) */
+	double *rho; /* constants in decision functions (rho[k*(k-1)/2]) */
+	int *sv_indices; /* sv_indices[0,...,nSV-1] are values in [1,...,num_traning_data] to indicate SVs in the training set */
+
+	/* for classification only */
+
+	int *label; /* label of each class (label[k]) */
+	int *nSV; /* number of SVs for each class (nSV[k]) */
+	/* nSV[0] + nSV[1] + ... + nSV[k-1] = l */
+
+
+	/*TODO: neccessery? check what are they doing */
+	double nu; /* for NU_SVC, ONE_CLASS, and NU_SVR */
+	double p; /* for EPSILON_SVR */
 
 	arma::mat data;		// armadillo matrix and vector (double)
 	arma::vec target;
