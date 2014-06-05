@@ -24,10 +24,6 @@ int main(int argc, char** argv)
   {
   cout << "Armadillo version: " << arma_version::as_string() << endl;
  
-//mat A;(4,4);
-//A.fill(1.0);
-//mat A;// = randu<mat>(7,8);
-
 mat A;
 
   A << 0.555950 << 0.274690 << 0.540605 << 1.0 << endr
@@ -50,18 +46,24 @@ cout<<"rows "<<A.n_rows<<endl;
 A.print();
 cout<<"Pos and Neg matrixs"<<endl<<endl;
 
-posMat(A);
-negMat(A);
+posMat(A).print();
+
+cout<<"============="<<endl;
+
+negMat(A).print();
 
 
 cout<<"Cov matrix: "<<endl<<endl;
 
-computeCovPosMat(posMat(A)).print();
-computeCovNegMat(negMat(A)).print();
-
+arma::mat pos = computeCovPosMat(posMat(A));
+pos.print();
+cout<<"========="<<endl<<endl;
+arma::mat neg = computeCovNegMat(negMat(A));
+neg.print();
 cout<<"Trans Matrix: "<<endl;
 
-computeTransMat(computeCovPosMat(posMat(A)),computeCovNegMat(posMat(A))).print();
+computeTransMat(pos,neg).print();
+
 
 cout<<"Root of matrix example form Wiki: "<<endl<<endl;
 mat T;
@@ -77,11 +79,11 @@ cout<<"All together!!! : "<<endl;
 
 cout<<"Mapping for positive: "<<endl;
 
-mappingPos(computeTransMat(computeCovPosMat(posMat(A)),computeCovNegMat(posMat(A))),posMat(A)).print();
+mappingPos(computeTransMat(pos,neg),posMat(A)).print();
 
-//cout<<"Mapping for negative: "<<endl;
+cout<<"Mapping for negative: "<<endl;
 
-//mappingNeg(computeTransMat(computeCovPosMat(posMat(A)),computeCovNegMat(posMat(A))),negMat(A)).print();
+mappingNeg(computeTransMat(computeCovPosMat(posMat(A)),computeCovNegMat(posMat(A))),negMat(A)).print();
 
 
   system("Pause");
@@ -93,11 +95,10 @@ arma::mat posMat(arma::mat &matrix) {
 	 int insertion = 0;
     for (unsigned int i = 0; i < matrix.n_rows; i++) {
 		 if (matrix(i, matrix.n_cols-1) == 1){
-            matrix.submat(i, 0, i, matrix.n_cols - 1).print();
-			covPosMat.insert_rows(insertion++, matrix.submat(i, 0, i, matrix.n_cols - 1));		
+			covPosMat.insert_rows(insertion++, matrix.submat(i, 0, i, matrix.n_cols - 2));		
 		 }
 	}
-    return covPosMat;
+	return covPosMat;
 }
 
 arma::mat negMat(arma::mat &matrix) {
@@ -105,7 +106,7 @@ arma::mat negMat(arma::mat &matrix) {
 	int insertions = 0;
     for (unsigned int i = 0; i < matrix.n_rows; i++) {
         if (matrix(i, matrix.n_cols - 1) == -1)
-            covNegMat.insert_rows(insertions++, matrix.submat(i, 0, i, matrix.n_cols - 1));
+            covNegMat.insert_rows(insertions++, matrix.submat(i, 0, i, matrix.n_cols - 2));
     }
 
     return covNegMat;
@@ -124,6 +125,9 @@ arma::mat computeCovNegMat(arma::mat &negMatrix) {
 
 arma::mat computeTransMat(arma::mat &covPosMat,
         arma::mat &covNegMat) {
+			covPosMat.print();
+			covNegMat.print();
+			cout<<"Trans============"<<endl;
     arma::mat transMat = covPosMat + covNegMat;
     return transMat;
 }
@@ -136,18 +140,22 @@ arma::mat mappingPos(arma::mat &transMatrix,
     arma::mat diagonalMatrix;
 	
     arma::mat preprocessorNeg;
-    float alfa=1.0;
+    //Need to set correct alfa
+	float alfa=1.0;
 
     if (transMatrix.is_square()) {
-		
-        diagonalMatrix = arma::mat(transMatrix.n_cols, transMatrix.n_cols,
-                arma::fill::zeros);
-		diagonalMatrix.print();
-		//diagonalMatrix = transMatrix + alfa*diagonalMatrix; 
-        //tmpMatrix = inv(transMatrix);
+        mat onesMat = arma::mat(transMatrix.n_cols, transMatrix.n_cols,
+                arma::fill::ones);
+		diagonalMatrix = diagmat(onesMat);
         tmpMatrix = inv(transMatrix + alfa*diagonalMatrix);
+		tmpMatrix.print();
+		cout<<"Inv"<<endl;
 		tmpMatrix = sqrtMat(tmpMatrix);
-        preprocessorPos = tmpMatrix * posMatrix;
+		tmpMatrix.print();
+		cout<<"Sqrt"<<endl;
+		posMatrix.print();
+		cout<<"Pos"<<endl;
+        preprocessorPos = tmpMatrix * posMatrix.t();
     }
 
     return preprocessorPos;
@@ -159,15 +167,17 @@ arma::mat mappingNeg(arma::mat &transMatrix,
     arma::mat diagonalMatrix;
 	
     arma::mat preprocessorNeg;
-    float alfa;
+    //Need to set correct alfa
+	float alfa=1.0;
 
     if (transMatrix.is_square()) {
-        diagonalMatrix = arma::mat(transMatrix.n_cols, transMatrix.n_cols,
-                arma::fill::zeros);
+		 mat onesMat = arma::mat(transMatrix.n_cols, transMatrix.n_cols,
+                arma::fill::ones);
+		diagonalMatrix = diagmat(onesMat);
 		diagonalMatrix = transMatrix + alfa*diagonalMatrix; 
         tmpMatrix = inv(transMatrix);
         tmpMatrix = sqrtMat(tmpMatrix);
-        preprocessorNeg = tmpMatrix * negMatrix;
+        preprocessorNeg = tmpMatrix * negMatrix.t();
     }
 
     return preprocessorNeg;
@@ -208,7 +218,7 @@ arma::mat sqrtMat(arma::mat &matrix) {
 }
 
 //TwoeSVMPostprocessor functions
-
+//b varible is given by learned SVM
 arma::rowvec projectingDataPos(arma::mat &matrix,arma::rowvec &weights){
    return weights.t()*matrix;
  }
@@ -218,5 +228,5 @@ arma::rowvec projectingDataNeg(arma::mat &matrix,arma::rowvec &weights){
  }
  
  float shiftingBoundary(arma::rowvec &P1,arma::rowvec &P2){
-   return 2.0;//b-( stddev(P1)-stddev(P2)/stddev(P1)+stddev(P2) )  
+   return b-( stddev(P1)-stddev(P2)/stddev(P1)+stddev(P2) )  
  }
