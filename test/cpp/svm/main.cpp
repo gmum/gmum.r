@@ -5,7 +5,7 @@
  *      Author: igor
  */
 
-#include "../../src/svm_client.h"
+#include "svm_client.h"
 
 
 int main( int argc, char* argv[] ) {
