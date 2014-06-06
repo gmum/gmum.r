@@ -62,5 +62,10 @@ gtest_main.a : gtest-all.o gtest_main.o
 libsvm_test: gtest_main.a 
 	$(CXX) libsvm_test.cc src/svm_basic.cpp src/libsvm_runner.cpp src/svm.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
+svm_utils_test: gtest_main.a 
+	$(CXX) svm_utils_test.cc $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+
+
+
 
 endif
