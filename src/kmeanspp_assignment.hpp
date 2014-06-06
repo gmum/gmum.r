@@ -23,7 +23,6 @@ namespace gmum {
 
   void initAssignKmeanspp(std::vector<unsigned int> &assignment,
 			  arma::mat &points,
-			  unsigned int nrOfPoints,
 			  unsigned int nrOfClusters);    
 
   void calculateDistance(std::vector<unsigned int> &centers,

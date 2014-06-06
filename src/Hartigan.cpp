@@ -104,15 +104,13 @@ namespace gmum {
 		
 	//find the best cluster to assign the point to it 
 	for(unsigned int l = 0; l < clusters.size(); l++){
-	  if(l != source) {
-	    boost::shared_ptr<Cluster> oldTarget = clusters[l];
-	    boost::shared_ptr<Cluster> newTarget = clusters[l]->addPoint(pointToAssign);
-	    float entropyChange = newTarget->entropy() - oldTarget->entropy();
-	    if(entropyChange < minEntropyChange){
-	      minEntropyChange = entropyChange;
-	      minEntropyChangeElementIndex = l;
-	      minEntropyChangeCluster = newTarget;						
-	    }
+	  boost::shared_ptr<Cluster> oldTarget = clusters[l];
+	  boost::shared_ptr<Cluster> newTarget = clusters[l]->addPoint(pointToAssign);
+	  float entropyChange = newTarget->entropy() - oldTarget->entropy();
+	  if(entropyChange < minEntropyChange){
+	    minEntropyChange = entropyChange;
+	    minEntropyChangeElementIndex = l;
+	    minEntropyChangeCluster = newTarget;						
 	  }
 	}
 		

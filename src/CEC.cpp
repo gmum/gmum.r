@@ -12,43 +12,29 @@ namespace gmum {
     Cluster::numberOfPoints = points->n_rows;
     clusters.reserve(type.size());
 
-    try {
-
       for(unsigned int i = 0; i < type.size(); i++) {
 	boost::shared_ptr<Cluster> cluster;
-	try {
-	  switch(type[i]) {
-	  case standard:
-	    cluster = boost::shared_ptr<Cluster>(new Cluster(i, *assignment, *points));
-	    break;
-	  case full:
-	    cluster = boost::shared_ptr<Cluster>(new ClusterCovMat(covMatrices[i], i, *assignment, *points));
-	    break;
-	  case diagonal:
-	    cluster = boost::shared_ptr<Cluster>(new ClusterDiagonal(i, *assignment, *points));
-	    break;
-	  case sphere:
-	    cluster = boost::shared_ptr<Cluster>(new ClusterSpherical(i, *assignment, *points));
-	    break;
-	  case fsphere:
-	    cluster = boost::shared_ptr<Cluster>(new ClusterConstRadius(radius[i], i, *assignment, *points));
-	    break;
-	  }
-	} catch(NoPointsInCluster e) {
-	  std::cout << "NoPointsInCluster" << std::endl;
-	  continue;
-	} catch(std::exception e) {
-	  std::cout << "switch" << std::endl;
-	  std::cout << type[i] << std::endl;
-	  throw(e);
+
+	switch(type[i]) {
+	case standard:
+	  cluster = boost::shared_ptr<Cluster>(new Cluster(i, *assignment, *points));
+	  break;
+	case full:
+	  cluster = boost::shared_ptr<Cluster>(new ClusterCovMat(covMatrices[i], i, *assignment, *points));
+	  break;
+	case diagonal:
+	  cluster = boost::shared_ptr<Cluster>(new ClusterDiagonal(i, *assignment, *points));
+	  break;
+	case sphere:
+	  cluster = boost::shared_ptr<Cluster>(new ClusterSpherical(i, *assignment, *points));
+	  break;
+	case fsphere:
+	  cluster = boost::shared_ptr<Cluster>(new ClusterConstRadius(radius[i], i, *assignment, *points));
+	  break;
 	}
+	
 	clusters.push_back(cluster);
       }
-
-    } catch(std::exception e) {
-      std::cout << "CEC constructor" << std::endl;
-      throw(e);
-    }
 
   }
 

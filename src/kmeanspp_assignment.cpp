@@ -4,11 +4,12 @@ namespace gmum {
 
   void initAssignKmeanspp(std::vector<unsigned int> &assignment,
 			  arma::mat &points,
-			  unsigned int nrOfPoints,
 			  unsigned int nrOfClusters) {
     
     std::vector<unsigned int> centers;
     centers.reserve(nrOfClusters);
+
+    unsigned int nrOfPoints = assignment.size();
 
     static int seed = time(NULL);
     static boost::random::mt19937 gen(seed);
@@ -50,7 +51,7 @@ namespace gmum {
 
     //assign points
     for(unsigned int i=0; i<nrOfPoints; ++i)
-      assignment.push_back(findNearest(i, centers, points));
+      assignment[i] = findNearest(i, centers, points);
 
   }
 

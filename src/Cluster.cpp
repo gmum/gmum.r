@@ -11,47 +11,39 @@ namespace gmum {
 
   Cluster::Cluster() {}
 
-  Cluster::Cluster(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points) {
-    try {
-      initializeMean(id, assignment, points);
-    } catch(std::exception e) {
-      std::cout << "mean" << std::endl;
-      throw(e);
-    }
+  Cluster::Cluster(unsigned int id, const std::vector<unsigned int> &assignment, arma::mat &points) {
+
+    initializeMean(id, assignment, points);
 
     if(count == 0) throw(NoPointsInCluster());
 
-    try {
-      initializeCovarianceMatrix(id, assignment, points);
-    } catch(std::exception e) {
-      std::cout << "covariance" << std::endl;
-      throw(e);
-    }
+    initializeCovarianceMatrix(id, assignment, points);
 
     N = points.n_cols;
     calculateEntropy();
 
   }
 
-  arma::rowvec Cluster::initializeMean(unsigned int id, std::vector<unsigned int> &assignment,
+  arma::rowvec Cluster::initializeMean(unsigned int id, const std::vector<unsigned int> &assignment,
 				       arma::mat &points) {
     int dimention = points.n_cols;
   
     count = 0;
     mean = arma::rowvec(dimention, arma::fill::zeros);
-  
+
     for(unsigned int i = 0; i < points.n_rows; i++) {
       if(assignment[i] == id) {
 	mean += points.row(i);
 	count +=1;
       }
     }
+
     mean = mean/count;
 
     return mean;
   }
 
-  void Cluster::initializeCovarianceMatrix(unsigned int id, std::vector<unsigned int> &assignment,
+  void Cluster::initializeCovarianceMatrix(unsigned int id, const std::vector<unsigned int> &assignment,
 					   arma::mat &points) {
     int dimension = points.n_cols;
 
@@ -116,18 +108,10 @@ namespace gmum {
 
   void Cluster::calculateEntropy() {
     float p = 1.0*count / numberOfPoints;
-    try {
-      _entropy = p* (N*log(2*M_PI*M_E)/2 + log(arma::det(covMat))/2 + (-log(p)));
-    } catch(std::exception e) {
-      std::cout << "calculate" << std::endl;
-      std::cout << count << std::endl;
-      std::cout << covMat << std::endl;
-      std::cout << arma::det(covMat) << std::endl;
-      throw(e);
-    }
+    _entropy = p* (N*log(2*M_PI*M_E)/2 + log(arma::det(covMat))/2 + (-log(p)));
   }
 
-  void Cluster::computeCovarianceMatrix(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points) {}
+  void Cluster::computeCovarianceMatrix(unsigned int id, const std::vector<unsigned int> &assignment, arma::mat &points) {}
 
 
 
@@ -185,7 +169,7 @@ namespace gmum {
     return covMatTrace;
   }
 
-  void ClusterOnlyTrace::computeCovarianceMatrix(unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points) {
+  void ClusterOnlyTrace::computeCovarianceMatrix(unsigned int id, const std::vector<unsigned int> &assignment, arma::mat &points) {
     initializeCovarianceMatrix(id,assignment,points);
     _computedCovMat = true;
   }

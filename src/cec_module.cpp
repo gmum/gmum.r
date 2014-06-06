@@ -211,34 +211,16 @@ namespace gmum {
   void randomAssignment(Assignment assignmentType, std::vector<unsigned int> &assignment,
 			arma::mat &points, int nrOfClusters) {
 
-    /*bool everyClusterNotEmpty;
-
-      do {*/
+    assignment.resize(points.n_rows);
 
       switch(assignmentType) {
       case random:
-	initAssignRandom(assignment, points.n_rows, nrOfClusters);
+	initAssignRandom(assignment, nrOfClusters);
 	break;
       case kmeanspp:
-	initAssignKmeanspp(assignment, points, points.n_rows, nrOfClusters);
+	initAssignKmeanspp(assignment, points, nrOfClusters);
 	break;
       }
-
-      /*  std::vector<bool> empty;
-      empty.reserve(nrOfClusters);
-      for(int i=0; i<nrOfClusters; ++i) empty[i] = true;
-
-      for(int i=0; i<points.n_rows; ++i)
-	if(empty[assignment[i]]) empty[assignment[i]] = false;
-  
-      everyClusterNotEmpty = true;
-      for(int i=0; i<nrOfClusters; ++i)
-	if(empty[i]) {
-	  everyClusterNotEmpty = false;
-	  break;
-	}
-
-	} while(!everyClusterNotEmpty);*/
   }
 
 
