@@ -20,35 +20,36 @@ evalqOnLoad({
         print(data.frame(names,Length), row.names=FALSE)
     }
 
-    plot.cec <<- function(x,slice=c(1,2), ellipses = FALSE, centers = FALSE) {
-        
-        if (length(slice) <= 2) {
-            plot(x$x()[,slice], col = (x$y() + 1))
-        } else if(length(slice) > 2){
-            pairs(x$x()[,slice],col = (x$y()+1))
-        } else
-            {
-                print("Can't draw 0-dim")
-            }
+    plot.cec <<- function(x,slice = c(), ellipses = FALSE, centers = FALSE) {
+
+        d = x$x()
+        if (length(slice)==0){
+            slice = c(1:(dim(d)[2]))
+        }
+        if (length(slice)==2) {
+            plot(d[,slice], col = (x$y() + 1))
+        }
+        else{
+            pairs(d[,slice],col = (x$y()+1))
+        }
 
         if (ellipses || centers) {
             cen = x$centers()
             n = length(cen)
-            if (ellipses){
+            if (ellipses && length(slice) <= 2){
                 library("car")
                 cov = x$cov()
 
                 for (i in 1:n) {
                     print(t(length(cen[i])))
                     print(class(cen[i]))
-                    ellipse(unlist(cen[i]),matrix(unlist(cov[i]),ncol=2),1.0)
+                    ellipse(unlist(cen[i][slice]),matrix(unlist(cov[i]),ncol=2)[slice,slice],1.0)
             }
         }
 
         if(centers) {
-            print(centers)
-             mcenters = do.call(rbind,cen)
-            points(mcenters,col="blue",bg=par("bg"))
+            mcenters = do.call(rbind,cen)
+            points(mcenters[,slice],col="blue",bg=par("bg"))
          }
         }
     }
