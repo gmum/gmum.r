@@ -28,6 +28,7 @@ namespace gmum {
 
     float killThreshold = CONST::killThresholdInit;
     if(list.containsElementNamed(CONST::killThreshold)) {
+
       killThreshold = Rcpp::as<float>(list[CONST::killThreshold]);
       if(killThreshold > 1.0/clusters.size())
 	Rcpp::stop(std::string(CONST::killThreshold)+" is too hight");
@@ -73,23 +74,29 @@ namespace gmum {
 
     randomAssignment(assignmentType, *assignment, *points, clusters.size());
 
-    CEC *currentCEC = new CEC(points, assignment, hartigan,
-			      killThreshold, type, radius, covMat);
+    CEC *currentCEC = NULL;
 
-    currentCEC->loop();
-    --nstart;
+    try {
+      currentCEC = new CEC(points, assignment, hartigan,
+			   killThreshold, type, radius, covMat);
 
-    for(; nstart>0; --nstart) {
+      currentCEC->loop();
+      --nstart;
 
-      randomAssignment(assignmentType, *assignment, *points, clusters.size());
-      CEC *nextCEC = new CEC(points, assignment, hartigan,
-			     killThreshold, type, radius, covMat);
-      nextCEC->loop();
+      for(; nstart>0; --nstart) {
 
-      if(nextCEC->entropy() < currentCEC->entropy()) {
-	delete currentCEC;
-	currentCEC = nextCEC;
+	randomAssignment(assignmentType, *assignment, *points, clusters.size());
+	CEC *nextCEC = new CEC(points, assignment, hartigan,
+			       killThreshold, type, radius, covMat);
+	nextCEC->loop();
+
+	if(nextCEC->entropy() < currentCEC->entropy()) {
+	  delete currentCEC;
+	  currentCEC = nextCEC;
+	}
       }
+    } catch(std::exception e) {
+      std::cout << "cec_module" << std::endl;
     }
 
     return currentCEC;
@@ -204,15 +211,16 @@ namespace gmum {
   void randomAssignment(Assignment assignmentType, std::vector<unsigned int> &assignment,
 			arma::mat &points, int nrOfClusters) {
 
-    switch(assignmentType) {
-    case random:
-      initAssignRandom(assignment, points.n_rows, nrOfClusters);
-      break;
-    case kmeanspp:
-      initAssignKmeanspp(assignment, points, points.n_rows, nrOfClusters);
-      break;
-    }
-  
+    assignment.resize(points.n_rows);
+
+      switch(assignmentType) {
+      case random:
+	initAssignRandom(assignment, nrOfClusters);
+	break;
+      case kmeanspp:
+	initAssignKmeanspp(assignment, points, nrOfClusters);
+	break;
+      }
   }
 
 
