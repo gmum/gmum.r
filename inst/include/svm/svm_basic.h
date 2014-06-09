@@ -74,6 +74,10 @@ public:
 	arma::vec target;
 	arma::vec result;
 
+
+	//2eConfig
+	two
+
 	// constructors
 	SVMConfiguration();
 	SVMConfiguration(bool);
