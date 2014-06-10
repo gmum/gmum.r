@@ -62,7 +62,7 @@ namespace gmum {
     }
 
     //type of random assignment
-    Assignment assignmentType = random;
+    Assignment assignmentType = kmeanspp;
     if(list.containsElementNamed(CONST::CLUSTERS::init)) {
       std::string init = Rcpp::as<std::string>(list(CONST::CLUSTERS::init));
       if(init.compare(CONST::CLUSTERS::random)==0) assignmentType = random;
