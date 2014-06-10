@@ -5,8 +5,8 @@ namespace gmum {
   CEC::CEC(boost::shared_ptr<arma::mat> points, 
 	   boost::shared_ptr<std::vector<unsigned int> > assignment, 
 	   boost::shared_ptr<Algorithm> algorithm,
-	   float killThreshold, std::vector<ClusterType> type,
-	   std::vector<float> radius, std::vector<arma::mat> covMatrices)
+	   double killThreshold, std::vector<ClusterType> type,
+	   std::vector<double> radius, std::vector<arma::mat> covMatrices)
     : assignment(assignment), points(points), algorithm(algorithm), killThreshold(killThreshold) {
 
     Cluster::numberOfPoints = points->n_rows;
@@ -41,7 +41,7 @@ namespace gmum {
   CEC::CEC(boost::shared_ptr<arma::mat> points, 
 	   boost::shared_ptr<std::vector<unsigned int> > assignment, 
 	   boost::shared_ptr<Algorithm> algorithm,
-	   float killThreshold, int numberOfClusters)
+	   double killThreshold, int numberOfClusters)
     : assignment(assignment), points(points), algorithm(algorithm), killThreshold(killThreshold) {
 
     Cluster::numberOfPoints = points->n_rows;
@@ -58,8 +58,8 @@ namespace gmum {
     algorithm->singleLoop(*points, *assignment, killThreshold, clusters);
   }
 
-  float CEC::entropy() {
-    float s= 0.0;
+  double CEC::entropy() {
+    double s= 0.0;
     for (std::vector<boost::shared_ptr<Cluster> >::iterator it = clusters.begin() ; it!= clusters.end();++it ){
       s+= (*it)->entropy();
     }
@@ -94,7 +94,7 @@ namespace gmum {
     return result.nrOfClusters;
   }
 
-  std::list<float> CEC::getEnergy() {
+  std::list<double> CEC::getEnergy() {
     return result.energy;
   }
 

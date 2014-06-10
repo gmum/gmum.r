@@ -13,9 +13,11 @@ namespace gmum {
       Rcpp::stop("dataset is required!");
 
     Rcpp::NumericMatrix proxyDataset = Rcpp::as<Rcpp::NumericMatrix>(list[CONST::dataset]);
+
     //reuses memory and avoids extra copy
     boost::shared_ptr<arma::mat> points(new arma::mat(proxyDataset.begin(), proxyDataset.nrow(),
 						      proxyDataset.ncol(), false));
+
     /*
      * read predefined clusters or creates standard description
      * in standard number or number specified by user
@@ -26,10 +28,10 @@ namespace gmum {
     if(points->n_rows < clusters.size()) 
       Rcpp::stop("Size of dataset cannot be less than number of clusters!");
 
-    float killThreshold = CONST::killThresholdInit;
+    double killThreshold = CONST::killThresholdInit;
     if(list.containsElementNamed(CONST::killThreshold)) {
 
-      killThreshold = Rcpp::as<float>(list[CONST::killThreshold]);
+      killThreshold = Rcpp::as<double>(list[CONST::killThreshold]);
       if(killThreshold > 1.0/clusters.size())
 	Rcpp::stop(std::string(CONST::killThreshold)+" is too hight");
     }
@@ -37,7 +39,7 @@ namespace gmum {
     //vectors init
     std::vector<ClusterType> type;
     std::vector<arma::mat> covMat;
-    std::vector<float> radius;
+    std::vector<double> radius;
     initVectors(type, covMat, radius, clusters);
 
     //logging options
@@ -96,7 +98,7 @@ namespace gmum {
 	}
       }
     } catch(std::exception e) {
-      std::cout << "cec_module" << std::endl;
+      Rcpp::stop(std::string("exception ")+e.what()+" caught in CEC_new");
     }
 
     return currentCEC;
@@ -156,7 +158,7 @@ namespace gmum {
 	  if(!list.containsElementNamed(CONST::CLUSTERS::radius))
 	    Rcpp::stop("radius required");
 
-	  float radius = Rcpp::as<float>(list[CONST::CLUSTERS::radius]);
+	  double radius = Rcpp::as<double>(list[CONST::CLUSTERS::radius]);
 	  typeList = Rcpp::List::create(Rcpp::Named(CONST::CLUSTERS::type) = 
 					CONST::CLUSTERS::fsphere,
 					Rcpp::Named(CONST::CLUSTERS::radius) = radius);
@@ -174,7 +176,7 @@ namespace gmum {
 
   void initVectors(std::vector<ClusterType> &type, 
 		   std::vector<arma::mat> &covMat,
-		   std::vector<float> &radius,
+		   std::vector<double> &radius,
 		   std::list<Rcpp::List> &clusters) {
 
     type.resize(clusters.size());
@@ -197,7 +199,7 @@ namespace gmum {
       } else if(typeStr.compare(CONST::CLUSTERS::fsphere)==0) {
 
 	type[i] = fsphere;
-	radius[i] = Rcpp::as<float>((*it)[CONST::CLUSTERS::radius]);
+	radius[i] = Rcpp::as<double>((*it)[CONST::CLUSTERS::radius]);
 
       } else if(typeStr.compare(CONST::CLUSTERS::sphere)==0) type[i] = sphere;
       else if(typeStr.compare(CONST::CLUSTERS::diagonal)==0) type[i] = diagonal;
@@ -225,9 +227,9 @@ namespace gmum {
 
 
 
-  std::list<float> CECpredict(CEC* cec, std::vector<float> vec, bool general) {
+  std::list<double> CECpredict(CEC* cec, std::vector<double> vec, bool general) {
     arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
-    std::list<float> out;
+    std::list<double> out;
 
     if(general)
       for(int i=0; i<cec->clusters.size(); ++i) out.push_back(cec->clusters[i]->predict(x));
@@ -237,17 +239,17 @@ namespace gmum {
 
 
 
-  unsigned int CECpredict(CEC *cec, std::vector<float> vec) {
+  unsigned int CECpredict(CEC *cec, std::vector<double> vec) {
     arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
 
     int assign = 0;
-    float minEntropyChange = std::numeric_limits<float>::max();
+    double minEntropyChange = std::numeric_limits<double>::max();
   
     for(int i=0; i<cec->clusters.size(); ++i) {
 
       boost::shared_ptr<Cluster> oldCluster = cec->clusters[i];
       boost::shared_ptr<Cluster> newCluster = cec->clusters[i]->addPoint(x);
-      float entropyChange = newCluster->entropy() - oldCluster->entropy();
+      double entropyChange = newCluster->entropy() - oldCluster->entropy();
 
       if(entropyChange < minEntropyChange) {
 	minEntropyChange = entropyChange;

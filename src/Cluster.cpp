@@ -91,14 +91,14 @@ namespace gmum {
     return covMat;
   }
 
-  float Cluster::entropy() {
+  double Cluster::entropy() {
     return _entropy;
   }
 
-  float Cluster::predict(arma::rowvec x) {
-    float constMultiplier = sqrt(1.0/(pow(2*M_PI, x.n_cols)*arma::det(covMat)));
-    float scalar = arma::as_scalar((x-mean)*arma::inv(covMat)*((x-mean).t()));
-    float exponens = exp(-0.5*scalar);
+  double Cluster::predict(arma::rowvec x) {
+    double constMultiplier = sqrt(1.0/(pow(2*M_PI, x.n_cols)*arma::det(covMat)));
+    double scalar = arma::as_scalar((x-mean)*arma::inv(covMat)*((x-mean).t()));
+    double exponens = exp(-0.5*scalar);
 
     return constMultiplier*exponens;
   }
@@ -107,7 +107,7 @@ namespace gmum {
   unsigned int Cluster::numberOfPoints = 0;
 
   void Cluster::calculateEntropy() {
-    float p = 1.0*count / numberOfPoints;
+    double p = 1.0*count / numberOfPoints;
     _entropy = p* (N*log(2*M_PI*M_E)/2 + log(arma::det(covMat))/2 + (-log(p)));
   }
 
@@ -182,29 +182,29 @@ namespace gmum {
     invSigma = arma::inv(sigma);
   }
 
-  ClusterCovMat::ClusterCovMat(const arma::mat & _invSigma, float _sigmaDet,
+  ClusterCovMat::ClusterCovMat(const arma::mat & _invSigma, double _sigmaDet,
 			       int _count,arma::rowvec & _mean, arma::mat & covMat)
     : Cluster(_count,_mean,covMat), invSigma(_invSigma), sigmaDet(_sigmaDet){}
 
   void ClusterCovMat::calculateEntropy() {
-    float p = 1.0*count / numberOfPoints;
+    double p = 1.0*count / numberOfPoints;
     _entropy =p*( N*log(2*M_PI)/2 + arma::trace(invSigma*covMat)/2 + N*log(sigmaDet)/2 -log(p));
   }
 
 
 
-  ClusterConstRadius::ClusterConstRadius(float r, unsigned int id, std::vector<unsigned int> &assignment,
+  ClusterConstRadius::ClusterConstRadius(double r, unsigned int id, std::vector<unsigned int> &assignment,
 					 arma::mat &points) : ClusterOnlyTrace(id,assignment,points), r(r) {
     calculateEntropy();
   }
 
-  ClusterConstRadius::ClusterConstRadius(float r, int _count, const arma::rowvec & _mean, double _covMatTrace) :
+  ClusterConstRadius::ClusterConstRadius(double r, int _count, const arma::rowvec & _mean, double _covMatTrace) :
     ClusterOnlyTrace(_count,_mean,_covMatTrace), r(r){ 
     calculateEntropy();
   }
 
   void ClusterConstRadius::calculateEntropy() {
-    float p = 1.0*count / numberOfPoints;
+    double p = 1.0*count / numberOfPoints;
     _entropy = p*(N*log(2*M_PI)/2 + covMatTrace/(2*r) + N*log(r)/2 -log(p));
   }
 
@@ -221,7 +221,7 @@ namespace gmum {
   }
 
   void ClusterSpherical::calculateEntropy() {
-    float p = 1.0*count / numberOfPoints;
+    double p = 1.0*count / numberOfPoints;
     _entropy = p*(N*log(2*M_PI*M_E/N)/2 + N*log(covMatTrace)/2 -log(p));
   }
 
@@ -234,7 +234,7 @@ namespace gmum {
     : Cluster(_count,_mean,covMat){}
 
   void ClusterDiagonal::calculateEntropy() {
-    float p = 1.0*count / numberOfPoints;
+    double p = 1.0*count / numberOfPoints;
     _entropy = p*( N*log(2*M_PI*M_E)/2 + log(arma::det(arma::diagmat(covMat)))/2 -log(p));
   }
 
