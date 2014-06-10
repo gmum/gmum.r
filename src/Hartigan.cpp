@@ -4,7 +4,7 @@ namespace gmum {
 
   Hartigan::Hartigan(bool logNrOfClusters, bool logEnergy) : Algorithm(logNrOfClusters, logEnergy) {}
 
-  TotalResult Hartigan::loop(arma::mat &points, std::vector<unsigned int> &assignment,
+  TotalResult Hartigan::loop(const arma::mat &points, std::vector<unsigned int> &assignment,
 			     double killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters) {
     TotalResult result;
     SingleResult sr;
@@ -17,7 +17,7 @@ namespace gmum {
     return result;
   }
 
-  SingleResult Hartigan::singleLoop(arma::mat &points, std::vector<unsigned int> &assignment, 
+  SingleResult Hartigan::singleLoop(const arma::mat &points, std::vector<unsigned int> &assignment, 
 				    double killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters) {
 
     int switched = 0;  //numer of points who has been moved to another cluster
@@ -86,7 +86,8 @@ namespace gmum {
   }
 
 
-  void Hartigan::removeCluster(unsigned int source, arma::mat &points, std::vector<unsigned int> &assignment,
+  void Hartigan::removeCluster(unsigned int source, const arma::mat &points, 
+			       std::vector<unsigned int> &assignment,
 			       std::vector<boost::shared_ptr<Cluster> > &clusters) {
     //delete cluster
     clusters.erase(clusters.begin() + source);

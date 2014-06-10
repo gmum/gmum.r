@@ -15,7 +15,7 @@ namespace gmum {
     Rcpp::NumericMatrix proxyDataset = Rcpp::as<Rcpp::NumericMatrix>(list[CONST::dataset]);
 
     //reuses memory and avoids extra copy
-    boost::shared_ptr<arma::mat> points(new arma::mat(proxyDataset.begin(), proxyDataset.nrow(),
+    boost::shared_ptr<const arma::mat> points(new arma::mat(proxyDataset.begin(), proxyDataset.nrow(),
 						      proxyDataset.ncol(), false));
 
     /*
@@ -211,7 +211,7 @@ namespace gmum {
 
 
   void randomAssignment(Assignment assignmentType, std::vector<unsigned int> &assignment,
-			arma::mat &points, int nrOfClusters) {
+			const arma::mat &points, int nrOfClusters) {
 
     assignment.resize(points.n_rows);
 

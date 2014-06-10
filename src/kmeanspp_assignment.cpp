@@ -3,7 +3,7 @@
 namespace gmum {
 
   void initAssignKmeanspp(std::vector<unsigned int> &assignment,
-			  arma::mat &points,
+			  const arma::mat &points,
 			  unsigned int nrOfClusters) {
     
     std::vector<unsigned int> centers;
@@ -55,9 +55,9 @@ namespace gmum {
 
   }
 
-  void calculateDistance(std::vector<unsigned int> &centers,
+  void calculateDistance(const std::vector<unsigned int> &centers,
 			 std::list<Pair> &selected,
-			 arma::mat &points) {
+			 const arma::mat &points) {
 
     for(std::list<Pair>::iterator it=selected.begin(); it != selected.end(); ++it) {
       arma::rowvec point = points.row(it->pointNumber);
@@ -91,8 +91,8 @@ namespace gmum {
   }
 
   unsigned int findNearest(unsigned int i, 
-			   std::vector<unsigned int> &centers,
-			   arma::mat &points) {
+			   const std::vector<unsigned int> &centers,
+			   const arma::mat &points) {
 
     arma::rowvec point = points.row(i);
     float distance = std::numeric_limits<float>::max();
