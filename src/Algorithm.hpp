@@ -32,9 +32,9 @@ namespace gmum {
   public:
     Algorithm(bool logNrOfClusters, bool logEnergy)
       : logNrOfClusters(logNrOfClusters), logEnergy(logEnergy) {}
-    virtual TotalResult loop(arma::mat &points, std::vector<unsigned int> &assignment,
+    virtual TotalResult loop(const arma::mat &points, std::vector<unsigned int> &assignment,
 			     double killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters)=0;
-    virtual SingleResult singleLoop(arma::mat &points, std::vector<unsigned int> &assignment,
+    virtual SingleResult singleLoop(const arma::mat &points, std::vector<unsigned int> &assignment,
 				    double killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters)=0;
     virtual ~Algorithm() {};
   };

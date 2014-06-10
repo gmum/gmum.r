@@ -19,17 +19,17 @@ namespace gmum {
   private:
     TotalResult result;
     boost::shared_ptr<std::vector<unsigned int> > assignment;
-    boost::shared_ptr<arma::mat> points;
+    boost::shared_ptr<const arma::mat> points;
     boost::shared_ptr<Algorithm> algorithm;
     const double killThreshold;
   public:
-    CEC(boost::shared_ptr<arma::mat> points, 
+    CEC(boost::shared_ptr<const arma::mat> points, 
 	boost::shared_ptr<std::vector<unsigned int> > assignment, 
 	boost::shared_ptr<Algorithm> algorithm,
-	double killThreshold, std::vector<ClusterType> type,
-	std::vector<double> radius, std::vector<arma::mat> covMatrices);
+	double killThreshold, const std::vector<ClusterType> &type,
+	const std::vector<double> &radius, const std::vector<arma::mat> &covMatrices);
 
-    CEC(boost::shared_ptr<arma::mat> points, 
+    CEC(boost::shared_ptr<const arma::mat> points, 
 	boost::shared_ptr<std::vector<unsigned int> > assignment, 
 	boost::shared_ptr<Algorithm> algorithm,
 	double killThreshold, int numberOfClusters);

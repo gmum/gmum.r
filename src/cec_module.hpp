@@ -56,7 +56,7 @@ namespace gmum {
 		   std::list<Rcpp::List> &clusters);
 
   void randomAssignment(Assignment assignmentType, std::vector<unsigned int> &assignment,
-			arma::mat &points, int nrOfClusters);
+			const arma::mat &points, int nrOfClusters);
 
   std::list<double> CECpredict(CEC*, std::vector<double>, bool);
   unsigned int CECpredict(CEC*, std::vector<double>);
