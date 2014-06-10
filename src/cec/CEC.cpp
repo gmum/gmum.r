@@ -98,4 +98,12 @@ namespace gmum {
     return result.energy;
   }
 
+  boost::shared_ptr<arma::mat> CEC::getPtrToPoints() const {
+    return this->points;
+  }
+
+  boost::shared_ptr<std::vector<unsigned int> > CEC::getPtrToAssignement() const {
+    return this->assignment;
+  }
+  
 }
