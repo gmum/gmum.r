@@ -52,6 +52,10 @@ namespace gmum {
 
   void CEC::loop() {
     result = algorithm->loop(*points, *assignment, killThreshold, clusters);
+    for(int i=0; i<clusters.size(); ++i) {
+      ClusterOnlyTrace *ptr = dynamic_cast<ClusterOnlyTrace*>(&(*clusters[i]));
+      if(ptr != 0) ptr->computeCovarianceMatrix(i, *assignment, *points);
+    }
   }
 
   void CEC::singleLoop() {
@@ -98,7 +102,7 @@ namespace gmum {
     return result.energy;
   }
 
-  boost::shared_ptr<arma::mat> CEC::getPtrToPoints() const {
+  boost::shared_ptr<const arma::mat> CEC::getPtrToPoints() const {
     return this->points;
   }
 
