@@ -5,7 +5,7 @@ namespace gmum {
   Hartigan::Hartigan(bool logNrOfClusters, bool logEnergy) : Algorithm(logNrOfClusters, logEnergy) {}
 
   TotalResult Hartigan::loop(arma::mat &points, std::vector<unsigned int> &assignment,
-			     float killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters) {
+			     double killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters) {
     TotalResult result;
     SingleResult sr;
 
@@ -18,7 +18,7 @@ namespace gmum {
   }
 
   SingleResult Hartigan::singleLoop(arma::mat &points, std::vector<unsigned int> &assignment, 
-				    float killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters) {
+				    double killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters) {
 
     int switched = 0;  //numer of points who has been moved to another cluster
     int dimension = points.n_cols;
@@ -31,7 +31,7 @@ namespace gmum {
 	if(k != source) {
 
 	  boost::shared_ptr<Cluster> oldSource, oldTarget, newSource, newTarget;
-	  float oldEntropy, newEntropy;
+	  double oldEntropy, newEntropy;
 
 	  try {
 
@@ -78,7 +78,7 @@ namespace gmum {
 	}  //for iterates clusters
     }  //for iterates points
 
-    float energy = 0;
+    double energy = 0;
     if(logEnergy)
       for(int i=0; i<clusters.size(); ++i) energy += clusters[i]->entropy();
 
@@ -100,13 +100,13 @@ namespace gmum {
 	arma::rowvec pointToAssign = points.row(j);
 	int minEntropyChangeElementIndex = -1;
 	boost::shared_ptr<Cluster> minEntropyChangeCluster;
-	float minEntropyChange = std::numeric_limits<float>::max();
+	double minEntropyChange = std::numeric_limits<double>::max();
 		
 	//find the best cluster to assign the point to it 
 	for(unsigned int l = 0; l < clusters.size(); l++){
 	  boost::shared_ptr<Cluster> oldTarget = clusters[l];
 	  boost::shared_ptr<Cluster> newTarget = clusters[l]->addPoint(pointToAssign);
-	  float entropyChange = newTarget->entropy() - oldTarget->entropy();
+	  double entropyChange = newTarget->entropy() - oldTarget->entropy();
 	  if(entropyChange < minEntropyChange){
 	    minEntropyChange = entropyChange;
 	    minEntropyChangeElementIndex = l;

@@ -18,7 +18,7 @@ namespace gmum {
      * covariance matrix 
      */
     arma::mat covMat;
-    float _entropy;
+    double _entropy;
 
     virtual void calculateEntropy();
     void initializeCovarianceMatrix(unsigned int id, const std::vector<unsigned int> &assignment, arma::mat &points);
@@ -30,12 +30,12 @@ namespace gmum {
     Cluster(unsigned int id, const std::vector<unsigned int> &assignment, arma::mat &points);
     virtual boost::shared_ptr<Cluster> addPoint(arma::rowvec &point);
     virtual boost::shared_ptr<Cluster> removePoint(arma::rowvec &point);
-    float entropy();
+    double entropy();
     int size();
     arma::rowvec initializeMean(unsigned int id, const std::vector<unsigned int> &assignment, arma::mat &points);
     arma::rowvec getMean();
     virtual arma::mat getCovMat();
-    float predict(arma::rowvec);
+    double predict(arma::rowvec);
     static unsigned int numberOfPoints;
     virtual void computeCovarianceMatrix(unsigned int id, const std::vector<unsigned int> &assignment, arma::mat &points);
   };
@@ -65,20 +65,20 @@ namespace gmum {
   class ClusterCovMat : public Cluster {
     void calculateEntropy();
     arma::mat invSigma;
-    float sigmaDet;
+    double sigmaDet;
     boost::shared_ptr<Cluster> createInstance(int _count,arma::rowvec & _mean, arma::mat & covMat);
   public:
-    ClusterCovMat(const arma::mat & invSigma, float sigmaDet, int _count,arma::rowvec & _mean, arma::mat & covMat);
+    ClusterCovMat(const arma::mat & invSigma, double sigmaDet, int _count,arma::rowvec & _mean, arma::mat & covMat);
     ClusterCovMat(const arma::mat & sigma, unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
   };
 
   class ClusterConstRadius : public ClusterOnlyTrace {
     void calculateEntropy();
-    float r;
+    double r;
     boost::shared_ptr<ClusterOnlyTrace> createInstance(int _count,const arma::rowvec & _mean, double _covMatTrace);
   public:
-    ClusterConstRadius(float r, int _count, const arma::rowvec & _mean, double _covMatTrace);
-    ClusterConstRadius(float r, unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
+    ClusterConstRadius(double r, int _count, const arma::rowvec & _mean, double _covMatTrace);
+    ClusterConstRadius(double r, unsigned int id, std::vector<unsigned int> &assignment, arma::mat &points);
   };
 
 
