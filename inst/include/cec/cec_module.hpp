@@ -58,9 +58,10 @@ namespace gmum {
   void randomAssignment(Assignment assignmentType, std::vector<unsigned int> &assignment,
 			const arma::mat &points, int nrOfClusters);
 
+  void plot(CEC*);
+  arma::mat getDataSet(CEC* cec);
   std::list<double> CECpredict(CEC*, std::vector<double>, bool);
   unsigned int CECpredict(CEC*, std::vector<double>);
-
 
   const char* CONST::dataset = "x";
   const char* CONST::nrOfClusters = "k";
@@ -109,6 +110,8 @@ namespace gmum {
       .method("log.energy", &CEC::getEnergy)
       .method("log.iters", &CEC::iters)
       .method("clustering",&CEC::getAssignment)
+      .method("plot", plot)
+      .method("x", getDataSet)
       ;
   }
 }

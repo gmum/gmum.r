@@ -137,7 +137,7 @@ void ClusterReader::readDimension() {
     file.close();
   }
   else {
-    std::cerr << "Failed to open " << energyPath() << std::endl;
+    std::cerr << "Failed to open " << dimensionPath() << std::endl;
   }
 }
 void ClusterReader::getPoints(std::vector<std::vector<double> > & out) {

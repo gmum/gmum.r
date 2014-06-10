@@ -259,4 +259,15 @@ namespace gmum {
 
     return assign;
   }
+  //should be removed 
+  void plot(CEC* cec) {
+    //  Rcpp::Language call("plot",Rcpp::List::create(Rcpp::Named("x")=*(cec->getPtrToPoints()),			  Rcpp::Named("col") = *(cec->getPtrToAssignement())));
+        // Rcpp::Language call("plot",*(cec->getPtrToPoints()),Rcpp::Named("col")=cec->getAssignment());
+     Rcpp::Language call("plot",*(cec->getPtrToPoints()));
+    call.eval();
+  }
+  
+  arma::mat getDataSet(CEC* cec) {
+    return *(cec->getPtrToPoints());
+  }
 }
