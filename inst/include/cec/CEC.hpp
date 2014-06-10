@@ -45,7 +45,7 @@ namespace gmum {
     std::vector<arma::mat> cov();
     unsigned int iters();
     std::list<unsigned int> getNrOfClusters();
-    boost::shared_ptr<arma::mat> getPtrToPoints() const;
+    boost::shared_ptr<const arma::mat> getPtrToPoints() const;
     boost::shared_ptr<std::vector<unsigned int> > getPtrToAssignement() const;
     std::list<double> getEnergy();
   };
