@@ -8,16 +8,16 @@ namespace gmum {
   struct SingleResult {
     int switched;
     int nrOfClusters;
-    float energy;
+    double energy;
     SingleResult() {}
-    SingleResult(int switched, int nrOfClusters, float energy) :
+    SingleResult(int switched, int nrOfClusters, double energy) :
       switched(switched), nrOfClusters(nrOfClusters), energy(energy) {}
   };
 
   struct TotalResult {
     int iterations;
     std::list<unsigned int> nrOfClusters;
-    std::list<float> energy;
+    std::list<double> energy;
     TotalResult() : iterations(0) {}
     void append(SingleResult result, bool logNrOfClusters, bool logEnergy) {
       iterations++;
@@ -32,10 +32,10 @@ namespace gmum {
   public:
     Algorithm(bool logNrOfClusters, bool logEnergy)
       : logNrOfClusters(logNrOfClusters), logEnergy(logEnergy) {}
-    virtual TotalResult loop(arma::mat &points, std::vector<unsigned int> &assignment,
-			     float killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters)=0;
-    virtual SingleResult singleLoop(arma::mat &points, std::vector<unsigned int> &assignment,
-				    float killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters)=0;
+    virtual TotalResult loop(const arma::mat &points, std::vector<unsigned int> &assignment,
+			     double killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters)=0;
+    virtual SingleResult singleLoop(const arma::mat &points, std::vector<unsigned int> &assignment,
+				    double killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters)=0;
     virtual ~Algorithm() {};
   };
 

@@ -10,7 +10,6 @@
 namespace gmum {
 
   void initAssignRandom(std::vector<unsigned int> &assignment,
-			unsigned int nrOfPoints,
 			unsigned int nrOfClusters);
 
 }
