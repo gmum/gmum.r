@@ -22,21 +22,20 @@ namespace gmum {
   };
 
   void initAssignKmeanspp(std::vector<unsigned int> &assignment,
-			  arma::mat &points,
-			  unsigned int nrOfPoints,
+			  const arma::mat &points,
 			  unsigned int nrOfClusters);    
 
-  void calculateDistance(std::vector<unsigned int> &centers,
+  void calculateDistance(const std::vector<unsigned int> &centers,
 			 std::list<Pair> &selected,
-			 arma::mat &points);
+			 const arma::mat &points);
 
   std::list<Pair>::iterator choose(boost::random::bernoulli_distribution<> &bernoulli,
 			      boost::random::mt19937 &gen,
 			      std::list<Pair> &selected);
 
   unsigned int findNearest(unsigned int i, 
-			   std::vector<unsigned int> &centers,
-			   arma::mat &points);
+			   const std::vector<unsigned int> &centers,
+			   const arma::mat &points);
 
 }
 

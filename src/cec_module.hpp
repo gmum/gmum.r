@@ -37,7 +37,7 @@ namespace gmum {
     };
 
     static const unsigned int nrOfClustersInit;
-    static const float killThresholdInit;
+    static const double killThresholdInit;
     static const unsigned int nstartInit;
   };
 
@@ -52,16 +52,16 @@ namespace gmum {
 
   void initVectors(std::vector<ClusterType> &type, 
 		   std::vector<arma::mat> &covMat,
-		   std::vector<float> &radius,
+		   std::vector<double> &radius,
 		   std::list<Rcpp::List> &clusters);
 
   void randomAssignment(Assignment assignmentType, std::vector<unsigned int> &assignment,
-			arma::mat &points, int nrOfClusters);
+			const arma::mat &points, int nrOfClusters);
 
-  std::list<float> CECpredict(CEC*, std::vector<float>, bool);
-  unsigned int CECpredict(CEC*, std::vector<float>);
   void plot(CEC*);
   arma::mat getDataSet(CEC* cec);
+  std::list<double> CECpredict(CEC*, std::vector<double>, bool);
+  unsigned int CECpredict(CEC*, std::vector<double>);
 
   const char* CONST::dataset = "x";
   const char* CONST::nrOfClusters = "k";
@@ -87,14 +87,14 @@ namespace gmum {
   const char* CONST::CLUSTERS::radius = "params.r";
   
   const unsigned int CONST::nrOfClustersInit = 10;
-  const float CONST::killThresholdInit = 1e-4;
-  const unsigned int CONST::nstartInit = 20;
+  const double CONST::killThresholdInit = 1e-4;
+  const unsigned int CONST::nstartInit = 1;
 
   RCPP_MODULE(cec) {
     using namespace Rcpp;
 
-    std::list<float> (*predict_1)(CEC*, std::vector<float>, bool) = CECpredict;
-    unsigned int (*predict_2)(CEC*, std::vector<float>) = CECpredict;
+    std::list<double> (*predict_1)(CEC*, std::vector<double>, bool) = CECpredict;
+    unsigned int (*predict_2)(CEC*, std::vector<double>) = CECpredict;
 
     class_<CEC>("cec")
       .factory(CEC__new)
