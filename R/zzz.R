@@ -15,9 +15,13 @@ evalqOnLoad({
     summary.cec<<- function(object) {
         print.cec(object)
         names = c("x","k","clustering","method.type","method.init","params.r","params.cov","control.nstart","control.eps","control.itmax","log.energy","log.ncluster","log.iters")
-        
-        Length = c(length(object$clustering()),length(object$centers()),length(object$clustering()),-1,-1,-1,-1,-1,-1,-1,length(object$log.energy()),length(object$log.ncluster()),length(object$log.iters()))
-        print(data.frame(names,Length), row.names=FALSE)
+        datalength = length(object$y())
+        nrClusters = length(object$centers())
+        bestNumberOfSteps = length(object$log.energy())
+        Length = c(datalength,nrClusters,nrClusters,nrClusters,1,nrClusters,nrClusters,-1,1,1,bestNumberOfSteps,bestNumberOfSteps,1)
+        Class = rep("-none-",length(names))
+        Mode = c("numeric","character","character","character","character",rep("numeric",8))
+        print(data.frame(names,Length,Class,Mode), row.names=FALSE)
     }
 
     plot.cec <<- function(x,slice = c(), ellipses = FALSE, centers = FALSE) {
