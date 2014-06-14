@@ -60,8 +60,11 @@ namespace gmum {
 
   void plot(CEC*);
   arma::mat getDataSet(CEC* cec);
+
   std::list<double> CECpredict(CEC*, std::vector<double>, bool);
   unsigned int CECpredict(CEC*, std::vector<double>);
+
+  unsigned int getNstart(CEC* cec);
 
   const char* CONST::dataset = "x";
   const char* CONST::nrOfClusters = "k";
@@ -90,6 +93,8 @@ namespace gmum {
   const double CONST::killThresholdInit = 1e-4;
   const unsigned int CONST::nstartInit = 1;
 
+  unsigned int nstart;
+
   RCPP_MODULE(cec) {
     using namespace Rcpp;
 
@@ -112,6 +117,7 @@ namespace gmum {
       .method("clustering",&CEC::getAssignment)
       .method("plot", plot)
       .method("x", getDataSet)
+      .method("nstart", getNstart)
       ;
   }
 }
