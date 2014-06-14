@@ -18,7 +18,7 @@ evalqOnLoad({
         datalength = length(object$y())
         nrClusters = length(object$centers())
         bestNumberOfSteps = length(object$log.energy())
-        Length = c(datalength,nrClusters,nrClusters,nrClusters,1,nrClusters,nrClusters,-1,1,1,bestNumberOfSteps,bestNumberOfSteps,1)
+        Length = c(datalength,nrClusters,nrClusters,nrClusters,1,nrClusters,nrClusters,1,1,1,bestNumberOfSteps,bestNumberOfSteps,1)
         Class = rep("-none-",length(names))
         Mode = c("numeric","character","character","character","character",rep("numeric",8))
         print(data.frame(names,Length,Class,Mode), row.names=FALSE)
