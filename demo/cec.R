@@ -33,3 +33,6 @@ predictCluster(c, c(1,1))
 # or find out what are the probabilities of belonging
 # to each cluster
 predictClusters(c, c(1,1))
+
+# you can visualise size and shape of clusters
+plot(c, ellipses=TRUE)
