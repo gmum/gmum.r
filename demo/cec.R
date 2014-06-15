@@ -36,3 +36,8 @@ predictClusters(c, c(1,1))
 
 # you can visualise size and shape of clusters
 plot(c, ellipses=TRUE)
+
+# try the same with random assignment
+args <- list(k=3, x=dataset, params.nstart=10, method.type='sphere', method.init='random')
+c <- new(cec, args)
+plot(c)
