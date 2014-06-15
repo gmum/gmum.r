@@ -48,9 +48,20 @@ evalqOnLoad({
                 for (i in 1:n) {
                     print(t(length(cen[i])))
                     print(class(cen[i]))
-                    ellipse(unlist(cen[i][slice]),matrix(unlist(cov[i]),ncol=2)[slice,slice],1.0)
-                }
-            }
+                    ## data = unlist(cov[i])
+                    ## covMat = matrix(data,ncol=sqrt(length(data)))[slice,slice]
+                    ## print(covMat)
+                    ## eigenValuesAndVectors = eigen(covMat) # covariance matrix is positivly definde
+                    ## r1 = 1.0 / sqrt((min(eigenValuesAndVectors$values)))
+                    ## r2 = 1.0 / sqrt((max(eigenValuesAndVectors$values)))
+                    ## r12 = 1.0 / (min(eigenValuesAndVectors$values));
+                    ## r22 = 1.0 / (max(eigenValuesAndVectors$values))
+                    ## print(r1)
+                    ## print(r2)
+                    ##ellipse(unlist(cen[i][slice]),covMat,r12) this is a cheat, we are not acutually using the covariance we computed 
+                    dataEllipse(d[x$y() == (i-1),],plot.points=FALSE,add = TRUE, levels = c(0.9))
+               }
+           }
 
             if(centers) {
                 mcenters = do.call(rbind,cen)
