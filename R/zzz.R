@@ -1,17 +1,18 @@
 loadModule("cec", TRUE)
 summary.cec<- NULL
 plot.cec <- NULL
-show.cec <- NULL
+
 evalqOnLoad({
 
     print.cec <<- function(x) {
         print(sprintf("Cec clustring, %d clusters with %f entropy",
-              length(x$centers()), x$entropy()))
+                      length(x$centers()), x$entropy()))
         print("Centers : ")
         print(x$centers())
         print("Covariances : ")
         print(x$cov())
     }
+    
     summary.cec<<- function(object) {
         print.cec(object)
         names = c("x","k","clustering","method.type","method.init","params.r","params.cov","control.nstart","control.eps","control.itmax","log.energy","log.ncluster","log.iters")
@@ -48,20 +49,20 @@ evalqOnLoad({
                     print(t(length(cen[i])))
                     print(class(cen[i]))
                     ellipse(unlist(cen[i][slice]),matrix(unlist(cov[i]),ncol=2)[slice,slice],1.0)
+                }
             }
-        }
 
-        if(centers) {
-            mcenters = do.call(rbind,cen)
-            points(mcenters[,slice],col="blue",bg=par("bg"))
-         }
+            if(centers) {
+                mcenters = do.call(rbind,cen)
+                points(mcenters[,slice],col="blue",bg=par("bg"))
+            }
         }
     }
     
 
 
-setMethod("summary", "Rcpp_cec", summary.cec)
-setMethod("print","Rcpp_cec", print.cec)
-setMethod("plot","Rcpp_cec",plot.cec)
+    setMethod("summary", "Rcpp_cec", summary.cec)
+    setMethod("print","Rcpp_cec", print.cec)
+    setMethod("plot","Rcpp_cec",plot.cec)
 
 })
