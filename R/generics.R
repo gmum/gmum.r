@@ -33,11 +33,11 @@ evalqOnLoad({
         c$cov()
     }
 
-    predictCluster.cec <- function(vec, c) {
+    predictCluster.cec <- function(c, vec) {
         c$predict(vec)
     }
 
-    predictClusters.cec <- function(vec, c) {
+    predictClusters.cec <- function(c, vec) {
         c$predict(vec,TRUE)
     }
 
@@ -72,10 +72,10 @@ evalqOnLoad({
     setGeneric("cov", function(c) standardGeneric("cov"))
     setMethod("cov", "Rcpp_cec", cov.cec)
 
-    setGeneric("predictCluster", function(vec, c) standardGeneric("predictCluster"))
+    setGeneric("predictCluster", function(c, ...) standardGeneric("predictCluster"))
     setMethod("predictCluster", "Rcpp_cec", predictCluster.cec)
 
-    setGeneric("predictClusters", function(vec, c) standardGeneric("predictClusters"))
+    setGeneric("predictClusters", function(c, ...) standardGeneric("predictClusters"))
     setMethod("predictClusters", "Rcpp_cec", predictClusters.cec)
 
     setGeneric("log.ncluster", function(c) standardGeneric("log.ncluster"))

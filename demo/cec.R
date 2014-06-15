@@ -22,3 +22,14 @@ args <- list(k=3, x=dataset, params.nstart=10, method.type='sphere')
 c <- new(cec, args)
 plot(c)
 # ain't that great? :D
+
+# you can learn details of clustering like this
+centers(c)
+cov(c)
+
+# you can predict cluster which a point would belong to
+predictCluster(c, c(1,1))
+
+# or find out what are the probabilities of belonging
+# to each cluster
+predictClusters(c, c(1,1))
