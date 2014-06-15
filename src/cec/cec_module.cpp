@@ -216,7 +216,7 @@ namespace gmum {
 
       switch(assignmentType) {
       case random:
-	initAssignRandom(assignment, nrOfClusters);
+	initAssignRandom(assignment, points, nrOfClusters);
 	break;
       case kmeanspp:
 	initAssignKmeanspp(assignment, points, nrOfClusters);

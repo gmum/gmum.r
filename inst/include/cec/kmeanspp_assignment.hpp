@@ -6,6 +6,7 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
+#include "assignment.hpp"
 
 #ifndef KMEANSPP_ASSIGMENT_HPP
 #define KMEANSPP_ASSIGMENT_HPP
@@ -32,10 +33,6 @@ namespace gmum {
   std::list<Pair>::iterator choose(boost::random::bernoulli_distribution<> &bernoulli,
 			      boost::random::mt19937 &gen,
 			      std::list<Pair> &selected);
-
-  unsigned int findNearest(unsigned int i, 
-			   const std::vector<unsigned int> &centers,
-			   const arma::mat &points);
 
 }
 
