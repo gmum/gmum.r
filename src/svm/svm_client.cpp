@@ -104,7 +104,23 @@ bool SVMClient::isProbability(){
 	return (bool)config.probability;
 }
 
+// model getters
+double* SVMClient::getAlpha() {
+	return config.rho;
+}
 
+double SVMClient::getBias() {	// where is the bias in config?
+	return 0.0;			// temporary
+}
+
+double* SVMClient::getW() {		// where is W in config?
+	if ( config.kernel_type == _LINEAR ) {
+		return new double[2];	// temporary
+	}
+	else {
+		return 0;
+	}
+}
 
 // Runners
 void SVMClient::run() {

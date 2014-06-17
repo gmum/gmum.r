@@ -70,8 +70,9 @@ RCPP_MODULE(svm_wrapper) {
 			.method("getEps", &SVMClient::getEps)
 			.method("isShrinking", &SVMClient::isShrinking)
 			.method("isProbability", &SVMClient::isProbability)
-
-
+			.method("getAlpha", &SVMClient::getAlpha)
+			.method("getBias", &SVMClient::getBias)
+			.method("getW", &SVMClient::getW)
 
 			.method("train", &SVMClient::train)
 			.method("predict", &SVMClient::predict)
