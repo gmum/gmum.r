@@ -71,7 +71,8 @@ void SVMConfiguration::setWeights( Rcpp::NumericVector weights ) {
 
 void SVMConfiguration::setLibrary( std::string library ) {
 	if ( library == "libsvm" ) {
-		this->svm_type = LIBSVM;
+		this->library = LIBSVM;
+		this->svm_type = C_SVC;
 	}
 	// else if
 }
@@ -101,9 +102,9 @@ void SVMConfiguration::setPreprocess( std::string preprocess ) {
 }
 
 void SVMConfiguration::setDefaultParams() {
-	our_svm_type = LIBSVM;
+	library = LIBSVM;
 	svm_type = C_SVC;
-	kernel_type = LINEAR;
+	kernel_type = _LINEAR;
 	degree = 3;
 	gamma = 0;	// 1/num_features
 	coef0 = 0;

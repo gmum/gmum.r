@@ -2,6 +2,7 @@
 #define SVM_CLIENT_H
 
 #include "svm_handler.h"
+#include "libsvm_runner.h"
 #include "svm_basic.h"
 #include "norm.h"
 #include <vector>
