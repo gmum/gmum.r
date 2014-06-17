@@ -14,12 +14,15 @@ private:
 	void createFlow();
 
 public:
+	//constructors
 	SVMClient(SVMConfiguration*);
 	bool trained;
 
+	// data setters
 	void setX( arma::mat );
 	void setY( arma::vec );
 
+	// params setter
 	void setLibrary(std::string);
 	void setKernel(std::string);
 	void setPreprocess(std::string);
@@ -33,10 +36,12 @@ public:
 	void setShrinking(int);
 	void setProbability(int);
 
+	// data getters
 	arma::mat getX();
 	arma::vec getY();
 	arma::vec getPrediction();
 
+	// params getters
 	std::string getLibrary();
 	std::string getKernel();
 	std::string getPreprocess();
@@ -50,9 +55,16 @@ public:
 	bool isShrinking();
 	bool isProbability();
 
+	// runners
 	void run();
 	void predict( arma::mat );
 	void train();
+
+	// model getters
+ // double** getSV(); // double**, std::vector, arma:mat ?
+	double* getAlpha();
+	double getBias();
+	double* getW();
 };
 
 #endif
