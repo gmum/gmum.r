@@ -31,9 +31,9 @@ public:
 
 	std::string error_msg; //if something went wrong, there is msg with error
 
-	SVMType our_svm_type;
+	SVMType library;
 	int svm_type;
-	int kernel_type;
+	KernelType kernel_type;
 	Preprocess preprocess;
 
 	int degree;		// for poly

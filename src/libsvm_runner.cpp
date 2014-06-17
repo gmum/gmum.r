@@ -68,7 +68,7 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 }
 
 bool LibSVMRunner::canHandle(SVMConfiguration& config) {
-	return config.our_svm_type == LIBSVM;
+	return config.library == LIBSVM;
 }
 
 bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
@@ -212,7 +212,7 @@ svm_parameter* LibSVMRunner::configuration_to_problem(
 	svm_parameter* param;
 	param = Malloc(svm_parameter, 1);
 	param->svm_type = config.svm_type;
-	param->kernel_type = config.kernel_type;
+	// param->kernel_type = config.kernel_type;
 	param->degree = config.degree;
 	param->gamma = config.gamma;	// 1/num_features
 	param->coef0 = config.coef0;
@@ -226,6 +226,19 @@ svm_parameter* LibSVMRunner::configuration_to_problem(
 	param->nr_weight = config.nr_weight;
 	param->weight_label = config.weight_label;
 	param->weight = config.weight;
+
+	if ( config.kernel_type == _LINEAR ) {
+			param->kernel_type = LINEAR;
+		}
+		else if ( config.kernel_type == _POLY ) {
+			param->kernel_type = POLY;
+		}
+		else if ( config.kernel_type == _RBF ) {
+			param->kernel_type = RBF;
+		}
+		else if ( config.kernel_type == _SIGMOID ) {
+			param->kernel_type = SIGMOID;
+		}
 	return param;
 }
 
