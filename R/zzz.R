@@ -2,6 +2,7 @@ loadModule("cec", TRUE)
 summary.cec<- NULL
 plot.cec <- NULL
 
+
 evalqOnLoad({
 
     print.cec <<- function(x) {
@@ -15,20 +16,24 @@ evalqOnLoad({
     
     summary.cec<<- function(object) {
         print.cec(object)
-        names = c("x","k","clustering","method.type","method.init","params.r","params.cov","control.nstart","control.eps","control.itmax","log.energy","log.ncluster","log.iters")
+        names = c("x", "k", "clustering", "method.type", "method.init",
+            "params.r", "params.cov", "control.nstart", "control.eps",
+            "control.itmax", "log.energy", "log.ncluster", "log.iters")
         datalength = length(object$y())
         nrClusters = length(object$centers())
         bestNumberOfSteps = length(object$log.energy())
-        Length = c(datalength,nrClusters,nrClusters,nrClusters,1,nrClusters,nrClusters,1,1,1,bestNumberOfSteps,bestNumberOfSteps,1)
+        Length = c(datalength, nrClusters, nrClusters, nrClusters, 1,
+            nrClusters, nrClusters, 1, 1, 1, bestNumberOfSteps,
+            bestNumberOfSteps,1)
         Class = rep("-none-",length(names))
-        Mode = c("numeric","character","character","character","character",rep("numeric",8))
-        print(data.frame(names,Length,Class,Mode), row.names=FALSE)
+        Mode = c("numeric", "numeric", "character", "character", "character", rep("numeric",8))
+        print(data.frame(names, Length, Class, Mode), row.names=FALSE)
     }
 
     plot.cec <<- function(x,slice = c(), ellipses = FALSE, centers = FALSE) {
 
         d = x$x()
-        if (length(slice)==0){
+        if (length(slice)==0) {
             slice = c(1:(dim(d)[2]))
         }
         if (length(slice)==2) {
@@ -46,21 +51,27 @@ evalqOnLoad({
                 cov = x$cov()
 
                 for (i in 1:n) {
-                    print(t(length(cen[i])))
-                    print(class(cen[i]))
-                    ## data = unlist(cov[i])
-                    ## covMat = matrix(data,ncol=sqrt(length(data)))[slice,slice]
-                    ## print(covMat)
-                    ## eigenValuesAndVectors = eigen(covMat) # covariance matrix is positivly definde
-                    ## r1 = 1.0 / sqrt((min(eigenValuesAndVectors$values)))
-                    ## r2 = 1.0 / sqrt((max(eigenValuesAndVectors$values)))
-                    ## r12 = 1.0 / (min(eigenValuesAndVectors$values));
-                    ## r22 = 1.0 / (max(eigenValuesAndVectors$values))
-                    ## print(r1)
-                    ## print(r2)
-                    ##ellipse(unlist(cen[i][slice]),covMat,r12) this is a cheat, we are not acutually using the covariance we computed 
-                    dataEllipse(d[x$y() == (i-1),],plot.points=FALSE,add = TRUE, levels = c(0.9))
+                    data = unlist(cov[i])
+                    covMat = matrix(data,ncol=sqrt(length(data)))[slice,slice]
+                    m = unlist(cen[i][slice])
+                    print(covMat)
+                    eigenValuesAndVectors = eigen(covMat)
+                    veE <- eigenValuesAndVectors$vectors
+                    l <- eigenValuesAndVectors$values
+                    r <- seq(-pi, pi, by = 0.001)
+                    len <- length(r)
+                    Xa <- 2*sqrt(l[1])*cos(r)
+                    Ya <- 2*sqrt(l[2])*sin(r)
+                    mm <- c(rep(m[1], len),rep(m[2],len))
+                    meansMultiply <- matrix(mm, ncol = 2)
+                    line1 = cbind(Xa,Ya)
+                    lineAll = rbind(line1)
+                    ddd <- (lineAll%*%t(veE)) + meansMultiply
+                    points(ddd,col = "black", type = "l", lwd = 2)
+                    #dataEllipse(d[x$y() == (i-1),],plot.points=FALSE,add = TRUE, levels = c(0.9))
                }
+
+                
            }
 
             if(centers) {
