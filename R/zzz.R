@@ -2,59 +2,6 @@ loadModule("cec", TRUE)
 summary.cec<- NULL
 plot.cec <- NULL
 
-ellipsesPrzemek <<- function(x,slice = c(), ellipses = FALSE, centers = FALSE) {
-
-        d = x$x()
-        if (length(slice)==0) {
-            slice = c(1:(dim(d)[2]))
-        }
-        if (length(slice)==2) {
-            plot(d[,slice], col = (x$y() + 1))
-        }
-        else{
-            pairs(d[,slice],col = (x$y()+1))
-        }
-
-        if (ellipses || centers) {
-            cen = x$centers()
-            n = length(cen)
-            if (ellipses && length(slice) <= 2){
-                library("car")
-                cov = x$cov()
-
-                for (i in 1:n) {
-                    data = unlist(cov[i])
-                    covMat = matrix(data,ncol=sqrt(length(data)))[slice,slice]
-                    m = unlist(cen[i][slice])
-                    print(covMat)
-                    eigenValuesAndVectors = eigen(covMat)
-                    veE <- eigenValuesAndVectors$vectors
-                    l <- eigenValuesAndVectors$values
-                    r <- seq(-pi, pi, by = 0.001)
-                    len <- length(r)
-                    Xa <- 2*sqrt(l[1])*cos(r)
-                    Ya <- 2*sqrt(l[2])*sin(r)
-                    mm <- c(rep(m[1], len),rep(m[2],len))
-                    meansMultiply <- matrix(mm, ncol = 2)
-                    line1 = cbind(Xa,Ya)
-                    lineAll = rbind(line1)
-                    ddd <- (lineAll%*%t(veE)) + meansMultiply
-#                    plot(ddd, col = "black", type = "l", lwd = 2 , add = TRUE)
-                    points(ddd,col = "black", type = "l", lwd = 2)
-                    print(class(ddd))
-                    print(dim(ddd))
-                    
-                    #ellipse(unlist(cen[i][slice]),covMat,r12) this is a cheat, we are not acutually using the covariance we computed 
-                    #dataEllipse(d[x$y() == (i-1),],plot.points=FALSE,add = TRUE, levels = c(0.9))
-               }
-           }
-
-            if(centers) {
-                mcenters = do.call(rbind,cen)
-                points(mcenters[,slice],col="blue",bg=par("bg"))
-            }
-        }
-    }
 
 evalqOnLoad({
 
@@ -104,21 +51,27 @@ evalqOnLoad({
                 cov = x$cov()
 
                 for (i in 1:n) {
-                    print(t(length(cen[i])))
-                    print(class(cen[i]))
-                    ## data = unlist(cov[i])
-                    ## covMat = matrix(data,ncol=sqrt(length(data)))[slice,slice]
-                    ## print(covMat)
-                    ## eigenValuesAndVectors = eigen(covMat) # covariance matrix is positivly definde
-                    ## r1 = 1.0 / sqrt((min(eigenValuesAndVectors$values)))
-                    ## r2 = 1.0 / sqrt((max(eigenValuesAndVectors$values)))
-                    ## r12 = 1.0 / (min(eigenValuesAndVectors$values));
-                    ## r22 = 1.0 / (max(eigenValuesAndVectors$values))
-                    ## print(r1)
-                    ## print(r2)
-                    ##ellipse(unlist(cen[i][slice]),covMat,r12) this is a cheat, we are not acutually using the covariance we computed 
-                    dataEllipse(d[x$y() == (i-1),],plot.points=FALSE,add = TRUE, levels = c(0.9))
+                    data = unlist(cov[i])
+                    covMat = matrix(data,ncol=sqrt(length(data)))[slice,slice]
+                    m = unlist(cen[i][slice])
+                    print(covMat)
+                    eigenValuesAndVectors = eigen(covMat)
+                    veE <- eigenValuesAndVectors$vectors
+                    l <- eigenValuesAndVectors$values
+                    r <- seq(-pi, pi, by = 0.001)
+                    len <- length(r)
+                    Xa <- 2*sqrt(l[1])*cos(r)
+                    Ya <- 2*sqrt(l[2])*sin(r)
+                    mm <- c(rep(m[1], len),rep(m[2],len))
+                    meansMultiply <- matrix(mm, ncol = 2)
+                    line1 = cbind(Xa,Ya)
+                    lineAll = rbind(line1)
+                    ddd <- (lineAll%*%t(veE)) + meansMultiply
+                    points(ddd,col = "black", type = "l", lwd = 2)
+                    #dataEllipse(d[x$y() == (i-1),],plot.points=FALSE,add = TRUE, levels = c(0.9))
                }
+
+                
            }
 
             if(centers) {
