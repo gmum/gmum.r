@@ -23,13 +23,11 @@ ellipsesPrzemek <<- function(x,slice = c(), ellipses = FALSE, centers = FALSE) {
                 cov = x$cov()
 
                 for (i in 1:n) {
-                    print(t(length(cen[i])))
-                    print(class(cen[i]))
                     data = unlist(cov[i])
                     covMat = matrix(data,ncol=sqrt(length(data)))[slice,slice]
                     m = unlist(cen[i][slice])
                     print(covMat)
-                    eigenValuesAndVectors = eigen(covMat) # covariance matrix is positivly definde
+                    eigenValuesAndVectors = eigen(covMat)
                     veE <- eigenValuesAndVectors$vectors
                     l <- eigenValuesAndVectors$values
                     r <- seq(-pi, pi, by = 0.001)
@@ -40,7 +38,7 @@ ellipsesPrzemek <<- function(x,slice = c(), ellipses = FALSE, centers = FALSE) {
                     meansMultiply <- matrix(mm, ncol = 2)
                     line1 = cbind(Xa,Ya)
                     lineAll = rbind(line1)
-                    ddd <- (lineAll%*%veE) + meansMultiply
+                    ddd <- (lineAll%*%t(veE)) + meansMultiply
 #                    plot(ddd, col = "black", type = "l", lwd = 2 , add = TRUE)
                     points(ddd,col = "black", type = "l", lwd = 2)
                     print(class(ddd))
