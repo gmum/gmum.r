@@ -76,7 +76,7 @@ public:
 
 
 	//2eConfig
-	two
+//	two
 
 	// constructors
 	SVMConfiguration();
