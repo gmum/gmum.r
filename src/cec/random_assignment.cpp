@@ -31,7 +31,6 @@ namespace gmum {
 	  }
 	}
     
-     //assign points
     for(unsigned int i = 0; i < nrOfPoints; ++i)
       assignment[i] = findNearest(i, centers, points);
   }
