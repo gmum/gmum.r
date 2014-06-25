@@ -1,11 +1,13 @@
-#include <RcppArmadillo.h>
-#include "Hartigan.hpp"
-#include "CEC.hpp"
-#include "random_assignment.hpp"
-#include "kmeanspp_assignment.hpp"
 #include <list>
 #include <vector>
 #include <boost/smart_ptr.hpp>
+#include <RcppArmadillo.h>
+#include "CEC.hpp"
+#include "Hartigan.hpp"
+#include "random_assignment.hpp"
+#include "kmeanspp_assignment.hpp"
+#include "user_assignment.hpp"
+
 
 namespace gmum {
 
@@ -14,6 +16,7 @@ namespace gmum {
     static const char* nrOfClusters;
     static const char* clusters;
     static const char* nstart;
+    static const char* centroidsList;
     static const char* killThreshold;
     static const char* itmax;
     static const char* energy;
@@ -30,10 +33,10 @@ namespace gmum {
       static const char* init;
       static const char* kmeanspp;
       static const char* random;
+      static const char* centr;
 
       static const char* covMat;
       static const char* radius;
-
     };
 
     static const unsigned int nrOfClustersInit;
@@ -41,10 +44,12 @@ namespace gmum {
     static const unsigned int nstartInit;
   };
 
-  enum Assignment{
-    kmeanspp, random
-  };
-
+  class Assignment {
+public:
+  Assignment() {};
+  virtual void operator() (std::vector<unsigned int> &assignment,
+			const arma::mat &points, int nrOfClusters) = 0;
+};
 
   CEC* CEC__new(SEXP args);
 
@@ -55,7 +60,7 @@ namespace gmum {
 		   std::vector<double> &radius,
 		   std::list<Rcpp::List> &clusters);
 
-  void randomAssignment(Assignment assignmentType, std::vector<unsigned int> &assignment,
+  void assignClusters(Assignment &assignmentType, std::vector<unsigned int> &assignment,
 			const arma::mat &points, int nrOfClusters);
 
   void plot(CEC*);
@@ -69,11 +74,12 @@ namespace gmum {
   const char* CONST::dataset = "x";
   const char* CONST::nrOfClusters = "k";
   const char* CONST::clusters = "params.mix";
-  const char* CONST::nstart = "params.nstart";
+  const char* CONST::nstart = "params.nstart";  
+  const char* CONST::centroidsList = "params.centroids";
   const char* CONST::killThreshold = "control.eps";
   const char* CONST::itmax = "control.itmax";
   const char* CONST::energy = "log.energy";
-  const char* CONST::nclusters = "log.ncluster";
+  const char* CONST::nclusters = "log.ncluster";  
 
   const char* CONST::CLUSTERS::type = "method.type";
   const char* CONST::CLUSTERS::standard = "std";
@@ -85,6 +91,7 @@ namespace gmum {
   const char* CONST::CLUSTERS::init = "method.init";
   const char* CONST::CLUSTERS::kmeanspp = "kmeans++";
   const char* CONST::CLUSTERS::random = "random";
+  const char* CONST::CLUSTERS::centr = "centroids";
 
   const char* CONST::CLUSTERS::covMat = "params.cov";
   const char* CONST::CLUSTERS::radius = "params.r";

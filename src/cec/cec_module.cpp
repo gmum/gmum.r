@@ -2,6 +2,35 @@
 
 namespace gmum {
 
+  class KmeansppAssignment : public Assignment {
+public:
+  KmeansppAssignment() {};
+  virtual void operator() (std::vector<unsigned int> &assignment,
+			const arma::mat &points, int nrOfClusters){
+				initAssignKmeanspp(assignment, points, nrOfClusters);
+			}
+};
+
+  class RandomAssignment : public Assignment {
+public:
+  RandomAssignment() {};
+  virtual void operator() (std::vector<unsigned int> &assignment,
+			const arma::mat &points, int nrOfClusters){
+				initAssignRandom(assignment, points, nrOfClusters);
+			}
+};
+
+  class CentroidsAssignment : public Assignment {
+public:
+  const arma::mat &centroids;
+  CentroidsAssignment(const arma::mat &centr) : centroids(centr) {};
+  virtual void operator() (std::vector<unsigned int> &assignment,
+			const arma::mat &points, int nrOfClusters){
+				initAssignCentroids(assignment, points, nrOfClusters, centroids);
+			}
+};
+
+
   CEC* CEC__new(SEXP args) {
 
     /*
@@ -61,12 +90,23 @@ namespace gmum {
       else nstart = temp;
     }
 
-    //type of random assignment
-    Assignment assignmentType = kmeanspp;
+    Assignment *assignmentType = new KmeansppAssignment();
     if(list.containsElementNamed(CONST::CLUSTERS::init)) {
       std::string init = Rcpp::as<std::string>(list(CONST::CLUSTERS::init));
-      if(init.compare(CONST::CLUSTERS::random)==0) assignmentType = random;
-      else if(init.compare(CONST::CLUSTERS::kmeanspp)==0) assignmentType = kmeanspp;
+      if(init.compare(CONST::CLUSTERS::random)==0) assignmentType = new RandomAssignment();
+      else if(init.compare(CONST::CLUSTERS::kmeanspp)==0) assignmentType = new KmeansppAssignment();
+      else if(init.compare(CONST::CLUSTERS::centr)==0) {
+	    if(!list.containsElementNamed(CONST::centroidsList))
+          Rcpp::stop("List of centroids is required with centroids method init!");
+        Rcpp::NumericMatrix proxyCentroids = Rcpp::as<Rcpp::NumericMatrix>(list[CONST::centroidsList]);	
+	    boost::shared_ptr<const arma::mat> centroids = 
+			boost::shared_ptr<const arma::mat>(new arma::mat
+				(proxyCentroids.begin(),
+				 proxyCentroids.nrow(),
+				 proxyCentroids.ncol(), false));	
+		// Rcpp::stop("here!");		 					      
+	   assignmentType = new CentroidsAssignment(*centroids);
+      }
       else Rcpp::stop(std::string("cannot recognize ")+init);
     }
 
@@ -74,7 +114,7 @@ namespace gmum {
     boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
     boost::shared_ptr<Hartigan> hartigan(new Hartigan(logNrOfClusters, logEnergy));
 
-    randomAssignment(assignmentType, *assignment, *points, clusters.size());
+    assignClusters(*assignmentType, *assignment, *points, clusters.size());
 
     CEC *currentCEC = NULL;
 
@@ -86,7 +126,7 @@ namespace gmum {
 
       for(int i=1; i<nstart; ++i) {
 
-	randomAssignment(assignmentType, *assignment, *points, clusters.size());
+	assignClusters(*assignmentType, *assignment, *points, clusters.size());
 	CEC *nextCEC = new CEC(points, assignment, hartigan,
 			       killThreshold, type, radius, covMat);
 	nextCEC->loop();
@@ -206,22 +246,13 @@ namespace gmum {
 
     }
   }
+  
+  
 
-
-
-  void randomAssignment(Assignment assignmentType, std::vector<unsigned int> &assignment,
+  void assignClusters(Assignment &assignmentType, std::vector<unsigned int> &assignment,
 			const arma::mat &points, int nrOfClusters) {
-
     assignment.resize(points.n_rows);
-
-      switch(assignmentType) {
-      case random:
-	initAssignRandom(assignment, points, nrOfClusters);
-	break;
-      case kmeanspp:
-	initAssignKmeanspp(assignment, points, nrOfClusters);
-	break;
-      }
+    assignmentType(assignment, points, nrOfClusters);
   }
 
 
