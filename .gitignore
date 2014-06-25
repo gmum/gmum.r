@@ -1,2 +1,21 @@
 *.so
 *.o
+*.a
+#R history files
+.RData
+.Rhistory
+..Rcheck
+
+#Vim files
+*~
+*.swp
+#
+Debug
+.cproject
+.project
+.settings
+..Rcheck/
+
+#file with main for tests
+src/main.cpp
+test/cpp/libsvm_test
