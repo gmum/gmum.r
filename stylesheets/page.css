@@ -1,0 +1,179 @@
+/**
+ * GMUM.r CSS
+ * @author  Konrad Talik
+ */
+
+
+/*
+ * Visual properties
+ */
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-family: "Open Sans", "Helvetica Neue", helvetica, arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+div#footer {
+}
+
+
+/*
+ * Visual classes
+ */
+
+/* Colors */
+
+.nocolor {
+    color: rgba(0, 0, 0, 0.75);
+    background-color: white;
+}
+
+.invertedcolor {
+    color: rgba(255, 255, 255, 0.75);
+    background-color: #222;
+}
+
+.themecolor {
+    color: rgba(255, 255, 255, 0.75);
+    background-color: #D95C5C;
+}
+
+.shaded {
+    color: rgba(255, 255, 255, 0.75);
+    text-shadow: 1px 1px 1px #111;
+    background-color: #D95C5C;
+}
+
+.shaded article {
+    background-color: rgba(255, 255, 255, 0.25);
+    padding-top: 12.5px; padding-top: 1.25rem;
+    padding-bottom: 12.5px; padding-bottom: 1.25rem;
+}
+
+
+
+/*
+ * Technical classes
+ */
+
+.brick {
+    padding-top: 100px; padding-top: 10rem;
+    padding-bottom: 100px; padding-bottom: 10rem;
+
+    font-size: 15px; font-size: 1.5rem;
+    text-align: center;
+
+    background-attachment: fixed;
+    background-position: center;
+    background-size: 100%;
+}
+
+.expandedtop {
+    padding-top: 300px; padding-top: 30rem;
+}
+
+.compressed {
+    padding-top: 50px; padding-top: 5rem;
+    padding-bottom: 50px; padding-bottom: 5rem;
+}
+
+.verycompressed {
+    padding-top: 12.5px; padding-top: 1.25rem;
+    padding-bottom: 12.5px; padding-bottom: 1.25rem;
+}
+
+.banner {
+    color: #D95C5C;
+    font-size: 70px; font-size: 7rem;
+    font-weight: bold;
+
+    text-shadow: 1px 1px 1px #111;
+    padding: 50px 100px 50px 100px; padding: 5rem 10rem 5rem 10rem;
+}
+
+.note {
+    font-weight: normal;
+    padding-top: 5px; padding-top: 0.5rem;
+    padding-bottom: 5px; padding-bottom: 0.5rem;
+}
+
+/* General divs */
+
+div.wrapper {
+    /*
+    white-space: nowrap;
+    */
+}
+
+div.container {
+}
+
+div.item {
+    padding-top: 25px; padding-top: 2.5rem;
+    padding-bottom: 25px; padding-bottom: 2.5rem;
+
+    vertical-align: middle;
+
+    display: inline-block;
+    width: auto;
+}
+
+/* deprecated */
+div.block {
+    display: inline-block;
+    vertical-align: top;
+    width: 100%;
+    outline: none;
+    margin: 0px auto;
+
+    padding-top: 100px; padding-top: 10rem;
+    padding-bottom: 100px; padding-bottom: 10rem;
+
+    font-size: 15px; font-size: 1.5rem;
+    text-align: center;
+
+    background-attachment: fixed;
+    background-position: center;
+}
+
+/* Menu */
+
+nav.menu a.item {
+    display: inline-block;
+    padding: 5px 10px 5px 10px; padding: 0.5rem 1rem 0.5rem 1rem;
+
+    border-radius: 10px; border-radius 1rem;
+
+    color: white;
+    text-shadow: 1px 1px 1px #222;
+
+    background: -o-linear-gradient(top, #EEE, #D95C5C);
+    background: -moz-linear-gradient(top, #EEE, #D95C5C);
+    background: -ms-linear-gradient(top, #EEE, #D95C5C);
+    background: -webkit-linear-gradient(top, #EEE, #D95C5C);
+    background: linear-gradient(top, #EEE, #D95C5C);
+    background-size: 100% 70px; background-size: 100% 7rem;
+    background-position: 0 -35px; background-position: 0 -3.5rem;
+}
+
+nav.menu a.item:hover {
+    color: #D95C5C;
+
+    text-shadow: 1px 1px 1px #AAA;
+
+    background-position: 0 0px; background-position: 0 0rem;
+
+    -o-transition: all 250ms linear;
+    -moz-transition: all 250ms linear;
+    -ms-transition: all 250ms linear;
+    -webkit-transition: all 250ms linear;
+    transition: all 250ms linear;
+}
+
+.item {
+}
