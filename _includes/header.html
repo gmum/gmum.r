@@ -3,29 +3,59 @@
 <head>
     <title> {{ page.title }} </title>
     <meta charset="UTF-8">
-    <link type="text/css" rel="stylesheet" href="stylesheets/page.css" />
-    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="/stylesheets/page.css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<!-- Scroll background in 3D -->
+<script >
+$(document).ready(
+    function(){
+    $('section[background-3d="true"]').each(function(){
+        var $bgObj = $(this);
+        var $window = $(window);
+     
+        $(window).scroll(
+            function() {
+                var yPos = -($window.scrollTop() / $bgObj.data('distance'));
+                var newPos = '50% '+ yPos + 'px';
+                $bgObj.css({ backgroundPosition: newPos });
+            });
+    });   
+});
+</script>
+
 </head>
 </body>
-<div class="wrapper">
 
 <section
     id="header" class="brick nocolor verycompressed">
     <div class="container">
-    <div class="brick item banner">
-    gmum.r
-    <div class="brick note">
-    Classification and clustering models for R
-    </div>
-    </div>
-    <div class="brick item">
-    <nav class="menu">
-    <a class="item">group</a>
-    <a class="item">download tarball</a>
-    <a class="item">download zip</a>
-    <a class="item">view source code</a>
-    </nav>
-    </div>
+        <div class="brick item banner">
+            gmum.r
+            <div class="brick note">
+                Classification and clustering models for R
+            </div>
+        </div>
+        <div class="brick item menu verycompressed">
+            <a class="item" href="http://gmum.ii.uj.edu.pl" target="_blank">
+                group</a>
+            <a class="item" href="https://github.com/gmum/gmum.r/tarball/master">
+                download tarball</a>
+            <a class="item" href="https://github.com/gmum/gmum.r/zipball/master">
+                download zip</a>
+            <a class="item" href="https://github.com/gmum/gmum.r" target="_blank">
+                view source code</a>
+        </div>
     </div>
 </section>
 
+<!-- Navigator -->
+<section class="brick themecolor verycompressed navigator">
+    <icon>{>}</icon><a href="/">home</a>
+    <icon>{@}</icon><a href="{% post_url 2014-06-06-authors %}">authors</a>
+    <icon>$()</icon><a href="/#project">project</a>
+    <icon>c()</icon><a href="/#contact">contact</a>
+    <icon>uj()</icon><a href="/#academy">academy</a>
+    <icon>&#x222B;()</icon><a href="/#theory">theory</a>
+    <icon>+=</icon><a href="/#contribute">contribute</a>
+</section>

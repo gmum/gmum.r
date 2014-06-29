@@ -18,7 +18,18 @@ body {
     padding: 0;
 }
 
-div#footer {
+a {
+    font-weight: bold;
+    color: #D95C5C;
+}
+
+a.inverted {
+    font-weight: bold;
+    color: #f7dbdb;
+}
+
+p {
+    transition: all 1s ease;
 }
 
 
@@ -44,17 +55,20 @@ div#footer {
 }
 
 .shaded {
-    color: rgba(255, 255, 255, 0.75);
-    text-shadow: 1px 1px 1px #111;
+    color: rgba(0, 0, 0, 0.875);
+    text-shadow: 1px 1px 1px #FFF;
     background-color: #D95C5C;
+    padding-right: 5%;
+    padding-left: 5%;
 }
 
 .shaded article {
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: rgba(255, 255, 255, 0.4);
     padding-top: 12.5px; padding-top: 1.25rem;
     padding-bottom: 12.5px; padding-bottom: 1.25rem;
+    padding-right: 5%;
+    padding-left: 5%;
 }
-
 
 
 /*
@@ -73,8 +87,55 @@ div#footer {
     background-size: 100%;
 }
 
+.brick article {
+    padding-right: 10%;
+    padding-left: 10%;
+}
+
+.post article {
+    text-align: left;
+
+    padding-left: 30px; padding-left: 3rem;
+    padding-right: 30px; padding-right: 3rem;
+}
+
+.navigator {
+    text-align: left;
+    padding-left: 10%;
+}
+
+.navigator a {
+    font-weight: bold;
+    color: #f7dbdb;
+    vertical-align: center;
+}
+
+icon {
+    color: white;
+    font-size: large;
+    text-shadow: 1px 1px 1px #111;
+
+    background-color: rgba(255, 255, 255, 0.25);
+    display: inline-block;
+    width: 40px; width: 4rem;
+    height: 40px; height: 4rem;
+    border-radius: 50%;
+
+    line-height: 40px; line-height: 4rem;
+    text-align: center;
+    margin-right: 5px; margin-right: 0.5rem;
+    margin-left: 10px; margin-left: 1rem;
+}
+
+.categories {
+    text-align: left;
+    padding-left: 10%;
+}
+
+/* Height manipulations */
+
 .expandedtop {
-    padding-top: 300px; padding-top: 30rem;
+    padding-top: 20%;
 }
 
 .compressed {
@@ -87,10 +148,26 @@ div#footer {
     padding-bottom: 12.5px; padding-bottom: 1.25rem;
 }
 
+.rightball {
+    margin-left: 50%;
+    border-radius: 50%;
+    text-align: right;
+}
+
+.leftball {
+    margin-right: 50%;
+    border-radius: 50%;
+    text-align: left;
+}
+
+/* Specific bricks */
+
 .banner {
     color: #D95C5C;
     font-size: 70px; font-size: 7rem;
     font-weight: bold;
+
+    vertical-align: middle;
 
     text-shadow: 1px 1px 1px #111;
     padding: 50px 100px 50px 100px; padding: 5rem 10rem 5rem 10rem;
@@ -100,6 +177,10 @@ div#footer {
     font-weight: normal;
     padding-top: 5px; padding-top: 0.5rem;
     padding-bottom: 5px; padding-bottom: 0.5rem;
+}
+
+.description {
+    vertical-align: top;
 }
 
 /* General divs */
@@ -117,40 +198,32 @@ div.item {
     padding-top: 25px; padding-top: 2.5rem;
     padding-bottom: 25px; padding-bottom: 2.5rem;
 
-    vertical-align: middle;
+    vertical-align: top;
 
     display: inline-block;
     width: auto;
 }
 
-/* deprecated */
-div.block {
-    display: inline-block;
-    vertical-align: top;
-    width: 100%;
-    outline: none;
-    margin: 0px auto;
-
-    padding-top: 100px; padding-top: 10rem;
-    padding-bottom: 100px; padding-bottom: 10rem;
-
-    font-size: 15px; font-size: 1.5rem;
-    text-align: center;
-
-    background-attachment: fixed;
-    background-position: center;
-}
-
 /* Menu */
 
-nav.menu a.item {
+.menu {
+    vertical-align: middle;
+}
+
+.menu a.item {
     display: inline-block;
     padding: 5px 10px 5px 10px; padding: 0.5rem 1rem 0.5rem 1rem;
+    margin-left: 2px; margin-left: 0.2rem;
+    margin-right: 2px; margin-right: 0.2rem;
+    margin-top: 2px; margin-top: 0.2rem;
+    margin-bottom: 2px; margin-bottom: 0.2rem;
+    vertical-align: middle;
 
     border-radius: 10px; border-radius 1rem;
 
     color: white;
     text-shadow: 1px 1px 1px #222;
+    text-decoration: none;
 
     background: -o-linear-gradient(top, #EEE, #D95C5C);
     background: -moz-linear-gradient(top, #EEE, #D95C5C);
@@ -159,12 +232,19 @@ nav.menu a.item {
     background: linear-gradient(top, #EEE, #D95C5C);
     background-size: 100% 70px; background-size: 100% 7rem;
     background-position: 0 -35px; background-position: 0 -3.5rem;
+
+    -o-transition: all 250ms linear;
+    -moz-transition: all 250ms linear;
+    -ms-transition: all 250ms linear;
+    -webkit-transition: all 250ms linear;
+    transition: all 250ms linear;
 }
 
-nav.menu a.item:hover {
+.menu a.item:hover {
     color: #D95C5C;
 
     text-shadow: 1px 1px 1px #AAA;
+    text-decoration: none;
 
     background-position: 0 0px; background-position: 0 0rem;
 
@@ -175,5 +255,19 @@ nav.menu a.item:hover {
     transition: all 250ms linear;
 }
 
-.item {
+
+/* IDs */
+
+#header .container .item {
+    vertical-align: middle;
+}
+
+#postDescription {
+    width: 25%;
+    text-align: right;
+    padding-right: 20px; padding-right: 2rem;
+}
+
+#postContent {
+    width: 70%;
 }

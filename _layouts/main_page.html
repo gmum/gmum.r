@@ -1,41 +1,152 @@
 {% include header.html %}
 
-<div class="brick nocolor">
-Test
-</div>
-
-<section
-    id="home" data-type="background" data-speed="10" class="brick shaded"
-    style="background-image: url(images/romanticism.jpg);">
-         <article>Hello, World</article>
+<section class="brick nocolor compressed">
+<h1>About</h1>
+<p>GMUM.r is a R package with new classification and clustering models. This
+is being done in a close <b>collaboration</b> between 
+<a href="http://gmum.ii.uj.edu.pl/" target="_blank">GMUM group</a>
+members and
+<a href="{% post_url 2014-06-06-authors %}">students</a>.
+</p>
 </section>
 
-<div class="brick invertedcolor">
-Hello, GMUM.r
-</div>
-
-<div class="brick shaded expandedtop"
-    style="background-image: url(images/wmii.jpg)">
+<section class="brick invertedcolor" id="project">
+<h1>Project contents</h1>
+<p>
+GMUM.r goals are</br>
+</br>
+<div class="shaded nocolor">
 <article>
-Hello, WMII
+<b>&#x2738; performance &#x2738; transparency</b> and <b>&#x2738; simplicity</b></br>
+</article>
+</div>
+</br>
+Also our architecture is divided into several modules.
+</p>
+
+<section>
+<div class="container">
+    <div class="brick item" style="width: 30%">
+        <article>
+        <h1><icon>&#x2737;</icon>CEC</h1>
+        Cross Entropy Clustering blah bla blah (short description).
+        </article>
+    </div>
+    <div class="brick item" style="width: 30%">
+        <article>
+        <h1><icon>&#x272A;</icon>SVM</h1>
+        Support Vector Machines babble babble (short description).</br>
+        </br>
+        Read <a href="{% post_url 2014-06-06-svm %}">more</a>.</br>
+        </article>
+    </div>
+    <div class="brick item" style="width: 30%">
+        <article>
+        <h1><icon>&#x2749;</icon>GNG</h1>
+        <b>Growing Neural Gas</b> implements online clustering in R ... blah blah blah (short description)</br>
+        </br>
+        Read <a href="{% post_url 2014-06-06-gng %}">more</a>.</br>
+        </br>
+        GNG currently has a separate code. View it on <a href="https://github.com/kudkudak/growing-neural-gas" target="_blank">GitHub</a>.
+        </article>
+    </div>
+</div>
+</section>
+
+</section>
+
+<section
+    id="home" class="brick shaded"
+    style="background-image: url(images/romanticism.jpg);"
+    background-3d="true" data-distance="15">
+        Let's cite here something like</br>
+        </br>
+        <article class="rightball">
+        <icon>&#x201D;</icon><i>Big challenges, Big World, Big Data</i></br>
+        <b>~ one of the gmum.r <code>programmers</code></b>
+        </article>
+        <article class="leftball">
+        <icon>&#x201D;</icon><i>It's working much better than I expected!</i></br>
+        <b>~ one of our <code>coders</code></b>
+        </article>
+</section>
+
+<section class="brick nocolor compressed" id="contribute">
+<h1>Contribute</h1>
+Feel free to start <b>contributing</b>!
+</br>
+We welcome you to cooperate - either in giving us feedback and in sending some
+pull requests. For more information about tasks, bugs and how to work with us,
+please check below links: </br>
+</br>
+<div class="shaded nocolor">
+<article>
+<icon>{!?}</icon><a href="https://github.com/gmum/gmum.r/issues" target="_blank">issue tracker</a>
+<icon>{w}</icon><a href="https://github.com/gmum/gmum.r/wiki" target="_blank">wiki</a>
+</article>
+</div>
+</section>
+
+<section class="brick invertedcolor compressed" id="contact">
+<h1>Contact</h1>
+Feel free to contact with us:</br>
+</br>
+Wojciech Czarnecki</br>
+<a href="mailto:wojciech.czarnecki@uj.edu.pl">&#x2709;wojciech.czarnecki@uj.edu.pl</a>
+<a href="https://github.com/lejlot" target="_blank">@lejlot</a></br>
+Project coordinator</br>
+</br>
+Stanisław Jastrzębski</br>
+<a href="mailto:staszek.jastrzebski@gmail.com">&#x2709;staszek.jastrzebski@gmail.com</a>
+<a href="https://github.com/kudkudak" target="_blank">@kudkudak</a></br>
+Maintainer</br>
+</br>
+Konrad Talik</br>
+<a href="mailto:konrad.talik@uj.edu.pl">&#x2709;konrad.talik@uj.edu.pl</a>
+<a href="https://github.com/ktalik" target="_blank">@ktalik</a></br>
+Git and webmaster
+</section>
+
+<section class="brick shaded expandedtop" id="academy"
+    style="background-image: url(images/wmii.jpg);"
+    background-3d="true" data-distance="15">
+<article>
+<img src="/images/jubilee.png" width=20% height=20%></img>
+<h1>Jagiellonian University in Krakow</h1>
 </article>
 </br>
 <article>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. In magna arcu, aliquam
-vulputate sagittis non, volutpat ut odio. Sed adipiscing aliquet lacinia.
-Suspendisse rhoncus tellus quis orci gravida gravida. In porta ipsum felis,
-sed gravida sapien euismod id. Morbi hendrerit vel nisl tincidunt congue.
-Aenean malesuada vitae leo sit amet pellentesque. Nulla sagittis ligula
-aliquam mattis hendrerit. Cras lobortis bibendum risus eu varius. pellentesque
-tempus nulla eget justo pretium, id eleifend sapien adipiscing. Vivamus sodales
-tellus erat, ac luctus dolor laoreet sed.
+GMUM.r is being developed at the
+<a href="http://www.matinf.uj.edu.pl/" target="_blank">Faculty of Mathematics and Computer Science</a>
+of
+<a href="http://www.uj.edu.pl/" target="_blank">Jagiellonian University</a>. This project is
+supervised by researchers from the
+<a href="http://gmum.ii.uj.edu.pl/" target="_blank">GMUM</a> group,
+Group of Machine Learning Research. The group focus on various machine learning
+models and algorithms, with particular interest in hybrid models, connecting
+concepts from both classification and clustering methods. For students, this
+project is an unique occasion to make a first step into true science.
 </article>
+</section>
 
+<section class="brick invertedcolor" id="theory">
+<h1>Theory</h1>
+Theory behind the implemented algorithms derives from the work of GMUM
+researchers (blah blah blah). Some of the theoretical basis can be obtained by
+readind related GMUM publications: </br>
+
+<div class="brick item verycompressed">
+<nav class="menu">
+    <a class="item" href="https://apacz.matinf.uj.edu.pl//publikacje/7143-cross-entropy-clustering" target="_blank">
+        Przemysław Spurek, Jacek Tabor, Cross Entropy Clustering, PATTERN RECOGN vol. 47 (2014), 3046–3059</a>
+    <a class="item" >
+        publication</a>
+    <a class="item" >
+        publication</a>
+</nav>
 </div>
 
-<div class="brick invertedcolor">
-Test
-</div>
+</section>
 
 {% include footer.html %}
 

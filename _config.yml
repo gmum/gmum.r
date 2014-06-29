@@ -12,7 +12,7 @@ encoding:    nil
 future:      true
 show_drafts: nil
 limit_posts: 0
-highlighter: pygments
+highlighter: rogue
 
 relative_permalinks: true
 
