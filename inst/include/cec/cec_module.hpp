@@ -1,11 +1,13 @@
-#include <RcppArmadillo.h>
-#include "Hartigan.hpp"
-#include "CEC.hpp"
-#include "random_assignment.hpp"
-#include "kmeanspp_assignment.hpp"
 #include <list>
 #include <vector>
 #include <boost/smart_ptr.hpp>
+#include <RcppArmadillo.h>
+#include "Hartigan.hpp"
+#include "random_assignment.hpp"
+#include "kmeanspp_assignment.hpp"
+#include "clusterParams.hpp"
+#include "params.hpp"
+#include "CEC.hpp"
 
 namespace gmum {
 
@@ -17,7 +19,7 @@ namespace gmum {
     static const char* killThreshold;
     static const char* itmax;
     static const char* energy;
-    static const char* nclusters;
+    static const char* logClusters;
 
     struct CLUSTERS {
       static const char* type;
@@ -33,32 +35,37 @@ namespace gmum {
 
       static const char* covMat;
       static const char* radius;
-
     };
 
     static const unsigned int nrOfClustersInit;
     static const double killThresholdInit;
     static const unsigned int nstartInit;
+    static const Assignment defaultAssignment;
+
+    struct ERRORS {
+      static const char* datasetReq;
+      static const char* nstartsPositive;
+      static const char* nrOfClustersPositive;
+      static const char* datasetSize;
+      static const char* killThresholdSize;
+      static const char* assignmentError;
+      static const char* covMatReq;
+      static const char* radiusReq;
+      static const char* clusterRecError;
+    };
   };
 
-  enum Assignment{
-    kmeanspp, random
-  };
 
 
   CEC* CEC__new(SEXP args);
 
-  void initClusters(std::list<Rcpp::List> &clusters, Rcpp::List &list);
-
-  void initVectors(std::vector<ClusterType> &type, 
-		   std::vector<arma::mat> &covMat,
-		   std::vector<double> &radius,
-		   std::list<Rcpp::List> &clusters);
+  Params processArguments(const Rcpp::List list);
+  void verifyParams(const Params params);
+  CEC *findBestCEC(const Params params);
 
   void randomAssignment(Assignment assignmentType, std::vector<unsigned int> &assignment,
 			const arma::mat &points, int nrOfClusters);
 
-  void plot(CEC*);
   arma::mat getDataSet(CEC* cec);
 
   std::list<double> CECpredict(CEC*, std::vector<double>, bool);
@@ -73,7 +80,7 @@ namespace gmum {
   const char* CONST::killThreshold = "control.eps";
   const char* CONST::itmax = "control.itmax";
   const char* CONST::energy = "log.energy";
-  const char* CONST::nclusters = "log.ncluster";
+  const char* CONST::logClusters = "log.ncluster";
 
   const char* CONST::CLUSTERS::type = "method.type";
   const char* CONST::CLUSTERS::standard = "std";
@@ -92,6 +99,17 @@ namespace gmum {
   const unsigned int CONST::nrOfClustersInit = 10;
   const double CONST::killThresholdInit = 1e-4;
   const unsigned int CONST::nstartInit = 1;
+  const Assignment CONST::defaultAssignment = kmeanspp;
+
+  const char* CONST::ERRORS::datasetReq = "dataset is required!";
+  const char* CONST::ERRORS::nstartsPositive = "Number of starts should be a positive integer!";
+  const char* CONST::ERRORS::nrOfClustersPositive = "Number of clusters should be a positive integer!";
+  const char* CONST::ERRORS::datasetSize = "Size of dataset cannot be less than number of clusters!";
+  const char* CONST::ERRORS::killThresholdSize = (std::string(CONST::killThreshold)+" is too hight").c_str();
+  const char* CONST::ERRORS::assignmentError = "cannot recognize assignment initiation method";
+  const char* CONST::ERRORS::covMatReq = "cavariance matrix required";
+  const char* CONST::ERRORS::radiusReq = "radius is required";
+  const char* CONST::ERRORS::clusterRecError = "cannot recognise cluster type";
 
   unsigned int nstart;
 
@@ -115,7 +133,6 @@ namespace gmum {
       .method("log.ncluster", &CEC::getNrOfClusters)
       .method("log.energy", &CEC::getEnergy)
       .method("log.iters", &CEC::iters)
-      .method("plot", plot)
       .method("x", getDataSet)
       .method("nstart", getNstart)
       ;

@@ -2,39 +2,74 @@
 
 namespace gmum {
 
-  CEC::CEC(boost::shared_ptr<const arma::mat> points, 
-	   boost::shared_ptr<std::vector<unsigned int> > assignment, 
-	   boost::shared_ptr<Algorithm> algorithm,
-	   double killThreshold, const std::vector<ClusterType> &type,
-	   const std::vector<double> &radius, const std::vector<arma::mat> &covMatrices)
-    : assignment(assignment), points(points), algorithm(algorithm), killThreshold(killThreshold) {
+  boost::shared_ptr<Cluster> CEC::createCluster(ClusterParams &params, int i) {
+
+    boost::shared_ptr<Cluster> cluster;
+    switch(params.type) {
+    case standard:
+      cluster = boost::shared_ptr<Cluster>(new Cluster(i, *assignment, *points));
+      break;
+    case full: {
+      ClusterFullParams &ptr = static_cast<ClusterFullParams&>(params);
+      cluster = boost::shared_ptr<Cluster>(new ClusterCovMat(ptr.covMat, i, *assignment, *points));
+      break;
+    }
+    case diagonal:
+      cluster = boost::shared_ptr<Cluster>(new ClusterDiagonal(i, *assignment, *points));
+      break;
+    case sphere:
+      cluster = boost::shared_ptr<Cluster>(new ClusterSpherical(i, *assignment, *points));
+      break;
+    case fsphere:
+      ClusterFsphereParams &ptr = static_cast<ClusterFsphereParams&>(params);
+      cluster = boost::shared_ptr<Cluster>(new ClusterConstRadius(ptr.radius, i, *assignment, *points));
+      break;
+    }
+
+    return cluster;
+  }
+
+  CEC::CEC(boost::shared_ptr<Algorithm> algorithm,
+	   boost::shared_ptr<std::vector<unsigned int> > assignment,
+	   const Params params)
+    : algorithm(algorithm), assignment(assignment), 
+      points(params.dataset), killThreshold(params.killThreshold) {
 
     Cluster::numberOfPoints = points->n_rows;
-    clusters.reserve(type.size());
+    clusters.reserve(params.nrOfClusters);
 
-      for(unsigned int i = 0; i < type.size(); i++) {
-	boost::shared_ptr<Cluster> cluster;
-
-	switch(type[i]) {
-	case standard:
-	  cluster = boost::shared_ptr<Cluster>(new Cluster(i, *assignment, *points));
-	  break;
-	case full:
-	  cluster = boost::shared_ptr<Cluster>(new ClusterCovMat(covMatrices[i], i, *assignment, *points));
-	  break;
-	case diagonal:
-	  cluster = boost::shared_ptr<Cluster>(new ClusterDiagonal(i, *assignment, *points));
-	  break;
-	case sphere:
-	  cluster = boost::shared_ptr<Cluster>(new ClusterSpherical(i, *assignment, *points));
-	  break;
-	case fsphere:
-	  cluster = boost::shared_ptr<Cluster>(new ClusterConstRadius(radius[i], i, *assignment, *points));
-	  break;
-	}
-	
-	clusters.push_back(cluster);
+    int i=0;
+    if(params.clusterType == mix)
+      for(std::list<boost::shared_ptr<ClusterParams> >::const_iterator it = params.clusters.begin();
+	  it != params.clusters.end(); ++it, ++i)
+	clusters.push_back(createCluster(*(*it), i));
+    else {
+      ClusterParams *cluster;
+      switch(params.clusterType) {
+      case fsphere: {
+	ClusterFsphereParams *proxy = new ClusterFsphereParams();
+	proxy->radius = params.radius;
+	cluster = proxy;
+	break;
       }
+      case full: {
+	ClusterFullParams *proxy = new ClusterFullParams();
+	proxy->covMat = params.covMat;
+	cluster = proxy;
+	break;
+      }
+      default:
+	/*case standard:
+	  case diagonal:
+	  case sphere:*/
+	cluster = new ClusterParams();
+	cluster->type = params.clusterType;
+	  break;
+      }
+      for(int i=0; i<params.nrOfClusters; ++i)
+	clusters.push_back(createCluster(*cluster, i));
+      delete cluster;
+    }
 
   }
 
