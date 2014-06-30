@@ -5,15 +5,13 @@
 #include "Cluster.hpp"
 #include "Algorithm.hpp"
 #include "exceptions.hpp"
+#include "clusterParams.hpp"
+#include "params.hpp"
 
 #ifndef CEC_HPP
 #define CEC_HPP
 
 namespace gmum {
-
-  enum ClusterType {
-    standard, full, diagonal, sphere, fsphere
-  };
 
   class CEC {
     
@@ -23,12 +21,11 @@ namespace gmum {
     boost::shared_ptr<const arma::mat> points;
     boost::shared_ptr<Algorithm> algorithm;
     const double killThreshold;
+    boost::shared_ptr<Cluster> createCluster(ClusterParams &params, int i);
   public:
-    CEC(boost::shared_ptr<const arma::mat> points, 
-	boost::shared_ptr<std::vector<unsigned int> > assignment, 
-	boost::shared_ptr<Algorithm> algorithm,
-	double killThreshold, const std::vector<ClusterType> &type,
-	const std::vector<double> &radius, const std::vector<arma::mat> &covMatrices);
+    CEC(boost::shared_ptr<Algorithm> algorithm,
+	boost::shared_ptr<std::vector<unsigned int> > assignment,
+	Params params);
 
     CEC(boost::shared_ptr<const arma::mat> points, 
 	boost::shared_ptr<std::vector<unsigned int> > assignment, 
