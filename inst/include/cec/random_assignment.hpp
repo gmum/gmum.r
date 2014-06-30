@@ -14,6 +14,14 @@ namespace gmum {
   void initAssignRandom(std::vector<unsigned int> &assignment,
 			const arma::mat &points,
 			unsigned int nrOfClusters);
+			
+class RandomAssignment : public Assignment {
+public:
+  RandomAssignment(const arma::mat &points, const int nrOfClusters) : Assignment::Assignment(points, nrOfClusters) {};
+  virtual void operator() (std::vector<unsigned int> &assignment){
+				initAssignRandom(assignment, points, nrOfClusters);
+			}
+};
 
 }
 
