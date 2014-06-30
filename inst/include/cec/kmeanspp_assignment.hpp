@@ -21,7 +21,7 @@ namespace gmum {
       return distance >= p.distance;
     }
   };
-
+  
   void initAssignKmeanspp(std::vector<unsigned int> &assignment,
 			  const arma::mat &points,
 			  unsigned int nrOfClusters);    
@@ -33,7 +33,14 @@ namespace gmum {
   std::list<Pair>::iterator choose(boost::random::bernoulli_distribution<> &bernoulli,
 			      boost::random::mt19937 &gen,
 			      std::list<Pair> &selected);
-
+			      
+ class KmeansppAssignment : public Assignment {	  
+	public:
+	  KmeansppAssignment(const arma::mat &points, const int nrOfClusters) : Assignment::Assignment(points, nrOfClusters) {};
+	  virtual void operator() (std::vector<unsigned int> &assignment){
+					initAssignKmeanspp(assignment, points, nrOfClusters);
+				}
+	};
 }
 
 #endif

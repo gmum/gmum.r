@@ -44,13 +44,6 @@ namespace gmum {
     static const unsigned int nstartInit;
   };
 
-  class Assignment {
-public:
-  Assignment() {};
-  virtual void operator() (std::vector<unsigned int> &assignment,
-			const arma::mat &points, int nrOfClusters) = 0;
-};
-
   CEC* CEC__new(SEXP args);
 
   void initClusters(std::list<Rcpp::List> &clusters, Rcpp::List &list);
@@ -61,7 +54,7 @@ public:
 		   std::list<Rcpp::List> &clusters);
 
   void assignClusters(Assignment &assignmentType, std::vector<unsigned int> &assignment,
-			const arma::mat &points, int nrOfClusters);
+			const arma::mat &points);
 
   void plot(CEC*);
   arma::mat getDataSet(CEC* cec);
