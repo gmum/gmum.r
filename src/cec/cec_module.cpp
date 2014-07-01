@@ -123,6 +123,7 @@ namespace gmum {
 	    params.centroids.push_back(Rcpp::as<std::vector<double> >(*it));
 
 	} else params.centroidsSet = false;
+      }
     }
 
     if(params.clusters.size() > 0) params.clusterType = mix;
@@ -222,18 +223,18 @@ namespace gmum {
     Assignment *assignmentType;
     switch(params.assignmentType) {
     case random:
-      assignmentType = new RandomAssignment(*points, params.nrOfClusters);
+      assignmentType = new RandomAssignment(*(params.dataset), params.nrOfClusters);
       break;
     case kmeanspp:
-      assignmentType = new KmeansppAssignment(*points, params.nrOfClusters);
+      assignmentType = new KmeansppAssignment(*(params.dataset), params.nrOfClusters);
       break;
     case centroids:
-      assignmentType = new CentroidsAssignment(*points, params.centroids);
+      assignmentType = new CentroidsAssignment(*(params.dataset), params.centroids);
       break;
     }
 
-    assignment->resize(params.dataset.n_rows);
-    assignmentType(assignment);
+    assignment->resize(params.dataset->n_rows);
+    (*assignmentType)(*assignment);
 
     CEC *currentCEC = NULL;
 
@@ -244,7 +245,7 @@ namespace gmum {
 
       for(int i=1; i<nstart; ++i) {
 
-	assignmentType(assignment);
+	(*assignmentType)(*assignment);
 	CEC *nextCEC = new CEC(hartigan, assignment, params);
 	nextCEC->loop();
 

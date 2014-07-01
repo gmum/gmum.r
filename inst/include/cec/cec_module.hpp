@@ -43,7 +43,7 @@ namespace gmum {
     static const unsigned int nrOfClustersInit;
     static const double killThresholdInit;
     static const unsigned int nstartInit;
-    static const Assignment defaultAssignment;
+    static const AssignmentType defaultAssignment;
 
     struct ERRORS {
       static const char* datasetReq;
@@ -94,7 +94,7 @@ namespace gmum {
   const char* CONST::CLUSTERS::init = "method.init";
   const char* CONST::CLUSTERS::kmeanspp = "kmeans++";
   const char* CONST::CLUSTERS::random = "random";
-  const char* CONST::CLUSTERS::centr = "centroids";
+  const char* CONST::CLUSTERS::centroids = "centroids";
 
   const char* CONST::CLUSTERS::covMat = "params.cov";
   const char* CONST::CLUSTERS::radius = "params.r";
@@ -102,7 +102,7 @@ namespace gmum {
   const unsigned int CONST::nrOfClustersInit = 10;
   const double CONST::killThresholdInit = 1e-4;
   const unsigned int CONST::nstartInit = 1;
-  const Assignment CONST::defaultAssignment = kmeanspp;
+  const AssignmentType CONST::defaultAssignment = kmeanspp;
 
   const char* CONST::ERRORS::datasetReq = "dataset is required!";
   const char* CONST::ERRORS::nstartsPositive = "Number of starts should be a positive integer!";

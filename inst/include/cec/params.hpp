@@ -15,7 +15,7 @@ namespace gmum {
     bool logNrOfClusters, logEnergy;
     int nstart;
     AssignmentType assignmentType;
-    bool centroidSet;
+    bool centroidsSet;
     std::list<std::vector<double> > centroids;
     ClusterType clusterType;
     std::list<boost::shared_ptr<ClusterParams> > clusters;
