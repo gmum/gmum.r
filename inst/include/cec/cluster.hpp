@@ -28,7 +28,6 @@ namespace gmum {
     double entropy();
     int size();
     arma::rowvec getMean();
-    double predict(const arma::rowvec &);
     virtual arma::mat getCovMat(unsigned int, 
 				const std::vector<unsigned int> &, 
 			    	const arma::mat &) = 0;

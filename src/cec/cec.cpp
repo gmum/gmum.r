@@ -2,27 +2,38 @@
 
 namespace gmum {
 
-  boost::shared_ptr<Cluster> CEC::createCluster(const ClusterParams &params, int i) {
+  boost::shared_ptr<Cluster> CEC::createCluster(const ClusterParams &params,
+						int i) {
 
     boost::shared_ptr<Cluster> cluster;
     switch(params.type) {
     case standard:
-      cluster = boost::shared_ptr<Cluster>(new ClusterStandard(i, *assignment, *points));
+      cluster = boost::shared_ptr<Cluster>(new ClusterStandard(i, *assignment,
+							       *points));
       break;
     case full: {
-      const ClusterFullParams &ptr = static_cast<const ClusterFullParams&>(params);
-      cluster = boost::shared_ptr<Cluster>(new ClusterCovMat(ptr.covMat, i, *assignment, *points));
+      const ClusterFullParams &ptr = 
+	static_cast<const ClusterFullParams&>(params);
+      cluster = boost::shared_ptr<Cluster>(new ClusterCovMat(ptr.covMat, i,
+							     *assignment,
+							     *points));
       break;
     }
     case diagonal:
-      cluster = boost::shared_ptr<Cluster>(new ClusterDiagonal(i, *assignment, *points));
+      cluster = boost::shared_ptr<Cluster>(new ClusterDiagonal(i, *assignment,
+							       *points));
       break;
     case sphere:
-      cluster = boost::shared_ptr<Cluster>(new ClusterSpherical(i, *assignment, *points));
+      cluster = boost::shared_ptr<Cluster>(new ClusterSpherical(i, *assignment,
+								*points));
       break;
     case fsphere:
-      const ClusterFsphereParams &ptr = static_cast<const ClusterFsphereParams&>(params);
-      cluster = boost::shared_ptr<Cluster>(new ClusterConstRadius(ptr.radius, i, *assignment, *points));
+      const ClusterFsphereParams &ptr = 
+	static_cast<const ClusterFsphereParams&>(params);
+      cluster = boost::shared_ptr<Cluster>(new ClusterConstRadius(ptr.radius,
+								  i,
+								  *assignment,
+								  *points));
       break;
     }
 
@@ -63,7 +74,7 @@ namespace gmum {
 	  case sphere:*/
 	cluster = new ClusterParams();
 	cluster->type = params.clusterType;
-	  break;
+	break;
       }
       for(int i=0; i<params.nrOfClusters; ++i)
 	clusters.push_back(createCluster(*cluster, i));
@@ -88,8 +99,12 @@ namespace gmum {
     return s;
   }
 
-  std::vector<unsigned int> CEC::getAssignment() const {
+  std::vector<unsigned int> &CEC::getAssignment() const {
     return *assignment;
+  }
+
+  const arma::mat &CEC::getPoints() const {
+    return *points;
   }
 
   std::vector<arma::rowvec> CEC::centers() const {
@@ -126,7 +141,8 @@ namespace gmum {
     return this->points;
   }
 
-  boost::shared_ptr<std::vector<unsigned int> > CEC::getPtrToAssignement() const {
+  boost::shared_ptr<std::vector<unsigned int> > 
+  CEC::getPtrToAssignement() const {
     return this->assignment;
   }
   
