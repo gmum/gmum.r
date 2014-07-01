@@ -25,8 +25,8 @@ namespace gmum {
   public:
     virtual boost::shared_ptr<Cluster> addPoint(const arma::rowvec &) = 0;
     virtual boost::shared_ptr<Cluster> removePoint(const arma::rowvec &) = 0;
-    double entropy();
-    int size();
+    double entropy() const;
+    int size() const;
     arma::rowvec getMean();
     virtual arma::mat getCovMat(unsigned int, 
 				const std::vector<unsigned int> &, 
