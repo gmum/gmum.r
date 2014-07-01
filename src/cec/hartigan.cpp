@@ -55,6 +55,7 @@ namespace gmum {
 	    oldTarget = clusters[k];
 	    newSource = clusters[source]->removePoint(point);
 	    newTarget = clusters[k]->addPoint(point);
+
 	    double sourceEntropyChange =
 	      calcEntropyChange(*newSource, *oldSource, numberOfPoints);
 	    double targetEntropyChange = 
@@ -127,8 +128,10 @@ namespace gmum {
 	for(unsigned int l = 0; l < clusters.size(); l++){
 	  boost::shared_ptr<Cluster> oldTarget = clusters[l];
 	  boost::shared_ptr<Cluster> newTarget = clusters[l]->addPoint(pointToAssign);
+
 	  double entropyChange = 
 	    calcEntropyChange(*newTarget, *oldTarget, numberOfPoints);
+
 	  if(entropyChange < minEntropyChange){
 	    minEntropyChange = entropyChange;
 	    minEntropyChangeElementIndex = l;
@@ -147,5 +150,9 @@ namespace gmum {
       //to keep assignment adequate.
     }			  
   }
-
+  double Hartigan::entropy(boost::shared_ptr<Cluster> ptrToCluster,
+                           int numberOfPoints) {
+    double p = (1.0*ptrToCluster->size())/numberOfPoints;
+    return p*ptrToCluster->entropy()  + p*log(-p);
+  }
 }
