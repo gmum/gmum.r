@@ -17,13 +17,28 @@ namespace gmum {
     return result;
   }
 
+  double Hartigan::calcWholeEntropy(double crossEntropy,
+				    int pointsInCluster, 
+				    int numberOfPoints) {
+    double p = 1.0*pointsInCluster/numberOfPoints;
+    return p*(crossEntropy-log(p));
+  }
+
+  double Hartigan::calcEntropyChange(const Cluster &A,
+				     const Cluster &B,
+				     int numberOfPoints) {
+    double entropyA = calcWholeEntropy(A.entropy(), A.size(), numberOfPoints);
+    double entropyB = calcWholeEntropy(B.entropy(), B.size(), numberOfPoints);
+    return entropyA - entropyB;
+  }
+
   SingleResult Hartigan::singleLoop(const arma::mat &points, std::vector<unsigned int> &assignment, 
 				    double killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters) {
 
     int switched = 0;  //numer of points who has been moved to another cluster
     int dimension = points.n_cols;
-
-    for(unsigned int i = 0; i < Cluster::numberOfPoints; i++) {
+    int numberOfPoints = points.n_rows;
+    for(unsigned int i = 0; i < numberOfPoints; i++) {
       unsigned int source = assignment[i];
       arma::rowvec point = points.row(i);
 
@@ -32,6 +47,7 @@ namespace gmum {
 
 	  boost::shared_ptr<Cluster> oldSource, oldTarget, newSource, newTarget;
 	  double oldEntropy, newEntropy;
+	  double wholeEntropyChange;
 
 	  try {
 
@@ -39,9 +55,13 @@ namespace gmum {
 	    oldTarget = clusters[k];
 	    newSource = clusters[source]->removePoint(point);
 	    newTarget = clusters[k]->addPoint(point);
-	    oldEntropy = oldSource->entropy()+oldTarget->entropy() ;
-	    newEntropy = newSource->entropy()+newTarget->entropy();
 
+	    double sourceEntropyChange =
+	      calcEntropyChange(*newSource, *oldSource, numberOfPoints);
+	    double targetEntropyChange = 
+	      calcEntropyChange(*newTarget, *oldTarget, numberOfPoints);
+
+	    wholeEntropyChange = targetEntropyChange+sourceEntropyChange;
 
 	  } catch(std::exception e) {
 	    std::cout << "removePoint" << std::endl;
@@ -52,7 +72,7 @@ namespace gmum {
 	    //return SingleResult(switched, clusters.size(), 0);
 	  }
 
-	  if(newEntropy < oldEntropy) {
+	  if(wholeEntropyChange < 0) {  //newEntropy < oldEntropy
 	    clusters[source] = newSource;
 	    clusters[k] = newTarget;
 	    switched++;
@@ -63,7 +83,7 @@ namespace gmum {
 	    try {
 	      //if cluster has number of members lower than threshold, remove the cluster
 	      //threshold is fraction of all points
-	      if(clusters[source]->size() < std::max(int(killThreshold*Cluster::numberOfPoints),dimension+1)) {
+	      if(clusters[source]->size() < std::max(int(killThreshold*numberOfPoints),dimension+1)) {
 
 		removeCluster(source, points, assignment, clusters);
 	      }
@@ -93,7 +113,8 @@ namespace gmum {
     clusters.erase(clusters.begin() + source);
 
     //assign points of erased cluster
-    for(unsigned int j = 0; j < Cluster::numberOfPoints; j++) {
+    int numberOfPoints = points.n_rows;
+    for(unsigned int j = 0; j < numberOfPoints; j++) {
 
       //find point of deleted cluster
       if(assignment[j] == source) {
@@ -107,7 +128,10 @@ namespace gmum {
 	for(unsigned int l = 0; l < clusters.size(); l++){
 	  boost::shared_ptr<Cluster> oldTarget = clusters[l];
 	  boost::shared_ptr<Cluster> newTarget = clusters[l]->addPoint(pointToAssign);
-	  double entropyChange = newTarget->entropy() - oldTarget->entropy();
+
+	  double entropyChange = 
+	    calcEntropyChange(*newTarget, *oldTarget, numberOfPoints);
+
 	  if(entropyChange < minEntropyChange){
 	    minEntropyChange = entropyChange;
 	    minEntropyChangeElementIndex = l;
@@ -126,5 +150,9 @@ namespace gmum {
       //to keep assignment adequate.
     }			  
   }
-
+  double Hartigan::entropy(boost::shared_ptr<Cluster> ptrToCluster,
+                           int numberOfPoints) {
+    double p = (1.0*ptrToCluster->size())/numberOfPoints;
+    return p*ptrToCluster->entropy()  + p*log(-p);
+  }
 }
