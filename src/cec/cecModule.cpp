@@ -39,7 +39,7 @@ namespace gmum {
 	if(!list.containsElementNamed(CONST::CLUSTERS::type)) {
 
 	  cluster.reset(new ClusterParams());
-	  cluster->type = noType;
+	  cluster->type = knoType;
 
 	} else {
 
@@ -48,12 +48,12 @@ namespace gmum {
 	  if(typeStr.compare(CONST::CLUSTERS::standard)==0) {
 
 	    cluster.reset(new ClusterParams());
-	    cluster->type = standard;
+	    cluster->type = kstandard;
 
 	  } else if(typeStr.compare(CONST::CLUSTERS::full)==0) {
 
 	    ClusterFullParams *ptr = new ClusterFullParams();
-	    ptr->type = full;
+	    ptr->type = kfull;
 	   
 	    if(list.containsElementNamed(CONST::CLUSTERS::covMat)) {
 	      ptr->covMatSet = true;
@@ -66,7 +66,7 @@ namespace gmum {
 	  } else if(typeStr.compare(CONST::CLUSTERS::fsphere)==0) {
 
 	    ClusterFsphereParams *ptr = new ClusterFsphereParams();
-	    ptr->type = fsphere;
+	    ptr->type = kfsphere;
 
 	    if(list.containsElementNamed(CONST::CLUSTERS::radius)) {
 	      ptr->radiusSet = true;
@@ -77,13 +77,13 @@ namespace gmum {
 
 	  } else if(typeStr.compare(CONST::CLUSTERS::sphere)==0) {
 	    cluster.reset(new ClusterParams());
-	    cluster->type = sphere;
+	    cluster->type = ksphere;
 	  } else if(typeStr.compare(CONST::CLUSTERS::diagonal)==0) {
 	    cluster.reset(new ClusterParams());
-	    cluster->type = diagonal;
+	    cluster->type = kdiagonal;
 	  } else {
 	    cluster.reset(new ClusterParams());
-	    cluster->type = noType;
+	    cluster->type = knoType;
 	  }
 	}
 
@@ -111,10 +111,10 @@ namespace gmum {
     params.assignmentType = CONST::defaultAssignment;
     if(list.containsElementNamed(CONST::CLUSTERS::init)) {
       std::string init = Rcpp::as<std::string>(list(CONST::CLUSTERS::init));
-      if(init.compare(CONST::CLUSTERS::random)==0) params.assignmentType = random;
-      else if(init.compare(CONST::CLUSTERS::kmeanspp)==0) params.assignmentType = kmeanspp;
+      if(init.compare(CONST::CLUSTERS::random)==0) params.assignmentType = krandom;
+      else if(init.compare(CONST::CLUSTERS::kmeanspp)==0) params.assignmentType = kkmeanspp;
       else if(init.compare(CONST::CLUSTERS::centroids)==0) {
-	params.assignmentType = centroids;
+	params.assignmentType = kcentroids;
 	if(list.containsElementNamed(CONST::centroidsList)) {
 	  params.centroidsSet = true;
 	  Rcpp::List desc = Rcpp::as<Rcpp::List>(list[CONST::centroidsList]);
@@ -126,22 +126,22 @@ namespace gmum {
       }
     }
 
-    if(params.clusters.size() > 0) params.clusterType = mix;
+    if(params.clusters.size() > 0) params.clusterType = kmix;
     else {
-      params.clusterType = standard;
+      params.clusterType = kstandard;
       if(list.containsElementNamed(CONST::CLUSTERS::type)) {
 	std::string type = Rcpp::as<std::string>(list[CONST::CLUSTERS::type]);
 	if(type.compare(CONST::CLUSTERS::standard)==0) {
 	  //nothing but recognises
 	} else if(type.compare(CONST::CLUSTERS::full)==0) {
-	  params.clusterType = full;
+	  params.clusterType = kfull;
 	} else if(type.compare(CONST::CLUSTERS::diagonal)==0) {
-	  params.clusterType = diagonal;
+	  params.clusterType = kdiagonal;
 	} else if(type.compare(CONST::CLUSTERS::sphere)==0) {
-	  params.clusterType = sphere;
+	  params.clusterType = ksphere;
 	} else if(type.compare(CONST::CLUSTERS::fsphere)==0) {
-	  params.clusterType = fsphere;
-	} else params.clusterType = noType;
+	  params.clusterType = kfsphere;
+	} else params.clusterType = knoType;
       }
 
       if(list.containsElementNamed(CONST::CLUSTERS::covMat)) {
@@ -178,39 +178,39 @@ namespace gmum {
     if(params.killThreshold > 1.0/params.nrOfClusters)
       Rcpp::stop(CONST::ERRORS::killThresholdSize);
 
-    if(params.assignmentType == noAssignment)
+    if(params.assignmentType == knoAssignment)
       Rcpp::stop(CONST::ERRORS::assignmentError);
 
-    if(params.assignmentType == centroids && params.centroids.size() != params.nrOfClusters)
+    if(params.assignmentType == kcentroids && params.centroids.size() != params.nrOfClusters)
       Rcpp::stop(CONST::ERRORS::centroidsError);
 
     switch(params.clusterType) {
-    case full:
+    case kfull:
       if(!params.covMatSet) Rcpp::stop(CONST::ERRORS::covMatReq);
       break;
-    case fsphere:
+    case kfsphere:
       if(!params.radiusSet) Rcpp::stop(CONST::ERRORS::radiusReq);
       break;
-    case noType:
+    case knoType:
       Rcpp::stop(CONST::ERRORS::clusterRecError);
       break;
-    case mix:
-      for(std::list<boost::shared_ptr<ClusterParams> >::const_iterator it = params.clusters.begin();
-	  it != params.clusters.end(); ++it)
-	switch((*it)->type) {
-	case full: {
-	  ClusterFullParams &ptr = static_cast<ClusterFullParams&>(*(*it));
+    case kmix:
+      BOOST_FOREACH(boost::shared_ptr<ClusterParams> cluster, params.clusters) {
+	switch(cluster->type) {
+	case kfull: {
+	  ClusterFullParams &ptr = static_cast<ClusterFullParams&>(*cluster);
 	  if(!ptr.covMatSet) Rcpp::stop(CONST::ERRORS::covMatReq);
 	  break;
 	}
-	case fsphere: {
-	  ClusterFsphereParams &ptr = static_cast<ClusterFsphereParams&>(*(*it));
+	case kfsphere: {
+	  ClusterFsphereParams &ptr = static_cast<ClusterFsphereParams&>(*cluster);
 	  if(!ptr.radiusSet) Rcpp::stop(CONST::ERRORS::radiusReq);
 	  break;
 	}
-	case noType:
+	case knoType:
 	  Rcpp::stop(CONST::ERRORS::clusterRecError);
 	}
+      }
     }
   }
 
@@ -222,13 +222,13 @@ namespace gmum {
 
     Assignment *assignmentType;
     switch(params.assignmentType) {
-    case random:
+    case krandom:
       assignmentType = new RandomAssignment(*(params.dataset), params.nrOfClusters);
       break;
-    case kmeanspp:
+    case kkmeanspp:
       assignmentType = new KmeansppAssignment(*(params.dataset), params.nrOfClusters);
       break;
-    case centroids:
+    case kcentroids:
       assignmentType = new CentroidsAssignment(*(params.dataset), params.centroids);
       break;
     }

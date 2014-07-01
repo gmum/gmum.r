@@ -6,7 +6,7 @@
 namespace gmum {
 
   enum ClusterType {
-    standard, full, diagonal, sphere, fsphere, noType, mix,
+    kstandard, kfull, kdiagonal, ksphere, kfsphere, knoType, kmix,
   };
 
   struct ClusterParams {

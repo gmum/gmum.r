@@ -4,7 +4,7 @@
 namespace gmum {
 
   enum AssignmentType {
-    kmeanspp, random, centroids, noAssignment,
+    kkmeanspp, krandom, kcentroids, knoAssignment,
   };
 
   struct Params {
