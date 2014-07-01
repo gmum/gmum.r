@@ -1,4 +1,4 @@
-#include "random_assignment.hpp"
+#include "randomAssignment.hpp"
 
 namespace gmum {
 	

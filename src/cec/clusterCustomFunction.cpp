@@ -1,4 +1,4 @@
-#include "cluster_custom_function.hpp"
+#include "clusterCustomFunction.hpp"
 
 namespace gmum {
   ClusterCustomFunction::ClusterCustomFunction(int _count,

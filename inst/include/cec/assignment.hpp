@@ -13,6 +13,7 @@ namespace gmum {
     Assignment(const arma::mat &points, const int nrOfClusters)
       : points(points), nrOfClusters(nrOfClusters) {};
     virtual void operator() (std::vector<unsigned int> &assignment) = 0;
+    virtual ~Assignment() {}
   };
 
   unsigned int findNearest(unsigned int i, 

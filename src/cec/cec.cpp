@@ -1,8 +1,8 @@
-#include "CEC.hpp"
+#include "cec.hpp"
 
 namespace gmum {
 
-  boost::shared_ptr<Cluster> CEC::createCluster(ClusterParams &params, int i) {
+  boost::shared_ptr<Cluster> CEC::createCluster(const ClusterParams &params, int i) {
 
     boost::shared_ptr<Cluster> cluster;
     switch(params.type) {
@@ -10,7 +10,7 @@ namespace gmum {
       cluster = boost::shared_ptr<Cluster>(new Cluster(i, *assignment, *points));
       break;
     case full: {
-      ClusterFullParams &ptr = static_cast<ClusterFullParams&>(params);
+      const ClusterFullParams &ptr = static_cast<const ClusterFullParams&>(params);
       cluster = boost::shared_ptr<Cluster>(new ClusterCovMat(ptr.covMat, i, *assignment, *points));
       break;
     }
@@ -21,7 +21,7 @@ namespace gmum {
       cluster = boost::shared_ptr<Cluster>(new ClusterSpherical(i, *assignment, *points));
       break;
     case fsphere:
-      ClusterFsphereParams &ptr = static_cast<ClusterFsphereParams&>(params);
+      const ClusterFsphereParams &ptr = static_cast<const ClusterFsphereParams&>(params);
       cluster = boost::shared_ptr<Cluster>(new ClusterConstRadius(ptr.radius, i, *assignment, *points));
       break;
     }
@@ -31,7 +31,7 @@ namespace gmum {
 
   CEC::CEC(boost::shared_ptr<Algorithm> algorithm,
 	   boost::shared_ptr<std::vector<unsigned int> > assignment,
-	   const Params params)
+	   const Params &params)
     : algorithm(algorithm), assignment(assignment), 
       points(params.dataset), killThreshold(params.killThreshold) {
 
@@ -73,18 +73,6 @@ namespace gmum {
 
   }
 
-  CEC::CEC(boost::shared_ptr<const arma::mat> points, 
-	   boost::shared_ptr<std::vector<unsigned int> > assignment, 
-	   boost::shared_ptr<Algorithm> algorithm,
-	   double killThreshold, int numberOfClusters)
-    : assignment(assignment), points(points), algorithm(algorithm), killThreshold(killThreshold) {
-
-    Cluster::numberOfPoints = points->n_rows;
-    clusters.reserve(numberOfClusters);
-    for(int i = 0; i < numberOfClusters; i++)
-      clusters.push_back(boost::shared_ptr<Cluster>(new Cluster(i, *assignment, *points)));
-  }
-
   void CEC::loop() {
     result = algorithm->loop(*points, *assignment, killThreshold, clusters);
     for(int i=0; i<clusters.size(); ++i) {
@@ -99,24 +87,24 @@ namespace gmum {
 
   double CEC::entropy() {
     double s= 0.0;
-    for (std::vector<boost::shared_ptr<Cluster> >::iterator it = clusters.begin() ; it!= clusters.end();++it ){
+    for (std::vector<boost::shared_ptr<Cluster> >::iterator it = clusters.begin() ; it!= clusters.end(); ++it) {
       s+= (*it)->entropy();
     }
     return s;
   }
 
-  std::vector<unsigned int> CEC::getAssignment() {
+  std::vector<unsigned int> CEC::getAssignment() const {
     return *assignment;
   }
 
-  std::vector<arma::rowvec> CEC::centers() {
+  std::vector<arma::rowvec> CEC::centers() const {
     std::vector<arma::rowvec> array;
     array.reserve(clusters.size());
     for(int i=0; i<clusters.size(); ++i) array.push_back(clusters[i]->getMean());
     return array;
   }
 
-  std::vector<arma::mat> CEC::cov() {
+  std::vector<arma::mat> CEC::cov() const {
     std::vector<arma::mat> array;
     array.reserve(clusters.size());
 
@@ -125,15 +113,15 @@ namespace gmum {
     return array;
   }
 
-  unsigned int CEC::iters() {
+  unsigned int CEC::iters() const {
     return result.iterations;
   }
 
-  std::list<unsigned int> CEC::getNrOfClusters() {
+  std::list<unsigned int> CEC::getNrOfClusters() const {
     return result.nrOfClusters;
   }
 
-  std::list<double> CEC::getEnergy() {
+  std::list<double> CEC::getEnergy() const {
     return result.energy;
   }
 
