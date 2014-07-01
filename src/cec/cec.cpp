@@ -6,21 +6,21 @@ namespace gmum {
 
     boost::shared_ptr<Cluster> cluster;
     switch(params.type) {
-    case standard:
+    case kstandard:
       cluster = boost::shared_ptr<Cluster>(new Cluster(i, *assignment, *points));
       break;
-    case full: {
+    case kfull: {
       const ClusterFullParams &ptr = static_cast<const ClusterFullParams&>(params);
       cluster = boost::shared_ptr<Cluster>(new ClusterCovMat(ptr.covMat, i, *assignment, *points));
       break;
     }
-    case diagonal:
+    case kdiagonal:
       cluster = boost::shared_ptr<Cluster>(new ClusterDiagonal(i, *assignment, *points));
       break;
-    case sphere:
+    case ksphere:
       cluster = boost::shared_ptr<Cluster>(new ClusterSpherical(i, *assignment, *points));
       break;
-    case fsphere:
+    case kfsphere:
       const ClusterFsphereParams &ptr = static_cast<const ClusterFsphereParams&>(params);
       cluster = boost::shared_ptr<Cluster>(new ClusterConstRadius(ptr.radius, i, *assignment, *points));
       break;
@@ -39,20 +39,20 @@ namespace gmum {
     clusters.reserve(params.nrOfClusters);
 
     int i=0;
-    if(params.clusterType == mix)
-      for(std::list<boost::shared_ptr<ClusterParams> >::const_iterator it = params.clusters.begin();
-	  it != params.clusters.end(); ++it, ++i)
-	clusters.push_back(createCluster(*(*it), i));
+    if(params.clusterType == kmix)
+      BOOST_FOREACH(boost::shared_ptr<ClusterParams> cluster, params.clusters) {
+	clusters.push_back(createCluster(*cluster, i));
+      }
     else {
       ClusterParams *cluster;
       switch(params.clusterType) {
-      case fsphere: {
+      case kfsphere: {
 	ClusterFsphereParams *proxy = new ClusterFsphereParams();
 	proxy->radius = params.radius;
 	cluster = proxy;
 	break;
       }
-      case full: {
+      case kfull: {
 	ClusterFullParams *proxy = new ClusterFullParams();
 	proxy->covMat = params.covMat;
 	cluster = proxy;
@@ -87,8 +87,8 @@ namespace gmum {
 
   double CEC::entropy() {
     double s= 0.0;
-    for (std::vector<boost::shared_ptr<Cluster> >::iterator it = clusters.begin() ; it!= clusters.end(); ++it) {
-      s+= (*it)->entropy();
+    BOOST_FOREACH(boost::shared_ptr<Cluster> cluster, clusters) {
+      s+= cluster->entropy();
     }
     return s;
   }

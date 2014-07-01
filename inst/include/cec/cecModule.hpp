@@ -102,7 +102,7 @@ namespace gmum {
   const unsigned int CONST::nrOfClustersInit = 10;
   const double CONST::killThresholdInit = 1e-4;
   const unsigned int CONST::nstartInit = 1;
-  const AssignmentType CONST::defaultAssignment = kmeanspp;
+  const AssignmentType CONST::defaultAssignment = kkmeanspp;
 
   const char* CONST::ERRORS::datasetReq = "dataset is required!";
   const char* CONST::ERRORS::nstartsPositive = "Number of starts should be a positive integer!";
