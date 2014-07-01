@@ -3,8 +3,8 @@
 
 namespace gmum {
 
-  enum Assignment {
-    kmeanspp, random, noAssignment,
+  enum AssignmentType {
+    kmeanspp, random, centroids, noAssignment,
   };
 
   struct Params {
@@ -14,7 +14,9 @@ namespace gmum {
     int nrOfClusters;
     bool logNrOfClusters, logEnergy;
     int nstart;
-    Assignment assignmentType;
+    AssignmentType assignmentType;
+    bool centroidSet;
+    std::list<std::vector<double> > centroids;
     ClusterType clusterType;
     std::list<boost::shared_ptr<ClusterParams> > clusters;
     bool covMatSet;

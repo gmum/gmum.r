@@ -2,12 +2,13 @@
 #include <vector>
 #include <boost/smart_ptr.hpp>
 #include <RcppArmadillo.h>
+#include "CEC.hpp"
 #include "Hartigan.hpp"
 #include "random_assignment.hpp"
 #include "kmeanspp_assignment.hpp"
+#include "user_assignment.hpp"
 #include "clusterParams.hpp"
 #include "params.hpp"
-#include "CEC.hpp"
 
 namespace gmum {
 
@@ -16,6 +17,7 @@ namespace gmum {
     static const char* nrOfClusters;
     static const char* clusters;
     static const char* nstart;
+    static const char* centroidsList;
     static const char* killThreshold;
     static const char* itmax;
     static const char* energy;
@@ -32,6 +34,7 @@ namespace gmum {
       static const char* init;
       static const char* kmeanspp;
       static const char* random;
+      static const char* centroids;
 
       static const char* covMat;
       static const char* radius;
@@ -52,6 +55,7 @@ namespace gmum {
       static const char* covMatReq;
       static const char* radiusReq;
       static const char* clusterRecError;
+      static const char* centroidsError;
     };
   };
 
@@ -63,9 +67,6 @@ namespace gmum {
   void verifyParams(const Params params);
   CEC *findBestCEC(const Params params);
 
-  void randomAssignment(Assignment assignmentType, std::vector<unsigned int> &assignment,
-			const arma::mat &points, int nrOfClusters);
-
   arma::mat getDataSet(CEC* cec);
 
   std::list<double> CECpredict(CEC*, std::vector<double>, bool);
@@ -76,7 +77,8 @@ namespace gmum {
   const char* CONST::dataset = "x";
   const char* CONST::nrOfClusters = "k";
   const char* CONST::clusters = "params.mix";
-  const char* CONST::nstart = "params.nstart";
+  const char* CONST::nstart = "params.nstart";  
+  const char* CONST::centroidsList = "params.centroids";
   const char* CONST::killThreshold = "control.eps";
   const char* CONST::itmax = "control.itmax";
   const char* CONST::energy = "log.energy";
@@ -92,6 +94,7 @@ namespace gmum {
   const char* CONST::CLUSTERS::init = "method.init";
   const char* CONST::CLUSTERS::kmeanspp = "kmeans++";
   const char* CONST::CLUSTERS::random = "random";
+  const char* CONST::CLUSTERS::centr = "centroids";
 
   const char* CONST::CLUSTERS::covMat = "params.cov";
   const char* CONST::CLUSTERS::radius = "params.r";
@@ -110,6 +113,7 @@ namespace gmum {
   const char* CONST::ERRORS::covMatReq = "cavariance matrix required";
   const char* CONST::ERRORS::radiusReq = "radius is required";
   const char* CONST::ERRORS::clusterRecError = "cannot recognise cluster type";
+  const char* CONST::ERRORS::centroidsError = "number of centroids is different than number of clusters";
 
   unsigned int nstart;
 

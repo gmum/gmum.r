@@ -2,9 +2,7 @@
 
 namespace gmum {
 
-  void initAssignKmeanspp(std::vector<unsigned int> &assignment,
-			  const arma::mat &points,
-			  unsigned int nrOfClusters) {
+  void KmeansppAssignment::operator() (std::vector<unsigned int> &assignment) {
     
     std::vector<unsigned int> centers;
     centers.reserve(nrOfClusters);
@@ -49,10 +47,7 @@ namespace gmum {
       selected.pop_front();
     }
 
-    //assign points
-    for(unsigned int i=0; i<nrOfPoints; ++i)
-      assignment[i] = findNearest(i, centers, points);
-
+    assignPoints(assignment, centers, points);
   }
 
   void calculateDistance(const std::vector<unsigned int> &centers,
@@ -76,8 +71,8 @@ namespace gmum {
   }
 
   std::list<Pair>::iterator choose(boost::random::bernoulli_distribution<> &bernoulli,
-			      boost::random::mt19937 &gen,
-			      std::list<Pair> &selected) {
+				   boost::random::mt19937 &gen,
+				   std::list<Pair> &selected) {
 
     std::list<Pair>::iterator it = selected.begin();
     for(; !bernoulli(gen) && it != selected.end(); ++it);

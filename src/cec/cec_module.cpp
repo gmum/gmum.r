@@ -113,6 +113,16 @@ namespace gmum {
       std::string init = Rcpp::as<std::string>(list(CONST::CLUSTERS::init));
       if(init.compare(CONST::CLUSTERS::random)==0) params.assignmentType = random;
       else if(init.compare(CONST::CLUSTERS::kmeanspp)==0) params.assignmentType = kmeanspp;
+      else if(init.compare(CONST::CLUSTERS::centroids)==0) {
+	params.assignmentType = centroids;
+	if(list.containsElementNamed(CONST::centroidsList)) {
+	  params.centroidsSet = true;
+	  Rcpp::List desc = Rcpp::as<Rcpp::List>(list[CONST::centroidsList]);
+
+	  for(Rcpp::List::iterator it = desc.begin(); it != desc.end(); ++it)
+	    params.centroids.push_back(Rcpp::as<std::vector<double> >(*it));
+
+	} else params.centroidsSet = false;
     }
 
     if(params.clusters.size() > 0) params.clusterType = mix;
@@ -170,6 +180,9 @@ namespace gmum {
     if(params.assignmentType == noAssignment)
       Rcpp::stop(CONST::ERRORS::assignmentError);
 
+    if(params.assignmentType == centroids && params.centroids.size() != params.nrOfClusters)
+      Rcpp::stop(CONST::ERRORS::centroidsError);
+
     switch(params.clusterType) {
     case full:
       if(!params.covMatSet) Rcpp::stop(CONST::ERRORS::covMatReq);
@@ -206,7 +219,21 @@ namespace gmum {
     boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
     boost::shared_ptr<Hartigan> hartigan(new Hartigan(params.logNrOfClusters, params.logEnergy));
 
-    randomAssignment(params.assignmentType, *assignment, *(params.dataset), params.nrOfClusters);
+    Assignment *assignmentType;
+    switch(params.assignmentType) {
+    case random:
+      assignmentType = new RandomAssignment(*points, params.nrOfClusters);
+      break;
+    case kmeanspp:
+      assignmentType = new KmeansppAssignment(*points, params.nrOfClusters);
+      break;
+    case centroids:
+      assignmentType = new CentroidsAssignment(*points, params.centroids);
+      break;
+    }
+
+    assignment->resize(params.dataset.n_rows);
+    assignmentType(assignment);
 
     CEC *currentCEC = NULL;
 
@@ -217,7 +244,7 @@ namespace gmum {
 
       for(int i=1; i<nstart; ++i) {
 
-	randomAssignment(params.assignmentType, *assignment, *(params.dataset), params.nrOfClusters);
+	assignmentType(assignment);
 	CEC *nextCEC = new CEC(hartigan, assignment, params);
 	nextCEC->loop();
 
@@ -231,23 +258,6 @@ namespace gmum {
     }
 
     return currentCEC;
-  }
-
-
-
-  void randomAssignment(Assignment assignmentType, std::vector<unsigned int> &assignment,
-			const arma::mat &points, int nrOfClusters) {
-
-    assignment.resize(points.n_rows);
-
-      switch(assignmentType) {
-      case random:
-	initAssignRandom(assignment, points, nrOfClusters);
-	break;
-      case kmeanspp:
-	initAssignKmeanspp(assignment, points, nrOfClusters);
-	break;
-      }
   }
 
 
