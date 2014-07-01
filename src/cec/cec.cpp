@@ -7,7 +7,7 @@ namespace gmum {
     boost::shared_ptr<Cluster> cluster;
     switch(params.type) {
     case standard:
-      cluster = boost::shared_ptr<Cluster>(new Cluster(i, *assignment, *points));
+      cluster = boost::shared_ptr<Cluster>(new ClusterStandard(i, *assignment, *points));
       break;
     case full: {
       const ClusterFullParams &ptr = static_cast<const ClusterFullParams&>(params);
@@ -35,7 +35,6 @@ namespace gmum {
     : algorithm(algorithm), assignment(assignment), 
       points(params.dataset), killThreshold(params.killThreshold) {
 
-    Cluster::numberOfPoints = points->n_rows;
     clusters.reserve(params.nrOfClusters);
 
     int i=0;
@@ -75,10 +74,6 @@ namespace gmum {
 
   void CEC::loop() {
     result = algorithm->loop(*points, *assignment, killThreshold, clusters);
-    for(int i=0; i<clusters.size(); ++i) {
-      ClusterOnlyTrace *ptr = dynamic_cast<ClusterOnlyTrace*>(&(*clusters[i]));
-      if(ptr != 0) ptr->computeCovarianceMatrix(i, *assignment, *points);
-    }
   }
 
   void CEC::singleLoop() {
@@ -108,7 +103,9 @@ namespace gmum {
     std::vector<arma::mat> array;
     array.reserve(clusters.size());
 
-    for(int i=0; i<clusters.size(); ++i) array.push_back(clusters[i]->getCovMat());
+    for(int i=0; i<clusters.size(); ++i) {
+      array.push_back(clusters[i]->getCovMat(i, *assignment, *points));
+    }
 
     return array;
   }
