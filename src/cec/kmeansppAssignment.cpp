@@ -1,4 +1,4 @@
-#include "kmeanspp_assignment.hpp"
+#include "kmeansppAssignment.hpp"
 
 namespace gmum {
 

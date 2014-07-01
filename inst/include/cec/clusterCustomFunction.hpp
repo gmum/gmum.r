@@ -8,7 +8,7 @@
 #include <boost/smart_ptr.hpp>
 #include <Rcpp.h>
 #include "exceptions.hpp"
-#include "Cluster.hpp"
+#include "cluster.hpp"
 
 
 

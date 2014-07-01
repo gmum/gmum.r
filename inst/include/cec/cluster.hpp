@@ -14,9 +14,6 @@ namespace gmum {
     unsigned int N;
     int count;
     arma::rowvec mean;
-    /*
-     * covariance matrix 
-     */
     arma::mat covMat;
     double _entropy;
 

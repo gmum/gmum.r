@@ -1,4 +1,4 @@
-#include "Hartigan.hpp"
+#include "hartigan.hpp"
 
 namespace gmum {
 

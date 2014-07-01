@@ -2,8 +2,8 @@
 #include <vector>
 #include <limits>
 #include <cmath>
-#include "Cluster.hpp"
-#include "Algorithm.hpp"
+#include "cluster.hpp"
+#include "algorithm.hpp"
 
 #ifndef HARTIGAN_HPP
 #define HARTIGAN_HPP

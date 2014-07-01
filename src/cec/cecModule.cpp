@@ -1,4 +1,4 @@
-#include "cec_module.hpp"
+#include "cecModule.hpp"
 
 namespace gmum {
 
@@ -12,7 +12,7 @@ namespace gmum {
 
 
 
-  Params processArguments(const Rcpp::List list) {
+  Params processArguments(const Rcpp::List &list) {
     Params params;
 
     if(list.containsElementNamed(CONST::dataset)) {
@@ -161,7 +161,7 @@ namespace gmum {
 
 
 
-  void verifyParams(const Params params) {
+  void verifyParams(const Params &params) {
 
     if(!params.datasetSet)
       Rcpp::stop(CONST::ERRORS::datasetReq);
@@ -216,7 +216,7 @@ namespace gmum {
 
 
 
-  CEC *findBestCEC(const Params params) {
+  CEC *findBestCEC(const Params &params) {
     boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
     boost::shared_ptr<Hartigan> hartigan(new Hartigan(params.logNrOfClusters, params.logEnergy));
 
@@ -258,6 +258,7 @@ namespace gmum {
       Rcpp::stop(std::string("exception ")+e.what()+" caught in CEC_new");
     }
 
+    delete assignmentType;
     return currentCEC;
   }
 

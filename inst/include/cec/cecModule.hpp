@@ -2,11 +2,11 @@
 #include <vector>
 #include <boost/smart_ptr.hpp>
 #include <RcppArmadillo.h>
-#include "CEC.hpp"
-#include "Hartigan.hpp"
-#include "random_assignment.hpp"
-#include "kmeanspp_assignment.hpp"
-#include "user_assignment.hpp"
+#include "cec.hpp"
+#include "hartigan.hpp"
+#include "randomAssignment.hpp"
+#include "kmeansppAssignment.hpp"
+#include "centroidsAssignment.hpp"
 #include "clusterParams.hpp"
 #include "params.hpp"
 
@@ -63,9 +63,9 @@ namespace gmum {
 
   CEC* CEC__new(SEXP args);
 
-  Params processArguments(const Rcpp::List list);
-  void verifyParams(const Params params);
-  CEC *findBestCEC(const Params params);
+  Params processArguments(const Rcpp::List &list);
+  void verifyParams(const Params &params);
+  CEC *findBestCEC(const Params &params);
 
   arma::mat getDataSet(CEC* cec);
 
