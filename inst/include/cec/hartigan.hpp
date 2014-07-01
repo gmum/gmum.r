@@ -28,6 +28,7 @@ namespace gmum {
 		       double killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters);
     SingleResult singleLoop(const arma::mat &points, std::vector<unsigned int> &assignment, 
 			      double killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters);
+    double entropy(boost::shared_ptr<Cluster> ptrToCluster, int numberOfPoints);
   };
 
 }
