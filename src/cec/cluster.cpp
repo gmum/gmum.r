@@ -34,7 +34,7 @@ namespace gmum {
     return mean;
   }
 
-  int Cluster::size() {
+  int Cluster::size() const {
     return count;
   }
 
@@ -42,7 +42,7 @@ namespace gmum {
     return mean;
   }
 
-  double Cluster::entropy() {
+  double Cluster::entropy() const {
     return _entropy;
   }
 
