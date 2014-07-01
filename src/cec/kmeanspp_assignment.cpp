@@ -31,16 +31,17 @@ namespace gmum {
       selected.push_back(k);
     }
 
+    int centersLeft = nrOfClusters;
     //first center
     centers.push_back(selected.front().pointNumber);
     selected.pop_front();
-    --nrOfClusters;
+    --centersLeft;
 
     //choose other centers
     float bernoulli_p = 0.8;
     boost::random::bernoulli_distribution<> bernoulli(bernoulli_p);
 
-    for(; nrOfClusters > 0; --nrOfClusters) {
+    for(; centersLeft > 0; --centersLeft) {
       calculateDistance(centers, selected, points);
       std::list<Pair>::iterator it = choose(bernoulli, gen, selected);
       centers.push_back(selected.front().pointNumber);
