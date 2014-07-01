@@ -16,12 +16,14 @@ namespace gmum {
     void removeCluster(unsigned int source, const arma::mat &points,
 		       std::vector<unsigned int> &assignment,
 		       std::vector<boost::shared_ptr<Cluster> > &clusters);
+    
   public:
     Hartigan(bool logNrOfClusters, bool logEnergy);
     TotalResult loop(const arma::mat &points, std::vector<unsigned int> &assignment,
 		       double killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters);
     SingleResult singleLoop(const arma::mat &points, std::vector<unsigned int> &assignment, 
 			      double killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters);
+    double entropy(boost::shared_ptr<Cluster> ptrToCluster, int numberOfPoints);
   };
 
 }
