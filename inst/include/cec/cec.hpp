@@ -32,7 +32,8 @@ namespace gmum {
     void loop();
     void singleLoop();
     double entropy();
-    std::vector<unsigned int> getAssignment() const;
+    std::vector<unsigned int> &getAssignment() const;
+    const arma::mat &getPoints() const;
     std::vector<arma::rowvec> centers() const;
     std::vector<arma::mat> cov() const;
     unsigned int iters() const;
