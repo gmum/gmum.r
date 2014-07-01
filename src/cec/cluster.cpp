@@ -38,21 +38,12 @@ namespace gmum {
     return count;
   }
 
-  arma::rowvec Cluster::getMean(){
+  arma::rowvec Cluster::getMean() {
     return mean;
   }
 
   double Cluster::entropy() {
     return _entropy;
-  }
-
-  double Cluster::predict(const arma::rowvec &x) {
-    // double constMultiplier = sqrt(1.0/(pow(2*M_PI, x.n_cols)*arma::det(covMat)));
-    // double scalar = arma::as_scalar((x-mean)*arma::inv(covMat)*((x-mean).t()));
-    // double exponens = exp(-0.5*scalar);
-
-    // return constMultiplier*exponens;
-    return 1.0;
   }
 
   void ClusterUseCovMat::initializeCovarianceMatrix(

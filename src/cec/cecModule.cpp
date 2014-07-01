@@ -269,7 +269,17 @@ namespace gmum {
     std::list<double> out;
 
     if(general)
-      for(int i=0; i<cec->clusters.size(); ++i) out.push_back(cec->clusters[i]->predict(x));
+      for(int i=0; i<cec->clusters.size(); ++i) {
+	arma::mat covMat = cec->clusters[i]->getCovMat(i,
+						       cec->getAssignment(),
+						       cec->getPoints());
+	arma::rowvec mean = cec->clusters[i]->getMean();
+	double constMultiplier = sqrt(1.0/(pow(2*M_PI, x.n_cols)*arma::det(covMat)));
+	double scalar = arma::as_scalar((x-mean)*arma::inv(covMat)*((x-mean).t()));
+	double exponens = exp(-0.5*scalar);
+
+	out.push_back(constMultiplier*exponens);
+      }
 
     return out;
   }
