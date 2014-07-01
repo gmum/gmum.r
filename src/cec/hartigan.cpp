@@ -22,8 +22,8 @@ namespace gmum {
 
     int switched = 0;  //numer of points who has been moved to another cluster
     int dimension = points.n_cols;
-
-    for(unsigned int i = 0; i < Cluster::numberOfPoints; i++) {
+    int numberOfPoints = points.n_rows;
+    for(unsigned int i = 0; i < numberOfPoints; i++) {
       unsigned int source = assignment[i];
       arma::rowvec point = points.row(i);
 
@@ -63,7 +63,7 @@ namespace gmum {
 	    try {
 	      //if cluster has number of members lower than threshold, remove the cluster
 	      //threshold is fraction of all points
-	      if(clusters[source]->size() < std::max(int(killThreshold*Cluster::numberOfPoints),dimension+1)) {
+	      if(clusters[source]->size() < std::max(int(killThreshold*numberOfPoints),dimension+1)) {
 
 		removeCluster(source, points, assignment, clusters);
 	      }
@@ -93,7 +93,8 @@ namespace gmum {
     clusters.erase(clusters.begin() + source);
 
     //assign points of erased cluster
-    for(unsigned int j = 0; j < Cluster::numberOfPoints; j++) {
+    int numberOfPoints = points.n_rows;
+    for(unsigned int j = 0; j < numberOfPoints; j++) {
 
       //find point of deleted cluster
       if(assignment[j] == source) {
