@@ -47,7 +47,7 @@ evalqOnLoad({
             cen = x$centers()
             n = length(cen)
             if (ellipses && length(slice) <= 2){
-                library("car")
+                #library("car")
                 cov = x$cov()
 
                 for (i in 1:n) {
