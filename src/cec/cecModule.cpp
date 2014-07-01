@@ -275,7 +275,13 @@ namespace gmum {
 						       cec->getPoints());
 	arma::rowvec mean = cec->clusters[i]->getMean();
 	double constMultiplier = sqrt(1.0/(pow(2*M_PI, x.n_cols)*arma::det(covMat)));
-	double scalar = arma::as_scalar((x-mean)*arma::inv(covMat)*((x-mean).t()));
+
+	arma::mat Q,R;
+	arma::qr_econ(Q,R,covMat);
+	int dim = mean.n_cols;
+	arma::mat Id = arma::eye(dim,dim);
+	arma::mat inv = solve(R,Id)*Q.t();
+	double scalar = arma::as_scalar((x-mean)*inv*((x-mean).t()));
 	double exponens = exp(-0.5*scalar);
 
 	out.push_back(constMultiplier*exponens);
