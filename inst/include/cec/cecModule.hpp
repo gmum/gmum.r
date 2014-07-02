@@ -21,17 +21,14 @@ namespace gmum {
 
   arma::mat getDataSet(CEC* cec);
 
-  std::list<double> CECpredict(CEC*, std::vector<double>, bool);
-  unsigned int CECpredict(CEC*, std::vector<double>);
-
   unsigned int getNstart(CEC* cec);
   unsigned int nstart;
 
   RCPP_MODULE(cec) {
     using namespace Rcpp;
 
-    std::list<double> (*predict_1)(CEC*, std::vector<double>, bool) = CECpredict;
-    unsigned int (*predict_2)(CEC*, std::vector<double>) = CECpredict;
+    std::list<double> (CEC::*predict_1)(std::vector<double>, bool) = &CEC::predict;
+    unsigned int (CEC::*predict_2)(std::vector<double>) const = &CEC::predict;
 
     class_<CEC>("cec")
       .factory(CEC__new)

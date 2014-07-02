@@ -263,57 +263,6 @@ namespace gmum {
   }
 
 
-
-  std::list<double> CECpredict(CEC* cec, std::vector<double> vec, bool general) {
-    arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
-    std::list<double> out;
-
-    if(general)
-      for(int i=0; i<cec->clusters.size(); ++i) {
-	arma::mat covMat = cec->clusters[i]->getCovMat(i,
-						       cec->getAssignment(),
-						       cec->getPoints());
-	arma::rowvec mean = cec->clusters[i]->getMean();
-	double constMultiplier = sqrt(1.0/(pow(2*M_PI, x.n_cols)*arma::det(covMat)));
-
-	arma::mat Q,R;
-	arma::qr_econ(Q,R,covMat);
-	int dim = mean.n_cols;
-	arma::mat Id = arma::eye(dim,dim);
-	arma::mat inv = solve(R,Id)*Q.t();
-	double scalar = arma::as_scalar((x-mean)*inv*((x-mean).t()));
-	double exponens = exp(-0.5*scalar);
-
-	out.push_back(constMultiplier*exponens);
-      }
-
-    return out;
-  }
-
-
-
-  unsigned int CECpredict(CEC *cec, std::vector<double> vec) {
-    arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
-
-    int assign = 0;
-    double minEntropyChange = std::numeric_limits<double>::max();
-  
-    for(int i=0; i<cec->clusters.size(); ++i) {
-
-      boost::shared_ptr<Cluster> oldCluster = cec->clusters[i];
-      boost::shared_ptr<Cluster> newCluster = cec->clusters[i]->addPoint(x);
-      double entropyChange = newCluster->entropy() - oldCluster->entropy();
-
-      if(entropyChange < minEntropyChange) {
-	minEntropyChange = entropyChange;
-	assign = i;
-      }
-    }
-
-    return assign;
-  }
-
-
   
   arma::mat getDataSet(CEC* cec) {
     return *(cec->getPtrToPoints());

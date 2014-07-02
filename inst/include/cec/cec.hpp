@@ -22,6 +22,8 @@ namespace gmum {
     boost::shared_ptr<const arma::mat> points;
     boost::shared_ptr<Algorithm> algorithm;
     const double killThreshold;
+    std::vector<bool> invSet;
+    std::vector<arma::mat> inv;
     boost::shared_ptr<Cluster> createCluster(const ClusterParams &params, int i);
   public:
     CEC(boost::shared_ptr<Algorithm> algorithm,
@@ -41,6 +43,8 @@ namespace gmum {
     boost::shared_ptr<const arma::mat> getPtrToPoints() const;
     boost::shared_ptr<std::vector<unsigned int> > getPtrToAssignement() const;
     std::list<double> getEnergy() const;
+    unsigned int predict(std::vector<double> vec) const;
+    std::list<double> predict(std::vector<double> vec, bool general);
   };
 
 }
