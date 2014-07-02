@@ -85,6 +85,9 @@ namespace gmum {
 
   void CEC::loop() {
     result = algorithm->loop(*points, *assignment, killThreshold, clusters);
+    int nrOfClusters = clusters.size();
+    invSet.resize(nrOfClusters, false);
+    inv.resize(nrOfClusters);
   }
 
   void CEC::singleLoop() {
@@ -146,4 +149,54 @@ namespace gmum {
     return this->assignment;
   }
   
+  unsigned int CEC::predict(std::vector<double> vec) const {
+    arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
+
+    int assign = 0;
+    double minEntropyChange = std::numeric_limits<double>::max();
+  
+    for(int i=0; i<clusters.size(); ++i) {
+
+      boost::shared_ptr<Cluster> oldCluster = clusters[i];
+      boost::shared_ptr<Cluster> newCluster = clusters[i]->addPoint(x);
+      double entropyChange = newCluster->entropy() - oldCluster->entropy();
+
+      if(entropyChange < minEntropyChange) {
+	minEntropyChange = entropyChange;
+	assign = i;
+      }
+    }
+
+    return assign;
+  }
+
+
+  std::list<double> CEC::predict(std::vector<double> vec, bool general) {
+    arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
+    std::list<double> out;
+
+    if(general)
+      for(int i=0; i<clusters.size(); ++i) {
+	arma::mat covMat = clusters[i]->getCovMat(i,
+						  *assignment,
+						  *points);
+	arma::rowvec mean = clusters[i]->getMean();
+	if(!invSet[i]) {
+	  arma::mat Q,R;
+	  arma::qr_econ(Q,R,covMat);
+	  int dim = mean.n_cols;
+	  arma::mat Id = arma::eye(dim,dim);
+	  inv[i] = solve(R,Id)*Q.t();
+	  invSet[i] = true;
+	}
+
+	double constMultiplier = sqrt(1.0/(pow(2*M_PI, x.n_cols)*arma::det(covMat)));
+	double scalar = arma::as_scalar((x-mean)*inv[i]*((x-mean).t()));
+	double exponens = exp(-0.5*scalar);
+
+	out.push_back(constMultiplier*exponens);
+      }
+
+    return out;
+  }
 }
