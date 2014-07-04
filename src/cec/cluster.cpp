@@ -1,5 +1,5 @@
 #include "cluster.hpp"
-
+#include <Rcpp.h>
 namespace gmum {
 
   Cluster::Cluster(int _count, const arma::rowvec &_mean):
@@ -10,7 +10,6 @@ namespace gmum {
   Cluster::Cluster(unsigned int id, 
 		   const std::vector<unsigned int> &assignment, 
 		   const arma::mat &points) {
-
     initializeMean(id, assignment, points);
     if(count == 0) throw(NoPointsInCluster());
 
