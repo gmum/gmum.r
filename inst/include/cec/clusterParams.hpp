@@ -1,12 +1,12 @@
 #include <armadillo>
-
+#include <string>
 #ifndef CLUSTERPARAMS_HPP
 #define CLUSTERPARAMS_HPP
 
 namespace gmum {
 
   enum ClusterType {
-    kstandard, kfull, kdiagonal, ksphere, kfsphere, knoType, kmix,
+    kstandard, kfull, kdiagonal, ksphere, kfsphere, knoType, kmix, kcustom
   };
 
   struct ClusterParams {
@@ -22,6 +22,11 @@ namespace gmum {
   struct ClusterFsphereParams : public ClusterParams {
     bool radiusSet;
     double radius;
+  };
+
+  struct ClusterCustomParams : public ClusterParams {
+    bool functionNameSet;
+    std::string functionName;
   };
 
 }
