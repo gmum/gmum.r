@@ -1,4 +1,5 @@
 loadModule("cec", TRUE)
+CEC <- NULL
 loop.cec <- NULL
 entropy.cec <- NULL
 y.cec <- NULL
@@ -12,6 +13,10 @@ log.iters.cec <- NULL
 nstart.cec <- NULL
 
 evalqOnLoad({
+
+	CEC <<- function(args){
+        new(cec, args)
+    }
 
     loop.cec <- function(c) {
         c$loop()
