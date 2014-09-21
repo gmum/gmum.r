@@ -156,8 +156,8 @@ void SVMClient::createFlow() {
 
 		switch (svm_type) {
 			case LIBSVM: {
-				LibSVMRunner runner;
-				handlers.push_back(&runner);
+				LibSVMRunner *runner = new LibSVMRunner();
+				handlers.push_back(runner);
 				break;
 			}
 	//		case SVMLIGHT : {	SVMLightRunner runner;		// Wating for svm light runner implementation
@@ -165,8 +165,8 @@ void SVMClient::createFlow() {
 	//			break;
 	//		}
 			default: {
-				LibSVMRunner runner;				// dafault will be libsvm
-				handlers.push_back(&runner);
+				LibSVMRunner *runner = new LibSVMRunner();				// dafault will be libsvm
+				handlers.push_back(runner);
 				break;
 			}
 		}
