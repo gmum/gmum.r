@@ -41,3 +41,41 @@ check.trained <- function(object) {
     warning("You are changing parameters of a trained model, remember to train it again before prediction.")
   }
 }
+
+
+accuracy.svm <- function(object=NULL, y=NULL, t) {
+  if (is.null(object) && !is.null(y) && t != FALSE ) {
+    if ( length(t) != length(y)) {
+      stop("Result's and target's length dont match!")
+    }
+    len <- length(t)
+    
+    diff = t-y
+    acc <- sum(diff == 0) / len
+    return(acc)
+  } 
+  else if (!is.null(object) && is.null(y) &&  t != FALSE) {
+    x <- object$getX()
+    object$train()
+    object$predict(x)
+    y <- object$getPrediction()
+    
+    if ( length(t) != length(y)) {
+      stop("Result's and target's length dont match!")
+    }
+    len <- length(t)
+    
+    diff = t-y
+    acc <- sum(diff == 0) / len
+    return(acc)
+  }
+  else {
+    stop("You need to provide either model and target, or result and target")
+  }
+  
+}
+
+
+
+
+
