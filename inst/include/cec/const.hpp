@@ -51,7 +51,7 @@ namespace gmum {
   const char* CONST::dataset = "x";
   const char* CONST::nrOfClusters = "k";
   const char* CONST::clusters = "params.mix";
-  const char* CONST::nstart = "params.nstart";  
+  const char* CONST::nstart = "control.nstart";
   const char* CONST::centroidsList = "params.centroids";
   const char* CONST::killThreshold = "control.eps";
   const char* CONST::itmax = "control.itmax";
