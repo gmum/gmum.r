@@ -1,28 +1,34 @@
-## -*- mode: makefile; -*-
 
 SOURCES = $(wildcard cec/*.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
 
-
-
 R_HOME := 	$(shell R RHOME)
 RCPPFLAGS := 	$(shell $(R_HOME)/bin/R CMD config --cppflags)
 RLDFLAGS := 	$(shell $(R_HOME)/bin/R CMD config --ldflags)
+
 RCPPINCL := 	$(shell echo 'Rcpp:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)
-RCPPLIBS := 	$(shell echo 'Rcpp:::LdFlags()' | $(R_HOME)/bin/R --vanilla --slave)
 RCPPARMAINCL := 	$(shell echo 'RcppArmadillo:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)
+
+RCPPLIB := -L$(subst include,libs,$(shell echo $(RCPPINCL) | cut -c 3-))
+RCPPARMALIB := -L$(subst include,libs,$(shell echo $(RCPPARMAINCL) | cut -c 3-))
+
 LAPACK_LIBS := 	$(shell ${R_HOME}/bin/R CMD config LAPACK_LIBS)
 BLAS_LIBS := 	$(shell ${R_HOME}/bin/R CMD config BLAS_LIBS)
 
-
-
 PKG_CPPFLAGS := -I../inst/include/cec -I. $(shell $(R_HOME)/bin/R CMD config CPPFLAGS)
 PKG_CXXFLAGS := $(RCPPFLAGS) $(RCPPINCL) $(RCPPARMAINCL) $(RINSIDEINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -g -pthread -fpic
-PKG_LIBS := 	$(RLDFLAGS) $(RRPATH) $(RBLAS) $(RLAPACK) $(RCPPLIBS) $(RINSIDELIBS) -lrt -lpthread $(LAPACK_LIBS) $(BLAS_LIBS) -larmadillo
+PKG_LIBS := 	$(RLDFLAGS) $(RRPATH) $(RBLAS) $(RLAPACK) $(RCPPLIB) $(RCPPARMALIB) $(RINSIDELIBS) -lrt -lpthread $(LAPACK_LIBS) $(BLAS_LIBS)
 
+%.o : %.cpp
+	g++ $(PKG_CPPFLAGS) $(PKG_CXXFLAGS) $^ -c -o $@
 
+gmum.r.so: $(OBJECTS)
+	g++ -shared $^ $(PKG_LIBS) -o $@
 
-all: $(SHLIB)
+all: gmum.r.so
 
 clean:
-	@rm -f $(OBJECTS)
+	-rm cec/*.o
+	-rm gmum.r.so
+
+.PHONY: all clean
