@@ -1,3 +1,20 @@
+#' @title CEC()
+#' Create CEC model object
+#'
+#' @param x dataset
+#' @param k initial number of clusters
+#' @param method.type Gauss family
+#' @param method.init method to initialize clusters
+#' @param params.r radius for spherical family
+#' @param params.cov covariance matrix for covariance family
+#' @param params.centroids list of centroids
+#' @param control.nstart how many times to perform algorithm
+#' @param control.eps what change of value should terminate algorithm
+#' @param control.itmax maximum number of iterations
+#' @param log.energy record collected energy of all clusters in each iteration
+#' @param log.ncluster record number of clusters in each iteration
+#' @param log.iters record number of iterations
+
 loadModule("cec", TRUE)
 CEC <- NULL
 loop.cec <- NULL
@@ -14,7 +31,7 @@ nstart.cec <- NULL
 
 evalqOnLoad({
 
-	CEC <<- function(args){
+    CEC <<- function(args){
         new(cec, args)
     }
 
