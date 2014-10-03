@@ -24,7 +24,7 @@ TEST(TwoESVMTest, TestAll) {
 
 	two_e_pre_runner.processRequest(svm_config);
 	lib_svm_runner.processRequest(svm_config);
-//	two_e_post_runner.processRequest(svm_config);
+	two_e_post_runner.processRequest(svm_config);
 
 	svm_config.setPrediction(true);
 	lib_svm_runner.processRequest(svm_config);
