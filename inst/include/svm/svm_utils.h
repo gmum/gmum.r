@@ -5,8 +5,8 @@
  *      Author: sacherus
  */
 
-#ifndef UTILS_H_
-#define UTILS_H_
+#ifndef SVC_UTILS_H_
+#define SVC_UTILS_H_
 #include <svm.h>
 //#include <RcppArmadillo.h>
 #include <armadillo>
@@ -19,30 +19,33 @@ public:
 	//convert sparse matrix to armadillo matrix
 	static arma::mat libtoarma(svm_node** svm_nodes, int nr_sv, int dim) {
 		arma::mat ret(nr_sv, dim);
-		int j;
-		for(int row=0; row < nr_sv; row++) {
-			j = 0;
+		for (int row = 0; row < nr_sv; row++) {
 			svm_node* tmp_row = svm_nodes[row];
-			while(tmp_row[j++].value != -1) {
-				ret(row, tmp_row[j].index) = tmp_row[j].value;
+			for (int j = 0; tmp_row[j].index != -1; j++) {
+				ret(row, tmp_row[j].index - 1) = tmp_row[j].value;
 			}
 		}
 		return ret;
 	}
 
-	static arma::vec arrtoarma(double* arr, int size) {
+	static arma::vec arrtoarmavec(double* arr, int size) {
 		arma::vec ret(size);
-		for(int i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++) {
 			ret(i) = arr[i];
 		}
 		return ret;
 	}
 
-//	TODO: SHOULD WORK FOR MULTICLASS
-	static arma::vec arrtoarma(double** arr, int size) {
-			return arrtoarma(arr[0], size);
-		}
+//	TODO: MAKE IT WORKING FOR MULTICLASS
+	static arma::vec arrtoarmavec(double** arr, int size) {
+		return arrtoarmavec(arr[0], size);
+	}
+
+	static arma::mat matrixByValue(arma::mat &data, arma::vec &targets,
+			int value) {
+		return data.rows(find(targets == value));
+	}
 
 };
 
-#endif /* UTILS_H_ */
+#endif /* SVC_UTILS_H_ */
