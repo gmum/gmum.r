@@ -52,7 +52,7 @@ RCPP_MODULE(svm_wrapper) {
 			.method("setCoef0",&SVMClient::setCoef0)
 			.method("setC",&SVMClient::setC)
 			.method("setEps",&SVMClient::setEps)
-			.method("setShirnking",&SVMClient::setShrinking)
+			.method("setShrinking",&SVMClient::setShrinking)
 			.method("setProbability",&SVMClient::setProbability)
 
 			.method("getX", &SVMClient::getX)
@@ -70,8 +70,9 @@ RCPP_MODULE(svm_wrapper) {
 			.method("getEps", &SVMClient::getEps)
 			.method("isShrinking", &SVMClient::isShrinking)
 			.method("isProbability", &SVMClient::isProbability)
-
-
+			.method("getAlpha", &SVMClient::getAlpha)
+			.method("getBias", &SVMClient::getBias)
+			.method("getW", &SVMClient::getW)
 
 			.method("train", &SVMClient::train)
 			.method("predict", &SVMClient::predict)
