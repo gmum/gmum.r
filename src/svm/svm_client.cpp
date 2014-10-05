@@ -104,7 +104,23 @@ bool SVMClient::isProbability(){
 	return (bool)config.probability;
 }
 
+// model getters
+double* SVMClient::getAlpha() {
+	return config.rho;
+}
 
+double SVMClient::getBias() {	// where is the bias in config?
+	return 0.0;			// temporary
+}
+
+double* SVMClient::getW() {		// where is W in config?
+	if ( config.kernel_type == _LINEAR ) {
+		return new double[2];	// temporary
+	}
+	else {
+		return 0;
+	}
+}
 
 // Runners
 void SVMClient::run() {
@@ -122,7 +138,7 @@ void SVMClient::train() {
 }
 
 void SVMClient::predict( arma::mat problem ) {
-	config.data = problem;
+	config.setData(problem);
 	if ( SVMHandlers.size() > 0 ) {
 		config.setPrediction(true);
 		for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
@@ -133,26 +149,27 @@ void SVMClient::predict( arma::mat problem ) {
 }
 
 void SVMClient::createFlow() {
-	SVMType svm_type = config.our_svm_type;
+	SVMType svm_type = config.library;
 	Preprocess preprocess = config.preprocess;
 	std::vector<SVMHandler*> handlers;
 
-	//	switch (svm_type) {
-	//		case LIBSVM: {
-	//			LibSVMRunner runner;
-	//			handlers.push_back(&runner);
-	//			break;
-	//		}
+
+		switch (svm_type) {
+			case LIBSVM: {
+				LibSVMRunner *runner = new LibSVMRunner();
+				handlers.push_back(runner);
+				break;
+			}
 	//		case SVMLIGHT : {	SVMLightRunner runner;		// Wating for svm light runner implementation
 	//			handlers.push_back( &runner );
 	//			break;
 	//		}
-	//		default: {
-	//			LibSVMRunner runner;				// dafault will be libsvm
-	//			handlers.push_back(&runner);
-	//			break;
-	//		}
-	//	}
+			default: {
+				LibSVMRunner *runner = new LibSVMRunner();				// dafault will be libsvm
+				handlers.push_back(runner);
+				break;
+			}
+		}
 
 	switch (preprocess) {
 	// case TWOE :	{	TwoeSVMPostprocessor post_runner;
