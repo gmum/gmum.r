@@ -4,8 +4,7 @@
 
 class TwoeSVMPostprocessor: public SVMHandler {
 private:
-	arma::rowvec projectingDataPos(arma::mat &matrix, arma::rowvec &weights);
-	arma::rowvec projectingDataNeg(arma::mat &matrix, arma::rowvec &weights);
+	arma::rowvec projectingData(arma::mat &matrix, arma::rowvec &weights);
 	void makePreprocessor();
 	float shiftingBoundary();
 public:
