@@ -1,42 +1,48 @@
 #include "cec.hpp"
-
+#include "clusterCustomFunction.hpp"
 namespace gmum {
 
   boost::shared_ptr<Cluster> CEC::createCluster(const ClusterParams &params,
 						int i) {
-
     boost::shared_ptr<Cluster> cluster;
     switch(params.type) {
-    case kstandard:
-      cluster = boost::shared_ptr<Cluster>(new ClusterStandard(i, *assignment,
-							       *points));
-      break;
-    case kfull: {
-      const ClusterFullParams &ptr = 
-	static_cast<const ClusterFullParams&>(params);
-      cluster = boost::shared_ptr<Cluster>(new ClusterCovMat(ptr.covMat, i,
-							     *assignment,
-							     *points));
-      break;
+      case kstandard:
+        cluster = boost::shared_ptr<Cluster>(new ClusterStandard(i, *assignment,
+        						       *points));
+        break;
+      case kfull: {
+        const ClusterFullParams &ptr = 
+        	static_cast<const ClusterFullParams&>(params);
+        cluster = boost::shared_ptr<Cluster>(new ClusterCovMat(ptr.covMat, i,
+        						     *assignment,
+        						     *points));
+         break;
+      }
+      case kdiagonal:
+        cluster = boost::shared_ptr<Cluster>(new ClusterDiagonal(i, *assignment,
+        						       *points));
+        break;
+      case ksphere:
+        cluster = boost::shared_ptr<Cluster>(new ClusterSpherical(i, *assignment,
+        							*points));
+        break;
+      case kfsphere: {
+        const ClusterFsphereParams &ptr = 
+        static_cast<const ClusterFsphereParams&>(params);
+        cluster = boost::shared_ptr<Cluster>(new ClusterConstRadius(ptr.radius,
+        							    i,
+        							    *assignment,
+        							    *points));
+         break;
+      }
+      case kcustom: {
+        const ClusterCustomParams &ptr = 
+          static_cast<const ClusterCustomParams&>(params);
+         cluster = boost::shared_ptr<Cluster>(new ClusterCustomFunction(
+             i, *assignment, *points, ptr.functionName));
+        break;
+      }
     }
-    case kdiagonal:
-      cluster = boost::shared_ptr<Cluster>(new ClusterDiagonal(i, *assignment,
-							       *points));
-      break;
-    case ksphere:
-      cluster = boost::shared_ptr<Cluster>(new ClusterSpherical(i, *assignment,
-								*points));
-      break;
-    case kfsphere:
-      const ClusterFsphereParams &ptr = 
-	static_cast<const ClusterFsphereParams&>(params);
-      cluster = boost::shared_ptr<Cluster>(new ClusterConstRadius(ptr.radius,
-								  i,
-								  *assignment,
-								  *points));
-      break;
-    }
-
     return cluster;
   }
 
@@ -52,8 +58,7 @@ namespace gmum {
     if(params.clusterType == kmix)
       BOOST_FOREACH(boost::shared_ptr<ClusterParams> cluster, params.clusters) {
 	clusters.push_back(createCluster(*cluster, i));
-      }
-    else {
+    } else {
       ClusterParams *cluster;
       switch(params.clusterType) {
       case kfsphere: {
@@ -66,16 +71,24 @@ namespace gmum {
 	ClusterFullParams *proxy = new ClusterFullParams();
 	proxy->covMat = params.covMat;
 	cluster = proxy;
+        
 	break;
+      }
+      case kcustom :{
+        ClusterCustomParams *proxy = new ClusterCustomParams();
+        proxy->functionName = params.functionName;
+        cluster = proxy;
+        break;
       }
       default:
 	/*case standard:
 	  case diagonal:
 	  case sphere:*/
 	cluster = new ClusterParams();
-	cluster->type = params.clusterType;
+	
 	break;
       }
+      cluster->type = params.clusterType;
       for(int i=0; i<params.nrOfClusters; ++i)
 	clusters.push_back(createCluster(*cluster, i));
       delete cluster;
