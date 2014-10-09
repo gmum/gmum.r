@@ -1,5 +1,17 @@
+library(methods)
+
+loadModule("cec", TRUE)
+
+#' CEC()
+#' 
 #' @title CEC()
 #' Create CEC model object
+#'
+#' @export
+#'
+#' @rdname cec-methods
+#'
+#' @docType methods
 #'
 #' @param x dataset
 #' @param k initial number of clusters
@@ -14,9 +26,11 @@
 #' @param log.energy record collected energy of all clusters in each iteration
 #' @param log.ncluster record number of clusters in each iteration
 #' @param log.iters record number of iterations
-
-loadModule("cec", TRUE)
+#' 
+#' @examples
+#' TODO !!
 CEC <- NULL
+
 loop.cec <- NULL
 entropy.cec <- NULL
 y.cec <- NULL
@@ -35,50 +49,50 @@ evalqOnLoad({
         new(cec, args)
     }
 
-    loop.cec <- function(c) {
+    loop.cec <<- function(c) {
         c$loop()
     }
 
-    entropy.cec <- function(c) {
+    entropy.cec <<- function(c) {
         c$entropy()
     }
 
-    y.cec <- function(c) {
+    y.cec <<- function(c) {
         c$y()
     }
 
-    centers.cec <- function(c) {
+    centers.cec <<- function(c) {
         c$centers()
     }
 
-    cov.cec <- function(c) {
+    cov.cec <<- function(c) {
         c$cov()
     }
 
-    predictCluster.cec <- function(c, vec) {
+    predictCluster.cec <<- function(c, vec) {
         c$predict(vec)
     }
 
-    predictClusters.cec <- function(c, vec) {
+    predictClusters.cec <<- function(c, vec) {
         c$predict(vec,TRUE)
     }
 
-    log.ncluster.cec <- function(c) {
+    log.ncluster.cec <<- function(c) {
         c$log.ncluster()
     }
 
-    log.energy.cec <- function(c) {
+    log.energy.cec <<- function(c) {
         c$log.energy()
     }
 
-    log.iters.cec <- function(c) {
+    log.iters.cec <<- function(c) {
         c$log.iters()
     }
 
-    nstart.cec <- function(c) {
+    nstart.cec <<- function(c) {
         c$nstart()
     }
-
+    
     setGeneric("loop", function(c) standardGeneric("loop"))
     setMethod("loop", "Rcpp_cec", loop.cec)
     
