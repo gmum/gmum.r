@@ -1,6 +1,7 @@
 #ifndef PARAMS_HPP
 #define PARAMS_HPP
 
+#include <string>
 namespace gmum {
 
   enum AssignmentType {
@@ -23,6 +24,8 @@ namespace gmum {
     arma::mat covMat;
     bool radiusSet;
     double radius;
+    bool functionNameSet;
+    std::string functionName;
   };
 
 }

@@ -17,16 +17,16 @@ namespace gmum {
   }
 
   void ClusterCustomFunction::calculateEntropy() {
-    // Rcpp::Environment myEnv = Environment::global_env();
-    // Rcpp::Function myFunction = myEnv[functionName];
-    Rcpp::Language call(functionName, Rcpp::List::create(Rcpp::Named("m", mean),
-        Rcpp::Named("sigma", covMat)));
-    _entropy = Rcpp::as<double>(call.eval());
+    Rcpp::Environment myEnv = Rcpp::Environment::global_env();
+    Rcpp::Function myFunction = myEnv[functionName];
+    _entropy = Rcpp::as<double>(myFunction(Rcpp::Named("m", Rcpp::wrap(mean)),
+    Rcpp::Named("sigma", Rcpp::wrap(covMat))));
   }
   boost::shared_ptr<ClusterUseCovMat> ClusterCustomFunction::createInstance(
       int _count, const arma::rowvec& _mean, const arma::mat& _mat) {
     return boost::shared_ptr<ClusterUseCovMat>(new ClusterCustomFunction(
         _count, _mean, _mat, functionName));
   }
-                              
 }
+
+
