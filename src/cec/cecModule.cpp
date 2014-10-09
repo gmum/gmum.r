@@ -1,16 +1,12 @@
 #include "cecModule.hpp"
-
 namespace gmum {
 
   CEC* CEC__new(SEXP args) {
-
     Rcpp::List list(args);
     const Params params = processArguments(list);
     verifyParams(params);
     return findBestCEC(params);
   }
-
-
 
   Params processArguments(const Rcpp::List &list) {
     Params params;
@@ -81,6 +77,17 @@ namespace gmum {
 	  } else if(typeStr.compare(CONST::CLUSTERS::diagonal)==0) {
 	    cluster.reset(new ClusterParams());
 	    cluster->type = kdiagonal;
+          } else if(typeStr.compare(CONST::CLUSTERS::custom)==0) {
+            ClusterCustomParams *ptr = new ClusterCustomParams();
+            ptr->type = kcustom;
+            if (list.containsElementNamed(CONST::CLUSTERS::functionName)==0) {
+              ptr->functionNameSet = true;
+              ptr->functionName = Rcpp::as<std::string>(
+              list[CONST::CLUSTERS::functionName]); 
+            } else {
+              ptr->functionNameSet = false;
+            }
+            cluster.reset(ptr);
 	  } else {
 	    cluster.reset(new ClusterParams());
 	    cluster->type = knoType;
@@ -131,7 +138,8 @@ namespace gmum {
       params.clusterType = kstandard;
       if(list.containsElementNamed(CONST::CLUSTERS::type)) {
 	std::string type = Rcpp::as<std::string>(list[CONST::CLUSTERS::type]);
-	if(type.compare(CONST::CLUSTERS::standard)==0) {
+        //Rcpp::stop(type);
+        if(type.compare(CONST::CLUSTERS::standard)==0) {
 	  //nothing but recognises
 	} else if(type.compare(CONST::CLUSTERS::full)==0) {
 	  params.clusterType = kfull;
@@ -141,6 +149,8 @@ namespace gmum {
 	  params.clusterType = ksphere;
 	} else if(type.compare(CONST::CLUSTERS::fsphere)==0) {
 	  params.clusterType = kfsphere;
+        } else if(type.compare(CONST::CLUSTERS::custom)==0) {
+          params.clusterType = kcustom;
 	} else params.clusterType = knoType;
       }
 
@@ -154,8 +164,14 @@ namespace gmum {
 	params.radiusSet = true;
 	params.radius = Rcpp::as<double>(list[CONST::CLUSTERS::radius]);
       } else params.radiusSet = false;
-    }
-
+      
+      if(list.containsElementNamed(CONST::CLUSTERS::functionName)) {
+        params.functionNameSet = true;
+        params.functionName = Rcpp::as<std::string>(list[CONST::CLUSTERS::functionName]);
+      } else {
+        params.functionNameSet = false;
+      }
+    } 
     return params;
   }
 
@@ -194,6 +210,9 @@ namespace gmum {
     case knoType:
       Rcpp::stop(CONST::ERRORS::clusterRecError);
       break;
+    case kcustom:
+      if(!params.functionNameSet) Rcpp::stop(CONST::ERRORS::functionNameReq);
+      break;
     case kmix:
       BOOST_FOREACH(boost::shared_ptr<ClusterParams> cluster, params.clusters) {
 	switch(cluster->type) {
@@ -209,8 +228,13 @@ namespace gmum {
 	}
 	case knoType:
 	  Rcpp::stop(CONST::ERRORS::clusterRecError);
+        case kcustom:
+          ClusterCustomParams &ptr = static_cast<ClusterCustomParams&>(*cluster);
+          if(!ptr.functionNameSet) Rcpp::stop(CONST::ERRORS::functionNameReq);
+          break;
 	}
       }
+      
     }
   }
 
@@ -237,7 +261,6 @@ namespace gmum {
     (*assignmentType)(*assignment);
 
     CEC *currentCEC = NULL;
-
     try {
       currentCEC = new CEC(hartigan, assignment, params);
 
