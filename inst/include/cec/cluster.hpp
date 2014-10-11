@@ -1,7 +1,7 @@
 #include <armadillo>
 #include <vector>
 #include <cmath>
-#include <boost/smart_ptr.hpp>
+#include "boost/smart_ptr.hpp"
 #include "exceptions.hpp"
 
 #ifndef CLUSTER_HPP
