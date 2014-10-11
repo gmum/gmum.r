@@ -5,7 +5,7 @@
 #include <vector>
 #include <cmath>
 #include <string>
-#include <boost/smart_ptr.hpp>
+#include "boost/smart_ptr.hpp"
 #include <Rcpp.h>
 #include "exceptions.hpp"
 #include "cluster.hpp"
