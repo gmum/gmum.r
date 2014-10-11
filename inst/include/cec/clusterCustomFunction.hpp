@@ -10,9 +10,8 @@
 #include "exceptions.hpp"
 #include "cluster.hpp"
 
-
-
 namespace gmum {
+
   class ClusterCustomFunction : public ClusterUseCovMat {
    private:
     std::string functionName;

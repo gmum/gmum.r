@@ -9,6 +9,9 @@
 
 namespace gmum {
 
+  /**
+   * cluster stores its entropy and know how to update it
+   */
   class Cluster {
   protected:
     unsigned int N;
