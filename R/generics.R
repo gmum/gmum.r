@@ -1,5 +1,3 @@
-library(methods)
-
 loadModule("cec", TRUE)
 
 #' CEC()
@@ -26,21 +24,99 @@ loadModule("cec", TRUE)
 #' @param log.energy record collected energy of all clusters in each iteration
 #' @param log.ncluster record number of clusters in each iteration
 #' @param log.iters record number of iterations
-#' 
-#' @examples
-#' TODO !!
 CEC <- NULL
 
+#' @title loop()
+#' start loop of the algorithm where learning is done
+#'
+#' @docType methods
+#'
+#' @param c CEC model object
 loop.cec <- NULL
+
+#' @title entropy()
+#' print result entropy of clustering found
+#' 
+#' @docType methods
+#'
+#' @param c CEC model object
 entropy.cec <- NULL
+
+#' @title y()
+#' print labels assigned
+#' #' 
+#' @docType methods
+#'
+#' @param c CEC model object
 y.cec <- NULL
+
+#' @title centers()
+#' print centers of clusters
+#'
+#' @docType methods
+#'
+#' @param c CEC model object
 centers.cec <- NULL
+
+#' @title cov()
+#' print covariances of clusters
+#'
+#' @docType methods
+#'
+#' @param c CEC model object
 cov.cec <- NULL
+
+#' @title predictCluster()
+#' for given point predict cluster where it belongs
+#' 
+#' @docType methods
+#'
+#' @param c CEC model object
+#' @param vec given point
 predictCluster.cec <- NULL
+
+#' @title predictClusters()
+#' for given point print propabilities of belonging to each cluster
+#' 
+#' @docType methods
+#'
+#' @param c CEC model object
+#' @param vec given point
 predictClusters.cec <- NULL
+
+#' @title log.ncluster.cec()
+#' print number of clusters that has been recorded at each stage of learning.
+#' Data is recorded only if you has chosen to when you created CEC model object.
+#' 
+#' @docType methods
+#'
+#' @param c CEC model object
 log.ncluster.cec <- NULL
+
+#' @title log.energy.cec()
+#' print energy recorded that has been recorded at each stage of learning.
+#' Data is recorded only if you has chosen to when you created CEC model object.
+#'  
+#' @docType methods
+#'
+#' @param c CEC model object
 log.energy.cec <- NULL
+
+#' @title log.iters.cec()
+#' print how many iterations it took to learn CEC model
+#'  
+#' @docType methods
+#'
+#' @param c CEC model object
 log.iters.cec <- NULL
+
+#' @title nstart()
+#' print number of times CEC algorithm is to be performed. The best outcome
+#' is chosen as result.
+#'  
+#' @docType methods
+#'
+#' @param c CEC model object
 nstart.cec <- NULL
 
 evalqOnLoad({
