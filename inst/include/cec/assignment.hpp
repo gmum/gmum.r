@@ -4,7 +4,11 @@
 #define ASSIGMENT_HPP
 
 namespace gmum {
-	
+
+  /**
+   * Different methods of initiating assignment inherit from this class.
+   * You use operator() for getting new assignment.
+   */
   class Assignment {
   protected:
     const arma::mat &points;

@@ -8,6 +8,9 @@
 
 namespace gmum {
 
+  /**
+   * points are labeled by the closest centroid
+   */
   class CentroidsAssignment : public Assignment {
   protected:
     const std::list<std::vector<double> > &centroids;

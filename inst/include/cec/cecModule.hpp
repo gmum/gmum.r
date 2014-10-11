@@ -13,10 +13,26 @@
 
 namespace gmum {
 
+  /**
+   * connection between c++ and R. Is responsible for creating CEC module object.
+   * First proceses arguments, second verify whether arguments are correct.
+   * Third find best clustering
+   */
   CEC* CEC__new(SEXP args);
 
+  /**
+   * number of arguments is quite large. Because of that processing has been
+   * exported to seperate function.
+   */
   Params processArguments(const Rcpp::List &list);
+  /**
+   * depending on arguments some data maybe necessary. Verify checks whether
+   * arguments given are sufficient to learn the model.
+   */
   void verifyParams(const Params &params);
+  /**
+   * assign points to clusters and learn model nstart number of times.
+   */
   CEC *findBestCEC(const Params &params);
 
   arma::mat getDataSet(CEC* cec);
