@@ -1,7 +1,7 @@
 #include <vector>
 #include <list>
-#include <boost/smart_ptr.hpp>
-#include <boost/foreach.hpp>
+#include "boost/smart_ptr.hpp"
+#include "boost/foreach.hpp"
 #include <RcppArmadillo.h>
 #include "cluster.hpp"
 #include "algorithm.hpp"
