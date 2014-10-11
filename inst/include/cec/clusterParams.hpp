@@ -9,6 +9,9 @@ namespace gmum {
     kstandard, kfull, kdiagonal, ksphere, kfsphere, knoType, kmix, kcustom
   };
 
+  /**
+   * you need to store somewhere data about cluster. Each type can has its own.
+   */
   struct ClusterParams {
     ClusterType type;
     //virtual ~ClusterParams(){};

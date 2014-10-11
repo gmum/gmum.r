@@ -14,8 +14,10 @@
 
 namespace gmum {
 
+  /**
+   * instance of this class is CEC model object.
+   */
   class CEC {
-    
   private:
     TotalResult result;
     boost::shared_ptr<std::vector<unsigned int> > assignment;
