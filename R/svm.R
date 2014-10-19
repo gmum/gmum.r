@@ -1,5 +1,8 @@
-#' @title SVM()
-#' Create SVM model object
+#' @title SVM
+#' 
+#' @export
+#' 
+#' @description Create SVM model object. If any parameter will be omitted a default value will be used
 #' 
 #' @param x Dataset without labels
 #' @param y Labels
@@ -17,28 +20,375 @@
 #' @param tol Tolerance of termination criterion
 #' 
 #' @return SVM model object
-#' @example
-#' svm_model <- SVM(x = svm.breast_cancer.x(), 
-#' y = svm.breast_cancer.y(),
-#' lib = "libsvm",
-#' kernel = "linear",
-#' prep = "none",
-#' mclass = "none",
-#' C = 1,
-#' gamma = 0.01,
-#' coef0 = 0,
-#' degree = 3,
-#' shrinking = TRUE,
-#' probability = FALSE,
-#' cache_size = 100,
-#' tol = 1e-3 )
-
+#' @examples 
+#' svm <- SVM(lib = "libsvm", kernel = "linear", C = 1, gamma = 0.01, coef0 = 0,degree = 3)
+#' 
 SVM <- NULL
 
-#' Train SVM model
+#' @title Train SVM model
 #' 
+#' @description Trains provided svm object, using its parameters and dataset.
+#' 
+#' @rdname svm-train-methods
+#' 
+#' @export
+#' 
+#' @usage train(svm)
+#' 
+#' @param object Trained SVM object which will be used for prediction.
+#' 
+#' @docType methods
+#' 
+#' @aliases train
 train.svm <- NULL
+
+#' @title Predict
+#' 
+#' @description Returns predicted classes for provided test examples, note that provided model needs to be trained first before any prediction can be made.
+#' 
+#' @rdname svm-predict-methods
+#' 
+#' @export
+#' 
+#' @usage predict(svm, x)
+#' 
+#' @param object Trained SVM object.
+#' @param x unlabeled data, note that each entry needs to be the same dimentionality as training examples.
+#' 
+#' @docType methods
+#' 
+#' @aliases test
 predict.svm <- NULL
+
+#' @title print
+#' 
+#' @description Prints short summary of the SVM object and its parameters.
+#' 
+#' @rdname svm-print-methods
+#' 
+#' @export
+#' 
+#' @usage print(svm)
+#' 
+#' @param object SVM object
+#' 
+#' @docType methods
+#' @aliases summary
+print.svm <- NULL
+
+#' @title plot
+#' 
+#' @description Draws choosen dimenstions from a dataset on 2D plot. NOTE: This function will be change to a package default function.
+#' 
+#' @export
+#' 
+#' @usage plot(svm)
+#' 
+#' @rdname plot-dataset-methods
+#' 
+#' @docType plot
+plot.svm <- NULL
+
+#' @title load.dataset
+#' 
+#' @description Loads provided dataset to a SVM object, right now lables need to be in the last column.
+#' 
+#' @rdname svm-load-methods
+#' 
+#' @export
+#' 
+#' @usage load.dataset(svm, x)
+#' 
+#' @param object SVM object to which examples will be loaded.
+#' @param x Labeled dataset with lables in the last column.
+#' 
+#' @docType methods
+#' 
+#' @aliases dataset
+load.dataset <- NULL
+
+#' @title dataset.X
+#' 
+#' @description Prints dataset stored in a SVM object, without the labels.
+#' 
+#' @rdname print-x-methods
+#' 
+#' @export
+#' 
+#' @usage dataset.X(svm)
+#' 
+#' @param object SVM object.
+#' 
+#' @docType methods
+#' 
+#' @aliases dataset
+dataset.X <- NULL
+
+#' @title dataset.Y
+#' 
+#' @description Prints lables stored in a SVM object.
+#' 
+#' @rdname print-y-methods
+#' 
+#' @export
+#' 
+#' @usage dataset.Y(svm)
+#' 
+#' @param object SVM object.
+#' 
+#' @docType methods
+#' 
+#' @aliases dataset
+dataset.Y <- NULL
+
+
+#' @title params
+#' 
+#' @description Changes SVM objects parameters to provided, not every parameter needs to be given.
+#' 
+#' @rdname svm-parameters-method
+#' 
+#' @export
+#' 
+#' @usage params(svm, object, lib, kernel, preprocess, C, gamma, coef0, degree, cache_size, shrinking, probability)
+#' 
+#' @param lib Desired SVM Library, avialable are: libsvm.
+#' @param kernel Kernel type, avialable are: linear, poly, rbf, sigmoid.
+#' @param prep Preprocess method, avialable are: none, 2e.
+#' @param C Cost/Complexity parameter.
+#' @param gamma Gamma parameter for poly, rbf and sigmoid kernels.
+#' @param coef0 Coef0 for poly and sigmoid kernels.
+#' @param degree Degree for poly kernel.
+#' @param shrinking Whether to use shrinking heuristics.
+#' @param probability Whether to train a model for probability estimates .
+#' @param cache_size Cache size.
+#' 
+#' @examples params(svm, kernel="linear", preproces="none", C=10000)
+#' 
+#' @docType methods
+#' 
+#' @aliases parameters
+params.svm <- NULL
+
+#' @title params.lib
+#' 
+#' @description Changes or prints (if a argument is not provided) library in a SVM object, note: requires retraining.
+#' 
+#' @rdname svm-params-lib-method
+#' 
+#' @export
+#' 
+#' @usage 
+#' params.lib(svm)
+#' params.lib(svm,x)
+#' 
+#' @param object SVM object.
+#' @param x New library.
+#' 
+#' @examples params.lib(svm, "libsvm")
+#' 
+#' @docType methods
+#'  
+#' @aliases parameters
+params.svm.lib <- NULL
+
+#' @title params.kernel
+#' 
+#' @description Changes or prints (if a argument is not provided)kernel in a SVM object, note: requires retraining. Aviable are: libsvm.
+#' 
+#' @rdname svm-params-kernel-method
+#' 
+#' @export
+#' 
+#' @usage 
+#' params.kernel(svm)
+#' params.kernel(svm,x)
+#' 
+#' @param object SVM object.
+#' @param x New kernel.
+#' 
+#' @examples params.kernel(svm, "rbf")
+#' 
+#' @docType methods
+#' 
+#' @aliases parameters
+params.svm.kernel <- NULL
+
+#' @title params.prep
+#' 
+#' @description Changes or prints (if a argument is not provided) preprocess type in a SVM object, note: requires retraining. Aviable are: linear, sigmoid, poly, rbf.
+#' 
+#' @rdname svm-params-prep-method
+#' 
+#' @export
+#' 
+#' @usage 
+#' params.prep(svm)
+#' params.prep(svm,x)
+#' 
+#' @param object SVM object.
+#' @param x New preprocess type.
+#' 
+#' @examples params.prep(svm, "2e")
+#' 
+#' @docType methods
+#' 
+#' @aliases parameters
+params.svm.prep <- NULL
+
+#' @title params.C
+#' 
+#' @description Changes or prints (if a argument is not provided) Cost parameter in a SVM object, note: requires retraining. Aviable are: none, 2e
+#' 
+#' @rdname svm-params-C-methodd
+#' 
+#' @export
+#' 
+#' @usage 
+#' params.C(svm)
+#' params.C(svm,x)
+#' 
+#' @param object SVM object.
+#' @param x New cost.
+#' 
+#' @examples params.C(svm, 1000)
+#' 
+#' @docType methods
+#' 
+#' @aliases parameters
+params.svm.C <- NULL
+
+#' @title params.gamma
+#' 
+#' @description Changes or prints (if a argument is not provided) gamma parameter in a SVM object, note: requires retraining.
+#' 
+#' @rdname svm-params-gamma-method
+#' 
+#' @export
+#' 
+#' @usage 
+#' params.gamma(svm)
+#' params.gamma(svm,x)
+#' 
+#' @param object SVM object.
+#' @param x New gamma.
+#' 
+#' @examples params.gamma(svm, 0.01)
+#' 
+#' @docType methods
+#' 
+#' @aliases parameters
+params.svm.gamma <- NULL
+
+#' @title params.degree
+#' 
+#' @description Changes or prints (if a argument is not provided) degree in a SVM object, note: requires retraining.
+#' 
+#' @rdname svm-params-degree-method
+#' 
+#' @export
+#' 
+#' @usage 
+#' params.degree(svm)
+#' params.degree(svm,x)
+#' 
+#' @param object SVM object.
+#' @param x New degree.
+#' 
+#' @examples params.degree(svm, 4)
+#' 
+#' @docType methods
+#' 
+#' @aliases parameters
+params.svm.degree <- NULL
+
+#' @title params.coef0
+#' 
+#' @description Changes or prints (if a argument is not provided) coef0 parameter in a SVM object, note: requires retraining.
+#' 
+#' @rdname svm-params-coef0-method
+#' 
+#' @export
+#' 
+#' @usage 
+#' params.coef0(svm)
+#' params.coef0(svm,x)
+#' 
+#' @param object SVM object.
+#' @param x coef0.
+#' 
+#' @examples params.coef0(svm, 0)
+#' 
+#' @docType methods
+#' 
+#' @aliases parameters
+params.svm.coef0 <- NULL
+
+#' @title params.cache_size
+#' 
+#' @description Changes or prints (if a argument is not provided) cache_size (in MB) in a SVM object, note: requires retraining.
+#' 
+#' @rdname svm-params-cache-method
+#' 
+#' @export
+#' 
+#' @usage 
+#' params.cache_size(svm)
+#' params.cache_size(svm,x)
+#' 
+#' @param object SVM object.
+#' @param x New cache size.
+#' 
+#' @examples params.cache_size(svm, 100)
+#' 
+#' @docType methods
+#' 
+#' @aliases parameters
+params.svm.cache_size<- NULL
+
+#' @title params.shrinking
+#' 
+#' @description Changes or prints (if a argument is not provided) if shrinking heurestics are used in a SVM object, note: requires retraining.
+#' 
+#' @rdname svm-params-shrin-method
+#' 
+#' @export
+#' 
+#' @usage 
+#' params.shrinking(svm)
+#' params.shrinking(svm,x)
+#' 
+#' @param object SVM object.
+#' @param x TRUE/FALSE.
+#' 
+#' @examples params.shrinking(svm, TRUE)
+#' 
+#' @docType methods
+#' 
+#' @aliases parameters
+params.svm.shrinking <- NULL
+
+#' @title params.probability
+#' 
+#' @description Changes or prints (if a argument is not provided) if a SVM object is used for probability estimates , note: requires retraining.
+#' 
+#' @rdname svm-params-prob-method
+#' 
+#' @export
+#' 
+#' @usage 
+#' params.probability(svm)
+#' params.probability(svm,x)
+#' 
+#' @param object SVM object.
+#' @param x TRUE/FALSE.
+#' 
+#' @examples params.probability(svm, TRUE)
+#' 
+#' @docType methods
+#' 
+#' @aliases parameters
+params.svm.probability <- NULL
 
 loadModule('svm_wrapper', TRUE)
 
@@ -412,7 +762,7 @@ evalqOnLoad({
   setMethod("train", "Rcpp_SVMClient", train.svm)
   setMethod("predict", signature("Rcpp_SVMClient", "matrix"), predict.svm )
   setMethod("plot", signature("Rcpp_SVMClient","numeric","numeric"), plot.svm)
-  setMethod("plot", signature("Rcpp_SVMClient","missing"), plot.svm)
+  setMethod("plot", signature("Rcpp_SVMClient","missing","missing"), plot.svm)
   
   #dataset
   setMethod("load_dataset", signature("Rcpp_SVMClient", "matrix"), load.dataset)
