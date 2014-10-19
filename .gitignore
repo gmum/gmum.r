@@ -1,22 +1,27 @@
+# Binaries
 *.so
 *.o
 *.a
-#R history files
+
+# R history/config files
+*.Rproj
+.Rbuildignore
 .RData
 .Rhistory
+.Rproj.user
 ..Rcheck
 
-#Vim files
+# Editors, IDE's
 *~
 *.swp
-#
 Debug
 .cproject
 .project
 .settings
-..Rcheck/
+.idea
 
-#file with main for tests
+# file with main for tests
 src/main.cpp
 test/cpp/svm/svm_test_model.txt
 test/cpp/svm/libsvm_test
+

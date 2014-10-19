@@ -17,6 +17,7 @@ private:
 	virtual ~SvmUtils();
 public:
 	//convert sparse matrix to armadillo matrix
+    // TODO: This method is libsvm-customised (svm_node) - think about LibSVMUtils or something like that
 	static arma::mat libtoarma(svm_node** svm_nodes, int nr_sv, int dim) {
 		arma::mat ret(nr_sv, dim);
 		for (int row = 0; row < nr_sv; row++) {
