@@ -58,6 +58,18 @@ For detailed documentation please refer to provided documentation.
 
 ## Example
 
+### R CMD
+
+        devtools::load_all()
+        svm <- SVM()
+        x <- svm$getX()
+        target <- svm$getY()
+        train(svm)
+        result <- predict(svm, x)
+        acc <- accuracy.svm(y=result, t=target)
+        print(acc)
+    
+### Script
 
         library('gmum.r')
         
