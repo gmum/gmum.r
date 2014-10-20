@@ -564,8 +564,8 @@ evalqOnLoad({
   
   # dataset
   load.dataset <- function( object, x ) {
-      object$setX( x[,c( seq(1, ncol(x) - 1,1))] )
-      object$setY( x[,c(ncol(x))] )
+      object$setX( x[,c( seq(2, ncol(x),1))] )
+      object$setY( x[, 1] )
   }
   
   dataset.X <- function(object) {
