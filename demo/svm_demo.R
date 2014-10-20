@@ -37,3 +37,6 @@ train(svm)
 
 # Classify your dataset using predict function
 prediction <- predict(svm, x)
+
+# Check models accuracy
+acc <- accuracy.svm(y=y, t=prediction)
