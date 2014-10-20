@@ -1,1 +1,2 @@
 useDynLib(gmum.r)
+exportPattern("^[[:alpha:]]+")
