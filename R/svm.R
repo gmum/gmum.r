@@ -475,8 +475,8 @@ evalqOnLoad({
   if ( !isGeneric("predict") ) {
     setGeneric("predict", function( object, x, ... ) standardGeneric("predict") )
   }
-  if(!isGeneric("plot")){
-    setGeneric("plot", function( object, dim1=1, dim2=2, ... ) standardGeneric("plot"))
+  if(!isGeneric("plot.svm")){
+    setGeneric("plot.svm", function( object, dim1=1, dim2=2, ... ) standardGeneric("plot.svm"))
   }
   if (!isGeneric("load_dataset")  ) {
     setGeneric( "load_dataset", function( object, x, ... ) standardGeneric("load_dataset") )
@@ -761,8 +761,8 @@ evalqOnLoad({
   setMethod("print", "Rcpp_SVMClient", print.svm)
   setMethod("train", "Rcpp_SVMClient", train.svm)
   setMethod("predict", signature("Rcpp_SVMClient", "matrix"), predict.svm )
-  setMethod("plot", signature("Rcpp_SVMClient","numeric","numeric"), plot.svm)
-  setMethod("plot", signature("Rcpp_SVMClient","missing","missing"), plot.svm)
+  setMethod("plot.svm", signature("Rcpp_SVMClient","missing", "missing"), plot.svm)
+  setMethod("plot.svm", signature("Rcpp_SVMClient","numeric","numeric"), plot.svm)
   
   #dataset
   setMethod("load_dataset", signature("Rcpp_SVMClient", "matrix"), load.dataset)
