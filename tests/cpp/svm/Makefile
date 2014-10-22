@@ -2,19 +2,41 @@ ifndef GTEST
 $(error GTEST is not set, add to your .bashrc GTEST env. variable pointing to gtest directory without slash at the end)
 else
 
-include src/Makevars
+GMUMR_ROOT:=../../..
+GMUMR_SRC_DIR = $(GMUMR_ROOT)/src
+SVMLIGHT_DIR :=     ../../inst/include/svmlight
+
+include $(GMUMR_SRC_DIR)/Makevars
+
+## Separate include dirs for transparency
+# SVM Wrapper
+SVM_INCLUDE  :=     -I$(GMUMR_ROOT)/inst/include/svm
+SVMLIGHT_INCLUDE := -I $(SVMLIGHT_DIR)
+# Root directory (to allow explicit including f.e `svmlight/svm_learn.h`)
+INCLUDE_ROOT :=     -I ../../inst/include
+INCLUDE_DIRS :=     $(INCLUDE_ROOT) $(SVM_INCLUDE) -I ../../ -I ..
+
+## Source dirs
+# SVM Wrapper
+SVM_SOURCES :=      $(wildcard $(GMUMR_SRC_DIR)/svm/*.cpp)
+SOURCES :=          $(SVM_SOURCES)
+OBJECTS :=          $(patsubst %.cpp, %.o, $(SOURCES))
+
+SVMLIGHT_LIBS :=    $(SVMLIGHT_INCLUDE)/svm_learn.o $(SVMLIGHT_INCLUDE)/svm_common.o $(SVMLIGHT_INCLUDE)/svm_hideo.o
+
 CXX := $(CXX) -isystem $(GTEST)/include
-CPPFLAGS := $(PKG_CPPFLAGS)
+CPPFLAGS := $(INCLUDE_DIRS) $(PKG_CPPFLAGS)
 CXXFLAGS := $(PKG_CXXFLAGS) -g -O2 -s -pthread
 LDLIBS := $(PKG_LIBS) $(LDLIBS) -O1 -larmadillo -O1 -llapack -lblas
-USER_DIR = ../../src
 
-TESTS = libsvm_test
+TESTS = svm_utils_test 2_e_test 
+#libsvm_test 
 
 GTEST_HEADERS = $(GTEST)/include/gtest/*.h \
-                $(GTEST)/include/gtest/internal/*.h
+				$(GTEST)/include/gtest/internal/*.h
 
 all : $(TESTS)
+	for test in $(TESTS); do $$test; done
 
 debug:
 	@echo $(CXX)
@@ -43,11 +65,11 @@ GTEST_SRCS_ = $(GTEST)/src/*.cc $(GTEST)/src/*.h $(GTEST_HEADERS)
 
 gtest-all.o : $(GTEST_SRCS_)
 	$(CXX) $(CPPFLAGS) -I$(GTEST) $(CXXFLAGS) -c \
-            $(GTEST)/src/gtest-all.cc
+			$(GTEST)/src/gtest-all.cc
 
 gtest_main.o : $(GTEST_SRCS_)
 	$(CXX) $(CPPFLAGS) -I$(GTEST) $(CXXFLAGS) -c \
-            $(GTEST)/src/gtest_main.cc
+			$(GTEST)/src/gtest_main.cc
 
 gtest.a : gtest-all.o
 	$(AR) $(ARFLAGS) $@ $^
@@ -55,21 +77,20 @@ gtest.a : gtest-all.o
 gtest_main.a : gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
 
-#%.o : %.cc
-#	$(CXX) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -c
-
+%.o : %.cpp %.h
+	$(CXX) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -c
 
 libsvm_test: gtest_main.a 
-	$(CXX) libsvm_test.cc src/svm_basic.cpp src/libsvm_runner.cpp src/svm.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+	$(CXX) libsvm_test.cc $(GMUMR_SRC_DIR)/svm/svm_basic.cpp $(GMUMR_SRC_DIR)/svm/libsvm_runner.cpp $(GMUMR_SRC_DIR)/svm/svm.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
 svm_utils_test: gtest_main.a 
-	$(CXX) svm_utils_test.cc $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
-	
+	$(CXX) svm_utils_test.cc $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
-2_e_test: gtest_main.a 
-	$(CXX) 2_e_test.cc src/svm_basic.cpp src/libsvm_runner.cpp src/svm.cpp src/two_e_svm_pre.cpp src/two_e_svm_post.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+2_e_test: gtest_main.a
+	$(CXX) 2_e_test.cc $(GMUMR_SRC_DIR)/svm/svm_basic.cpp $(GMUMR_SRC_DIR)/svm/libsvm_runner.cpp $(GMUMR_SRC_DIR)/svm/svm.cpp $(GMUMR_SRC_DIR)/svm/two_e_svm_pre.cpp $(GMUMR_SRC_DIR)/svm/two_e_svm_post.cpp $(SVM_INCLUDE) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
-
+svmlight_runner_unittest: gtest_main.a $(OBJECTS) $(SVMLIGHT_DIR)/svm_common.o $(SVMLIGHT_DIR)/svm_learn.o $(SVMLIGHT_DIR)/svm_hideo.o
+	$(CXX) $(CPPFLAGS) svm/svmlight_runner_unittest.cc $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
 
 endif
