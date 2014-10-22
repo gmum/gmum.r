@@ -1,7 +1,7 @@
 library(ggplot2)
 
 plot2d.svm <- function( object, dim1, dim2) {
-  
+  print(object)
   d = object$getX()
   target = object$getY()
   

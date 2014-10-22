@@ -78,11 +78,15 @@ print.svm <- NULL
 
 #' @title plot
 #' 
-#' @description Draws choosen dimenstions from a dataset on 2D plot. NOTE: This function will be change to a package default function.
+#' @description Draws choosen dimenstions from a dataset on 2D plot coloring by class. NOTE: This function will be change to a package default function.
 #' 
 #' @export
 #' 
-#' @usage plot(svm)
+#' @usage plot(svm, dim1, dim2)
+#' 
+#' @param dim1 (optional) Dimension of x to plot on x axis, by default 1
+#' 
+#' @param dim2 (optional) Dimension of x to plot on y axis, by default 2
 #' 
 #' @rdname plot-dataset-methods
 #' 
@@ -475,9 +479,9 @@ evalqOnLoad({
   if ( !isGeneric("predict") ) {
     setGeneric("predict", function( object, x, ... ) standardGeneric("predict") )
   }
-  if(!isGeneric("plot.svm")){
-    setGeneric("plot.svm", function( object, dim1=1, dim2=2, ... ) standardGeneric("plot.svm"))
-  }
+#   if(!isGeneric("plot.svm")){
+#     setGeneric("plot.svm", function( object, dim1=1, dim2=2, ... ) standardGeneric("plot.svm"))
+#   }
   if (!isGeneric("load_dataset")  ) {
     setGeneric( "load_dataset", function( object, x, ... ) standardGeneric("load_dataset") )
   }
@@ -544,12 +548,13 @@ evalqOnLoad({
                   x$getDegree() ))
   }
   
-  plot.svm <- function(object, dim1 = 1, dim2 = 2) {
-    x = object$getX()
-    if (dim1 > ncol(x) || dim2 > ncol(x)) {
+  plot.svm <<- function(x, dim1 = 1, dim2 = 2) {
+    x_vect = x$getX()
+    if (dim1 > ncol(x_vect) || dim2 > ncol(x_vect)) {
       stop("Too large dimensions")
     }
-    plot2d.svm(object,dim1,dim2)
+    plot2d.svm(x,dim1,dim2) #TODO: fix efficiency, do not pass through call to next function that COPIES data,
+    #but rather delete plot2d.svm function it is redundant as shit
   }
   
   train.svm <<- function(object) {
@@ -757,13 +762,12 @@ evalqOnLoad({
       }
     }
   }
-  
+
   setMethod("print", "Rcpp_SVMClient", print.svm)
   setMethod("train", "Rcpp_SVMClient", train.svm)
   setMethod("predict", signature("Rcpp_SVMClient", "matrix"), predict.svm )
-  setMethod("plot.svm", signature("Rcpp_SVMClient","missing", "missing"), plot.svm)
-  setMethod("plot.svm", signature("Rcpp_SVMClient","numeric","numeric"), plot.svm)
-  
+  setMethod("plot", "Rcpp_SVMClient",  plot.svm)
+
   #dataset
   setMethod("load_dataset", signature("Rcpp_SVMClient", "matrix"), load.dataset)
   setMethod("dataset.X", signature("Rcpp_SVMClient"), dataset.X)
