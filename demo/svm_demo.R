@@ -1,5 +1,7 @@
 library('gmum.r')
 
+# DEPRECATED !!!
+
 # Load a dataset, here we have provided an example 
 ds <- svm.breast_cancer()
 
