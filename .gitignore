@@ -19,7 +19,4 @@ Debug
 #file with main for tests
 src/main.cpp
 test/cpp/svm/svm_test_model.txt
-tests/cpp/svm/libsvm_test
-tests/cpp/svm/2_e_test
-tests/cpp/svm/2_e_test.cc
-tests/cpp/svm/svm_utils_test
+test/cpp/svm/libsvm_test
