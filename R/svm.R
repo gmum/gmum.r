@@ -438,9 +438,17 @@ evalqOnLoad({
       stop("Wrong parameters.")
     }
     
-    labels = all.vars(update(formula,~0))
+    labels = all.vars(update(formula,.~0))
     y = data.matrix( data[,labels] )
-    x = data.matrix( data[,names(data) != labels] )
+    
+    # I'm pretty sure this should bo done differently, and equally so I can't find how
+    if (formula[3] == ".()"  ) {
+      x = data.matrix( data[,names(data) != labels]  )
+    }
+    else {
+      columns = all.vars(update(formula,0~.))
+      x = data.matrix( data[,columns] )
+    }
 
     config <- new(SVMConfiguration)
     config$x = x
