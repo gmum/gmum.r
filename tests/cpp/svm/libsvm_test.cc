@@ -1,4 +1,4 @@
-#include <gtest.h>
+#include "gtest/gtest.h"
 #include <armadillo>
 #include "libsvm_runner.h"
 #include "svm_basic.h"
