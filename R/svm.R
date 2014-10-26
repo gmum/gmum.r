@@ -399,22 +399,22 @@ loadModule('svm_wrapper', TRUE)
 
 evalqOnLoad({
 
-  SVM <<- function(x = svm.breast_cancer.x(), 
-                  y = svm.breast_cancer.y(),
-                  lib = "libsvm",
-                  kernel = "linear",
-                  prep = "none",
-                  mclass = "none",
-                  C = 1,
-                  gamma = 0.01,
-                  coef0 = 0,
-                  degree = 3,
-                  shrinking = TRUE,
-                  probability = FALSE,
-                  cweights = NULL,
-                  sweights = NULL,
-                  cache_size = 100,
-                  tol = 1e-3 ) {
+  SVM <<- function( formula, 
+                    data, 
+                    lib = "libsvm",             
+                    kernel = "linear",
+                    prep = "none",
+                    mclass = "none",
+                    C = 1,
+                    gamma = 0.01,
+                    coef0 = 0,
+                    degree = 3,
+                    shrinking = TRUE,
+                    probability = FALSE,
+                    cweights = NULL,
+                    sweights = NULL,
+                    cache_size = 100,
+                    tol = 1e-3 ) {
     
     # check for errors
     
@@ -438,6 +438,10 @@ evalqOnLoad({
       stop("Wrong parameters.")
     }
     
+    labels = all.vars(update(formula,~0))
+    y = data.matrix( data[,labels] )
+    x = data.matrix( data[,names(data) != labels] )
+
     config <- new(SVMConfiguration)
     config$x = x
     config$y = y
@@ -470,21 +474,23 @@ evalqOnLoad({
     }
     
     client <- new(SVMClient, config)
+    client$train()
+
     client 
   } 
     
-  if ( !isGeneric("train") ) {
-    setGeneric("train", function( object, ... ) standardGeneric("train") )
-  }
+#   if ( !isGeneric("train") ) {
+#     setGeneric("train", function( object, ... ) standardGeneric("train") )
+#   }
+
   if ( !isGeneric("predict") ) {
     setGeneric("predict", function( object, x, ... ) standardGeneric("predict") )
   }
-#   if(!isGeneric("plot.svm")){
-#     setGeneric("plot.svm", function( object, dim1=1, dim2=2, ... ) standardGeneric("plot.svm"))
+
+#   if (!isGeneric("load_dataset")  ) {
+#     setGeneric( "load_dataset", function( object, x, ... ) standardGeneric("load_dataset") )
 #   }
-  if (!isGeneric("load_dataset")  ) {
-    setGeneric( "load_dataset", function( object, x, ... ) standardGeneric("load_dataset") )
-  }
+
   if (!isGeneric("dataset.X")  ) {
     setGeneric( "dataset.X", function( object, ... ) standardGeneric("dataset.X") )
   }
@@ -557,9 +563,9 @@ evalqOnLoad({
     #but rather delete plot2d.svm function it is redundant as shit
   }
   
-  train.svm <<- function(object) {
-    object$train()
-  }
+#   train.svm <<- function(object) {
+#     object$train()
+#   }
   
   predict.svm <<- function(object, x) {
     object$predict(x)
@@ -568,10 +574,10 @@ evalqOnLoad({
   }
   
   # dataset
-  load.dataset <- function( object, x ) {
-      object$setX( x[,c( seq(2, ncol(x),1))] )
-      object$setY( x[, 1] )
-  }
+#   load.dataset <- function( object, x ) {
+#       object$setX( x[,c( seq(2, ncol(x),1))] )
+#       object$setY( x[, 1] )
+#   }
   
   dataset.X <- function(object) {
       object$getX()
@@ -764,12 +770,12 @@ evalqOnLoad({
   }
 
   setMethod("print", "Rcpp_SVMClient", print.svm)
-  setMethod("train", "Rcpp_SVMClient", train.svm)
+#   setMethod("train", "Rcpp_SVMClient", train.svm)
   setMethod("predict", signature("Rcpp_SVMClient", "matrix"), predict.svm )
   setMethod("plot", "Rcpp_SVMClient",  plot.svm)
 
   #dataset
-  setMethod("load_dataset", signature("Rcpp_SVMClient", "matrix"), load.dataset)
+#   setMethod("load_dataset", signature("Rcpp_SVMClient", "matrix"), load.dataset)
   setMethod("dataset.X", signature("Rcpp_SVMClient"), dataset.X)
   setMethod("dataset.Y", signature("Rcpp_SVMClient"), dataset.Y)
   
