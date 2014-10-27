@@ -2,8 +2,8 @@
 
 namespace gmum {
 
-  void CentroidsAssignment::operator() (std::vector<unsigned int> &assignment) {
-     assignPoints(assignment, centroids, points);
-  }
+void CentroidsAssignment::operator()(std::vector<unsigned int> &assignment) {
+	assignPoints(assignment, centroids, points);
+}
 
 }

@@ -5,32 +5,32 @@
 
 namespace gmum {
 
-  enum ClusterType {
-    kstandard, kfull, kdiagonal, ksphere, kfsphere, knoType, kmix, kcustom
-  };
+enum ClusterType {
+	kstandard, kfull, kdiagonal, ksphere, kfsphere, knoType, kmix, kcustom
+};
 
-  /**
-   * you need to store somewhere data about cluster. Each type can has its own.
-   */
-  struct ClusterParams {
-    ClusterType type;
-    //virtual ~ClusterParams(){};
-  };
+/**
+ * you need to store somewhere data about cluster. Each type can has its own.
+ */
+struct ClusterParams {
+	ClusterType type;
+	//virtual ~ClusterParams(){};
+};
 
-  struct ClusterFullParams : public ClusterParams {
-    bool covMatSet;
-    arma::mat covMat;
-  };
+struct ClusterFullParams: public ClusterParams {
+	bool covMatSet;
+	arma::mat covMat;
+};
 
-  struct ClusterFsphereParams : public ClusterParams {
-    bool radiusSet;
-    double radius;
-  };
+struct ClusterFsphereParams: public ClusterParams {
+	bool radiusSet;
+	double radius;
+};
 
-  struct ClusterCustomParams : public ClusterParams {
-    bool functionNameSet;
-    std::string functionName;
-  };
+struct ClusterCustomParams: public ClusterParams {
+	bool functionNameSet;
+	std::string functionName;
+};
 
 }
 
