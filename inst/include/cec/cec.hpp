@@ -14,40 +14,41 @@
 
 namespace gmum {
 
-  /**
-   * instance of this class is CEC model object.
-   */
-  class CEC {
-  private:
-    TotalResult result;
-    boost::shared_ptr<std::vector<unsigned int> > assignment;
-    boost::shared_ptr<const arma::mat> points;
-    boost::shared_ptr<Algorithm> algorithm;
-    const double killThreshold;
-    std::vector<bool> invSet;
-    std::vector<arma::mat> inv;
-    boost::shared_ptr<Cluster> createCluster(const ClusterParams &params, int i);
-  public:
-    CEC(boost::shared_ptr<Algorithm> algorithm,
-	boost::shared_ptr<std::vector<unsigned int> > assignment,
-	const Params &params);
+/**
+ * instance of this class is CEC model object.
+ */
+class CEC {
+private:
+	TotalResult result;
+	boost::shared_ptr<std::vector<unsigned int> > assignment;
+	boost::shared_ptr<const arma::mat> points;
+	boost::shared_ptr<Algorithm> algorithm;
+	const double killThreshold;
+	std::vector<bool> invSet;
+	std::vector<arma::mat> inv;
+	boost::shared_ptr<Cluster> createCluster(const ClusterParams &params,
+			int i);
+public:
+	CEC(boost::shared_ptr<Algorithm> algorithm,
+			boost::shared_ptr<std::vector<unsigned int> > assignment,
+			const Params &params);
 
-    std::vector<boost::shared_ptr<Cluster> > clusters;
-    void loop();
-    void singleLoop();
-    double entropy();
-    std::vector<unsigned int> &getAssignment() const;
-    const arma::mat &getPoints() const;
-    std::vector<arma::rowvec> centers() const;
-    std::vector<arma::mat> cov() const;
-    unsigned int iters() const;
-    std::list<unsigned int> getNrOfClusters() const;
-    boost::shared_ptr<const arma::mat> getPtrToPoints() const;
-    boost::shared_ptr<std::vector<unsigned int> > getPtrToAssignement() const;
-    std::list<double> getEnergy() const;
-    unsigned int predict(std::vector<double> vec) const;
-    std::list<double> predict(std::vector<double> vec, bool general);
-  };
+	std::vector<boost::shared_ptr<Cluster> > clusters;
+	void loop();
+	void singleLoop();
+	double entropy();
+	std::vector<unsigned int> &getAssignment() const;
+	const arma::mat &getPoints() const;
+	std::vector<arma::rowvec> centers() const;
+	std::vector<arma::mat> cov() const;
+	unsigned int iters() const;
+	std::list<unsigned int> getNrOfClusters() const;
+	boost::shared_ptr<const arma::mat> getPtrToPoints() const;
+	boost::shared_ptr<std::vector<unsigned int> > getPtrToAssignement() const;
+	std::list<double> getEnergy() const;
+	unsigned int predict(std::vector<double> vec) const;
+	std::list<double> predict(std::vector<double> vec, bool general);
+};
 
 }
 
