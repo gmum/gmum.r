@@ -1,3 +1,6 @@
+breast_cancer.path = "./data/svm/breast_cancer.data"
+twoe_data.path = "./data/svm/2e.data"
+
 read.libsvm <- function(filename, dimensionality) {
   
   content = readLines( filename )
@@ -29,7 +32,18 @@ read.libsvm <- function(filename, dimensionality) {
   return( yx )
 }
 
-dataset.xor <- function() {
+
+svm.dataset.breast_cancer <- function() {
+  bc = read.libsvm( breast_cancer.path, 10 )
+  return(data.frame(bc))
+}
+
+svm.dataset.2e <- function() {
+  te = read.table(twoe_data.path, quote="\"")
+  return(te)
+}
+
+svm.dataset.xor <- function() {
   matrix( 
     c(0,1,0,1,0,0,1,1,0,1,1,0),
     ncol=3,

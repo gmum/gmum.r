@@ -3,7 +3,7 @@ library('gmum.r')
 
 test_that('formulas work', {
   
-  dataset <- svm.breast_cancer()
+  dataset <- svm.dataset.breast_cancer()
   x1 = data.matrix( dataset[,names(dataset) != "X1"] )
   y1 = data.matrix( dataset[,"X1"] )
   svm <- SVM( X1 ~ ., dataset )
