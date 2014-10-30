@@ -1,3 +1,5 @@
+library(ggplot2)
+
 #' @title SVM
 #' 
 #' @export
@@ -563,12 +565,14 @@ evalqOnLoad({
   }
   
   plot.svm <<- function(x, dim1 = 1, dim2 = 2) {
-    x_vect = x$getX()
-    if (dim1 > ncol(x_vect) || dim2 > ncol(x_vect)) {
+    df =  data.frame( x$getX() ) 
+    if (dim1 > ncol(df) || dim2 > ncol(df)) {
       stop("Too large dimensions")
     }
-    plot2d.svm(x,dim1,dim2) #TODO: fix efficiency, do not pass through call to next function that COPIES data,
-    #but rather delete plot2d.svm function it is redundant as shit
+    t = x$getY()
+    x = df[,dim1]
+    y = df[,dim2]
+    qplot(data=df, x=x, y=y, color=t) # + scale_colour_gradientn(colours=rainbow(2),breaks = c(2,4))
   }
   
 #   train.svm <<- function(object) {
