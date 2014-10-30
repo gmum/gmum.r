@@ -25,11 +25,11 @@ void TwoeSVMPostprocessor::processRequest(SVMConfiguration &data) {
 		//examples x dim
 		//DIM W: (nsv x 1)^T x nsv x dim = 1 x dim
 		mat tmp_w = arma_coefs.t() * arma_sv;
-		data.w = tmp_w.t();
+		vec w = tmp_w.t();
 		//TODO: Use copying memory for better memory optimalization
 		//DIM PROJECTION: examps x dim x dim x 1 = exams x 1
-		double p_plus = stddev(SvmUtils::matrixByValue(data.data, data.target, 1) * data.w);
-		double p_minus = stddev(SvmUtils::matrixByValue(data.data, data.target, -1) * data.w);
+		double p_plus = stddev(SvmUtils::matrixByValue(data.data, data.target, 1) * w);
+		double p_minus = stddev(SvmUtils::matrixByValue(data.data, data.target, -1) * w);
 		//-rho = b
 		//TODO: consider multiclass examples
 		double b_dash = -(data.rho[0]) - (p_plus - p_minus) / (p_plus + p_minus);
