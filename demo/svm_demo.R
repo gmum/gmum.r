@@ -1,7 +1,7 @@
 library('gmum.r')
 
 # Load a dataset, here we have provided an example 
-ds <- svm.breast_cancer()
+ds <- svm.dataset.breast_cancer()
 
 # Create new SVM object
 svm <- SVM( formula = X1~. ,

@@ -441,15 +441,35 @@ evalqOnLoad({
     }
     
     labels = all.vars(update(formula,.~0))
-    y = data.matrix( data[,labels] )
+    x <- NULL
+    y <- NULL
     
-    # I'm pretty sure this should bo done differently, and equally so I can't find how
-    if (formula[3] == ".()"  ) {
-      x = data.matrix( data[,names(data) != labels]  )
+    if (is(data, "data.frame")) {
+      y = data.matrix( data[,labels] )
+      
+      # I'm pretty sure this should bo done differently, and equally so I can't find how
+      if (formula[3] == ".()"  ) {
+        x = data.matrix( data[,names(data) != labels]  )
+      }
+      else {
+        columns = all.vars(update(formula,0~.))
+        x = data.matrix( data[,columns] )
+      } 
+    }
+    else if (is(data, "matrix")) {
+      y = data[,labels]
+      
+      # I'm pretty sure this should bo done differently, and equally so I can't find how
+      if (formula[3] == ".()"  ) {
+        x = data[,names(data) != labels]
+      }
+      else {
+        columns = all.vars(update(formula,0~.))
+        x = data[,columns]
+      } 
     }
     else {
-      columns = all.vars(update(formula,0~.))
-      x = data.matrix( data[,columns] )
+      stop("data is of a wrong class, please provide data.frame or matrix")
     }
 
     config <- new(SVMConfiguration)
@@ -580,6 +600,13 @@ evalqOnLoad({
 #   }
   
   predict.svm <<- function(object, x) {
+    if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
+      stop("Wrong target class, please provide data.frame, matrix or numeric vector")
+    }
+    
+    if (!is(x, "matrix")) {
+      x = data.matrix(x)
+    }
     object$predict(x)
     prediction = object$getPrediction()
     prediction
@@ -783,7 +810,7 @@ evalqOnLoad({
 
   setMethod("print", "Rcpp_SVMClient", print.svm)
 #   setMethod("train", "Rcpp_SVMClient", train.svm)
-  setMethod("predict", signature("Rcpp_SVMClient", "matrix"), predict.svm )
+  setMethod("predict", signature("Rcpp_SVMClient", "ANY"), predict.svm )
   setMethod("plot", "Rcpp_SVMClient",  plot.svm)
 
   #dataset
