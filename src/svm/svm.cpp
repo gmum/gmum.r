@@ -476,7 +476,7 @@ void Solver::reconstruct_gradient()
 			nr_free++;
 
 	if(2*nr_free < active_size)
-		info("\nWARNING: using -h 0 may be faster\n");
+		info("WARNING: using -h 0 may be faster\n");
 
 	if (nr_free*l > 2*active_size*(l-active_size))
 	{
@@ -2003,7 +2003,7 @@ static double svm_svr_probability(
 		else 
 			mae+=fabs(ymv[i]);
 	mae /= (prob->l-count);
-	info("Prob. model for test data: target value = predicted value + z,\nz: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma= %g\n",mae);
+	// info("Prob. model for test data: target value = predicted value + z,\nz: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma= %g\n",mae);
 	free(ymv);
 	return mae;
 }
