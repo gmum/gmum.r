@@ -21,7 +21,7 @@ SVM_SOURCES :=      $(wildcard $(GMUMR_SRC_DIR)/svm/*.cpp)
 SOURCES :=          $(SVM_SOURCES)
 OBJECTS :=          $(patsubst %.cpp, %.o, $(SOURCES))
 
-SVMLIGHT_LIBS :=    $(SVMLIGHT_INCLUDE)/svm_learn.o $(SVMLIGHT_INCLUDE)/svm_common.o $(SVMLIGHT_INCLUDE)/svm_hideo.o
+SVMLIGHT_LIBS :=    $(wildcard $(SVMLIGHT_INCLUDE)/*.cpp) #$(SVMLIGHT_INCLUDE)/svm_learn.o $(SVMLIGHT_INCLUDE)/svm_common.o $(SVMLIGHT_INCLUDE)/svm_hideo.o
 
 CXX := $(CXX) -isystem $(GTEST)/include
 CPPFLAGS := $(INCLUDE_DIRS) $(PKG_CPPFLAGS)
