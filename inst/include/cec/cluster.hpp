@@ -1,16 +1,16 @@
-#include <armadillo>
-#include <vector>
-#include <cmath>
-#include "boost/smart_ptr.hpp"
-#include "exceptions.hpp"
-
 #ifndef CLUSTER_HPP
 #define CLUSTER_HPP
+
+#include <armadillo>
+#include <cmath>
+#include <vector>
+#include "boost/smart_ptr.hpp"
+#include "exceptions.hpp"
 
 namespace gmum {
 
 /**
- * cluster stores its entropy and know how to update it
+ * Cluster stores its entropy and knows how to update it
  */
 class Cluster {
 protected:

@@ -1,7 +1,8 @@
-#include <list>
-
 #ifndef ALGORITHM_HPP
 #define ALGORITHM_HPP
+
+#include <list>
+#include "cluster.hpp"
 
 namespace gmum {
 

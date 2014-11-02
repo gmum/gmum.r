@@ -1,15 +1,15 @@
-#include <stdlib.h>
-#include <vector>
-#include <RcppArmadillo.h>
-#include "assignment.hpp"
-
 #ifndef USER_ASSIGMENT_HPP
 #define USER_ASSIGMENT_HPP
+
+#include <vector>
+#include <stdlib.h>
+#include <RcppArmadillo.h>
+#include "assignment.hpp"
 
 namespace gmum {
 
 /**
- * points are labeled by the closest centroid
+ * Points are labeled by the closest centroid
  */
 class CentroidsAssignment: public Assignment {
 protected:

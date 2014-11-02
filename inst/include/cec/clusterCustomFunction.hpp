@@ -2,13 +2,13 @@
 #define CLUSTER_CUSTOM_FUNCTION_HPP_
 
 #include <armadillo>
-#include <vector>
 #include <cmath>
-#include <string>
-#include "boost/smart_ptr.hpp"
 #include <Rcpp.h>
-#include "exceptions.hpp"
+#include <string>
+#include <vector>
+#include "boost/smart_ptr.hpp"
 #include "cluster.hpp"
+#include "exceptions.hpp"
 
 namespace gmum {
 

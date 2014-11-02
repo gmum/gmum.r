@@ -1,5 +1,6 @@
 #include "cluster.hpp"
-#include <Rcpp.h>
+//#include <Rcpp.h>
+
 namespace gmum {
 
 Cluster::Cluster(int _count, const arma::rowvec &_mean) :
