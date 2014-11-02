@@ -1,21 +1,22 @@
-#include <vector>
-#include <list>
-#include "boost/smart_ptr.hpp"
-#include "boost/foreach.hpp"
-#include <RcppArmadillo.h>
-#include "cluster.hpp"
-#include "algorithm.hpp"
-#include "exceptions.hpp"
-#include "clusterParams.hpp"
-#include "params.hpp"
-
 #ifndef CEC_HPP
 #define CEC_HPP
+
+#include <list>
+#include <vector>
+#include <RcppArmadillo.h>
+#include "boost/foreach.hpp"
+#include "boost/smart_ptr.hpp"
+#include "algorithm.hpp"
+#include "cluster.hpp"
+#include "clusterCustomFunction.hpp"
+#include "clusterParams.hpp"
+#include "exceptions.hpp"
+#include "params.hpp"
 
 namespace gmum {
 
 /**
- * instance of this class is CEC model object.
+ * Instance of this class is CEC model object.
  */
 class CEC {
 private:

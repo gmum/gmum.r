@@ -2,6 +2,11 @@
 #define PARAMS_HPP
 
 #include <string>
+#include "boost/smart_ptr.hpp"
+#include <list>
+#include <vector>
+#include "clusterParams.hpp"
+
 namespace gmum {
 
 enum AssignmentType {
@@ -9,11 +14,12 @@ enum AssignmentType {
 };
 
 struct Params {
-	bool datasetSet;
+public:
 	boost::shared_ptr<const arma::mat> dataset;
 	double killThreshold;
 	int nrOfClusters;
-	bool logNrOfClusters, logEnergy;
+	bool logNrOfClusters;
+	bool logEnergy;
 	int nstart;
 	AssignmentType assignmentType;
 	bool centroidsSet;

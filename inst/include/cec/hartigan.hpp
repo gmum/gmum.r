@@ -1,12 +1,12 @@
-#include <RcppArmadillo.h>
-#include <vector>
-#include <limits>
-#include <cmath>
-#include "cluster.hpp"
-#include "algorithm.hpp"
-
 #ifndef HARTIGAN_HPP
 #define HARTIGAN_HPP
+
+#include <cmath>
+#include <limits>
+#include <RcppArmadillo.h>
+#include <vector>
+#include "algorithm.hpp"
+#include "cluster.hpp"
 
 namespace gmum {
 

@@ -37,7 +37,7 @@ SingleResult Hartigan::singleLoop(const arma::mat &points,
 		std::vector<unsigned int> &assignment, double killThreshold,
 		std::vector<boost::shared_ptr<Cluster> > &clusters) {
 
-	int switched = 0;  //numer of points who has been moved to another cluster
+	int switched = 0;  //number of points who has been moved to another cluster
 	int dimension = points.n_cols;
 	int numberOfPoints = points.n_rows;
 	for (unsigned int i = 0; i < numberOfPoints; i++) {
@@ -67,7 +67,7 @@ SingleResult Hartigan::singleLoop(const arma::mat &points,
 					wholeEntropyChange = targetEntropyChange
 							+ sourceEntropyChange;
 
-				} catch (std::exception e) {
+				} catch (std::exception &e) {
 					std::cout << "removePoint" << std::endl;
 					std::cout << dimension << std::endl;
 					std::cout << oldSource->size() << std::endl;
@@ -93,7 +93,7 @@ SingleResult Hartigan::singleLoop(const arma::mat &points,
 
 							removeCluster(source, points, assignment, clusters);
 						}
-					} catch (std::exception e) {
+					} catch (std::exception &e) {
 						//std::cout << e.what() << std::endl;
 						std::cout << "removeCluster" << std::endl;
 						throw(e);

@@ -5,18 +5,17 @@
 #include <iostream>
 #include <vector>
 
+class ClusterTestReader {
+private:
+	std::string dir;
+	std::string getPrefix();
+	std::string getDataPath();
+	std::string getAnswerPath();
+public:
+	ClusterTestReader(std::string _dir);
+	void readData(int dim, std::vector<Rcpp::NumericVector> & out);
+	void readAnswer(std::vector<int> & out);
 
-class ClusterTestReader{
-private :
-  std::string dir;
-  std::string getPrefix();
-  std::string getDataPath();
-  std::string getAnswerPath();
-public :
-  ClusterTestReader(std::string _dir);
-  void readData(int dim,std::vector<Rcpp::NumericVector> & out);
-  void readAnswer(std::vector<int> & out);
-  
 };
 
 #endif
