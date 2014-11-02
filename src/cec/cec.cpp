@@ -1,5 +1,5 @@
 #include "cec.hpp"
-#include "clusterCustomFunction.hpp"
+
 namespace gmum {
 
 boost::shared_ptr<Cluster> CEC::createCluster(const ClusterParams &params,
@@ -54,31 +54,32 @@ CEC::CEC(boost::shared_ptr<Algorithm> algorithm,
 
 	int i = 0;
 	if (params.clusterType == kmix)
-		BOOST_FOREACH(boost::shared_ptr<ClusterParams> cluster, params.clusters){
-		clusters.push_back(createCluster(*cluster, i));
-	} else {
+		BOOST_FOREACH(boost::shared_ptr<ClusterParams> cluster, params.clusters) {
+			clusters.push_back(createCluster(*cluster, i));
+		}
+	else {
 		ClusterParams *cluster;
-		switch(params.clusterType) {
-			case kfsphere: {
-				ClusterFsphereParams *proxy = new ClusterFsphereParams();
-				proxy->radius = params.radius;
-				cluster = proxy;
-				break;
-			}
-			case kfull: {
-				ClusterFullParams *proxy = new ClusterFullParams();
-				proxy->covMat = params.covMat;
-				cluster = proxy;
+		switch (params.clusterType) {
+		case kfsphere: {
+			ClusterFsphereParams *proxy = new ClusterFsphereParams();
+			proxy->radius = params.radius;
+			cluster = proxy;
+			break;
+		}
+		case kfull: {
+			ClusterFullParams *proxy = new ClusterFullParams();
+			proxy->covMat = params.covMat;
+			cluster = proxy;
 
-				break;
-			}
-			case kcustom : {
-				ClusterCustomParams *proxy = new ClusterCustomParams();
-				proxy->functionName = params.functionName;
-				cluster = proxy;
-				break;
-			}
-			default:
+			break;
+		}
+		case kcustom: {
+			ClusterCustomParams *proxy = new ClusterCustomParams();
+			proxy->functionName = params.functionName;
+			cluster = proxy;
+			break;
+		}
+		default:
 			/*case standard:
 			 case diagonal:
 			 case sphere:*/
@@ -87,8 +88,8 @@ CEC::CEC(boost::shared_ptr<Algorithm> algorithm,
 			break;
 		}
 		cluster->type = params.clusterType;
-		for(int i=0; i<params.nrOfClusters; ++i)
-		clusters.push_back(createCluster(*cluster, i));
+		for (int i = 0; i < params.nrOfClusters; ++i)
+			clusters.push_back(createCluster(*cluster, i));
 		delete cluster;
 	}
 
@@ -107,9 +108,9 @@ void CEC::singleLoop() {
 
 double CEC::entropy() {
 	double s = 0.0;
-	BOOST_FOREACH(boost::shared_ptr<Cluster> cluster, clusters){
-	s+= cluster->entropy();
-}
+	BOOST_FOREACH(boost::shared_ptr<Cluster> cluster, clusters) {
+		s += cluster->entropy();
+	}
 	return s;
 }
 
@@ -122,7 +123,7 @@ const arma::mat &CEC::getPoints() const {
 }
 
 std::vector<arma::rowvec> CEC::centers() const {
-	std::vector < arma::rowvec > array;
+	std::vector<arma::rowvec> array;
 	array.reserve(clusters.size());
 	for (int i = 0; i < clusters.size(); ++i)
 		array.push_back(clusters[i]->getMean());
@@ -130,7 +131,7 @@ std::vector<arma::rowvec> CEC::centers() const {
 }
 
 std::vector<arma::mat> CEC::cov() const {
-	std::vector < arma::mat > array;
+	std::vector<arma::mat> array;
 	array.reserve(clusters.size());
 
 	for (int i = 0; i < clusters.size(); ++i) {
@@ -152,6 +153,7 @@ std::list<double> CEC::getEnergy() const {
 	return result.energy;
 }
 
+//getDataSet
 boost::shared_ptr<const arma::mat> CEC::getPtrToPoints() const {
 	return this->points;
 }
@@ -161,7 +163,7 @@ boost::shared_ptr<std::vector<unsigned int> > CEC::getPtrToAssignement() const {
 }
 
 unsigned int CEC::predict(std::vector<double> vec) const {
-	arma::rowvec x = arma::conv_to < arma::rowvec > ::from(vec);
+	arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
 
 	int assign = 0;
 	double minEntropyChange = std::numeric_limits<double>::max();
@@ -182,7 +184,7 @@ unsigned int CEC::predict(std::vector<double> vec) const {
 }
 
 std::list<double> CEC::predict(std::vector<double> vec, bool general) {
-	arma::rowvec x = arma::conv_to < arma::rowvec > ::from(vec);
+	arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
 	std::list<double> out;
 
 	if (general)
@@ -209,4 +211,5 @@ std::list<double> CEC::predict(std::vector<double> vec, bool general) {
 
 	return out;
 }
+
 }

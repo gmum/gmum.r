@@ -1,3 +1,8 @@
+#ifndef CONST_HPP
+#define CONST_HPP
+
+#include "params.hpp"
+
 namespace gmum {
 
 struct CONST {
@@ -77,20 +82,20 @@ const char* CONST::CLUSTERS::covMat = "params.cov";
 const char* CONST::CLUSTERS::radius = "params.r";
 const char* CONST::CLUSTERS::functionName = "params.function";
 
-const unsigned int CONST::nrOfClustersInit = 10;
-const double CONST::killThresholdInit = 1e-4;
-const unsigned int CONST::nstartInit = 1;
-const AssignmentType CONST::defaultAssignment = kkmeanspp;
+//const unsigned int CONST::nrOfClustersInit = 10;
+//const double CONST::killThresholdInit = 1e-4;
+//const unsigned int CONST::nstartInit = 1;
+//const AssignmentType CONST::defaultAssignment = kkmeanspp;
 
-const char* CONST::ERRORS::datasetReq = "Dataset is required!";
-const char* CONST::ERRORS::nstartsPositive =
-		"Number of starts should be a positive integer!";
-const char* CONST::ERRORS::nrOfClustersPositive =
-		"Number of clusters should be a positive integer!";
+//const char* CONST::ERRORS::datasetReq = "Dataset is required!";
+//const char* CONST::ERRORS::nstartsPositive =
+//		"Number of starts should be a positive integer!";
+//const char* CONST::ERRORS::nrOfClustersPositive =
+//		"Number of clusters should be a positive integer!";
 const char* CONST::ERRORS::datasetSize =
 		"Size of dataset cannot be less than number of clusters!";
-const char* CONST::ERRORS::killThresholdSize = (std::string(
-		CONST::killThreshold) + " is too hight").c_str();
+//const char* CONST::ERRORS::killThresholdSize = (std::string(
+//		CONST::killThreshold) + " is too high").c_str();
 const char* CONST::ERRORS::assignmentError =
 		"Cannot recognize assignment initiation method";
 const char* CONST::ERRORS::covMatReq = "Cavariance matrix required";
@@ -101,3 +106,5 @@ const char* CONST::ERRORS::centroidsError =
 const char* CONST::ERRORS::functionNameReq = "Function is required";
 
 }
+
+#endif

@@ -1,8 +1,8 @@
-#include <armadillo>
-#include <string>
 #ifndef CLUSTERPARAMS_HPP
 #define CLUSTERPARAMS_HPP
 
+#include <armadillo>
+#include <string>
 namespace gmum {
 
 enum ClusterType {
@@ -10,7 +10,7 @@ enum ClusterType {
 };
 
 /**
- * you need to store somewhere data about cluster. Each type can has its own.
+ * You need to store somewhere data about cluster. Each type can have its own.
  */
 struct ClusterParams {
 	ClusterType type;
