@@ -2,7 +2,6 @@
 #define CECCONFIGURATION_HPP_
 
 #include "cec.hpp"
-#include "const.hpp"
 
 namespace gmum {
 
