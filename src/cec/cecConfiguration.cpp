@@ -1,4 +1,5 @@
 #include "cecConfiguration.hpp"
+#include "const.hpp"
 
 namespace gmum {
 cecConfiguration::cecConfiguration() {

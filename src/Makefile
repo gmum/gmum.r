@@ -1,4 +1,4 @@
-
+CC = g++
 SOURCES = $(wildcard cec/*.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
 
@@ -22,10 +22,10 @@ PKG_CXXFLAGS := $(RCPPFLAGS) $(BOOSTINCL) $(RCPPINCL) $(RCPPARMAINCL) $(RINSIDEI
 PKG_LIBS := 	$(RLDFLAGS) $(RRPATH) $(RBLAS) $(RLAPACK) $(RCPPLIB) $(RCPPARMALIB) $(RINSIDELIBS) -lrt -lpthread $(LAPACK_LIBS) $(BLAS_LIBS)
 
 %.o : %.cpp
-	g++ $(PKG_CPPFLAGS) $(PKG_CXXFLAGS) $^ -c -o $@
+	$(CC) $(PKG_CPPFLAGS) $(PKG_CXXFLAGS) $^ -c -o $@
 
 gmum.r.so: $(OBJECTS)
-	g++ -shared $^ $(PKG_LIBS) -o $@
+	$(CC) -shared $^ $(PKG_LIBS) -o $@
 
 all: gmum.r.so
 
