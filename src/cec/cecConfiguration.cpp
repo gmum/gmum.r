@@ -11,12 +11,10 @@ Params cecConfiguration::getParams() {
 
 void cecConfiguration::setX(const Rcpp::NumericMatrix proxyDataset) {
 	//reuses memory and avoids extra copy
-	boost::shared_ptr<const arma::mat> points(new arma::mat(proxyDataset.begin(), proxyDataset.nrow(),
-			proxyDataset.ncol(), false));
+	boost::shared_ptr<const arma::mat> points(
+			new arma::mat(proxyDataset.begin(), proxyDataset.nrow(),
+					proxyDataset.ncol(), false));
 	params.dataset = points;
-
-	if (params.dataset->n_rows < params.nrOfClusters)
-		Rcpp::stop(CONST::ERRORS::datasetSize);
 }
 
 void cecConfiguration::setK(const double killThreshold) {
@@ -24,10 +22,9 @@ void cecConfiguration::setK(const double killThreshold) {
 }
 
 void cecConfiguration::setCentroids(const Rcpp::List centroids) {
-	 Rcpp::List desc = Rcpp::as<Rcpp::List>(centroids);
+	Rcpp::List desc = Rcpp::as < Rcpp::List > (centroids);
 	if (!Rf_isNull(centroids)) {
-		for (Rcpp::List::iterator it = desc.begin(); it != desc.end();
-				++it)
+		for (Rcpp::List::iterator it = desc.begin(); it != desc.end(); ++it)
 			params.centroids.push_back(Rcpp::as < std::vector<double> > (*it));
 		params.centroidsSet = true;
 	} else
@@ -41,6 +38,9 @@ void cecConfiguration::setNrOfClusters(const int nrOfClusters) {
 		params.nrOfClusters = params.clusters.size();
 	else
 		params.nrOfClusters = CONST::nrOfClustersInit;
+
+	if (params.dataset->n_rows < params.nrOfClusters)
+		Rcpp::stop(CONST::ERRORS::datasetSize);
 }
 
 void cecConfiguration::setNstart(const int nstart) {
@@ -140,9 +140,8 @@ void cecConfiguration::setCov(const Rcpp::NumericMatrix covMatProxy) {
 		params.covMatSet = false;
 }
 void cecConfiguration::setMix(const Rcpp::List clusters) {
-	 Rcpp::List desc = Rcpp::as<Rcpp::List>(clusters);
-	for (Rcpp::List::iterator it = desc.begin(); it != desc.end();
-			++it) {
+	Rcpp::List desc = Rcpp::as < Rcpp::List > (clusters);
+	for (Rcpp::List::iterator it = desc.begin(); it != desc.end(); ++it) {
 		Rcpp::List list = Rcpp::as < Rcpp::List > (*it);
 		boost::shared_ptr<ClusterParams> cluster;
 		if (!list.containsElementNamed(CONST::CLUSTERS::type)) {
