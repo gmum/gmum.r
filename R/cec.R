@@ -119,15 +119,15 @@ nstart.cec <- NULL
 
 evalqOnLoad({
 
-    CEC <<- function(x = NULL,
+    CECtest <<- function(x = NULL,
                      k = 0,
-                     method.type = NULL,
+                     method.type = "",
                      method.init = "kmeans++",
                      params.r = 0,
                      params.cov = NULL,
                      params.centroids = NULL,
                      params.mix = NULL,
-                     params.function = ""
+                     params.function = "",
                      control.nstart = 1,
                      control.eps = 1e-4,
                      control.itmax = 1,
@@ -138,19 +138,19 @@ evalqOnLoad({
       # check for errors
       
       if (is.null(x))
-        Rcpp::stop("Dataset is required!");
+        stop("Dataset is required!");
       
       if (k <= 0)
-        Rcpp::stop("Number of clusters should be a positive integer!");
+        stop("Number of clusters should be a positive integer!");
       
       if (control.nstart <= 0)
-        Rcpp::stop("Number of starts should be a positive integer!");
+        stop("Number of starts should be a positive integer!");
       
       if (control.eps > 1.0 / k)
-        Rcpp::stop("killThreshold " + contorl.eps + " is too high");  
+        stop("killThreshold " + contorl.eps + " is too high");  
       
       if (control.itmax <= 0)
-        Rcpp::stop("Max number of iterations should be a positive integer!");
+        stop("Max number of iterations should be a positive integer!");
       
         config <- new(cecConfiguration)
         config$setX(x)
@@ -171,6 +171,7 @@ evalqOnLoad({
       
         cecClient <- new(cecClient, config)
         cec <- cecClient$findBestCEC()
+        cec
     }
 
     loop.cec <<- function(c) {
@@ -234,7 +235,7 @@ evalqOnLoad({
     setMethod("y", "Rcpp_cec", y.cec)
     setMethod("centers", "Rcpp_cec", centers.cec)
     setMethod("cov", "Rcpp_cec", cov.cec)
-    setMethod("predictCluster", "Rcpp_cec", predictCluster.cec)    
+    setMethod("predictCluster", "Rcpp_cec", predictCluster.cec)
     setMethod("predictClusters", "Rcpp_cec", predictClusters.cec)
     setMethod("log.ncluster", "Rcpp_cec", log.ncluster.cec)
     setMethod("log.energy", "Rcpp_cec", log.energy.cec)

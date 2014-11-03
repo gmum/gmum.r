@@ -36,16 +36,10 @@ struct CONST {
 	};
 
 	static const unsigned int nrOfClustersInit;
-	static const double killThresholdInit;
-	static const unsigned int nstartInit;
 	static const AssignmentType defaultAssignment;
 
 	struct ERRORS {
-		static const char* datasetReq;
-		static const char* nstartsPositive;
-		static const char* nrOfClustersPositive;
 		static const char* datasetSize;
-		static const char* killThresholdSize;
 		static const char* assignmentError;
 		static const char* covMatReq;
 		static const char* radiusReq;
@@ -82,20 +76,10 @@ const char* CONST::CLUSTERS::covMat = "params.cov";
 const char* CONST::CLUSTERS::radius = "params.r";
 const char* CONST::CLUSTERS::functionName = "params.function";
 
-//const unsigned int CONST::nrOfClustersInit = 10;
-//const double CONST::killThresholdInit = 1e-4;
-//const unsigned int CONST::nstartInit = 1;
-//const AssignmentType CONST::defaultAssignment = kkmeanspp;
-
-//const char* CONST::ERRORS::datasetReq = "Dataset is required!";
-//const char* CONST::ERRORS::nstartsPositive =
-//		"Number of starts should be a positive integer!";
-//const char* CONST::ERRORS::nrOfClustersPositive =
-//		"Number of clusters should be a positive integer!";
+const unsigned int CONST::nrOfClustersInit = 10;
+const AssignmentType CONST::defaultAssignment = kkmeanspp;
 const char* CONST::ERRORS::datasetSize =
 		"Size of dataset cannot be less than number of clusters!";
-//const char* CONST::ERRORS::killThresholdSize = (std::string(
-//		CONST::killThreshold) + " is too high").c_str();
 const char* CONST::ERRORS::assignmentError =
 		"Cannot recognize assignment initiation method";
 const char* CONST::ERRORS::covMatReq = "Cavariance matrix required";
