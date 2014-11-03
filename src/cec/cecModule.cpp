@@ -9,7 +9,7 @@ RCPP_EXPOSED_CLASS (CEC);
 
 namespace gmum {
 
-RCPP_MODULE(cec_module) {
+RCPP_MODULE(cec) {
 	using namespace Rcpp;
 
 	class_<cecConfiguration>("cecConfiguration")
