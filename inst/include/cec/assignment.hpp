@@ -1,5 +1,5 @@
-#ifndef ASSIGMENT_HPP
-#define ASSIGMENT_HPP
+#ifndef ASSIGNMENT_HPP
+#define ASSIGNMENT_HPP
 
 #include <RcppArmadillo.h>
 #include "boost/foreach.hpp"
