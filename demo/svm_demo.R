@@ -21,4 +21,4 @@ y <- dataset.Y(svm)
 prediction <- predict(svm, x)
 
 # Check models accuracy
-acc <- accuracy.svm(y=y, t=prediction)
+acc <- svm.accuracy(prediction=y, target=prediction)

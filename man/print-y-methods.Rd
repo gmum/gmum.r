@@ -4,8 +4,6 @@
 \alias{dataset}
 \alias{dataset.Y}
 \title{dataset.Y}
-\format{\preformatted{ NULL
-}}
 \usage{
 dataset.Y(svm)
 }
@@ -15,5 +13,4 @@ dataset.Y(svm)
 \description{
 Prints lables stored in a SVM object.
 }
-\keyword{datasets}
 
