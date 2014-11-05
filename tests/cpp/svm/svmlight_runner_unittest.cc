@@ -1,11 +1,10 @@
 #include <armadillo>
+#include <iostream>
 #include <string>
 
 #include "gtest/gtest.h"
 #include "svmlight_runner.h"
 #include "svm_basic.h"
-
-using namespace arma;
 
 namespace {
 
@@ -16,6 +15,21 @@ protected:
 
     SVMLightRunnerTest() {
         svmLightRunner = SVMLightRunner();
+
+    	learing_data_01
+            << 0.5 << 1.0 << 0.0 << 1.0 << arma::endr
+            << 0.4 << 1.1 << 0.0 << 1.0 << arma::endr
+            << 0.5 << 0.9 << 1.0 << 0.0 << arma::endr
+            << 0.5 << 1.0 << 1.0 << 0.0 << arma::endr
+            << 0.4 << 1.1 << 1.0 << 0.0 << arma::endr;
+    	learing_target_01 << -1 << -1 << 1 << 1 << 1;
+
+    	testing_data_01
+            << 0.4 << 0.9 << 0.0 << 1.0 << arma::endr
+            << 0.5 << 0.9 << 0.0 << 1.0 << arma::endr
+            << 0.4 << 1.0 << 1.0 << 0.0 << arma::endr
+            << 0.5 << 1.0 << 1.0 << 0.0 << arma::endr;
+    	testing_target_01 << -1 << -1 << 1 << 1;
     }
 
     virtual ~SVMLightRunnerTest() {}
@@ -26,9 +40,14 @@ protected:
     /// Called immediately after each test (right before the destructor)
     virtual void TearDown() {}
 
-    // Objects declared here can be used by all tests in the test case
+    /* Objects declared here can be used by all tests in the test case */
 
     SVMLightRunner svmLightRunner;
+
+	arma::mat learing_data_01;
+    arma::vec learing_target_01;
+	arma::mat testing_data_01;
+    arma::vec testing_target_01;
 };
 
 
@@ -36,24 +55,18 @@ protected:
 
 /* Fixture tests */
 
-TEST_F(SVMLightRunnerTest, processRequest) {
-	mat data;
-	data << 0.5 << 1.0 << 0.0 << 1.0 << endr
-         << 0.4 << 1.1 << 0.0 << 1.0 << endr
-         << 0.5 << 0.9 << 1.0 << 0.0 << endr
-         << 0.5 << 1.0 << 1.0 << 0.0 << endr
-         << 0.4 << 1.1 << 1.0 << 0.0 << endr;
-	vec target;
-	target << -1 << -1 << 1 << 1 << 1;
-
-	SVMConfiguration svm_config;
-	svm_config.setPrediction(false); // training model
-	svm_config.data = data;
-	svm_config.target = target;
-
+TEST_F(SVMLightRunnerTest, processRequest_learning) {
 	SVMLightRunner svmlr;
-	svmlr.processRequest(svm_config);
+	SVMConfiguration svm_config;
 
+	svm_config.data = learing_data_01;
+	svm_config.target = learing_target_01;
+	svm_config.setPrediction(false); // training model
+	svmlr.processRequest(svm_config);
+    std::cout << "support_vectors:" << svm_config.support_vectors << std::endl;
+
+	svm_config.data = testing_data_01;
+	svm_config.target = testing_target_01;
 	svm_config.setPrediction(true);
 	svmlr.processRequest(svm_config);
 

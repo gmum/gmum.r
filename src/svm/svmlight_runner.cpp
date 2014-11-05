@@ -13,23 +13,30 @@
 #include "svmlight_runner.h"
 #include "utils.h"
 
+
 SVMLightRunner::SVMLightRunner() {
 }
 
+
 SVMLightRunner::~SVMLightRunner() {
 }
+
 
 bool SVMLightRunner::canHandle(SVMConfiguration &config) {
     /// @TODO SVMLightRunner::canHandle
     return true;
 }
 
+
 void SVMLightRunner::processRequest(SVMConfiguration &config) {
+    char **argv;
     if (!config.isPrediction()) {
-        char **argv;
         librarySVMLearnMain(0, argv, true, config);
+    } else {
+        librarySVMClassifyMain(0, argv, true, config);
     }
 }
+
 
 /* Library functionalities wrappers */
 
@@ -40,9 +47,11 @@ char docfile[200];           /* file with training examples */
 char modelfile[200];         /* file for resulting classifier */
 char restartfile[200];       /* file with initial alphas */
 
+
 int SVMLightRunner::librarySVMLearnMain(
     int argc, char **argv, bool use_gmumr, SVMConfiguration &config
 ) {
+    std::cout << "[SVMLightRunner] librarySVMLearnMain()" << std::endl;
     DOC **docs;  /* training examples */
     long totwords,totdoc,i;
     double *target;
@@ -53,7 +62,7 @@ int SVMLightRunner::librarySVMLearnMain(
     MODEL *model=(MODEL *)my_malloc(sizeof(MODEL));
 
     // GMUM.R changes {
-    libraryReadInputParameters(
+    librarySVMLearnReadInputParameters(
         argc, argv, docfile, modelfile, restartfile, &verbosity, &learn_parm,
         &kernel_parm, use_gmumr, config
     );
@@ -99,7 +108,13 @@ int SVMLightRunner::librarySVMLearnMain(
        If you want to free the original data, and only keep the model, you 
        have to make a deep copy of 'model'. */
     /* deep_copy_of_model=copy_model(model); */
-    write_model(modelfile,model);
+    // GMUM.R changes {
+    if (!use_gmumr) {
+        write_model(modelfile,model);
+    } else {
+        SVMLightModelToSVMConfiguration(model, &config);
+    }
+    // GMUM.R changes }
 
     free(alpha_in);
     free_model(model,0);
@@ -108,14 +123,17 @@ int SVMLightRunner::librarySVMLearnMain(
     free(docs);
     free(target);
 
+    std::cout << "[SVMLightRunner] librarySVMLearnMain done." << std::endl;
     return(0);
 }
 
-void SVMLightRunner::libraryReadInputParameters(
+
+void SVMLightRunner::librarySVMLearnReadInputParameters(
     int argc, char *argv[], char *docfile, char *modelfile, char *restartfile,
     long *verbosity, LEARN_PARM *learn_parm, KERNEL_PARM *kernel_parm,
     bool use_gmumr, SVMConfiguration &config
 ) {
+    std::cout << "[SVMLightRunner] librarySVMLearnReadInputParameters()" << std::endl;
     long i;
     char type[100];
   
@@ -305,10 +323,344 @@ void SVMLightRunner::libraryReadInputParameters(
     }
 }
 
+
+char predictionsfile[200];
+
+
+int SVMLightRunner::librarySVMClassifyMain(
+    int argc, char **argv, bool use_gmumr, SVMConfiguration &config
+) {
+    std::cout << "[SVMLightRunner] librarySVMClassifyMain()" << std::endl;
+    DOC *doc;   /* test example */
+    WORD *words;
+    long max_docs,max_words_doc,lld;
+    long totdoc=0,queryid,slackid;
+    long correct=0,incorrect=0,no_accuracy=0;
+    long res_a=0,res_b=0,res_c=0,res_d=0,wnum,pred_format;
+    long j;
+    double t1,runtime=0;
+    double dist,doc_label,costfactor;
+    char *line,*comment; 
+    FILE *predfl,*docfl;
+    MODEL *model; 
+
+    // GMUM.R changes {
+    librarySVMClassifyReadInputParameters(
+        argc, argv, docfile, modelfile, predictionsfile, &verbosity,
+        &pred_format, use_gmumr, config);
+
+    if (!use_gmumr) {
+        nol_ll(docfile,&max_docs,&max_words_doc,&lld); /* scan size of input file */
+        lld+=2;
+
+        line = (char *)my_malloc(sizeof(char)*lld);
+    } else {
+        max_docs = config.target.n_rows;
+        max_words_doc = config.data.n_cols;
+        // lld used only for file reading
+    }
+    max_words_doc+=2;
+    words = (WORD *)my_malloc(sizeof(WORD)*(max_words_doc+10));
+    // GMUM.R changes }
+
+    model=libraryReadModel(modelfile, use_gmumr, config);
+    // GMUM.R changes }
+
+    if(model->kernel_parm.kernel_type == 0) { /* linear kernel */
+      /* compute weight vector */
+      add_weight_vector_to_linear_model(model);
+    }
+    
+    if(verbosity>=2) {
+      printf("Classifying test examples.."); fflush(stdout);
+    }
+
+    // GMUM.R changes {
+    bool newline;
+        if ((predfl = fopen (predictionsfile, "w")) == NULL)
+        { perror (predictionsfile); exit (1); }
+    if (!use_gmumr) {
+        if ((docfl = fopen (docfile, "r")) == NULL)
+        { perror (docfile); exit (1); }
+
+        newline = (!feof(docfl)) && fgets(line,(int)lld,docfl);
+    } else {
+        newline = false;
+        if (totdoc < config.target.n_rows) {
+            newline = true;
+            //std::string stringline = "";
+            //line = (char*)stringline.c_str();
+            line = svmConfigurationToSVMLightLearnInputLine(config, totdoc);
+        }
+    }
+    while(newline) {
+      if (use_gmumr) {
+            std::string stringline = "";
+      }
+      // GMUM.R changes }
+      if(line[0] == '#') continue;  /* line contains comments */
+      std::cout << line << std::endl;
+      parse_document(line,words,&doc_label,&queryid,&slackid,&costfactor,&wnum,
+             max_words_doc,&comment);
+      totdoc++;
+      if(model->kernel_parm.kernel_type == 0) {   /* linear kernel */
+        for(j=0;(words[j]).wnum != 0;j++) {  /* Check if feature numbers   */
+      if((words[j]).wnum>model->totwords) /* are not larger than in     */
+        (words[j]).wnum=0;               /* model. Remove feature if   */
+        }                                        /* necessary.                 */
+        doc = create_example(-1,0,0,0.0,create_svector(words,comment,1.0));
+        t1=get_runtime();
+        dist=classify_example_linear(model,doc);
+        runtime+=(get_runtime()-t1);
+        free_example(doc,1);
+      }
+      else {                             /* non-linear kernel */
+        doc = create_example(-1,0,0,0.0,create_svector(words,comment,1.0));
+        t1=get_runtime();
+        dist=classify_example(model,doc);
+        runtime+=(get_runtime()-t1);
+        free_example(doc,1);
+      }
+      if(dist>0) {
+        if(pred_format==0) { /* old weired output format */
+      fprintf(predfl,"%.8g:+1 %.8g:-1\n",dist,-dist);
+        }
+        if(doc_label>0) correct++; else incorrect++;
+        if(doc_label>0) res_a++; else res_b++;
+      }
+      else {
+        if(pred_format==0) { /* old weired output format */
+      fprintf(predfl,"%.8g:-1 %.8g:+1\n",-dist,dist);
+        }
+        if(doc_label<0) correct++; else incorrect++;
+        if(doc_label>0) res_c++; else res_d++;
+      }
+      if(pred_format==1) { /* output the value of decision function */
+        fprintf(predfl,"%.8g\n",dist);
+      }
+      if((int)(0.01+(doc_label*doc_label)) != 1) 
+        { no_accuracy=1; } /* test data is not binary labeled */
+      if(verbosity>=2) {
+        if(totdoc % 100 == 0) {
+      printf("%ld..",totdoc); fflush(stdout);
+        }
+      }
+      if (!use_gmumr) {
+          newline = (!feof(docfl)) && fgets(line,(int)lld,docfl);
+      } else {
+          newline = false;
+          if (totdoc < config.target.n_rows) {
+              newline = true;
+              //std::string stringline = "";
+              //line = (char*)stringline.c_str();
+              line = svmConfigurationToSVMLightLearnInputLine(config, totdoc);
+          }
+      }
+    }  
+    fclose(predfl);
+    if (!use_gmumr) {
+        fclose(docfl);
+        free(line);
+    }
+    free(words);
+    free_model(model,1);
+
+    if(verbosity>=2) {
+      printf("done\n");
+
+  /*   Note by Gary Boone                     Date: 29 April 2000        */
+  /*      o Timing is inaccurate. The timer has 0.01 second resolution.  */
+  /*        Because classification of a single vector takes less than    */
+  /*        0.01 secs, the timer was underflowing.                       */
+      printf("Runtime (without IO) in cpu-seconds: %.2f\n",
+         (float)(runtime/100.0));
+      
+    }
+    if((!no_accuracy) && (verbosity>=1)) {
+      printf("Accuracy on test set: %.2f%% (%ld correct, %ld incorrect, %ld total)\n",(float)(correct)*100.0/totdoc,correct,incorrect,totdoc);
+      printf("Precision/recall on test set: %.2f%%/%.2f%%\n",(float)(res_a)*100.0/(res_a+res_b),(float)(res_a)*100.0/(res_a+res_c));
+    }
+
+    return(0);
+}
+
+
+void SVMLightRunner::librarySVMClassifyReadInputParameters(
+    int argc, char **argv, char *docfile, char *modelfile,
+    char *predictionsfile, long int *verbosity, long int *pred_format,
+    bool use_gmumr, SVMConfiguration &config
+) {
+    std::cout << "[SVMLightRunner] librarySVMClassifyReadInputParameters()"
+              << std::endl;
+    long i;
+    
+    /* set default */
+    strcpy (modelfile, "svm_model");
+    strcpy (predictionsfile, "svm_predictions"); 
+    (*verbosity)=2;
+    (*pred_format)=1;
+
+    for(i=1;(i<argc) && ((argv[i])[0] == '-');i++) {
+      switch ((argv[i])[1]) 
+        { 
+        case 'h': print_help(); exit(0);
+        case 'v': i++; (*verbosity)=atol(argv[i]); break;
+        case 'f': i++; (*pred_format)=atol(argv[i]); break;
+        default: printf("\nUnrecognized option %s!\n\n",argv[i]);
+             print_help();
+             exit(0);
+        }
+    }
+    // GMUM.R changes {
+    if(!use_gmumr) {
+        if((i+1)>=argc) {
+          printf("\nNot enough input parameters!\n\n");
+          print_help();
+          exit(0);
+        }
+        strcpy (docfile, argv[i]);
+        strcpy (modelfile, argv[i+1]);
+        if((i+2)<argc) {
+          strcpy (predictionsfile, argv[i+2]);
+        }
+    }
+    // GMUM.R changes }
+    if(((*pred_format) != 0) && ((*pred_format) != 1)) {
+      printf("\nOutput format can only take the values 0 or 1!\n\n");
+      print_help();
+      exit(0);
+    }
+}
+
+MODEL * SVMLightRunner::libraryReadModel(
+    char *modelfile, bool use_gmumr, SVMConfiguration &config
+) {
+    std::cout << "[SVMLightRunner] libraryReadModel()" << std::endl;
+    FILE *modelfl;
+    long i,queryid,slackid;
+    double costfactor;
+    long max_sv,max_words,ll,wpos;
+    char *line,*comment;
+    WORD *words;
+    char version_buffer[100];
+    MODEL *model;
+
+    if(verbosity>=1) {
+      printf("Reading model..."); fflush(stdout);
+    }
+
+    // GMUM.R changes {
+    model = (MODEL *)my_malloc(sizeof(MODEL));
+
+    if (!use_gmumr) {
+        nol_ll(modelfile,&max_sv,&max_words,&ll); /* scan size of model file */
+        max_words+=2;
+        ll+=2;
+
+        words = (WORD *)my_malloc(sizeof(WORD)*(max_words+10));
+        line = (char *)my_malloc(sizeof(char)*ll);
+
+        if ((modelfl = fopen (modelfile, "r")) == NULL)
+        { perror (modelfile); exit (1); }
+
+        fscanf(modelfl,"SVM-light Version %s\n",version_buffer);
+        if(strcmp(version_buffer,VERSION)) {
+          perror ("Version of model-file does not match version of svm_classify!"); 
+          exit (1); 
+        }
+        fscanf(modelfl,"%ld%*[^\n]\n", &model->kernel_parm.kernel_type);  
+        fscanf(modelfl,"%ld%*[^\n]\n", &model->kernel_parm.poly_degree);
+        fscanf(modelfl,"%lf%*[^\n]\n", &model->kernel_parm.rbf_gamma);
+        fscanf(modelfl,"%lf%*[^\n]\n", &model->kernel_parm.coef_lin);
+        fscanf(modelfl,"%lf%*[^\n]\n", &model->kernel_parm.coef_const);
+        fscanf(modelfl,"%[^#]%*[^\n]\n", model->kernel_parm.custom);
+
+        fscanf(modelfl,"%ld%*[^\n]\n", &model->totwords);
+        fscanf(modelfl,"%ld%*[^\n]\n", &model->totdoc);
+        fscanf(modelfl,"%ld%*[^\n]\n", &model->sv_num);
+        fscanf(modelfl,"%lf%*[^\n]\n", &model->b);
+    } else { // use_gmumr
+        max_words = config.data.n_cols;
+        words = (WORD *)my_malloc(sizeof(WORD)*(max_words+10));
+
+        std::cout << "[SVMLightRunner] libraryReadModel/converting..." << std::endl;
+        /* 0=linear, 1=poly, 2=rbf, 3=sigmoid, 4=custom -- same as GMUM.R! */
+        model->kernel_parm.kernel_type = (long int) config.kernel_type;
+        // -d int      -> parameter d in polynomial kernel
+        model->kernel_parm.poly_degree = config.degree;
+        // -g float    -> parameter gamma in rbf kernel
+        model->kernel_parm.rbf_gamma = config.gamma;
+        // FIXME: what value here?
+        // -s float    -> parameter s in sigmoid/poly kerne
+        model->kernel_parm.coef_lin = config.coef0;
+        // FIXME: what value here?
+        // -r float    -> parameter c in sigmoid/poly kernel
+        model->kernel_parm.coef_const = 0.0;
+        // -u string   -> parameter of user defined kernel
+        //model->kernel_parm.custom = "empty";
+        // highest feature index
+        model->totwords = config.data.n_cols;
+        // number of training documents
+        model->totdoc = config.target.n_rows;
+        // number of support vectors plus 1 (!)
+        model->sv_num = config.l + 1;
+        // threshold b
+        model->b = config.threshold_b;
+        std::cout << "[SVMLightRunner] libraryReadModel/converting done." << std::endl;
+    }
+    // GMUM.R changes }
+
+    model->supvec = (DOC **)my_malloc(sizeof(DOC *)*model->sv_num);
+    model->alpha = (double *)my_malloc(sizeof(double)*model->sv_num);
+    model->index=NULL;
+    model->lin_weights=NULL;
+
+    // GMUM.R changes {
+    if (!use_gmumr) {
+        for(i=1;i<model->sv_num;i++) {
+          fgets(line,(int)ll,modelfl);
+          if(!parse_document(line,words,&(model->alpha[i]),&queryid,&slackid,
+                     &costfactor,&wpos,max_words,&comment)) {
+            printf("\nParsing error while reading model file in SV %ld!\n%s",
+               i,line);
+            exit(1);
+          }
+          model->supvec[i] = create_example(-1,
+                            0,0,
+                            0.0,
+                            create_svector(words,comment,1.0));
+        }
+        fclose(modelfl);
+        free(line);
+    } else {
+        for(i = 1; i < model->sv_num; ++i) {
+            line = svmConfigurationToSVMLightModelSVLine(config, i);
+            if(!parse_document(line,words,&(model->alpha[i]),&queryid,&slackid,
+                       &costfactor,&wpos,max_words,&comment)) {
+              printf("\nParsing error while reading model file in SV %ld!\n%s",
+                 i,line);
+              exit(1);
+            }
+            model->supvec[i] = create_example(-1,
+                              0,0,
+                              0.0,
+                              create_svector(words,comment,1.0));
+        }
+    }
+    // GMUM.R changes }
+    free(words);
+    if(verbosity>=1) {
+      fprintf(stdout, "OK. (%d support vectors read)\n",(int)(model->sv_num-1));
+    }
+    std::cout << "[SVMLightRunner] libraryReadModel done." << std::endl;
+    return(model);
+}
+
 void SVMLightRunner::libraryReadDocuments (
     char *docfile, DOC ***docs, double **label, long int *totwords,
     long int *totdoc, bool use_gmumr, SVMConfiguration &config
 ) {
+    std::cout << "[SVMLightRunner] libraryReadDocuments()" << std::endl;
     char *line,*comment;
     WORD *words;
     long dnum=0,wpos,dpos=0,dneg=0,dunlab=0,queryid,slackid,max_docs;
@@ -362,7 +714,7 @@ void SVMLightRunner::libraryReadDocuments (
             newline = true;
             //std::string stringline = "";
             //line = (char*)stringline.c_str();
-            line = svmConfigurationToSVMLightInputLine(config, dnum);
+            line = svmConfigurationToSVMLightLearnInputLine(config, dnum);
         }
     }
     while(newline) {
@@ -404,7 +756,7 @@ void SVMLightRunner::libraryReadDocuments (
           newline = false;
           if (dnum < config.target.n_rows) {
               newline = true;
-              line = svmConfigurationToSVMLightInputLine(config, dnum);
+              line = svmConfigurationToSVMLightLearnInputLine(config, dnum);
           }
       }
       // GMUM.R changes }
@@ -422,9 +774,10 @@ void SVMLightRunner::libraryReadDocuments (
 }
 
 
-char * SVMLightRunner::svmConfigurationToSVMLightInputLine(
+char * SVMLightRunner::svmConfigurationToSVMLightLearnInputLine(
     SVMConfiguration &config, long int line_num
 ) {
+    std::cout << "[SVMLightRunner] svmConfigurationToSVMLightLearnInputLine()" << std::endl;
     std::string line_string = "";
 
     std::ostringstream ss;
@@ -439,11 +792,79 @@ char * SVMLightRunner::svmConfigurationToSVMLightInputLine(
     return (char*)line_string.c_str();
 }
 
+
+char * SVMLightRunner::svmConfigurationToSVMLightModelSVLine(
+    SVMConfiguration &config, long int line_num
+) {
+    std::cout << "[SVMLightRunner] svmConfigurationToSVMLightModelSVLine()" << std::endl;
+    std::string line_string = "";
+
+    std::ostringstream ss;
+    ss << config.alpha_y[line_num];
+    for (long int i = 1; i <= config.support_vectors.n_cols; ++i) {
+        ss << ' ' << i << ':' << config.support_vectors(line_num, i-1);
+    }
+    ss << std::endl;
+    line_string = ss.str();
+
+    std::cout << "[SVMLightRunner] svmConfigurationToSVMLightModelSVLine done." << std::endl;
+    return (char*)line_string.c_str();
+}
+
+
+char ** SVMLightRunner::SVMConfigurationToSVMLightModelFile(
+    SVMConfiguration &config
+) {
+    char **result;
+    std::string line_string = "";
+    //result = malloc(sizeof(char *) * number_of_lines);
+}
+
+
+void SVMLightRunner::SVMLightModelToSVMConfiguration(
+    MODEL *model, SVMConfiguration *config
+) {
+    std::cout << "[SVMLightRunner] SVMLightModelToSVMConfiguration()" << std::endl;
+    /* 0=linear, 1=poly, 2=rbf, 3=sigmoid, 4=custom -- same as GMUM.R! */
+    // FIXME: No conversion?
+    config->kernel_type = (KernelType) model->kernel_parm.kernel_type;
+    // -d int      -> parameter d in polynomial kernel
+    config->degree = model->kernel_parm.poly_degree;
+    // -g float    -> parameter gamma in rbf kernel
+    config->gamma = model->kernel_parm.rbf_gamma;
+    // FIXME: what value here?
+    // -s float    -> parameter s in sigmoid/poly kerne
+    config->coef0 = model->kernel_parm.coef_lin;
+    // FIXME: what value here?
+    // -r float    -> parameter c in sigmoid/poly kernel
+    //??? = model->kernel_parm.coef_const;
+    // FIXME: what value here?
+    // -u string   -> parameter of user defined kernel
+    //??? = model->kernel_parm.custom;
+    // highest feature index - no assignment to read-only data
+    //config->data.n_cols = model->totwords;
+    // number of training documents - no assignment to read-only data
+    //config->target.n_rows = model->totdoc;
+    // number of support vectors plus 1 (!)
+    config->l = model->sv_num - 1;
+    // threshold b
+    config->threshold_b = model->b;
+    for(long int j = 0; j < config->l; ++j) {
+        config->alpha_y << model->alpha[j];
+        for (long int i = 0; i < config->support_vectors.n_cols; ++i) {
+            config->support_vectors << model->supvec[j]->fvec->words[i].weight;
+        }
+        config->support_vectors << arma::endr;
+    }
+    std::cout << "[SVMLightRunner] SVMLightModelToSVMConfiguration done." << std::endl;
+}
+
 void wait_any_key()
 {
   printf("\n(more)\n");
   (void)getc(stdin);
 }
+
 
 void print_help()
 {

@@ -35,11 +35,11 @@ public:
     // Documented in the parent class
     void processRequest(SVMConfiguration &);
 
-//protected:
+protected:
 
     /** @name Library functionalities wrappers
      *  Following methods are direct library functionalities wrappers with
-     *  file operations parametrized.
+     *  file operations parametrized (`bool use_gmumr`).
      */
     /// @{
 
@@ -55,10 +55,36 @@ public:
      * SVMLight's `svm_learn` auxiliary method
      * @author  Thorsten Joachims
      */
-    void libraryReadInputParameters(
+    void librarySVMLearnReadInputParameters(
         int argc, char *argv[], char *docfile, char *modelfile,
         char *restartfile, long *verbosity, LEARN_PARM *learn_parm,
         KERNEL_PARM *kernel_parm, bool use_gmumr, SVMConfiguration &config
+    );
+
+    /**
+     * SVMLight's `svm_classify` main method
+     * @author  Thorsten Joachims
+     */
+    int librarySVMClassifyMain(int argc, char **argv, bool use_gmumr,
+        SVMConfiguration &config
+    );
+
+    /**
+     * SVMLight's `svm_classify` auxiliary method
+     * @author  Thorsten Joachims
+     */
+    void librarySVMClassifyReadInputParameters(
+        int argc, char **argv, char *docfile, char *modelfile,
+        char *predictionsfile, long int *verbosity, long int *pred_format,
+        bool use_gmumr, SVMConfiguration &config
+    );
+
+    /**
+     * SVMLight's auxiliary method
+     * @author  Thorsten Joachims
+     */
+    MODEL * libraryReadModel(
+        char *modelfile, bool use_gmumr, SVMConfiguration &config
     );
 
     /**
@@ -73,10 +99,31 @@ public:
     /// @}
 
     /**
-     * Convert SVMConfiguration to one line of SVMLight input
+     * Convert SVMConfiguration to one line of SVMLight's `svm_learn` input
      */
-    char * svmConfigurationToSVMLightInputLine(
+    char * svmConfigurationToSVMLightLearnInputLine(
         SVMConfiguration &config, long int line_num
+    );
+
+    /**
+     * Convert SVMConfiguration to one line of SVMLight's `svm_classify` input
+     * of every Support Vector in one line (starting with alpha*y)
+     */
+    char * svmConfigurationToSVMLightModelSVLine(
+        SVMConfiguration &config, long int line_num
+    );
+
+    /**
+     * Convert SVMConfiguration to SVMLight's model file lines
+     */
+    char ** SVMConfigurationToSVMLightModelFile(SVMConfiguration &config);
+
+    /**
+     * Store SVMLight model data into SVMConfiguration
+     * NOTE: It does not clean unnecessary data!
+     */
+    void SVMLightModelToSVMConfiguration(
+        MODEL *model, SVMConfiguration *config
     );
 };
 

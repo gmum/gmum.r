@@ -51,10 +51,10 @@ public:
 	int probability; 	// do probability estimates
 	
 	//	libsvm Model parameters
-	int l;
-	int nr_class; /* number of classes, = 2 in regression/one class svm */
+	int l;                //< Number of support vectors TODO: rename?
+	int nr_class;         //< number of classes, = 2 in regression TODO: rename?
 	//TODO: don't keep support vectors as svm node, remember when Staszek wasn't happy about it?
-	struct svm_node **SV; /* SVs (SV[l]) */
+	struct svm_node **SV; //< SVs (SV[l]) TODO: remove?
 	double **sv_coef; /* coefficients for SVs in decision functions (sv_coef[k-1][l]) */
 	double *rho; /* constants in decision functions (rho[k*(k-1)/2]) */
 	int *sv_indices; /* sv_indices[0,...,nSV-1] are values in [1,...,num_traning_data] to indicate SVs in the training set */
@@ -70,12 +70,17 @@ public:
 	double nu; /* for NU_SVC, ONE_CLASS, and NU_SVR */
 	double p; /* for EPSILON_SVR */
 
+    /* SVMLight model parameters */
+    double threshold_b;
+    arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
+
 	arma::mat two_e_cov_inv_sqrt;
 	arma::mat two_e_b_dash;
 
 	arma::mat data;		// armadillo matrix and vector (double)
 	arma::vec target;
 	arma::vec result;
+    arma::mat support_vectors;
 
 
 	//2eConfig
