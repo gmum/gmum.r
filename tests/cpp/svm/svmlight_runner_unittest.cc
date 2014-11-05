@@ -61,16 +61,44 @@ TEST_F(SVMLightRunnerTest, processRequest_learning) {
 
 	svm_config.data = learing_data_01;
 	svm_config.target = learing_target_01;
-	svm_config.setPrediction(false); // training model
+	svm_config.setPrediction(false);
 	svmlr.processRequest(svm_config);
-    std::cout << "support_vectors:" << svm_config.support_vectors << std::endl;
+
+    // kernel_type - LINEAR
+    ASSERT_EQ(svm_config.kernel_type, 0);
+    // -d int      -> parameter d in polynomial kernel
+    ASSERT_EQ(svm_config.degree, 3);
+    // -g float    -> parameter gamma in rbf kernel
+    ASSERT_EQ(svm_config.gamma, 1);
+    // -s float    -> parameter s in sigmoid/poly kernel
+    ASSERT_EQ(svm_config.coef0, 1);
+    // -r float    -> parameter c in sigmoid/poly kernel
+    ASSERT_EQ(svm_config.C, 1);
+    // -u string   -> parameter of user defined kernel
+    ASSERT_EQ(std::string(svm_config.kernel_parm_custom), std::string("empty"));
+    // highest feature index - no assignment to read-only data
+    ASSERT_EQ(svm_config.data.n_cols, 4);
+    // number of support vectors
+    ASSERT_EQ(svm_config.l, 5);
+    // threshold b
+    ASSERT_DOUBLE_EQ(svm_config.threshold_b, -0.11450359507913976);
+}
+
+TEST_F(SVMLightRunnerTest, processRequest_classification) {
+	SVMLightRunner svmlr;
+	SVMConfiguration svm_config;
+
+	svm_config.data = learing_data_01;
+	svm_config.target = learing_target_01;
+	svm_config.setPrediction(false);
+	svmlr.processRequest(svm_config);
 
 	svm_config.data = testing_data_01;
 	svm_config.target = testing_target_01;
 	svm_config.setPrediction(true);
 	svmlr.processRequest(svm_config);
 
-    // TODO: ASSERT_EQ();
+    //TODO: Assertions
 }
 
 int main(int argc, char **argv) {

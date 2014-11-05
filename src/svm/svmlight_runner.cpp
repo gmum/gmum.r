@@ -7,6 +7,7 @@
 
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <vector>
 
@@ -390,7 +391,7 @@ int SVMLightRunner::librarySVMClassifyMain(
             newline = true;
             //std::string stringline = "";
             //line = (char*)stringline.c_str();
-            line = svmConfigurationToSVMLightLearnInputLine(config, totdoc);
+            line = SVMConfigurationToSVMLightLearnInputLine(config, totdoc);
         }
     }
     while(newline) {
@@ -399,7 +400,6 @@ int SVMLightRunner::librarySVMClassifyMain(
       }
       // GMUM.R changes }
       if(line[0] == '#') continue;  /* line contains comments */
-      std::cout << line << std::endl;
       parse_document(line,words,&doc_label,&queryid,&slackid,&costfactor,&wnum,
              max_words_doc,&comment);
       totdoc++;
@@ -453,7 +453,7 @@ int SVMLightRunner::librarySVMClassifyMain(
               newline = true;
               //std::string stringline = "";
               //line = (char*)stringline.c_str();
-              line = svmConfigurationToSVMLightLearnInputLine(config, totdoc);
+              line = SVMConfigurationToSVMLightLearnInputLine(config, totdoc);
           }
       }
     }  
@@ -590,14 +590,14 @@ MODEL * SVMLightRunner::libraryReadModel(
         model->kernel_parm.poly_degree = config.degree;
         // -g float    -> parameter gamma in rbf kernel
         model->kernel_parm.rbf_gamma = config.gamma;
-        // FIXME: what value here?
-        // -s float    -> parameter s in sigmoid/poly kerne
+        // -s float    -> parameter s in sigmoid/poly kernel
         model->kernel_parm.coef_lin = config.coef0;
-        // FIXME: what value here?
         // -r float    -> parameter c in sigmoid/poly kernel
-        model->kernel_parm.coef_const = 0.0;
+        model->kernel_parm.coef_const = config.C;
         // -u string   -> parameter of user defined kernel
-        //model->kernel_parm.custom = "empty";
+        char kernel_parm_custom[50] = "empty";
+        char * model_kernel_parm_custom = model->kernel_parm.custom;
+        model_kernel_parm_custom = kernel_parm_custom;
         // highest feature index
         model->totwords = config.data.n_cols;
         // number of training documents
@@ -634,7 +634,7 @@ MODEL * SVMLightRunner::libraryReadModel(
         free(line);
     } else {
         for(i = 1; i < model->sv_num; ++i) {
-            line = svmConfigurationToSVMLightModelSVLine(config, i);
+            line = SVMConfigurationToSVMLightModelSVLine(config, i-1);
             if(!parse_document(line,words,&(model->alpha[i]),&queryid,&slackid,
                        &costfactor,&wpos,max_words,&comment)) {
               printf("\nParsing error while reading model file in SV %ld!\n%s",
@@ -714,7 +714,7 @@ void SVMLightRunner::libraryReadDocuments (
             newline = true;
             //std::string stringline = "";
             //line = (char*)stringline.c_str();
-            line = svmConfigurationToSVMLightLearnInputLine(config, dnum);
+            line = SVMConfigurationToSVMLightLearnInputLine(config, dnum);
         }
     }
     while(newline) {
@@ -756,7 +756,7 @@ void SVMLightRunner::libraryReadDocuments (
           newline = false;
           if (dnum < config.target.n_rows) {
               newline = true;
-              line = svmConfigurationToSVMLightLearnInputLine(config, dnum);
+              line = SVMConfigurationToSVMLightLearnInputLine(config, dnum);
           }
       }
       // GMUM.R changes }
@@ -774,16 +774,16 @@ void SVMLightRunner::libraryReadDocuments (
 }
 
 
-char * SVMLightRunner::svmConfigurationToSVMLightLearnInputLine(
+char * SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     SVMConfiguration &config, long int line_num
 ) {
-    std::cout << "[SVMLightRunner] svmConfigurationToSVMLightLearnInputLine()" << std::endl;
+    std::cout << "[SVMLightRunner] SVMConfigurationToSVMLightLearnInputLine()" << std::endl;
     std::string line_string = "";
 
     std::ostringstream ss;
-    ss << config.target[line_num];
+    ss << std::setprecision(32) << config.target[line_num];
     for (long int j = 1; j <= config.data.n_cols; ++j) {
-        ss << ' ' << j << ':' << config.data(line_num, j-1);
+        ss << ' ' << j << ':' << std::setprecision(8) << config.data(line_num, j-1);
     }
     ss << std::endl;
     ss << "  ";
@@ -793,21 +793,21 @@ char * SVMLightRunner::svmConfigurationToSVMLightLearnInputLine(
 }
 
 
-char * SVMLightRunner::svmConfigurationToSVMLightModelSVLine(
+char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
     SVMConfiguration &config, long int line_num
 ) {
-    std::cout << "[SVMLightRunner] svmConfigurationToSVMLightModelSVLine()" << std::endl;
+    std::cout << "[SVMLightRunner] SVMConfigurationToSVMLightModelSVLine()" << std::endl;
     std::string line_string = "";
 
     std::ostringstream ss;
-    ss << config.alpha_y[line_num];
+    ss << std::setprecision(32) << config.alpha_y[line_num];
     for (long int i = 1; i <= config.support_vectors.n_cols; ++i) {
-        ss << ' ' << i << ':' << config.support_vectors(line_num, i-1);
+        ss << ' ' << i << ':' << std::setprecision(8) << config.support_vectors(line_num, i-1);
     }
     ss << std::endl;
     line_string = ss.str();
 
-    std::cout << "[SVMLightRunner] svmConfigurationToSVMLightModelSVLine done." << std::endl;
+    std::cout << "[SVMLightRunner] SVMConfigurationToSVMLightModelSVLine done." << std::endl;
     return (char*)line_string.c_str();
 }
 
@@ -825,6 +825,9 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     MODEL *model, SVMConfiguration *config
 ) {
     std::cout << "[SVMLightRunner] SVMLightModelToSVMConfiguration()" << std::endl;
+    long i, j;
+    SVECTOR *v;
+
     /* 0=linear, 1=poly, 2=rbf, 3=sigmoid, 4=custom -- same as GMUM.R! */
     // FIXME: No conversion?
     config->kernel_type = (KernelType) model->kernel_parm.kernel_type;
@@ -832,15 +835,12 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     config->degree = model->kernel_parm.poly_degree;
     // -g float    -> parameter gamma in rbf kernel
     config->gamma = model->kernel_parm.rbf_gamma;
-    // FIXME: what value here?
     // -s float    -> parameter s in sigmoid/poly kerne
     config->coef0 = model->kernel_parm.coef_lin;
-    // FIXME: what value here?
     // -r float    -> parameter c in sigmoid/poly kernel
-    //??? = model->kernel_parm.coef_const;
-    // FIXME: what value here?
+    config->C = model->kernel_parm.coef_const;
     // -u string   -> parameter of user defined kernel
-    //??? = model->kernel_parm.custom;
+    config->kernel_parm_custom = model->kernel_parm.custom;
     // highest feature index - no assignment to read-only data
     //config->data.n_cols = model->totwords;
     // number of training documents - no assignment to read-only data
@@ -849,12 +849,20 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     config->l = model->sv_num - 1;
     // threshold b
     config->threshold_b = model->b;
-    for(long int j = 0; j < config->l; ++j) {
-        config->alpha_y << model->alpha[j];
-        for (long int i = 0; i < config->support_vectors.n_cols; ++i) {
-            config->support_vectors << model->supvec[j]->fvec->words[i].weight;
+
+    config->alpha_y = arma::randu<arma::vec>(config->l);
+    config->support_vectors = arma::randu<arma::mat>(config->l, model->totwords);
+    for(i=1;i<model->sv_num;i++) {
+      for(v=model->supvec[i]->fvec;v;v=v->next) {
+        config->alpha_y(i-1) = model->alpha[i]*v->factor;
+        for (j=0; (v->words[j]).wnum; j++) {
+            printf("%ld:%.8g ",
+            (long)(v->words[j]).wnum,
+            (double)(v->words[j]).weight);
+            config->support_vectors(i-1,j) = v->words[j].weight;
         }
-        config->support_vectors << arma::endr;
+        //printf("#%s\n",v->userdefined);
+      }
     }
     std::cout << "[SVMLightRunner] SVMLightModelToSVMConfiguration done." << std::endl;
 }

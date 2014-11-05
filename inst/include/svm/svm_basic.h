@@ -70,10 +70,6 @@ public:
 	double nu; /* for NU_SVC, ONE_CLASS, and NU_SVR */
 	double p; /* for EPSILON_SVR */
 
-    /* SVMLight model parameters */
-    double threshold_b;
-    arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
-
 	arma::mat two_e_cov_inv_sqrt;
 	arma::mat two_e_b_dash;
 
@@ -82,6 +78,11 @@ public:
 	arma::vec result;
     arma::mat support_vectors;
 
+
+    /* SVMLight model parameters */
+    double threshold_b;
+    char *kernel_parm_custom;   // Custom kernel parameter(s)
+    arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
 
 	//2eConfig
 //	two

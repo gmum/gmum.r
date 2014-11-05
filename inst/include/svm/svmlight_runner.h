@@ -101,7 +101,7 @@ protected:
     /**
      * Convert SVMConfiguration to one line of SVMLight's `svm_learn` input
      */
-    char * svmConfigurationToSVMLightLearnInputLine(
+    char * SVMConfigurationToSVMLightLearnInputLine(
         SVMConfiguration &config, long int line_num
     );
 
@@ -109,7 +109,7 @@ protected:
      * Convert SVMConfiguration to one line of SVMLight's `svm_classify` input
      * of every Support Vector in one line (starting with alpha*y)
      */
-    char * svmConfigurationToSVMLightModelSVLine(
+    char * SVMConfigurationToSVMLightModelSVLine(
         SVMConfiguration &config, long int line_num
     );
 
@@ -129,3 +129,4 @@ protected:
 
 /* SVMLIGHT_RUNNER_H */
 #endif
+
