@@ -1,9 +1,9 @@
 #include "gtest/gtest.h"
 #include "cluster_reader.hpp"
 #include "clustering_comparator.hpp"
-#include "src/Hartigan.hpp"
-#include "src/random_assignment.hpp"
-#include "src/CEC.hpp"
+#include "hartigan.hpp"
+#include "randomAssignment.hpp"
+#include "cec.hpp"
 #include <vector>
 #include <armadillo>
 #include <boost/smart_ptr.hpp>
