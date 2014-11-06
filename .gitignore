@@ -2,9 +2,12 @@
 *.o
 *.a
 #R history files
-.RData
+.Rbuildignore
 .Rhistory
+.Rproj.user
+.RData
 ..Rcheck
+*.Rproj
 
 #Vim files
 *~
@@ -20,3 +23,4 @@ Debug
 src/main.cpp
 test/cpp/svm/svm_test_model.txt
 test/cpp/svm/libsvm_test
+
