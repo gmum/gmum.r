@@ -1,4 +1,4 @@
-SOURCES = $(wildcard svm/*.cpp)
+SOURCES = $(wildcard svm/*.cpp) $(wildcard cec/*.cpp)
 OBJECTS=$(SOURCES:.cpp=.o)
 
 R_HOME :=     $(shell R RHOME)
