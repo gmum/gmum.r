@@ -1,36 +1,15 @@
-<<<<<<< HEAD
 SOURCES = $(wildcard svm/*.cpp) $(wildcard cec/*.cpp)
 OBJECTS=$(SOURCES:.cpp=.o)
-
-R_HOME :=     $(shell R RHOME)
-RCPPFLAGS := 		$(shell $(R_HOME)/bin/R CMD config --cppflags)
-RLDFLAGS := 		$(shell $(R_HOME)/bin/R CMD config --ldflags)
-RCPPINCL := 		$(shell echo 'Rcpp:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)
-RCPPLIBS := 		$(shell echo 'Rcpp:::LdFlags()'  | $(R_HOME)/bin/R --vanilla --slave)
-RCPPARMAINCL :=		$(shell echo 'RcppArmadillo:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)	
-
-=======
-SOURCES = $(wildcard cec/*.cpp)
-OBJECTS=$(SOURCES:.cpp=.o)
-
 
 RCPPFLAGS := $(shell $(R_HOME)/bin/R CMD config --cppflags)
 RLDFLAGS := $(shell $(R_HOME)/bin/R CMD config --ldflags)
 RCPPINCL := $(shell $(R_HOME)/bin/Rscript -e "Rcpp:::CxxFlags()")
 RCPPLIBS := $(shell $(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()")
 RCPPARMAINCL := $(shell $(R_HOME)/bin/Rscript -e "RcppArmadillo:::CxxFlags()")
->>>>>>> cec-fix-build
 
 LAPACK_LIBS := $(shell ${R_HOME}/bin/R CMD config LAPACK_LIBS)
 BLAS_LIBS := $(shell ${R_HOME}/bin/R CMD config BLAS_LIBS)
 
-<<<<<<< HEAD
-PKG_CPPFLAGS :=   	-I ../inst/include/svm -Wall $(shell $(R_HOME)/bin/R CMD config CPPFLAGS) 
-PKG_CXXFLAGS := 		$(RCPPFLAGS) $(RCPPINCL) $(RCPPARMAINCL) $(RINSIDEINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -g -pthread -fpic
-PKG_LIBS := 	$(shell $(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()" ) $(LAPACK_LIBS) $(BLAS_LIBS) $(RLAPACK) $(RLDFLAGS) $(RRPATH) $(RBLAS) $(RCPPLIBS) $(RINSIDELIBS)
-=======
 PKG_CPPFLAGS := -I ../inst/include/svm -I ../inst/include/cec -Wall $(shell $(R_HOME)/bin/R CMD config CPPFLAGS)
 PKG_CXXFLAGS := $(RCPPFLAGS) $(RCPPINCL) $(RCPPARMAINCL) $(RINSIDEINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -g -pthread -fpic
 PKG_LIBS := $(LAPACK_LIBS) $(BLAS_LIBS) $(RLAPACK) $(RLDFLAGS) $(RRPATH) $(RBLAS) $(RCPPLIBS) $(RINSIDELIBS)
-
->>>>>>> cec-fix-build
