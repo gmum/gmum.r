@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include <armadillo>
-#include "src/Cluster.hpp"
+#include "cluster.hpp"
 using  namespace gmum;
 class ClusterTest : public ::testing::Test {
 protected:
