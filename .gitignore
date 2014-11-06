@@ -114,3 +114,25 @@ sympy-plots-for-*.tex/
 *.xdy
 
 
+*.so
+*.o
+*.a
+#R history files
+.RData
+.Rhistory
+..Rcheck
+
+#Vim files
+*~
+*.swp
+#
+Debug
+.cproject
+.project
+.settings
+..Rcheck/
+
+#file with main for tests
+src/main.cpp
+test/cpp/svm/svm_test_model.txt
+test/cpp/svm/libsvm_test
