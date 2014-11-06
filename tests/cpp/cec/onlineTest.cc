@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <armadillo>
 #include <vector>
-#include "src/Cluster.hpp"
+#include "cluster.hpp"
 #include <boost/shared_ptr.hpp>
 using namespace gmum;
 

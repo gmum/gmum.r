@@ -1,11 +1,11 @@
 #include "gtest/gtest.h"
 #include "cluster_reader.hpp"
-#include "src/Hartigan.hpp"
-#include "src/CEC.hpp"
+#include "hartigan.hpp"
+#include "cec.hpp"
 #include <vector>
 #include <armadillo>
 #include <boost/smart_ptr.hpp>
-#include "src/random_assignment.hpp"
+#include "randomAssignment.hpp"
 using namespace gmum;
 
 #define SHOW(x) std::cout << #x << " = " << x << std::endl

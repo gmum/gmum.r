@@ -2,15 +2,27 @@ ifndef GTEST
 $(error GTEST is not set, add to your .bashrc GTEST env. variable pointing to gtest directory without slash at the end)
 else
 
-include src/Makevars
+GMUMR_ROOT_DIR = ../../..
+
+INCLUDE_ROOT_DIR = $(GMUMR_ROOT_DIR)/inst/include
+SOURCES_ROOT_DIR = $(GMUMR_ROOT_DIR)/src
+
+CEC_INCLUDE_DIR = $(INCLUDE_ROOT_DIR)/cec/
+CEC_SOURCES_DIR = $(SOURCES_ROOT_DIR)/cec
+
+CEC_SOURCES = $(wildcard $(CEC_SOURCES)/*.cpp)
+SOURCES = $(CEC_SOURCES)
+OBJECTS = $(patsubst %.cpp, %.o, $(SOURCES))
+
+include $(SOURCES_ROOT_DIR)/Makevars
+
 CXX := $(CXX) -isystem $(GTEST)/include
-CPPFLAGS := $(PKG_CPPFLAGS)
+CPPFLAGS := -I$(INCLUDE_ROOT_DIR) -I$(CEC_INCLUDE_DIR) $(PKG_CPPFLAGS)
 CXXFLAGS := $(PKG_CXXFLAGS) -g -O2 -s -pthread
 LDLIBS := $(PKG_LIBS) $(LDLIBS) -O1 -larmadillo -O1 -llapack -lblas
-USER_DIR = ../../src
 
-TESTS = ClusterTest firstTest onlineTest ellipse_gauss_test simple_1_test mouse_1_test clusterTraceOnlyTest mouse_1_spherical_test big_data_tests
-
+# TESTS = ClusterTest firstTest onlineTest ellipse_gauss_test simple_1_test mouse_1_test clusterTraceOnlyTest mouse_1_spherical_test big_data_tests
+TESTS = big_data_tests
 GTEST_HEADERS = $(GTEST)/include/gtest/*.h \
                 $(GTEST)/include/gtest/internal/*.h
 
@@ -59,30 +71,30 @@ gtest_main.a : gtest-all.o gtest_main.o
 #	$(CXX) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -c
 
 ClusterTest : gtest_main.a 
-	$(CXX) ClusterTest.cc  src/Cluster.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+	$(CXX) ClusterTest.cc  $(CEC_SOURCES_DIR)/cluster.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 firstTest : gtest_main.a
 	$(CXX) firstTest.cc  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 onlineTest: gtest_main.a 
-	$(CXX) onlineTest.cc src/Cluster.hpp src/Cluster.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+	$(CXX) onlineTest.cc $(CEC_SOURCES_DIR)/cluster.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 clusterTraceOnlyTest: gtest_main.a 
-	$(CXX) clusterTraceOnlyTest.cc src/Cluster.hpp src/Cluster.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+	$(CXX) clusterTraceOnlyTest.cc $(CEC_SOURCES_DIR)/cluster.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 ellipse_gauss_test: gtest_main.a 
-	$(CXX) ellipse_gauss_test.cc src/CEC.hpp src/CEC.cpp src/Cluster.hpp src/Cluster.cpp src/Hartigan.hpp src/Hartigan.cpp src/random_assignment.hpp src/random_assignment.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+	$(CXX) ellipse_gauss_test.cc $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/hartigan.cpp $(CEC_SOURCES_DIR)/randomAssignment.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 mouse_1_test: gtest_main.a 
-	$(CXX) mouse_1_test.cc src/CEC.hpp src/CEC.cpp src/Cluster.hpp src/Cluster.cpp src/Hartigan.hpp src/Hartigan.cpp src/random_assignment.hpp src/random_assignment.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+	$(CXX) mouse_1_test.cc $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/hartigan.cpp $(CEC_SOURCES_DIR)/randomAssignment.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 mouse_1_spherical_test: gtest_main.a 
-	$(CXX) mouse_1_spherical_test.cc src/CEC.hpp src/CEC.cpp src/Cluster.hpp src/Cluster.cpp src/Hartigan.hpp src/Hartigan.cpp src/random_assignment.hpp src/random_assignment.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+	$(CXX) mouse_1_spherical_test.cc $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/hartigan.cpp $(CEC_SOURCES_DIR)/randomAssignment.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 simple_1_test: gtest_main.a 
-	$(CXX) simple_1_test.cc src/CEC.hpp src/CEC.cpp src/Cluster.hpp src/Cluster.cpp src/Hartigan.hpp src/Hartigan.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+	$(CXX) simple_1_test.cc $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/hartigan.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 big_data_tests: gtest_main.a 
-	$(CXX) big_data_tests.cc src/CEC.hpp src/CEC.cpp src/Cluster.hpp src/Cluster.cpp src/Hartigan.hpp src/Hartigan.cpp src/random_assignment.hpp src/random_assignment.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+	$(CXX) big_data_tests.cc $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/hartigan.cpp $(CEC_SOURCES_DIR)/randomAssignment.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 endif
