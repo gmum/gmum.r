@@ -20,31 +20,34 @@ protected:
     for(std::vector<unsigned int>::iterator it = clustering->begin();it!=clustering->end() ; ++it) {
       *it -= min;
     }
-    numberOfClusters = 3;
+    params.nrOfClusters = 3;
+    params.killThreshold = 0.0001;
+    params.dataset = points;
     std::cout << "initialized data" << std::endl;
   }
   boost::shared_ptr<std::vector<unsigned int> > clustering;
   boost::shared_ptr<arma::mat> points;
   double energy;
-  int numberOfClusters;
+  Params params;
 };
 
 #define SHOW_CLUSTERING
 
 TEST_F(Mouse1Test,IsEnergyCorrect) {
-  double killThreshold = 0.0001;
+
   BestPermutationComparator comparator;
   int t = 20;
   int numberOfTimesAcceptable = 0;  
   std::cout << "Should get energy : " << energy;
   for (int i = 0 ; i < t ; ++i) {
     boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
-    initAssignRandom(*assignment, points->n_rows, numberOfClusters);
+    RandomAssignment randomAssignment(*points, params.nrOfClusters);
+    randomAssignment(*assignment);
     boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
-    CEC cec(points, assignment, hartigan, killThreshold, numberOfClusters);
+    CEC cec(hartigan, assignment, params);
 
     cec.loop();
-    double percentage = comparator.evaluateClustering(numberOfClusters,*points,*assignment,*clustering);
+    double percentage = comparator.evaluateClustering(params.nrOfClusters,*points,*assignment,*clustering);
     std::cout << "Percentage " << percentage << std::endl;
     std::cout << "Energy " << cec.entropy() << std::endl;
     numberOfTimesAcceptable += (percentage >= 0.9) || (cec.entropy() < energy*1.5);

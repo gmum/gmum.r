@@ -20,13 +20,13 @@ C++ **Armadillo** library and its dependencies ( **Lapack**, **Blas**) need to b
 
 ## Build
 
-In order to build tests `cd` into this directory (`tests/cpp/cec`) and type `make`.
+In order to build tests `cd` into this directory (`tests/cpp/cec`) and type `make R_HOME=/usr`.
 
 ## Run tests
 
 All test cases are separate executable files. For example:
 
 ```
-./firstTest
+./onlineTest
 ```
 
