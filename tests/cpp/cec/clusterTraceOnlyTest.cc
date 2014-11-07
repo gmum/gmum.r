@@ -47,7 +47,7 @@ TEST(TraceOnly,AddPoint){
     arma::rowvec point(data.row(i));
     m = m->addPoint(point);
     ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m.get());
-    Cluster tmp(id,fits,tmpMatrix);
+    ClusterStandard tmp(id,fits,tmpMatrix);
     arma::rowvec  meanOnlineDifference = upref->getMean() - realM;
     float traceDiff = upref->getCovMatTrace() - arma::trace(covariance);
     float relativeError = std::abs(traceDiff/arma::trace(covariance));
@@ -101,7 +101,7 @@ TEST(TraceOnly,removePoint){
 
     arma::rowvec point(data.row(i));
     m = m->removePoint(point);
-    Cluster tmp(id,fits,tmpMatrix);
+    ClusterStandard tmp(id,fits,tmpMatrix);
 
     ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m.get());   
  arma::rowvec  meanOnlineDifference = upref->getMean() - realM;

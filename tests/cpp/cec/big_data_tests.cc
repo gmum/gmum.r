@@ -20,12 +20,17 @@ void run(const char * str, int numberOfClusters, int times = 1) {
   for (std::vector<unsigned int>::iterator it = clustering->begin(); it!= clustering->end() ; ++it)
     *it -= min;
 boost::shared_ptr<arma::mat> points(new arma::mat(clusterReader.getPointsInMatrix()));
-  double killThreshold = 0.0001;
+  Params params;
+  params.killThreshold = 0.0001;
+  params.nrOfClusters = numberOfClusters;
+  params.dataset = points;
+
  for (int i = 0 ; i < times ; ++i) {
     boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
-    initAssignRandom(*assignment, points->n_rows, numberOfClusters);
+    RandomAssignment randomAssignment(*points, params.nrOfClusters);
+    randomAssignment(*assignment);
     boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
-    CEC cec(points, assignment, hartigan, killThreshold, numberOfClusters);
+    CEC cec(hartigan, assignment, params);
 
     cec.loop();
     std::cout << "Energy " << cec.entropy() << std::endl;
@@ -35,33 +40,37 @@ boost::shared_ptr<arma::mat> points(new arma::mat(clusterReader.getPointsInMatri
 }
 
   void runSpherical(const char * str, int numberOfClusters, int times = 1){
-      std::cout.precision(41);
-  boost::shared_ptr<std::vector<unsigned int> > clustering(new std::vector<unsigned int>());
-  ClusterReader clusterReader(str,4);
-  clusterReader.getClustering(*clustering);
+    std::cout.precision(41);
+    boost::shared_ptr<std::vector<unsigned int> > clustering(new std::vector<unsigned int>());
+    ClusterReader clusterReader(str,4);
+    clusterReader.getClustering(*clustering);
 
-  int min = *(std::min_element(clustering->begin(),clustering->end()));
-  for (std::vector<unsigned int>::iterator it = clustering->begin(); it!= clustering->end() ; ++it)
+    int min = *(std::min_element(clustering->begin(),clustering->end()));
+    for (std::vector<unsigned int>::iterator it = clustering->begin(); it!= clustering->end() ; ++it)
     *it -= min;
-boost::shared_ptr<arma::mat> points(new arma::mat(clusterReader.getPointsInMatrix()));
-  double killThreshold = 0.0001;
-      std::vector<ClusterType> types;
-    std::vector<float> radius;
-    std::vector<arma::mat> covMatrices;
-    for (int i = 0 ; i < numberOfClusters ; ++i){
-      types.push_back(sphere);
-    }
- for (int i = 0 ; i < times ; ++i) {
-    boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
-    initAssignRandom(*assignment, points->n_rows, numberOfClusters);
-    boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
-    CEC cec(points, assignment, hartigan, killThreshold, types,radius,covMatrices);
+    boost::shared_ptr<arma::mat> points(new arma::mat(clusterReader.getPointsInMatrix()));
+    Params params;
+    params.killThreshold = 0.0001;
+    params.nrOfClusters = numberOfClusters;
+    params.dataset = points;
 
-    cec.loop();
-    std::cout << "Energy " << cec.entropy() << std::endl;
- }
- ASSERT_TRUE(true);
-  }
+//    std::vector<ClusterType> types;
+//    std::vector<float> radius;
+//    std::vector<arma::mat> covMatrices;
+//    for (int i = 0 ; i < numberOfClusters ; ++i){
+//      types.push_back(sphere);
+//    }
+    for (int i = 0 ; i < times ; ++i) {
+        boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
+        RandomAssignment randomAssignment(*points, params.nrOfClusters);
+        randomAssignment(*assignment);
+        boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
+        CEC cec(hartigan, assignment, params);
+
+        cec.loop();
+        std::cout << "Energy " << cec.entropy() << std::endl;
+    }
+}
 TEST(BigData,Normal_1) {
   
   run("bigData_1",3,times);
