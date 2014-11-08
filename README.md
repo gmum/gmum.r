@@ -13,104 +13,52 @@ Right now the only avaiable SVM implementation is the libSVM. We also provide [2
 
 ## Main methods
 
-* **SVM**(...) - create svm object.
-
-* **train**(svm) - train a SVM object.
+* **SVM**(formula, dataset, ... ) - create svm object.
 
 * **predict**(svm, x) - predict class of given examples using a SVM object.
 
-* **params**(svm, ...) - change parameters of a SVM object.
-
-
 ## Dataset methods
-
-* **load.dataset**(svm, dataset) - load a dataset to SVM object.
 
 * **dataset.X**(svm) - print unlabeled data.
 
 * **dataset.Y**(svm) - print labels.
 
+* **svm.dataset.breast_cancer**() - load breast cancer dataset.
 
-## Parameters method
+* **svm.dataset.2e**() - load example two ellipsoids dataset.
 
-Each method act as a setter when given an argument, and as a getter when used without one.
+* **read.libsvm**(filename, dimensionality) - load libsvm dataset format. 
 
-* **params.kernel**(svm, ... )
+## Misc
 
-* **params.preprocess**(svm, ... )
-
-* **params.C**(svm, ... )
-
-* **params.gamma**(svm, ... )
-
-* **params.coef0**(svm, ... )
-
-* **params.degree**(svm, ... )
-
-* **params.shrinkin**g(svm, ... )
-
-* **params.probability**(svm, ... )
-
-* **params.cache_size**(svm, ... )
-
+* **acc**(prediction, target) - calculated accuracy of a prediction.
 
 For detailed documentation please refer to provided documentation.
 
-## Example
-
-### R CMD
-
-        devtools::load_all()
-        svm <- SVM()
-        x <- svm$getX()
-        target <- svm$getY()
-        train(svm)
-        result <- predict(svm, x)
-        acc <- accuracy.svm(y=result, t=target)
-        print(acc)
-    
-### Script
+## Example usage
 
         library('gmum.r')
+
+        # Load a dataset, here we have provided an example 
+        ds <- svm.dataset.breast_cancer()
         
         # Create new SVM object
-        svm <- SVM(lib = "libsvm",
-                   kernel = "linear",
-                   prep = "none",
-                   C = 1,
-                   gamma = 0.01,
-                   coef0 = 0) 
-        
-        # Load a dataset, here we have provided an example 
-        ds <- read.libsvm( breast_cancer.path, 10 )
-        
-        # All functions are generic, meaning you nedd to provide your model as a first argument
-        load_dataset(svm, ds)
+        svm <- SVM( formula = X1~. ,
+                    data = ds,
+                    lib = "libsvm",
+                    kernel = "linear",
+                    prep = "none",
+                    C = 1,
+                    gamma = 0.01,
+                    coef0 = 0) 
         
         # You can access the dataset 
         x <- dataset.X(svm)
         y <- dataset.Y(svm)
         
-        # You can change the dataset, but that requires class methods
-        svm$setX(x)
-        svm$setY(y)
-        
-        # You can change model paramaters using params function for specific parameter
-        params.C(svm, 100)
-        
-        # or change multiple parameters at once
-        params(svm, C=1, gamma=0.01)
-        
-        # To view specific parameter you can use the same function without a values, or print a summary for your model
-        params.C(svm)
-        print(svm)
-        
-        # Use train(object) function to train your model on provided dataset
-        train(svm)
-        
         # Classify your dataset using predict function
         prediction <- predict(svm, x)
-
+        
         # Check models accuracy
-        acc <- accuracy.svm(y=y, t=prediction)
+        acc <- svm.accuracy(prediction=y, target=prediction)
 
