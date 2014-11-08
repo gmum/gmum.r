@@ -29,13 +29,13 @@ read.libsvm <- function(filename, dimensionality) {
     }
   }
   
-  return( yx )
+  return( data.frame(yx) )
 }
 
 
 svm.dataset.breast_cancer <- function() {
   bc = read.libsvm( breast_cancer.path, 10 )
-  return(data.frame(bc))
+  return(bc)
 }
 
 svm.dataset.2e <- function() {
