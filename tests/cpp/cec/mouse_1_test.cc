@@ -23,6 +23,7 @@ protected:
     params.nrOfClusters = 3;
     params.killThreshold = 0.0001;
     params.dataset = points;
+    params.clusterType = kstandard;
     std::cout << "initialized data" << std::endl;
   }
   boost::shared_ptr<std::vector<unsigned int> > clustering;

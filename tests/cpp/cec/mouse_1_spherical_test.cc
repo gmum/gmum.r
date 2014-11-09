@@ -23,6 +23,7 @@ protected:
     params.nrOfClusters = 3;
     params.killThreshold = 0.0001;
     params.dataset = points;
+    params.clusterType = ksphere;
     std::cout << "initialized data" << std::endl;
   }
   boost::shared_ptr<std::vector<unsigned int> > clustering;
@@ -44,15 +45,6 @@ TEST_F(Mouse1SphericalTest,IsEnergyCorrect) {
     assignment->resize(params.dataset->n_rows);
     randomAssignment(*assignment);
     boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
-//    std::vector<ClusterType> types;
-//    std::vector<float> radius;
-//    std::vector<arma::mat> covMatrices;
-
-//    for (int i = 0 ; i < params.nrOfClusters ; ++i){
-//      types.push_back(sphere);
-//    }
-//     ???
-//     params.types = types;
     CEC cec(hartigan, assignment, params);
 
     cec.loop();
@@ -73,7 +65,6 @@ TEST_F(Mouse1SphericalTest,IsEnergyCorrect) {
 
 
 TEST_F(Mouse1SphericalTest,StartingFromCorrectAssignment) {
-  double killThreshold = 0.0001;
   BestPermutationComparator comparator;
   int t = 1;
   int numberOfTimesAcceptable = 0;  
@@ -82,14 +73,7 @@ TEST_F(Mouse1SphericalTest,StartingFromCorrectAssignment) {
     boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
     for (std::vector<unsigned int>::iterator it = clustering->begin();it!=clustering->end(); ++it)
       assignment->push_back(*it);
-    //    initAssignRandom(*assignment, points->n_rows, numberOfClusters);
     boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
-    std::vector<ClusterType> types;
-    std::vector<float> radius;
-    std::vector<arma::mat> covMatrices;
-//    for (int i = 0 ; i < numberOfClusters ; ++i){
-//      types.push_back(sphere);
-//    }
     CEC cec(hartigan, assignment, params);
 
     cec.loop();
