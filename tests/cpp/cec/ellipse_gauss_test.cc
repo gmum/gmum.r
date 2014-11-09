@@ -50,6 +50,7 @@ TEST(EllipseGauss,real_test){
     boost::shared_ptr<std::vector<unsigned int> > assignment (new std::vector<unsigned int>);
 
     RandomAssignment randomAssignment(*points, params.nrOfClusters);
+    assignment->resize(params.dataset->n_rows);
     randomAssignment(*assignment);
     //CEC init
     boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
