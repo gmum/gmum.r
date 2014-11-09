@@ -24,6 +24,7 @@ boost::shared_ptr<arma::mat> points(new arma::mat(clusterReader.getPointsInMatri
   params.killThreshold = 0.0001;
   params.nrOfClusters = numberOfClusters;
   params.dataset = points;
+  params.clusterType = kstandard;
 
  for (int i = 0 ; i < times ; ++i) {
     boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
@@ -54,6 +55,7 @@ boost::shared_ptr<arma::mat> points(new arma::mat(clusterReader.getPointsInMatri
     params.killThreshold = 0.0001;
     params.nrOfClusters = numberOfClusters;
     params.dataset = points;
+    params.clusterType = kstandard;
 
 //    std::vector<ClusterType> types;
 //    std::vector<float> radius;
