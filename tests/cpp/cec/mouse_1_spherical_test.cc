@@ -41,6 +41,7 @@ TEST_F(Mouse1SphericalTest,IsEnergyCorrect) {
   for (int i = 0 ; i < t ; ++i) {
     boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
     RandomAssignment randomAssignment(*points, params.nrOfClusters);
+    assignment->resize(params.dataset->n_rows);
     randomAssignment(*assignment);
     boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
 //    std::vector<ClusterType> types;
