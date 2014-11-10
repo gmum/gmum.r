@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 SOURCES = $(wildcard svm/*.cpp) $(wildcard cec/*.cpp)
 OBJECTS=$(SOURCES:.cpp=.o)
 
@@ -13,3 +14,23 @@ BLAS_LIBS := $(shell ${R_HOME}/bin/R CMD config BLAS_LIBS)
 PKG_CPPFLAGS := -I ../inst/include/svm -I ../inst/include/cec -Wall $(shell $(R_HOME)/bin/R CMD config CPPFLAGS)
 PKG_CXXFLAGS := $(RCPPFLAGS) $(RCPPINCL) $(RCPPARMAINCL) $(RINSIDEINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -g -pthread -fpic
 PKG_LIBS := $(LAPACK_LIBS) $(BLAS_LIBS) $(RLAPACK) $(RLDFLAGS) $(RRPATH) $(RBLAS) $(RCPPLIBS) $(RINSIDELIBS)
+=======
+SOURCES = $(wildcard tinythread/*.cpp gng/*.cpp)
+OBJECTS=$(SOURCES:.cpp=.o)
+
+CPPFLAGS := $(shell $(R_HOME)/bin/R CMD config --cppflags)
+RLDFLAGS := $(shell $(R_HOME)/bin/R CMD config --ldflags)
+RCPPINCL := $(shell $(R_HOME)/bin/Rscript -e "Rcpp:::CxxFlags()")
+RCPPLIBS := $(shell $(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()")
+RCPPARMAINCL :=	$(shell $(R_HOME)/bin/Rscript -e "RcppArmadillo:::CxxFlags()")	
+
+PKG_CPPFLAGS := -DRCPP_INTERFACE -O4 -I../inst/include -I../inst/include/gng -I../inst/tinythread -I. $(shell $(R_HOME)/bin/R CMD config CPPFLAGS)
+PKG_CXXFLAGS := -O4 $(RCPPFLAGS) $(RCPPINCL) $(RCPPARMAINCL) $(RINSIDEINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -g -pthread -fpic  
+PKG_LIBS := -O4 $(RLDFLAGS) $(RRPATH) $(RBLAS) $(RLAPACK) $(RCPPLIBS) $(RINSIDELIBS) -lpthread
+
+
+all: $(SHLIB)
+
+clean:
+	@rm -f $(OBJECTS)
+>>>>>>> gng/gmum.r
