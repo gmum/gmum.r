@@ -13,6 +13,8 @@
 
 #include "libsvm_runner.h"
 #include "svm_basic.h"
+#include "svm_utils.h"
+#include "log.h"
 
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 void read_problem(const char *filename, svm_parameter& param);
@@ -79,7 +81,7 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 	error_msg = svm_check_parameter(&prob, param);
 
 	if (error_msg) {
-		fprintf(stderr, "ERROR: %s\n", error_msg);
+		LOG(LogLevel::Error, "ERROR: " + to_string(error_msg))
 		return false;
 	}
 	int* nr = Malloc(int, 1);
@@ -133,7 +135,7 @@ svm_model* LibSVMRunner::load_model_from_config(SVMConfiguration& config,
 	error_msg = svm_check_parameter(&prob, param);
 
 	if (error_msg) {
-		fprintf(stderr, "ERROR: %s\n", error_msg);
+		LOG(LogLevel::Error, "ERROR: " + to_string(error_msg))
 		return 0;
 	}
 
@@ -189,14 +191,14 @@ void LibSVMRunner::save_model_to_file(SVMConfiguration& config,
 	error_msg = svm_check_parameter(&prob, param);
 
 	if (error_msg) {
-		fprintf(stderr, "ERROR: %s\n", error_msg);
+		LOG(LogLevel::Error, "ERROR: " + to_string(error_msg))
 		exit(1);
 	}
 
 	model = svm_train(&prob, param);
 
 	if (svm_save_model(model_file_name, model)) {
-		fprintf(stderr, "can't save model to file %s\n", model_file_name);
+		LOG(LogLevel::Error, "can't save model to file " + to_string(model_file_name))
 		exit(1);
 	}
 	svm_free_and_destroy_model(&model);
@@ -316,31 +318,30 @@ void LibSVMRunner::file_prediction(SVMConfiguration& config) {
 
 	input = fopen(input_filename, "r");
 	if (input == NULL) {
-		fprintf(stderr, "can't open input file %s\n", input_filename);
+		LOG(LogLevel::Error, "can't open input file " + to_string(input_filename))
 		exit(1);
 	}
 
 	output = fopen(output_filename, "w");
 	if (output == NULL) {
-		fprintf(stderr, "can't open output file %s\n", output_filename);
+		LOG(LogLevel::Error, "can't open output file " + to_string(output_filename))
 		exit(1);
 	}
 
 	if ((model = svm_load_model(model_filename)) == 0) {
-		fprintf(stderr, "can't open model file %s\n", model_filename);
+		LOG(LogLevel::Error, "can't open model file " + to_string(model_filename));
 		exit(1);
 	}
 
 	x = (struct svm_node *) malloc(max_nr_attr * sizeof(struct svm_node));
 	if (predict_probability) {
 		if (svm_check_probability_model(model) == 0) {
-			fprintf(stderr, "Model does not support probabiliy estimates\n");
+			LOG(LogLevel::Error, "Model does not support probabiliy estimates");
 			exit(1);
 		}
 	} else {
 		if (svm_check_probability_model(model) != 0)
-			printf(
-					"Model supports probability estimates, but disabled in prediction.\n");
+			LOG(LogLevel::Info, "Model supports probability estimates, but disabled in prediction.");
 	}
 
 	predict(input, output);
@@ -359,10 +360,10 @@ void predict(FILE *input, FILE *output) {
 	int j;
 
 	if (predict_probability) {
-		if (svm_type == NU_SVR || svm_type == EPSILON_SVR)
-			printf(
-					"Prob. model for test data: target value = predicted value + z,\nz: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma=%g\n",
-					svm_get_svr_probability(model));
+		if (svm_type == NU_SVR || svm_type == EPSILON_SVR) {
+			LOG(LogLevel::Info, "Prob. model for test data: target value = predicted value + z,\nz: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma="
+							+ to_string(svm_get_svr_probability(model)));
+		}
 		else {
 			int *labels = (int *) malloc(nr_class * sizeof(int));
 			svm_get_labels(model, labels);
@@ -445,14 +446,13 @@ void predict(FILE *input, FILE *output) {
 		++total;
 	}
 	if (svm_type == NU_SVR || svm_type == EPSILON_SVR) {
-		printf("Mean squared error = %g (regression)\n", error / total);
-		printf("Squared correlation coefficient = %g (regression)\n",
-				((total * sumpt - sump * sumt) * (total * sumpt - sump * sumt))
-						/ ((total * sumpp - sump * sump)
-								* (total * sumtt - sumt * sumt)));
+		LOG(LogLevel::Info, "Mean squared error = " + to_string(error / total) + "(regression)");
+		LOG(LogLevel::Info, "Squared correlation coefficient = "
+				+ to_string(((total * sumpt - sump * sumt) * (total * sumpt - sump * sumt))
+				/ ((total * sumpp - sump * sump)
+				* (total * sumtt - sumt * sumt))) + "(regression)");
 	} else
-		printf("Accuracy = %g%% (%d/%d) (classification)\n",
-				(double) correct / total * 100, correct, total);
+		LOG(LogLevel::Info, "Accuracy = " + to_string((double) correct / total * 100) + "(classification)");
 	if (predict_probability)
 		free(prob_estimates);
 }
@@ -478,7 +478,7 @@ struct svm_parameter get_default_params() {
 }
 
 void exit_input_error(int line_num) {
-	fprintf(stderr, "Wrong input format at line %d\n", line_num);
+	LOG(LogLevel::Error, "Wrong input format at line " + to_string(line_num));
 	exit(1);
 }
 
@@ -505,7 +505,7 @@ void read_problem(const char *filename, svm_parameter& param) {
 	char *idx, *val, *label;
 
 	if (fp == NULL) {
-		fprintf(stderr, "can't open input file %s\n", filename);
+		LOG(LogLevel::Error, "Wcan't open input file " + to_string(filename));
 		exit(1);
 	}
 
@@ -582,14 +582,12 @@ void read_problem(const char *filename, svm_parameter& param) {
 	if (param.kernel_type == PRECOMPUTED)
 		for (i = 0; i < prob.l; i++) {
 			if (prob.x[i][0].index != 0) {
-				fprintf(stderr,
-						"Wrong input format: first column must be 0:sample_serial_number\n");
+				LOG(LogLevel::Error, "Wrong input format: first column must be 0:sample_serial_number");
 				exit(1);
 			}
 			if ((int) prob.x[i][0].value <= 0
 					|| (int) prob.x[i][0].value > max_index) {
-				fprintf(stderr,
-						"Wrong input format: sample_serial_number out of range\n");
+				LOG(LogLevel::Error, "Wrong input format: sample_serial_number out of range");
 				exit(1);
 			}
 		}
