@@ -2,9 +2,13 @@
 #define SVM_BASIC_H
 
 #include <string>
+#include <log.h>
 #include <RcppArmadillo.h>
 #include <R.h>
 
+#define DEBUG  // Comment this to run production version without logging.
+
+#define VERBOSITY LogLevel::Info
 
 enum KernelType {
 	_LINEAR, _POLY, _RBF, _SIGMOID // _PRECOMPUTED
@@ -24,6 +28,8 @@ enum Preprocess {
 class SVMConfiguration {
 
 public:
+	int verbosity;
+
 	std::string filename; //filename with data
 	std::string model_filename;
 	std::string output_filename;
