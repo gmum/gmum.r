@@ -140,3 +140,12 @@ src/main.cpp
 test/cpp/svm/svm_test_model.txt
 test/cpp/svm/libsvm_test
 
+=======
+.depend/
+build/
+*.so
+*.o
+*.d
+*~
+data/
+/TestParts/
