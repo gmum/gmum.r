@@ -8,6 +8,7 @@ namespace gmum {
         switch(params.type) {
             case knoType: // TODO: handle knoType parameter
             case kmix: // TODO: handle kmix parameter
+                break;
             case kstandard:
                 cluster = boost::shared_ptr<Cluster>(new ClusterStandard(i, *assignment,
                             *points));
