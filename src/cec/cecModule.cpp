@@ -204,6 +204,7 @@ namespace gmum {
             case kstandard: // TODO: handle kstandard parameter
             case kdiagonal: // TODO: handle kdiagonal parameter
             case ksphere: // TODO: handle ksphere parameter
+                break;
             case kfull:
                 if(!params.covMatSet) Rcpp::stop(CONST::ERRORS::covMatReq);
                 break;
