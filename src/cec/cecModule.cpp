@@ -5,7 +5,7 @@
 
 RCPP_EXPOSED_CLASS (cecConfiguration);
 RCPP_EXPOSED_CLASS (cecClient);
-RCPP_EXPOSED_CLASS (CEC);
+RCPP_EXPOSED_CLASS (cecModel);
 
 namespace gmum {
 
@@ -14,13 +14,13 @@ RCPP_MODULE(cec) {
 
 	class_<cecConfiguration>("cecConfiguration")
 	.constructor()
-	.method("setX", &cecConfiguration::setX)
-	.method("setK", &cecConfiguration::setK)
-	.method("setMethodType", &cecConfiguration::setMethodType)
+	.method("setDataSet", &cecConfiguration::setDataSet)
+	.method("setNrOfClusters", &cecConfiguration::setNrOfClusters)
 	.method("setMethodInit", &cecConfiguration::setMethodInit)
 	.method("setR", &cecConfiguration::setR)
 	.method("setCov", &cecConfiguration::setCov)
 	.method("setCentroids", &cecConfiguration::setCentroids)
+	.method("setMethodType", &cecConfiguration::setMethodType)
 	.method("setMix", &cecConfiguration::setMix)
 	.method("setFunction", &cecConfiguration::setFunction)
 	.method("setNstart", &cecConfiguration::setNstart)
@@ -35,23 +35,23 @@ RCPP_MODULE(cec) {
 	.constructor()
 	.method("findBestCEC", &cecClient::findBestCEC);
 
-	std::list<double> (CEC::*predict_1)(std::vector<double>,
-			bool) = &CEC::predict;
-	unsigned int (CEC::*predict_2)(std::vector<double>) const = &CEC::predict;
+	std::list<double> (cecModel::*predict_1)(std::vector<double>,
+			bool) = &cecModel::predict;
+	unsigned int (cecModel::*predict_2)(std::vector<double>) const = &cecModel::predict;
 	//TODO
-	class_<CEC>("CEC")
-	.method("loop", &CEC::loop)
-	.method("singleLoop", &CEC::singleLoop)
-	.method("entropy", &CEC::entropy)
-	.method("y", &CEC::getAssignment)
-	.method("clustering",&CEC::getAssignment)
-	.method("centers", &CEC::centers)
-	.method("cov", &CEC::cov)
+	class_<cecModel>("cecModel")
+	.method("loop", &cecModel::loop)
+	.method("singleLoop", &cecModel::singleLoop)
+	.method("entropy", &cecModel::entropy)
+	.method("y", &cecModel::getAssignment)
+	.method("clustering",&cecModel::getAssignment)
+	.method("centers", &cecModel::centers)
+	.method("cov", &cecModel::cov)
 	.method("predict", predict_1)
 	.method("predict", predict_2)
-	.method("log.ncluster", &CEC::getNrOfClusters)
-	.method("log.energy", &CEC::getEnergy)
-	.method("log.iters", &CEC::iters);
+	.method("log.ncluster", &cecModel::getNrOfClusters)
+	.method("log.energy", &cecModel::getEnergy)
+	.method("log.iters", &cecModel::iters);
 	//.method("x", getDataSet)
 
 }

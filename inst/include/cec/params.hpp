@@ -17,7 +17,7 @@ struct Params {
 public:
 	boost::shared_ptr<const arma::mat> dataset;
 	double killThreshold;
-	int nrOfClusters;
+	unsigned int nrOfClusters;
 	bool logNrOfClusters;
 	bool logEnergy;
 	int nstart;

@@ -21,7 +21,7 @@ public:
 	/**
 	 * Assign points to clusters and learn model config->params.nstart number of times.
 	 */
-	CEC* findBestCEC();
+	cecModel* findBestCEC();
 };
 
 } /* namespace gmum */

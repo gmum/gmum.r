@@ -1,8 +1,10 @@
 loadModule("cec", TRUE)
 
-#' summary()
-#' @title summary()
-#' print detailed information about CEC model object
+#' Summary CEC
+#' 
+#' @title summary
+#' 
+#' @description print detailed information about CEC model object
 #'
 #' @docType methods
 #'

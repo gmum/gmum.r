@@ -7,7 +7,7 @@ cecClient::cecClient(cecConfiguration* config) {
 	this->config = current_config;
 }
 
-CEC* cecClient::findBestCEC() {
+cecModel* cecClient::findBestCEC() {
 	boost::shared_ptr < std::vector<unsigned int>
 			> assignment(new std::vector<unsigned int>());
 	boost::shared_ptr < Hartigan
@@ -37,16 +37,16 @@ CEC* cecClient::findBestCEC() {
 	assignment->resize(this->config.getParams().dataset->n_rows);
 	(*assignmentType)(*assignment);
 
-	CEC *currentCEC = NULL;
+	cecModel *currentCEC = NULL;
 	try {
-		currentCEC = new CEC(hartigan, assignment, this->config.getParams());
+		currentCEC = new cecModel(hartigan, assignment, this->config.getParams());
 
 		currentCEC->loop();
 
 		for (int i = 1; i < cecClient::config.getParams().nstart; ++i) {
 
 			(*assignmentType)(*assignment);
-			CEC *nextCEC = new CEC(hartigan, assignment,
+			cecModel *nextCEC = new cecModel(hartigan, assignment,
 					this->config.getParams());
 			nextCEC->loop();
 
