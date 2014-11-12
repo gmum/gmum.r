@@ -1,7 +1,8 @@
-#' CEC()
+#' CEC
 #' 
 #' @title CEC()
-#' Create CEC model object
+#' 
+#' @description Create CEC model object
 #'
 #' @export
 #'
@@ -9,7 +10,7 @@
 #'
 #' @docType methods
 #'
-#' @param x dataset
+#' @param x numeric matrix of data
 #' @param k initial number of clusters
 #' @param method.type Gauss family
 #' @param method.init method to initialize clusters
@@ -18,54 +19,59 @@
 #' @param params.centroids list of centroids
 #' @param control.nstart how many times to perform algorithm
 #' @param control.eps what change of value should terminate algorithm
-#' @param control.itmax maximum number of iterations
+#' @param control.itmax maximum number of iterations at each start
 #' @param log.energy record collected energy of all clusters in each iteration
 #' @param log.ncluster record number of clusters in each iteration
 #' @param log.iters record number of iterations
 CEC <- NULL
 
-#' @title loop()
-#' Start loop of the algorithm where learning is done
+#' @title loop
+#' 
+#' @description Start loop of the algorithm where learning is done
 #'
 #' @docType methods
 #'
 #' @param c CEC model object
 loop.cec <- NULL
 
-#' @title entropy()
-#' Print result entropy of clustering found
+#' @title entropy
+#' 
+#' @description Print result entropy of clustering found
 #' 
 #' @docType methods
 #'
 #' @param c CEC model object
 entropy.cec <- NULL
 
-#' @title y()
-#' Print labels assigned
-#' #' 
+#' @title y
+#' @description Print labels assigned
+#' 
 #' @docType methods
 #'
 #' @param c CEC model object
 y.cec <- NULL
 
-#' @title centers()
-#' Print centers of clusters
+#' @title centers
+#' 
+#' @description Print centers of clusters
 #'
 #' @docType methods
 #'
 #' @param c CEC model object
 centers.cec <- NULL
 
-#' @title cov()
-#' Print covariances of clusters
+#' @title cov
+#' 
+#' @description Print covariances of clusters
 #'
 #' @docType methods
 #'
 #' @param c CEC model object
 cov.cec <- NULL
 
-#' @title predictCluster()
-#' For given point predict cluster where it belongs
+#' @title predictCluster
+#' 
+#' @description For given point predict cluster where it belongs
 #' 
 #' @docType methods
 #'
@@ -73,8 +79,9 @@ cov.cec <- NULL
 #' @param vec given point
 predictCluster.cec <- NULL
 
-#' @title predictClusters()
-#' For given point print propabilities of belonging to each cluster
+#' @title predictClusters
+#' 
+#' @description For given point print propabilities of belonging to each cluster
 #' 
 #' @docType methods
 #'
@@ -82,8 +89,9 @@ predictCluster.cec <- NULL
 #' @param vec given point
 predictClusters.cec <- NULL
 
-#' @title log.ncluster.cec()
-#' Print number of clusters that has been recorded at each stage of learning.
+#' @title log.ncluster.cec
+#' 
+#' @description Print number of clusters that has been recorded at each stage of learning.
 #' Data is recorded only if you has chosen to when you created CEC model object.
 #' 
 #' @docType methods
@@ -91,8 +99,9 @@ predictClusters.cec <- NULL
 #' @param c CEC model object
 log.ncluster.cec <- NULL
 
-#' @title log.energy.cec()
-#' Print energy recorded that has been recorded at each stage of learning.
+#' @title log.energy.cec
+#' 
+#' @description Print energy recorded that has been recorded at each stage of learning.
 #' Data is recorded only if you has chosen to when you created CEC model object.
 #'  
 #' @docType methods
@@ -100,16 +109,18 @@ log.ncluster.cec <- NULL
 #' @param c CEC model object
 log.energy.cec <- NULL
 
-#' @title log.iters.cec()
-#' Print how many iterations it took to learn CEC model
+#' @title log.iters.cec
+#' 
+#' @description Print how many iterations it took to learn CEC model
 #'  
 #' @docType methods
 #'
 #' @param c CEC model object
 log.iters.cec <- NULL
 
-#' @title nstart()
-#' Print number of times CEC algorithm is to be performed. The best outcome
+#' @title nstart
+#' 
+#' @description Print number of times CEC algorithm is to be performed. The best outcome
 #' is chosen as result.
 #'  
 #' @docType methods
@@ -119,7 +130,7 @@ nstart.cec <- NULL
 
 evalqOnLoad({
 
-    CECtest <<- function(x = NULL,
+    CEC <<- function(x = NULL,
                      k = 0,
                      method.type = "",
                      method.init = "kmeans++",
@@ -153,25 +164,25 @@ evalqOnLoad({
         stop("Max number of iterations should be a positive integer!");
       
         config <- new(cecConfiguration)
-        config$setX(x)
-        config$setK(k)
-        config$setMethodType(method.type)
+        config$setDataSet(x)
+        config$setNrOfClusters(k)
         config$setMethodInit(method.init)
         config$setR(params.r)
         config$setCov(params.cov)
-        config$setCentroid(params.centroids)
-        config$setMix(params.mix)
+        config$setCentroids(params.centroids)
+        config$setMix(params.mix)      
+        config$setMethodType(method.type)
         config$setFunction(params.function)
         config$setNstart(control.nstart)
         config$setEps(control.eps)
-        config$setItax(control.itmax)
+        config$setItmax(control.itmax)
         config$setLogEnergy(log.energy)
         config$setNCluster(log.ncluster)
         config$setIters(log.iters)
       
         cecClient <- new(cecClient, config)
-        cec <- cecClient$findBestCEC()
-        cec
+        cecModel <- cecClient$findBestCEC()
+        cecModel
     }
 
     loop.cec <<- function(c) {

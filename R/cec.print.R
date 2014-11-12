@@ -4,6 +4,7 @@ loadModule("cec", TRUE)
 #'
 #' @title print()
 #' print basic information about clusters found
+#' Presents a structure of the cec results object (clusters found)
 #'
 #' @docType methods
 #'

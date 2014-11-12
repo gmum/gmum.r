@@ -9,7 +9,7 @@ Params cecConfiguration::getParams() {
 	return this->params;
 }
 
-void cecConfiguration::setX(const Rcpp::NumericMatrix proxyDataset) {
+void cecConfiguration::setDataSet(const Rcpp::NumericMatrix proxyDataset) {
 	//reuses memory and avoids extra copy
 	boost::shared_ptr<const arma::mat> points(
 			new arma::mat(proxyDataset.begin(), proxyDataset.nrow(),
@@ -17,8 +17,16 @@ void cecConfiguration::setX(const Rcpp::NumericMatrix proxyDataset) {
 	params.dataset = points;
 }
 
-void cecConfiguration::setK(const double killThreshold) {
-	params.killThreshold = killThreshold;
+void cecConfiguration::setNrOfClusters(const unsigned int nrOfClusters) {
+	if (nrOfClusters != 0)
+		params.nrOfClusters = nrOfClusters;
+	else if (params.clusters.size() > 0)
+		params.nrOfClusters = params.clusters.size();
+	else
+		params.nrOfClusters = CONST::nrOfClustersInit;
+
+	if (params.dataset->n_rows < params.nrOfClusters)
+		Rcpp::stop(CONST::ERRORS::datasetSize);
 }
 
 void cecConfiguration::setCentroids(const Rcpp::List centroids) {
@@ -29,18 +37,6 @@ void cecConfiguration::setCentroids(const Rcpp::List centroids) {
 		params.centroidsSet = true;
 	} else
 		params.centroidsSet = false;
-}
-
-void cecConfiguration::setNrOfClusters(const int nrOfClusters) {
-	if (nrOfClusters != 0)
-		params.nrOfClusters = nrOfClusters;
-	else if (params.clusters.size() > 0)
-		params.nrOfClusters = params.clusters.size();
-	else
-		params.nrOfClusters = CONST::nrOfClustersInit;
-
-	if (params.dataset->n_rows < params.nrOfClusters)
-		Rcpp::stop(CONST::ERRORS::datasetSize);
 }
 
 void cecConfiguration::setNstart(const int nstart) {
@@ -214,21 +210,21 @@ void cecConfiguration::setFunction(const std::string functionName) {
 	} else {
 		params.functionNameSet = false;
 	}
-
 }
-void cecConfiguration::setEps() {
+void cecConfiguration::setEps(const double killThreshold) {
+	params.killThreshold = killThreshold;
 }
-void cecConfiguration::setItmax() {
+void cecConfiguration::setItmax(const int) {
 }
 void cecConfiguration::setLogEnergy(bool logEnergy) {
 	params.logEnergy = logEnergy;
 }
 
-void cecConfiguration::setNCluster(bool nrOfClusters) {
-	params.nrOfClusters = nrOfClusters;
+void cecConfiguration::setNCluster(bool logNrOfClusters) {
+	params.logNrOfClusters = logNrOfClusters;
 }
 
-void cecConfiguration::setIters() {
+void cecConfiguration::setIters(bool iters) {
 }
 } /* namespace gmum */
 

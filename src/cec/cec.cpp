@@ -2,7 +2,7 @@
 
 namespace gmum {
 
-boost::shared_ptr<Cluster> CEC::createCluster(const ClusterParams &params,
+boost::shared_ptr<Cluster> cecModel::createCluster(const ClusterParams &params,
 		int i) {
 	boost::shared_ptr<Cluster> cluster;
 	switch (params.type) {
@@ -44,7 +44,7 @@ boost::shared_ptr<Cluster> CEC::createCluster(const ClusterParams &params,
 	return cluster;
 }
 
-CEC::CEC(boost::shared_ptr<Algorithm> algorithm,
+cecModel::cecModel(boost::shared_ptr<Algorithm> algorithm,
 		boost::shared_ptr<std::vector<unsigned int> > assignment,
 		const Params &params) :
 		algorithm(algorithm), assignment(assignment), points(params.dataset), killThreshold(
@@ -95,18 +95,18 @@ CEC::CEC(boost::shared_ptr<Algorithm> algorithm,
 
 }
 
-void CEC::loop() {
+void cecModel::loop() {
 	result = algorithm->loop(*points, *assignment, killThreshold, clusters);
 	int nrOfClusters = clusters.size();
 	invSet.resize(nrOfClusters, false);
 	inv.resize(nrOfClusters);
 }
 
-void CEC::singleLoop() {
+void cecModel::singleLoop() {
 	algorithm->singleLoop(*points, *assignment, killThreshold, clusters);
 }
 
-double CEC::entropy() {
+double cecModel::entropy() {
 	double s = 0.0;
 	BOOST_FOREACH(boost::shared_ptr<Cluster> cluster, clusters) {
 		s += cluster->entropy();
@@ -114,15 +114,15 @@ double CEC::entropy() {
 	return s;
 }
 
-std::vector<unsigned int> &CEC::getAssignment() const {
+std::vector<unsigned int> &cecModel::getAssignment() const {
 	return *assignment;
 }
 
-const arma::mat &CEC::getPoints() const {
+const arma::mat &cecModel::getPoints() const {
 	return *points;
 }
 
-std::vector<arma::rowvec> CEC::centers() const {
+std::vector<arma::rowvec> cecModel::centers() const {
 	std::vector<arma::rowvec> array;
 	array.reserve(clusters.size());
 	for (int i = 0; i < clusters.size(); ++i)
@@ -130,7 +130,7 @@ std::vector<arma::rowvec> CEC::centers() const {
 	return array;
 }
 
-std::vector<arma::mat> CEC::cov() const {
+std::vector<arma::mat> cecModel::cov() const {
 	std::vector<arma::mat> array;
 	array.reserve(clusters.size());
 
@@ -141,28 +141,28 @@ std::vector<arma::mat> CEC::cov() const {
 	return array;
 }
 
-unsigned int CEC::iters() const {
+unsigned int cecModel::iters() const {
 	return result.iterations;
 }
 
-std::list<unsigned int> CEC::getNrOfClusters() const {
+std::list<unsigned int> cecModel::getNrOfClusters() const {
 	return result.nrOfClusters;
 }
 
-std::list<double> CEC::getEnergy() const {
+std::list<double> cecModel::getEnergy() const {
 	return result.energy;
 }
 
 //getDataSet
-boost::shared_ptr<const arma::mat> CEC::getPtrToPoints() const {
+boost::shared_ptr<const arma::mat> cecModel::getPtrToPoints() const {
 	return this->points;
 }
 
-boost::shared_ptr<std::vector<unsigned int> > CEC::getPtrToAssignement() const {
+boost::shared_ptr<std::vector<unsigned int> > cecModel::getPtrToAssignement() const {
 	return this->assignment;
 }
 
-unsigned int CEC::predict(std::vector<double> vec) const {
+unsigned int cecModel::predict(std::vector<double> vec) const {
 	arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
 
 	int assign = 0;
@@ -183,7 +183,7 @@ unsigned int CEC::predict(std::vector<double> vec) const {
 	return assign;
 }
 
-std::list<double> CEC::predict(std::vector<double> vec, bool general) {
+std::list<double> cecModel::predict(std::vector<double> vec, bool general) {
 	arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
 	std::list<double> out;
 
