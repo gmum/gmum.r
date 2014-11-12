@@ -18,7 +18,7 @@ namespace gmum {
 /**
  * Instance of this class is CEC model object.
  */
-class CEC {
+class cecModel {
 private:
 	TotalResult result;
 	boost::shared_ptr<std::vector<unsigned int> > assignment;
@@ -30,7 +30,7 @@ private:
 	boost::shared_ptr<Cluster> createCluster(const ClusterParams &params,
 			int i);
 public:
-	CEC(boost::shared_ptr<Algorithm> algorithm,
+	cecModel(boost::shared_ptr<Algorithm> algorithm,
 			boost::shared_ptr<std::vector<unsigned int> > assignment,
 			const Params &params);
 

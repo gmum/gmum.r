@@ -11,10 +11,9 @@ private:
 public:
 	cecConfiguration();
 	Params getParams();
-	void setX(const Rcpp::NumericMatrix);
-	void setK(const double);
+	void setDataSet(const Rcpp::NumericMatrix);
+	void setNrOfClusters(const unsigned int);
 	void setCentroids(const Rcpp::List);
-	void setNrOfClusters(const int);
 	void setNstart(const int);
 	void setMethodType(const std::string);
 	void setMethodInit(const std::string);
@@ -22,11 +21,11 @@ public:
 	void setCov(const Rcpp::NumericMatrix);
 	void setMix(const Rcpp::List);
 	void setFunction(const std::string);
-	void setEps();
-	void setItmax();
+	void setEps(const double);
+	void setItmax(const int);
 	void setLogEnergy(bool);
 	void setNCluster(bool);
-	void setIters();
+	void setIters(bool);
 };
 
 } /* namespace gmum */
