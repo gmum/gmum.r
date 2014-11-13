@@ -1,2 +1,2 @@
-library('testthat')
-test_check('GrowingNeuralGas')
+library(testthat)
+test_check('gmum.r')

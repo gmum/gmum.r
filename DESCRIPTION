@@ -12,4 +12,4 @@ Depends:
     RcppArmadillo(>= 0.4.300.0),
     ggplot2 (>= 1.0.0)
 LinkingTo: Rcpp, RcppArmadillo, BH
-eedsCompilation: yes
+NeedsCompilation: yes
