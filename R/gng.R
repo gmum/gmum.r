@@ -1,5 +1,6 @@
 #dev note: I have no idea how to document S4 methods using roxygen, I will have to assign someone to this task
 
+library(Rcpp)
 library(igraph)
 library(methods)
 
