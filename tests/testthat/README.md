@@ -18,6 +18,6 @@ install.packages("testthat")
 Just source these tests from within a R/RStudio shell. For example:
 
 ```
-source('./tests/test_that/test_svm_basics.R')
+source('./tests/testthat/test_svm_basics.R')
 ```
 
