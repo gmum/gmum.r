@@ -77,7 +77,8 @@ public:
 	arma::vec target;
 	arma::vec result;
 
-
+	//universal parameters
+	arma::vec w; //d
 	//2eConfig
 //	two
 
