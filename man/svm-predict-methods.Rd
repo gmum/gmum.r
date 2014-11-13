@@ -4,8 +4,6 @@
 \alias{predict.svm}
 \alias{test}
 \title{Predict}
-\format{\preformatted{ NULL
-}}
 \usage{
 predict(svm, x)
 }
@@ -15,7 +13,6 @@ predict(svm, x)
 \item{x}{unlabeled data, note that each entry needs to be the same dimentionality as training examples.}
 }
 \description{
-Returns predicted classes for provided test examples, note that provided model needs to be trained first before any prediction can be made.
+Returns predicted classes for provided test examples.
 }
-\keyword{datasets}
 
