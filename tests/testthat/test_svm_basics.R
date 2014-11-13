@@ -6,12 +6,12 @@ test_that('SVM fucntions is fool proof', {
   ds = svm.dataset.2e()
   f = V3 ~ .
   
-  expect_error( SVM(f, ds, lib="xyz"), "Error 20: bad library" )
-  expect_error( SVM(f, ds, kernel="xyz"), "Error 21: bad kernel")
-  expect_error( SVM(f, ds, prep="xyz"), "Error 22: bad preprocess" )
-  expect_error( SVM(f, ds, C = -1), "Error 24: bad parameters" )
-  expect_error( SVM(f, ds, gamma = -1), "Error 24: bad parameters" )
-  expect_error( SVM(f, ds, degree = 0), "Error 24: bad parameters" )
+  expect_error( SVM(f, ds, lib="xyz"), paste(GMUM_WRONG_LIBRARY, ": bad library" ))
+  expect_error( SVM(f, ds, kernel="xyz"), paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
+  expect_error( SVM(f, ds, prep="xyz"), paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
+  expect_error( SVM(f, ds, C = -1), paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
+  expect_error( SVM(f, ds, gamma = -1), paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
+  expect_error( SVM(f, ds, degree = 0), paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
   
   expect_warning( SVM(f, ds, kernel="linear", gamma=1), "Gamma parameter is not used with linear kernel" )
   expect_warning( SVM(f, ds, kernel="linear", degree=3), "Degree parameter is not used with linear kernel" )
