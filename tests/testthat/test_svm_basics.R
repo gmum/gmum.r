@@ -1,99 +1,47 @@
 library(testthat)
 library('gmum.r')
 
-test_that('data swapping works', {
-  a <- SVM()
-  xor <- dataset.xor()
-  x <- xor[,c(1,2)]
-  y <- xor[,3]
-
-  a$setX(x)
-  a$setY(y)
+test_that('SVM fucntions is fool proof', {
   
-  expect_that(dataset.X(a), equals(x))
-  # expect_that(dataset.Y(a), equals(y))
-})
-
-test_that('parameters setters and getters work', {
+  ds = svm.dataset.2e()
+  f = V3 ~ .
   
-  a <- SVM( lib = "libsvm",
-            kernel = "linear",
-            prep = "none",
-            C = 1,
-            gamma = 0,
-            coef0 = 0,
-            degree = 1,
-            shrinking = TRUE,
-            probability = FALSE,
-            cache_size = 100)
+  expect_error( SVM(f, ds, lib="xyz"), paste(GMUM_WRONG_LIBRARY, ": bad library" ))
+  expect_error( SVM(f, ds, kernel="xyz"), paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
+  expect_error( SVM(f, ds, prep="xyz"), paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
+  expect_error( SVM(f, ds, C = -1), paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
+  expect_error( SVM(f, ds, gamma = -1), paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
+  expect_error( SVM(f, ds, degree = 0), paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
   
-  # check getters
-  expect_that( params.lib(a), equals("libsvm"))
-  expect_that( params.kernel(a), equals("linear"))
-  expect_that( params.preprocess(a), equals("none"))
-  expect_that( params.C(a), equals(1) )
-  expect_that( params.gamma(a), equals(0) )
-  expect_that( params.coef0(a), equals(0) )
-  expect_that( params.degree(a), equals(1) )
-  expect_that( params.shrinking(a), equals(TRUE))
-  expect_that( params.probability(a), equals(FALSE))
-  expect_that( params.cache_size(a), equals(100))
-  
-  # check setters
-   # params.lib("light") // not yet
-  params.kernel(a, "rbf")
-  params.preprocess(a, "2e")
-  params.C(a,10)
-  params.gamma(a,0.01)
-  params.coef0(a,1)
-  params.degree(a,2)
-  params.shrinking(a,FALSE)
-  params.probability(a,TRUE)
-  params.cache_size(a,1000)
-  
-  expect_that( params.kernel(a), equals("rbf"))
-  expect_that( params.preprocess(a), equals("2e"))
-  expect_that( params.C(a), equals(10) )
-  expect_that( params.gamma(a), equals(0.01) )
-  expect_that( params.coef0(a), equals(1) )
-  expect_that( params.degree(a), equals(2) )
-  expect_that( params.shrinking(a), equals(FALSE))
-  expect_that( params.probability(a), equals(TRUE))
-  expect_that( params.cache_size(a), equals(1000))
-  
-  #check multiple
-  params(a, 
-         kernel="linear",
-         preproces="none",
-         C = 1,
-         gamma = 0,
-         coef0 = 0,
-         degree = 1,
-         shrinking = TRUE,
-         probability = FALSE,
-         cache_size = 100)
-  
-  expect_that( params.lib(a), equals("libsvm"))
-  expect_that( params.kernel(a), equals("linear"))
-  expect_that( params.preprocess(a), equals("none"))
-  expect_that( params.C(a), equals(1) )
-  expect_that( params.gamma(a), equals(0) )
-  expect_that( params.coef0(a), equals(0) )
-  expect_that( params.degree(a), equals(1) )
-  expect_that( params.shrinking(a), equals(TRUE))
-  expect_that( params.probability(a), equals(FALSE))
-  expect_that( params.cache_size(a), equals(100))
+  expect_warning( SVM(f, ds, kernel="linear", gamma=1), "Gamma parameter is not used with linear kernel" )
+  expect_warning( SVM(f, ds, kernel="linear", degree=3), "Degree parameter is not used with linear kernel" )
   
 })
+print("test::SVM error")
 
-test_that('getters and setters are foulproof', {
+test_that('formulas and data storing works', {
   
-  svm <- SVM()
+  dataset <- svm.dataset.breast_cancer()
+  x1 = data.matrix( dataset[,names(dataset) != "X1"] )
+  y1 = data.matrix( dataset[,"X1"] )
+  svm <- SVM( X1 ~ ., dataset )
+  x2 = svm$getX()
+  y2 = svm$getY()
+  expect_that(all.equal(x1,x2,check.attributes=FALSE), is_true())
+  expect_that(all.equal(y1,y2,check.attributes=FALSE), is_true())
   
-  expect_error(params.lib(svm, "asd"), "No such library. Avaiable are: libsvm")
-  expect_error(params.kernel(svm, "asd"), "No such kernel type. Avaiable are: linear, poly, rbf, sigmoid")
-  expect_error(params.preprocess(svm, "asd"), "No such preprocess type, Avaiable are: 2e, none")
+  formula = X1 ~ X2 + X3 + X4
+  data = all.vars(update(formula,0~.))
+  x3 = data.matrix( dataset[,data] )
+  y3 = data.matrix( dataset[,"X1"] )
+  svm2 <- SVM(formula, dataset)
+  x4 = svm2$getX()
+  y4 = svm2$getY()
+  expect_that(all.equal(x3,x4,check.attributes=FALSE), is_true())
+  expect_that(all.equal(y3,y4,check.attributes=FALSE), is_true())
+  
 })
+print("test::SVM formula and dataset")
 
 
 
