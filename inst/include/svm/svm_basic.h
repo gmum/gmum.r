@@ -78,6 +78,8 @@ public:
 	arma::vec result;
     arma::mat support_vectors;
 
+	//universal parameters
+	arma::vec w; //d
 
     /* SVMLight model parameters */
     double threshold_b;

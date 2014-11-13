@@ -3,13 +3,13 @@
 *.o
 *.a
 
-# R history/config files
-*.Rproj
+#R history files
 .Rbuildignore
-.RData
 .Rhistory
 .Rproj.user
+.RData
 ..Rcheck
+*.Rproj
 
 # Editors, IDE's
 *~
