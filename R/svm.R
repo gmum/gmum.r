@@ -765,7 +765,7 @@ evalqOnLoad({
 
   setMethod("print", "Rcpp_SVMClient", print.svm)
   setMethod("train", "Rcpp_SVMClient", train.svm)
-  setMethod("predict", signature("Rcpp_SVMClient", "matrix"), predict.svm )
+  setMethod("predict", "Rcpp_SVMClient", predict.svm )
   setMethod("plot", "Rcpp_SVMClient",  plot.svm)
 
   #dataset
