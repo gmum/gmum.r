@@ -136,27 +136,27 @@ evalqOnLoad({
     # check for errors
     
     if ( lib != "libsvm" ) { # || lib != "svmlight"
-      stop("Error 20: bad library") 
+      stop(paste(GMUM_WRONG_LIBRARY, ": bad library" )) 
       # log error No such library, available are: libsvm
     }
     
     if ( kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid" ) {
-      stop("Error 21: bad kernel")
+      stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
       # log error: No such kernel type. available are: linear, poly, rbf, sigmoid
     }
     
     if ( prep != "2e" && prep != "none" ) {
-      stop("Error 22: bad preprocess")
+      stop(paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
       # log erro No such preprocess type, available are: 2e, none
     }
     
     if ( mclass != "none" ) {
-      stop("Error 23: multiclass")
+      stop(paste(GMUM_NOT_SUPPORTED, ": multiclass" ))
       # log error: Sorry, multiclass is not yet supported
     }
     
     if (C < 0 || gamma < 0 || degree < 1 ) {
-      stop("Error 24: bad parameters")
+      stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
       # log error: bad paramters
     }
     
