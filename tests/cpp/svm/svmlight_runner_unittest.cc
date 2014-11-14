@@ -98,7 +98,10 @@ TEST_F(SVMLightRunnerTest, processRequest_classification) {
 	svm_config.setPrediction(true);
 	svmlr.processRequest(svm_config);
 
-    //TODO: Assertions
+    ASSERT_DOUBLE_EQ(svm_config.result[0], -0.77104032841091008);
+    ASSERT_DOUBLE_EQ(svm_config.result[1], -0.77104080978434542);
+    ASSERT_DOUBLE_EQ(svm_config.result[2], 0.99999861699854542);
+    ASSERT_DOUBLE_EQ(svm_config.result[3], 0.9999981356251102);
 }
 
 int main(int argc, char **argv) {

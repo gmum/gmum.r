@@ -34,10 +34,35 @@ void SVMLightRunner::processRequest(SVMConfiguration &config) {
     if (!config.isPrediction()) {
         librarySVMLearnMain(0, argv, true, config);
     } else {
-        librarySVMClassifyMain(0, argv, true, config);
+        predict(config);
+        // Below is a SVMLight library version
+        //librarySVMClassifyMain(0, argv, true, config);
     }
 }
 
+// TODO: More than linear
+void SVMLightRunner::predict(SVMConfiguration &config) {
+    std::cout << "[SVMLightRunner] predict()" << std::endl;
+    // Number of docs is a number of rows in data matrix
+    size_t n_docs = config.data.n_rows;
+    config.result = arma::randu<arma::vec>(n_docs);
+    
+    // For every doc
+    for (int i=0; i < n_docs; ++i) {
+        double doc_result = 0;
+        // For every support vector
+        for (int j=0; j < config.l; ++j) {
+            double sum_j = arma::dot(
+                config.data.row(i),
+                config.support_vectors.row(j)
+            );
+            sum_j *= config.alpha_y(j);
+            doc_result += sum_j;
+        }
+        doc_result -= config.threshold_b;
+        config.result[i] = doc_result;
+    }
+}
 
 /* Library functionalities wrappers */
 

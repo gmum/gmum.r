@@ -12,8 +12,8 @@
 
 
 extern "C" {
-#include "inst/include/svmlight/svm_common.h"
-#include "inst/include/svmlight/svm_learn.h"
+#include "svmlight/svm_common.h"
+#include "svmlight/svm_learn.h"
 }
 #define SVMLightRunner_temp_model_file "svmlightrunner_temp_model_file"
 #define SVMLightRunner_temp_output_file "svmlightrunner_temp_output_file"
@@ -36,6 +36,9 @@ public:
     void processRequest(SVMConfiguration &);
 
 protected:
+    
+    // TODO: Move this method to SVMHandler?
+    void predict(SVMConfiguration &);
 
     /** @name Library functionalities wrappers
      *  Following methods are direct library functionalities wrappers with
