@@ -13,9 +13,9 @@ namespace gmum {
   class Assignment {
   protected:
     const arma::mat &points;
-    const int nrOfClusters;
+    const unsigned int nrOfClusters;
   public:
-    Assignment(const arma::mat &points, const int nrOfClusters)
+    Assignment(const arma::mat &points, const unsigned int nrOfClusters)
       : points(points), nrOfClusters(nrOfClusters) {};
     virtual void operator() (std::vector<unsigned int> &assignment) = 0;
     virtual ~Assignment() {}
