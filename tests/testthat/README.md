@@ -15,9 +15,9 @@ install.packages("testthat")
 
 ## Run tests
 
-Just source these tests from within a R/RStudio shell. For example:
+To run all tests use devtools command:
 
 ```
-source('./tests/test_that/test_svm_basics.R')
+devtools::test()
 ```
 

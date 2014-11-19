@@ -3,13 +3,15 @@
 \name{plot.svm}
 \alias{plot.svm}
 \title{plot}
-\format{\preformatted{ NULL
-}}
 \usage{
-plot(svm)
+plot(svm, dim1, dim2)
+}
+\arguments{
+\item{dim1}{(optional) Dimension of x to plot on x axis, by default 1}
+
+\item{dim2}{(optional) Dimension of x to plot on y axis, by default 2}
 }
 \description{
-Draws choosen dimenstions from a dataset on 2D plot. NOTE: This function will be change to a package default function.
+Draws choosen dimenstions from a dataset on 2D plot coloring by class. NOTE: This function will be change to a package default function.
 }
-\keyword{datasets}
 
