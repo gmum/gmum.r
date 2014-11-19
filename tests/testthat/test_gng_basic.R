@@ -12,13 +12,9 @@ for(k in 1:1){
   
   # Construct gng object
   gng <- GNG(dataset_type=gng.dataset.bagging.prob, max_nodes=max_nodes, dim=3,
-             uniformgrid_optimization=FALSE,  lazyheap_optimization=FALSE
-             )
-
-  print(gng)
-  summary(gng)
-
-  print("here")
+             uniformgrid_optimization=FALSE,  lazyheap_optimization=FALSE, verbosity=10)
+             
+  
   
   # Construct examples, here we will use a sphere
   ex <- gng.preset.sphere(N=90000)
@@ -27,8 +23,6 @@ for(k in 1:1){
   print("her")
   ex_binded <- cbind(ex, rep(0.6, nrow(ex) ))
   
-  print("herE")
-  gng$get_number_nodes()#set_debug_level(11)
   
   # Set examples pointer, note: this is the most
   # efficient way to pass examples, however you can use it
