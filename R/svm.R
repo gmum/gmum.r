@@ -1,8 +1,10 @@
+library(ggplot2)
+
 #' @title SVM
 #' 
 #' @export
 #' 
-#' @description Create SVM model object. If any parameter will be omitted a default value will be used
+#' @description Create and train SVM model object. If any parameter will be omitted a default value will be used
 #' 
 #' @param x Dataset without labels
 #' @param y Labels
@@ -25,26 +27,9 @@
 #' 
 SVM <- NULL
 
-#' @title Train SVM model
-#' 
-#' @description Trains provided svm object, using its parameters and dataset.
-#' 
-#' @rdname svm-train-methods
-#' 
-#' @export
-#' 
-#' @usage train(svm)
-#' 
-#' @param object Trained SVM object which will be used for prediction.
-#' 
-#' @docType methods
-#' 
-#' @aliases train
-train.svm <- NULL
-
 #' @title Predict
 #' 
-#' @description Returns predicted classes for provided test examples, note that provided model needs to be trained first before any prediction can be made.
+#' @description Returns predicted classes for provided test examples.
 #' 
 #' @rdname svm-predict-methods
 #' 
@@ -93,24 +78,6 @@ print.svm <- NULL
 #' @docType plot
 plot.svm <- NULL
 
-#' @title load.dataset
-#' 
-#' @description Loads provided dataset to a SVM object, right now lables need to be in the last column.
-#' 
-#' @rdname svm-load-methods
-#' 
-#' @export
-#' 
-#' @usage load.dataset(svm, x)
-#' 
-#' @param object SVM object to which examples will be loaded.
-#' @param x Labeled dataset with lables in the last column.
-#' 
-#' @docType methods
-#' 
-#' @aliases dataset
-load.dataset <- NULL
-
 #' @title dataset.X
 #' 
 #' @description Prints dataset stored in a SVM object, without the labels.
@@ -145,299 +112,93 @@ dataset.X <- NULL
 #' @aliases dataset
 dataset.Y <- NULL
 
-
-#' @title params
-#' 
-#' @description Changes SVM objects parameters to provided, not every parameter needs to be given.
-#' 
-#' @rdname svm-parameters-method
-#' 
-#' @export
-#' 
-#' @usage params(svm, object, lib, kernel, preprocess, C, gamma, coef0, degree, cache_size, shrinking, probability)
-#' 
-#' @param lib Desired SVM Library, avialable are: libsvm.
-#' @param kernel Kernel type, avialable are: linear, poly, rbf, sigmoid.
-#' @param prep Preprocess method, avialable are: none, 2e.
-#' @param C Cost/Complexity parameter.
-#' @param gamma Gamma parameter for poly, rbf and sigmoid kernels.
-#' @param coef0 Coef0 for poly and sigmoid kernels.
-#' @param degree Degree for poly kernel.
-#' @param shrinking Whether to use shrinking heuristics.
-#' @param probability Whether to train a model for probability estimates .
-#' @param cache_size Cache size.
-#' 
-#' @examples params(svm, kernel="linear", preproces="none", C=10000)
-#' 
-#' @docType methods
-#' 
-#' @aliases parameters
-params.svm <- NULL
-
-#' @title params.lib
-#' 
-#' @description Changes or prints (if a argument is not provided) library in a SVM object, note: requires retraining.
-#' 
-#' @rdname svm-params-lib-method
-#' 
-#' @export
-#' 
-#' @usage 
-#' params.lib(svm)
-#' params.lib(svm,x)
-#' 
-#' @param object SVM object.
-#' @param x New library.
-#' 
-#' @examples params.lib(svm, "libsvm")
-#' 
-#' @docType methods
-#'  
-#' @aliases parameters
-params.svm.lib <- NULL
-
-#' @title params.kernel
-#' 
-#' @description Changes or prints (if a argument is not provided)kernel in a SVM object, note: requires retraining. Aviable are: libsvm.
-#' 
-#' @rdname svm-params-kernel-method
-#' 
-#' @export
-#' 
-#' @usage 
-#' params.kernel(svm)
-#' params.kernel(svm,x)
-#' 
-#' @param object SVM object.
-#' @param x New kernel.
-#' 
-#' @examples params.kernel(svm, "rbf")
-#' 
-#' @docType methods
-#' 
-#' @aliases parameters
-params.svm.kernel <- NULL
-
-#' @title params.prep
-#' 
-#' @description Changes or prints (if a argument is not provided) preprocess type in a SVM object, note: requires retraining. Aviable are: linear, sigmoid, poly, rbf.
-#' 
-#' @rdname svm-params-prep-method
-#' 
-#' @export
-#' 
-#' @usage 
-#' params.prep(svm)
-#' params.prep(svm,x)
-#' 
-#' @param object SVM object.
-#' @param x New preprocess type.
-#' 
-#' @examples params.prep(svm, "2e")
-#' 
-#' @docType methods
-#' 
-#' @aliases parameters
-params.svm.prep <- NULL
-
-#' @title params.C
-#' 
-#' @description Changes or prints (if a argument is not provided) Cost parameter in a SVM object, note: requires retraining. Aviable are: none, 2e
-#' 
-#' @rdname svm-params-C-methodd
-#' 
-#' @export
-#' 
-#' @usage 
-#' params.C(svm)
-#' params.C(svm,x)
-#' 
-#' @param object SVM object.
-#' @param x New cost.
-#' 
-#' @examples params.C(svm, 1000)
-#' 
-#' @docType methods
-#' 
-#' @aliases parameters
-params.svm.C <- NULL
-
-#' @title params.gamma
-#' 
-#' @description Changes or prints (if a argument is not provided) gamma parameter in a SVM object, note: requires retraining.
-#' 
-#' @rdname svm-params-gamma-method
-#' 
-#' @export
-#' 
-#' @usage 
-#' params.gamma(svm)
-#' params.gamma(svm,x)
-#' 
-#' @param object SVM object.
-#' @param x New gamma.
-#' 
-#' @examples params.gamma(svm, 0.01)
-#' 
-#' @docType methods
-#' 
-#' @aliases parameters
-params.svm.gamma <- NULL
-
-#' @title params.degree
-#' 
-#' @description Changes or prints (if a argument is not provided) degree in a SVM object, note: requires retraining.
-#' 
-#' @rdname svm-params-degree-method
-#' 
-#' @export
-#' 
-#' @usage 
-#' params.degree(svm)
-#' params.degree(svm,x)
-#' 
-#' @param object SVM object.
-#' @param x New degree.
-#' 
-#' @examples params.degree(svm, 4)
-#' 
-#' @docType methods
-#' 
-#' @aliases parameters
-params.svm.degree <- NULL
-
-#' @title params.coef0
-#' 
-#' @description Changes or prints (if a argument is not provided) coef0 parameter in a SVM object, note: requires retraining.
-#' 
-#' @rdname svm-params-coef0-method
-#' 
-#' @export
-#' 
-#' @usage 
-#' params.coef0(svm)
-#' params.coef0(svm,x)
-#' 
-#' @param object SVM object.
-#' @param x coef0.
-#' 
-#' @examples params.coef0(svm, 0)
-#' 
-#' @docType methods
-#' 
-#' @aliases parameters
-params.svm.coef0 <- NULL
-
-#' @title params.cache_size
-#' 
-#' @description Changes or prints (if a argument is not provided) cache_size (in MB) in a SVM object, note: requires retraining.
-#' 
-#' @rdname svm-params-cache-method
-#' 
-#' @export
-#' 
-#' @usage 
-#' params.cache_size(svm)
-#' params.cache_size(svm,x)
-#' 
-#' @param object SVM object.
-#' @param x New cache size.
-#' 
-#' @examples params.cache_size(svm, 100)
-#' 
-#' @docType methods
-#' 
-#' @aliases parameters
-params.svm.cache_size<- NULL
-
-#' @title params.shrinking
-#' 
-#' @description Changes or prints (if a argument is not provided) if shrinking heurestics are used in a SVM object, note: requires retraining.
-#' 
-#' @rdname svm-params-shrin-method
-#' 
-#' @export
-#' 
-#' @usage 
-#' params.shrinking(svm)
-#' params.shrinking(svm,x)
-#' 
-#' @param object SVM object.
-#' @param x TRUE/FALSE.
-#' 
-#' @examples params.shrinking(svm, TRUE)
-#' 
-#' @docType methods
-#' 
-#' @aliases parameters
-params.svm.shrinking <- NULL
-
-#' @title params.probability
-#' 
-#' @description Changes or prints (if a argument is not provided) if a SVM object is used for probability estimates , note: requires retraining.
-#' 
-#' @rdname svm-params-prob-method
-#' 
-#' @export
-#' 
-#' @usage 
-#' params.probability(svm)
-#' params.probability(svm,x)
-#' 
-#' @param object SVM object.
-#' @param x TRUE/FALSE.
-#' 
-#' @examples params.probability(svm, TRUE)
-#' 
-#' @docType methods
-#' 
-#' @aliases parameters
-params.svm.probability <- NULL
-
 loadModule('svm_wrapper', TRUE)
-
 
 evalqOnLoad({
 
-  SVM <<- function(x = svm.breast_cancer.x(), 
-                  y = svm.breast_cancer.y(),
-                  lib = "libsvm",
-                  kernel = "linear",
-                  prep = "none",
-                  mclass = "none",
-                  C = 1,
-                  gamma = 0.01,
-                  coef0 = 0,
-                  degree = 3,
-                  shrinking = TRUE,
-                  probability = FALSE,
-                  cweights = NULL,
-                  sweights = NULL,
-                  cache_size = 100,
-                  tol = 1e-3 ) {
+  SVM <<- function( formula, 
+                    data, 
+                    lib = "libsvm",             
+                    kernel = "linear",
+                    prep = "none",
+                    mclass = "none",
+                    C = 1,
+                    gamma = 0.01,
+                    coef0 = 0,
+                    degree = 1,
+                    shrinking = TRUE,
+                    probability = FALSE,
+                    cweights = NULL,
+                    sweights = NULL,
+                    cache_size = 100,
+                    tol = 1e-3 ) {
     
     # check for errors
     
     if ( lib != "libsvm" ) { # || lib != "svmlight"
-      stop("No such library. Avaiable are: libsvm")  
+      stop(paste(GMUM_WRONG_LIBRARY, ": bad library" )) 
+      # log error No such library, available are: libsvm
     }
     
     if ( kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid" ) {
-      stop("No such kernel type. Avaiable are: linear, poly, rbf, sigmoid")
+      stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
+      # log error: No such kernel type. available are: linear, poly, rbf, sigmoid
     }
     
     if ( prep != "2e" && prep != "none" ) {
-      stop("No such preprocess type, Avaiable are: 2e, none")
+      stop(paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
+      # log erro No such preprocess type, available are: 2e, none
     }
     
     if ( mclass != "none" ) {
-      stop("Sorry, multiclass is not yet supported")
+      stop(paste(GMUM_NOT_SUPPORTED, ": multiclass" ))
+      # log error: Sorry, multiclass is not yet supported
     }
     
     if (C < 0 || gamma < 0 || degree < 1 ) {
-      stop("Wrong parameters.")
+      stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
+      # log error: bad paramters
     }
     
+    if (kernel=="linear" && degree != 1) {
+      warning("Degree parameter is not used with linear kernel")
+    }
+    if (kernel=="linear" && gamma != 0.01) {
+      warning("Gamma parameter is not used with linear kernel")
+    }
+    
+    labels = all.vars(update(formula,.~0))
+    x <- NULL
+    y <- NULL
+    
+    if (is(data, "data.frame")) {
+      y = data.matrix( data[,labels] )
+      
+      # I'm pretty sure this should bo done differently, and equally so I can't find how
+      if (formula[3] == ".()"  ) {
+        x = data.matrix( data[,names(data) != labels]  )
+      }
+      else {
+        columns = all.vars(update(formula,0~.))
+        x = data.matrix( data[,columns] )
+      } 
+    }
+    else if (is(data, "matrix")) {
+      y = data[,labels]
+      
+      # I'm pretty sure this should bo done differently, and equally so I can't find how
+      if (formula[3] == ".()"  ) {
+        x = data[,names(data) != labels]
+      }
+      else {
+        columns = all.vars(update(formula,0~.))
+        x = data[,columns]
+      } 
+    }
+    else {
+      stop("data is of a wrong class, please provide data.frame or matrix")
+    }
+
     config <- new(SVMConfiguration)
     config$x = x
     config$y = y
@@ -470,73 +231,22 @@ evalqOnLoad({
     }
     
     client <- new(SVMClient, config)
+    client$train()
+
     client 
   } 
     
-  if ( !isGeneric("train") ) {
-    setGeneric("train", function( object, ... ) standardGeneric("train") )
-  }
   if ( !isGeneric("predict") ) {
     setGeneric("predict", function( object, x, ... ) standardGeneric("predict") )
   }
-#   if(!isGeneric("plot.svm")){
-#     setGeneric("plot.svm", function( object, dim1=1, dim2=2, ... ) standardGeneric("plot.svm"))
-#   }
-  if (!isGeneric("load_dataset")  ) {
-    setGeneric( "load_dataset", function( object, x, ... ) standardGeneric("load_dataset") )
-  }
+
   if (!isGeneric("dataset.X")  ) {
     setGeneric( "dataset.X", function( object, ... ) standardGeneric("dataset.X") )
   }
   if (!isGeneric("dataset.Y")  ) {
     setGeneric( "dataset.Y", function( object,  ... ) standardGeneric("dataset.Y") )
   }
-  if (!isGeneric("params")) {
-    setGeneric("params", function(object, 
-                                  lib=FALSE,
-                                  kernel=FALSE,
-                                  preprocess=FALSE,
-                                  C=FALSE,
-                                  gamma=NULL,
-                                  coef0=NULL,
-                                  degree=FALSE,
-                                  cache_size=FALSE,
-                                  shrinking=NULL,
-                                  probability=NULL,
-                                  ...) standardGeneric("params"))
-  }
-  if (!isGeneric("params.lib")) {
-    setGeneric("params.lib", function(object,x=FALSE,...) standardGeneric("params.lib"))
-  }
-  if (!isGeneric("params.kernel")) {
-    setGeneric("params.kernel", function(object,x=FALSE,...) standardGeneric("params.kernel"))
-  }
-  if (!isGeneric("params.preprocess")) {
-    setGeneric("params.preprocess", function(object,x=FALSE,...) standardGeneric("params.preprocess"))
-  }
-  if (!isGeneric("params.C")) {
-    setGeneric("params.C", function(object,x=FALSE,...) standardGeneric("params.C"))
-  }
-  if (!isGeneric("params.gamma")) {
-    setGeneric("params.gamma", function(object,x=NULL,...) standardGeneric("params.gamma"))
-  }
-  if (!isGeneric("params.degree")) {
-    setGeneric("params.degree", function(object,x=FALSE,...) standardGeneric("params.degree"))
-  }
-  if (!isGeneric("params.coef0")) {
-    setGeneric("params.coef0", function(object,x=NULL,...) standardGeneric("params.coef0"))
-  }
-  if (!isGeneric("params.cache_size")) {
-    setGeneric("params.cache_size", function(object,x=FALSE,...) standardGeneric("params.cache_size"))
-  }
-  if (!isGeneric("params.shrinking")) {
-    setGeneric("params.shrinking", function(object,x=NULL,...) standardGeneric("params.shrinking"))
-  }
-  if (!isGeneric("params.probability")) {
-    setGeneric("params.probability", function(object,x=NULL,...) standardGeneric("params.probability"))
-  }
-  
-  
+
   print.svm <- function(x) {
     print(sprintf("SVM object with: library: %s, kernel: %s, preprocess: %s, C: %.1f, gamma: %.3f, coef0: %.3f, degree: %d",
                   x$getLibrary(),
@@ -549,28 +259,27 @@ evalqOnLoad({
   }
   
   plot.svm <<- function(x, dim1 = 1, dim2 = 2) {
-    x_vect = x$getX()
-    if (dim1 > ncol(x_vect) || dim2 > ncol(x_vect)) {
+    df =  data.frame( x$getX() ) 
+    if (dim1 > ncol(df) || dim2 > ncol(df)) {
       stop("Too large dimensions")
     }
-    plot2d.svm(x,dim1,dim2) #TODO: fix efficiency, do not pass through call to next function that COPIES data,
-    #but rather delete plot2d.svm function it is redundant as shit
-  }
-  
-  train.svm <<- function(object) {
-    object$train()
+    t = x$getY()
+    x = df[,dim1]
+    y = df[,dim2]
+    qplot(data=df, x=x, y=y, color=t) # + scale_colour_gradientn(colours=rainbow(2),breaks = c(2,4))
   }
   
   predict.svm <<- function(object, x) {
+    if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
+      stop("Wrong target class, please provide data.frame, matrix or numeric vector")
+    }
+    
+    if (!is(x, "matrix")) {
+      x = data.matrix(x)
+    }
     object$predict(x)
     prediction = object$getPrediction()
     prediction
-  }
-  
-  # dataset
-  load.dataset <- function( object, x ) {
-      object$setX( x[,c( seq(2, ncol(x),1))] )
-      object$setY( x[, 1] )
   }
   
   dataset.X <- function(object) {
@@ -581,224 +290,14 @@ evalqOnLoad({
       object$getY()
   }
   
-  # Params
-  params.svm <- function( object, 
-                          lib=FALSE,
-                          kernel=FALSE,
-                          preprocess=FALSE,
-                          C=FALSE,
-                          gamma=NULL,
-                          coef0=NULL,
-                          degree=FALSE,
-                          cache_size=FALSE,
-                          shrinking=NULL,
-                          probability=NULL
-                          ) {
-    check.trained(object)
-    
-    if (lib != FALSE) {
-      if ( lib != "libsvm" ) { # || lib != "svmlight"
-        stop("No such library. Avaiable are: libsvm") # 
-      }
-      object$setLibrary(lib)
-    }
-    if (kernel != FALSE) {
-      if ( kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid" ) {
-        stop("No such kernel type. Avaiable are: linear, poly, rbf, sigmoid")
-      }
-      object$setKernel(kernel)
-    }
-    if (preprocess != FALSE) {
-      if ( preprocess != "2e" && preprocess != "none" ) {
-        stop("No such preprocess type, Avaiable are: 2e, none")
-      }
-      object$setPreprocess(preprocess)
-    }
-    if (C != FALSE && is.numeric(C)){
-      object$setC(C)
-    }
-    if (!is.null(gamma) && is.numeric(gamma)) {
-      object$setGamma(gamma)
-    }
-    if (!is.null(coef0) != FALSE && is.numeric(coef0)) {
-      object$setCoef0(coef0)
-    }
-    if (degree != FALSE && is.numeric(degree)) {
-      object$setDegree(degree)
-    }
-    if (cache_size != FALSE && is.numeric(cache_size)) {
-      object$setCache(cache_size)
-    }
-    if (!is.null(shrinking) && is.logical(shrinking)) {
-      if (shrinking) {
-        object$setShrinking(1)
-      }
-      else {
-        object$setShrinking(0)
-      }
-    }
-    if (!is.null(probability) && is.logical(probability)) {
-      if (probability) {
-        object$setProbability(1)
-      }
-      else {
-        object$setProbability(0)
-      }
-    }
-  }
-  
-  params.svm.lib <- function(object, x=FALSE) {
-    if (x == FALSE) {
-      object$getLibrary()
-    }
-    else {
-      if ( x != "libsvm" ) { # || x != "svmlight"
-        stop("No such library. Avaiable are: libsvm")  
-      }
-      object$setLibrary(x)
-    }
-  }
-  
-  params.svm.kernel <- function(object, x=FALSE) {
-    if (x == FALSE) {
-      object$getKernel()
-    }
-    else {
-      if ( x != "linear" && x != "poly" && x != "rbf" && x != "sigmoid" ) {
-        stop("No such kernel type. Avaiable are: linear, poly, rbf, sigmoid")
-      }
-      object$setKernel(x)
-    }
-  }
-  
-  params.svm.prep <- function(object, x=FALSE) {
-    if (x == FALSE) {
-      object$getPreprocess()
-    }
-    else {
-      if ( x != "2e" && x != "none" ) {
-        stop("No such preprocess type, Avaiable are: 2e, none")
-      }
-      object$setPreprocess(x)
-    }
-  }
-  
-  params.svm.C <- function(object, x=FALSE) {
-    if (x == FALSE) {
-      object$getC()
-    }
-    else {
-      check.trained(object)
-      object$setC(x)
-    }
-  }
-  
-  params.svm.gamma <- function(object, x=NULL){
-    if (is.null(x)) {
-      object$getGamma()
-    } 
-    else {
-      check.trained(object)
-      object$setGamma(x)
-    }
-  }
-  
-  params.svm.degree <- function(object, x=FALSE){
-    if (x == FALSE) {
-      object$getDegree()
-    }
-    else {
-      check.trained(object)
-      object$setDegree(x)
-    }
-  }
-  
-  params.svm.coef0 <- function(object, x=NULL){
-    if (is.null(x)) {
-      object$getCoef0()
-    }
-    else {
-      check.trained(object)
-      object$setCoef0(x)
-    }
-  }
-  
-  params.svm.cache_size<- function(object, x=FALSE){
-    if (x == FALSE) {
-      object$getCache()
-    }
-    else {
-      check.trained(object)
-      object$setCache(x)
-    }
-  }
-  
-  params.svm.shrinking <- function(object, x=NULL){
-    if (is.null(x)) {
-      object$isShrinking()
-    }
-    else {
-      check.trained(object)
-      if (x==TRUE) {
-        object$setShrinking(1)
-      }
-      else {
-        object$setShrinking(0)
-      }
-    }
-  }
-  
-  params.svm.probability <- function(object, x=NULL){
-    if (is.null(x)) {
-      object$isProbability()
-    }
-    else {
-      check.trained(object)
-      if (x) {
-        object$setProbability(1)
-      }
-      else {
-        object$setProbability(0)
-      }
-    }
-  }
-
   setMethod("print", "Rcpp_SVMClient", print.svm)
-  setMethod("train", "Rcpp_SVMClient", train.svm)
-  setMethod("predict", "Rcpp_SVMClient", predict.svm )
+  setMethod("predict", signature("Rcpp_SVMClient", "ANY"), predict.svm )
   setMethod("plot", "Rcpp_SVMClient",  plot.svm)
 
   #dataset
-  setMethod("load_dataset", signature("Rcpp_SVMClient", "matrix"), load.dataset)
   setMethod("dataset.X", signature("Rcpp_SVMClient"), dataset.X)
   setMethod("dataset.Y", signature("Rcpp_SVMClient"), dataset.Y)
-  
-  # params setters
-  setMethod("params", signature("Rcpp_SVMClient", "ANY","ANY","ANY","ANY","ANY","ANY","ANY","ANY","ANY","ANY"), params.svm)
-  setMethod("params.lib", signature("Rcpp_SVMClient", "character"), params.svm.lib)
-  setMethod("params.kernel", signature("Rcpp_SVMClient", "character"), params.svm.kernel)
-  setMethod("params.preprocess", signature("Rcpp_SVMClient", "character"), params.svm.prep)
-  setMethod("params.C", signature("Rcpp_SVMClient", "numeric"), params.svm.C)
-  setMethod("params.gamma", signature("Rcpp_SVMClient", "numeric"), params.svm.gamma)
-  setMethod("params.degree", signature("Rcpp_SVMClient", "numeric"), params.svm.degree)
-  setMethod("params.coef0", signature("Rcpp_SVMClient", "numeric"), params.svm.coef0)
-  setMethod("params.cache_size", signature("Rcpp_SVMClient", "numeric"), params.svm.cache_size)
-  setMethod("params.shrinking", signature("Rcpp_SVMClient", "logical"), params.svm.shrinking)
-  setMethod("params.probability", signature("Rcpp_SVMClient", "logical"), params.svm.probability)
-  
-  #params getters
-  setMethod("params.lib", signature("Rcpp_SVMClient", "missing"), params.svm.lib)
-  setMethod("params.kernel", signature("Rcpp_SVMClient", "missing"), params.svm.kernel)
-  setMethod("params.preprocess", signature("Rcpp_SVMClient", "missing"), params.svm.prep)
-  setMethod("params.C", signature("Rcpp_SVMClient", "missing"), params.svm.C)
-  setMethod("params.gamma", signature("Rcpp_SVMClient", "missing"), params.svm.gamma)
-  setMethod("params.degree", signature("Rcpp_SVMClient", "missing"), params.svm.degree)
-  setMethod("params.coef0", signature("Rcpp_SVMClient", "missing"), params.svm.coef0)
-  setMethod("params.cache_size", signature("Rcpp_SVMClient", "missing"), params.svm.cache_size)
-  setMethod("params.shrinking", signature("Rcpp_SVMClient", "missing"), params.svm.shrinking)
-  setMethod("params.probability", signature("Rcpp_SVMClient", "missing"), params.svm.probability)
-
-  
+    
 })
 
 

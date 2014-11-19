@@ -1,3 +1,6 @@
+breast_cancer.path <- paste( getwd(),'/data/svm/breast_cancer.data', sep="/..")
+twoe_data.path <- paste(getwd(),'/data/svm/2e.data', sep="/..")
+
 read.libsvm <- function(filename, dimensionality) {
   
   content = readLines( filename )
@@ -26,53 +29,37 @@ read.libsvm <- function(filename, dimensionality) {
     }
   }
   
-  return( yx )
+  return( data.frame(yx) )
 }
 
-dataset.xor <- function() {
+
+svm.dataset.breast_cancer <- function() {
+  bc = read.libsvm( breast_cancer.path, 10 )
+  return(bc)
+}
+
+svm.dataset.2e <- function() {
+  te = read.table(twoe_data.path, quote="\"")
+  return(te)
+}
+
+svm.dataset.xor <- function() {
   matrix( 
     c(0,1,0,1,0,0,1,1,0,1,1,0),
     ncol=3,
-    nrow=4)
+    nrow=4,
+    dimnames=list(c(),c("x","y","t")))
 }
 
-check.trained <- function(object) {
-  if ( object$trained ) {
-    warning("You are changing parameters of a trained model, remember to train it again before prediction.")
-  }
-}
-
-
-accuracy.svm <- function(object=NULL, y=NULL, t) {
-  if (is.null(object) && !is.null(y) && t != FALSE ) {
-    if ( length(t) != length(y)) {
-      stop("Result's and target's length dont match!")
+svm.accuracy <- function(prediction, target) {
+    if ( length(target) != length(prediction)) {
+      stop("Prediction's and target's length don't match!")
     }
-    len <- length(t)
+    len <- length(target)
     
-    diff = t-y
+    diff = target-prediction
     acc <- sum(diff == 0) / len
-    return(acc)
-  } 
-  else if (!is.null(object) && is.null(y) &&  t != FALSE) {
-    x <- object$getX()
-    object$train()
-    object$predict(x)
-    y <- object$getPrediction()
-    
-    if ( length(t) != length(y)) {
-      stop("Result's and target's length dont match!")
-    }
-    len <- length(t)
-    
-    diff = t-y
-    acc <- sum(diff == 0) / len
-    return(acc)
-  }
-  else {
-    stop("You need to provide either model and target, or result and target")
-  }
-  
+    return(acc) 
 }
 
 
