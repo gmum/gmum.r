@@ -17,7 +17,7 @@ namespace gmum {
 			
   class RandomAssignment : public Assignment {
   public:
-    RandomAssignment(const arma::mat &points, const int nrOfClusters)
+    RandomAssignment(const arma::mat &points, const unsigned int nrOfClusters)
       : Assignment::Assignment(points, nrOfClusters) {};
     virtual void operator() (std::vector<unsigned int> &assignment);
   };
