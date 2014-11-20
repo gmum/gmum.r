@@ -1,36 +1,30 @@
 {% include header.html %}
 
-<section class="brick themecolor verycompressed">
+{% include navbar.html %}
 
-    <div class="container invertedcolor">
+<section class="container-fluid post" id="{{ page.title }}">
+    <div class="row">
+        <div class="col-sm-4 post-info">
+            <div class="col-sm-4 text-center fixed">
+                <h1>{{ page.title }}</h1>
+                <p class="lead italic">
+                    {{ page.description }}
+                </p>
+                <p class="lead italic">
+                    by <a href="https://github.com/{{ page.author }}">@{{ page.author }}</a>
+                </p>
+            </div>
+        </div>
 
-        <div class="brick item description" id="postDescription">
-            <h1> {{ page.title }} </h1>
-            <p> {{ page.description }} </p>
-            <p>by <a href="https://github.com/{{ page.author }}">
-                @{{ page.author }} </a>
+        <div class="col-sm-8 post-content">
+            <p class="lead italic">
+                {{ content }}
+            </p>
+            <p class="author">
+
             </p>
         </div>
-
-        <div class="brick nocolor post item" id="postContent">
-            <article>
-            {{content}}
-            </article>
-        </div>
-
     </div>
-
-
-    <div class="brick verycompressed categories">
-        <b>this post is about</b>
-        {% for cat in page.categories %}
-            {{ cat }}
-        {% endfor %}
-    </div>
-</section>
-
-<section class="brick nocolor">
 </section>
 
 {% include footer.html %}
-
