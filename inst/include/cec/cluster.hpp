@@ -26,6 +26,7 @@ namespace gmum {
 				const std::vector<unsigned int> &, 
 				const arma::mat &);
   public:
+    virtual ~Cluster() { }
     virtual boost::shared_ptr<Cluster> addPoint(const arma::rowvec &) = 0;
     virtual boost::shared_ptr<Cluster> removePoint(const arma::rowvec &) = 0;
     double entropy() const;
@@ -49,6 +50,7 @@ namespace gmum {
     virtual boost::shared_ptr<ClusterUseCovMat> createInstance(
         int, const arma::rowvec &, const arma::mat &) = 0;
    public:
+    virtual ~ClusterUseCovMat() { }
     boost::shared_ptr<Cluster> addPoint(const arma::rowvec &);
     boost::shared_ptr<Cluster> removePoint(const arma::rowvec &);
     arma::mat getCovMat(unsigned int, 
@@ -69,6 +71,7 @@ namespace gmum {
                             const std::vector<unsigned int> &,
                             const arma::mat &);  
   public:
+    virtual ~ClusterOnlyTrace() { }
     virtual arma::mat getCovMat(unsigned int, 
 			        const std::vector<unsigned int> &,
 			        const arma::mat &);
@@ -87,6 +90,7 @@ namespace gmum {
     ClusterStandard(unsigned int,
                     const std::vector<unsigned int> &,
                     const arma::mat &);
+    virtual ~ClusterStandard() { }
   };
 
 
@@ -103,6 +107,7 @@ namespace gmum {
     ClusterCovMat(const arma::mat &, unsigned int,
 		  const std::vector<unsigned int> &,
 		  const arma::mat &);
+    virtual ~ClusterCovMat() { }
   };
 
   class ClusterConstRadius : public ClusterOnlyTrace {
