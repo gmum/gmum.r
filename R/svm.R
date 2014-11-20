@@ -67,11 +67,13 @@ print.svm <- NULL
 #' 
 #' @export
 #' 
-#' @usage plot(svm, dim1, dim2)
+#' @usage plot(svm, pca=TRUE, log="x")
+#' @usage plot(svm, dim1=3, dim2=4)
 #' 
-#' @param dim1 (optional) Dimension of x to plot on x axis, by default 1
-#' 
-#' @param dim2 (optional) Dimension of x to plot on y axis, by default 2
+#' @param pca Bool, use Principal Component Analysis for plot
+#' @param dim1 (optional) Dimension of dataset to plot on x axis, by default 1
+#' @param dim2 (optional) Dimension of dataset to plot on y axis, by default 2
+#' @param log (optional) Use logarthic transformation for an axis, "x", "y", or "xy"
 #' 
 #' @rdname plot-dataset-methods
 #' 
@@ -283,15 +285,23 @@ evalqOnLoad({
                   object$get_number_sv() ))
   }
   
-  plot.svm <<- function(x, dim1 = 1, dim2 = 2) {
-    df =  data.frame( x$getX() ) 
-    if (dim1 > ncol(df) || dim2 > ncol(df)) {
-      stop("Too large dimensions")
-    }
+  plot.svm <<- function(x, pca=TRUE, dim1 = 1, dim2 = 2, log="") {
+    df =  data.frame( x$getX() )
     t = x$getY()
-    x = df[,dim1]
-    y = df[,dim2]
-    qplot(data=df, x=x, y=y, color=t) # + scale_colour_gradientn(colours=rainbow(2),breaks = c(2,4))
+    if (pca) {
+      pca_data = prcomp(df, scale=TRUE)
+      scores = data.frame(df, pca_data$x[,1:3])
+      qplot(x=PC1, y=PC2, data=scores, colour=factor(t), ) + theme(legend.position="none")
+    }
+    else { 
+      if (dim1 > ncol(df) || dim2 > ncol(df)) {
+        stop("Too large dimensions")
+      }
+    
+      x = df[,dim1]
+      y = df[,dim2]
+      qplot(data=df, x=x, y=y, color=factor(t), log=log) + theme(legend.position="none")
+    }
   }
   
   predict.svm <<- function(object, x) {

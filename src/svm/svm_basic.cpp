@@ -7,6 +7,7 @@ SVMConfiguration::SVMConfiguration() {
 	this->prediction = false;
 	SVMConfiguration::setDefaultParams();
 }
+
 SVMConfiguration::SVMConfiguration(bool prediction) {
 	this->prediction = prediction;
 }
