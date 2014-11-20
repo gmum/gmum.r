@@ -39,7 +39,7 @@ public:
 	KmeansppAssignment(const arma::mat &points, const int nrOfClusters) :
 			Assignment::Assignment(points, nrOfClusters) {
 	}
-	
+
 	virtual void operator()(std::vector<unsigned int> &assignment);
 };
 }

@@ -25,6 +25,7 @@ protected:
 	arma::rowvec initializeMean(unsigned int, const std::vector<unsigned int> &,
 			const arma::mat &);
 public:
+	virtual ~Cluster() { }
 	virtual boost::shared_ptr<Cluster> addPoint(const arma::rowvec &) = 0;
 	virtual boost::shared_ptr<Cluster> removePoint(const arma::rowvec &) = 0;
 	double entropy() const;

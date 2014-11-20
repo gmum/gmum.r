@@ -168,7 +168,7 @@ evalqOnLoad({
         config$setNrOfClusters(k)
         config$setMethodInit(method.init)
         config$setR(params.r)
-        config$setCov(params.cov)
+       # config$setCov(params.cov)
         config$setCentroids(params.centroids)
         config$setMix(params.mix)      
         config$setMethodType(method.type)
@@ -180,9 +180,9 @@ evalqOnLoad({
         config$setNCluster(log.ncluster)
         config$setIters(log.iters)
       
-        cecClient <- new(cecClient, config)
-        cecModel <- cecClient$findBestCEC()
-        cecModel
+      #  cecClient <- new(cecClient, config)
+      #  cecModel <- cecClient$findBestCEC()
+      #  cecModel
     }
 
     loop.cec <<- function(c) {

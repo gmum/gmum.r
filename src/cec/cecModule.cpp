@@ -32,12 +32,13 @@ RCPP_MODULE(cec) {
 	//.field("x", &cecConfiguration::data)
 
 	class_<cecClient>("cecClient")
-	.constructor()
+	//.constructor<cecConfiguration*>()
 	.method("findBestCEC", &cecClient::findBestCEC);
 
 	std::list<double> (cecModel::*predict_1)(std::vector<double>,
 			bool) = &cecModel::predict;
-	unsigned int (cecModel::*predict_2)(std::vector<double>) const = &cecModel::predict;
+	unsigned int (cecModel::*predict_2)(
+			std::vector<double>) const = &cecModel::predict;
 	//TODO
 	class_<cecModel>("cecModel")
 	.method("loop", &cecModel::loop)
@@ -53,7 +54,6 @@ RCPP_MODULE(cec) {
 	.method("log.energy", &cecModel::getEnergy)
 	.method("log.iters", &cecModel::iters);
 	//.method("x", getDataSet)
-
 }
 }
 #endif
