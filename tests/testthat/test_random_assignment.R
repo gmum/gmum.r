@@ -66,7 +66,9 @@ test_that("mouse_1 random assignment is correct", {
   npoints = dim(dataset_points)[1]
   for(i in 1:t)
   {
-    args = list(k=nclusters, x=dataset_points, method.init='random')
+    #args = list(k=nclusters, x=dataset_points, method.init='random')
+    args = list(k=nclusters, x=dataset_points, method.init='random', method.type='sphere')
+
     c <- CEC(args)
     correct_percentage <- correctness(dataset_clusters, c$y(), npoints, nclusters)
     if(c$entropy() < (1.5 * expected_energy) | (correct_percentage >= 0.9) ) {
