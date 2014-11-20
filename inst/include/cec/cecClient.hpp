@@ -15,7 +15,6 @@ class cecClient {
 private:
 	cecConfiguration config;
 public:
-	cecClient(){}
 	cecClient(cecConfiguration*);
 
 	/**

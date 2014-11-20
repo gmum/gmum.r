@@ -39,7 +39,7 @@ void cecConfiguration::setCentroids(const Rcpp::List centroids) {
 		params.centroidsSet = false;
 }
 
-void cecConfiguration::setNstart(const int nstart) {
+void cecConfiguration::setNstart(const unsigned int nstart) {
 	params.nstart = nstart;
 }
 
@@ -75,6 +75,10 @@ void cecConfiguration::setMethodInit(const std::string init) {
 			&& params.centroids.size() != params.nrOfClusters)
 		Rcpp::stop(CONST::ERRORS::centroidsError);
 	switch (params.clusterType) {
+	case kstandard: // TODO: handle kstandard parameter
+	case kdiagonal: // TODO: handle kdiagonal parameter
+	case ksphere: // TODO: handle ksphere parameter
+		break;
 	case kfull:
 		if (!params.covMatSet)
 			Rcpp::stop(CONST::ERRORS::covMatReq);
@@ -91,31 +95,36 @@ void cecConfiguration::setMethodInit(const std::string init) {
 			Rcpp::stop(CONST::ERRORS::functionNameReq);
 		break;
 	case kmix:
-		BOOST_FOREACH(boost::shared_ptr<ClusterParams> cluster, params.clusters) {
-			switch (cluster->type) {
-			case kfull: {
-				ClusterFullParams &ptr =
-						static_cast<ClusterFullParams&>(*cluster);
-				if (!ptr.covMatSet)
-					Rcpp::stop(CONST::ERRORS::covMatReq);
-				break;
-			}
-			case kfsphere: {
-				ClusterFsphereParams &ptr =
-						static_cast<ClusterFsphereParams&>(*cluster);
-				if (!ptr.radiusSet)
-					Rcpp::stop(CONST::ERRORS::radiusReq);
-				break;
-			}
-			case knoType:
-				Rcpp::stop(CONST::ERRORS::clusterRecError);
-			case kcustom:
-				ClusterCustomParams &ptr =
-						static_cast<ClusterCustomParams&>(*cluster);
-				if (!ptr.functionNameSet)
-					Rcpp::stop(CONST::ERRORS::functionNameReq);
-				break;
-			}
+		BOOST_FOREACH(boost::shared_ptr < ClusterParams > cluster,
+				params.clusters)
+		switch (cluster->type) {
+		case kstandard:
+		case kdiagonal:
+		case ksphere:
+		case kmix:
+			break;
+		case kfull: {
+			ClusterFullParams &ptr = static_cast<ClusterFullParams&>(*cluster);
+			if (!ptr.covMatSet)
+				Rcpp::stop(CONST::ERRORS::covMatReq);
+			break;
+		}
+		case kfsphere: {
+			ClusterFsphereParams &ptr =
+					static_cast<ClusterFsphereParams&>(*cluster);
+			if (!ptr.radiusSet)
+				Rcpp::stop(CONST::ERRORS::radiusReq);
+			break;
+		}
+		case knoType:
+			Rcpp::stop(CONST::ERRORS::clusterRecError);
+			break;
+		case kcustom:
+			ClusterCustomParams &ptr =
+					static_cast<ClusterCustomParams&>(*cluster);
+			if (!ptr.functionNameSet)
+				Rcpp::stop(CONST::ERRORS::functionNameReq);
+			break;
 		}
 	}
 }
@@ -214,7 +223,7 @@ void cecConfiguration::setFunction(const std::string functionName) {
 void cecConfiguration::setEps(const double killThreshold) {
 	params.killThreshold = killThreshold;
 }
-void cecConfiguration::setItmax(const int) {
+void cecConfiguration::setItmax(const unsigned int) {
 }
 void cecConfiguration::setLogEnergy(bool logEnergy) {
 	params.logEnergy = logEnergy;

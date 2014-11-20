@@ -20,7 +20,7 @@ public:
 	unsigned int nrOfClusters;
 	bool logNrOfClusters;
 	bool logEnergy;
-	int nstart;
+	unsigned int nstart;
 	AssignmentType assignmentType;
 	bool centroidsSet;
 	std::list<std::vector<double> > centroids;

@@ -32,18 +32,18 @@ unsigned int findNearest(unsigned int i,
 	unsigned int nearest = -1;
 	unsigned int j = 0;
 
-	BOOST_FOREACH(std::vector<double> center, centers){
+	BOOST_FOREACH(std::vector<double> center, centers) {
 
-	arma::rowvec centr = arma::conv_to<arma::rowvec>::from(center);
-	arma::rowvec vec = centr - point;
-	float tempDist = arma::as_scalar(vec*vec.t());
-	if(distance > tempDist) {
-		distance = tempDist;
-		nearest = j;
+		arma::rowvec centr = arma::conv_to<arma::rowvec>::from(center);
+		arma::rowvec vec = centr - point;
+		float tempDist = arma::as_scalar(vec*vec.t());
+		if(distance > tempDist) {
+			distance = tempDist;
+			nearest = j;
+		}
+		j++;
+
 	}
-	j++;
-
-}
 
 	return nearest;
 }
