@@ -6,37 +6,40 @@ boost::shared_ptr<Cluster> cecModel::createCluster(const ClusterParams &params,
 		int i) {
 	boost::shared_ptr<Cluster> cluster;
 	switch (params.type) {
+	case knoType: // TODO: handle knoType parameter
+	case kmix: // TODO: handle kmix parameter
+		break;
 	case kstandard:
-		cluster = boost::shared_ptr<Cluster>(
-				new ClusterStandard(i, *assignment, *points));
+		cluster = boost::shared_ptr < Cluster
+				> (new ClusterStandard(i, *assignment, *points));
 		break;
 	case kfull: {
 		const ClusterFullParams &ptr =
 				static_cast<const ClusterFullParams&>(params);
-		cluster = boost::shared_ptr<Cluster>(
-				new ClusterCovMat(ptr.covMat, i, *assignment, *points));
+		cluster = boost::shared_ptr < Cluster
+				> (new ClusterCovMat(ptr.covMat, i, *assignment, *points));
 		break;
 	}
 	case kdiagonal:
-		cluster = boost::shared_ptr<Cluster>(
-				new ClusterDiagonal(i, *assignment, *points));
+		cluster = boost::shared_ptr < Cluster
+				> (new ClusterDiagonal(i, *assignment, *points));
 		break;
 	case ksphere:
-		cluster = boost::shared_ptr<Cluster>(
-				new ClusterSpherical(i, *assignment, *points));
+		cluster = boost::shared_ptr < Cluster
+				> (new ClusterSpherical(i, *assignment, *points));
 		break;
 	case kfsphere: {
 		const ClusterFsphereParams &ptr =
 				static_cast<const ClusterFsphereParams&>(params);
-		cluster = boost::shared_ptr<Cluster>(
-				new ClusterConstRadius(ptr.radius, i, *assignment, *points));
+		cluster = boost::shared_ptr < Cluster
+				> (new ClusterConstRadius(ptr.radius, i, *assignment, *points));
 		break;
 	}
 	case kcustom: {
 		const ClusterCustomParams &ptr =
 				static_cast<const ClusterCustomParams&>(params);
-		cluster = boost::shared_ptr<Cluster>(
-				new ClusterCustomFunction(i, *assignment, *points,
+		cluster = boost::shared_ptr < Cluster
+				> (new ClusterCustomFunction(i, *assignment, *points,
 						ptr.functionName));
 		break;
 	}
@@ -47,17 +50,19 @@ boost::shared_ptr<Cluster> cecModel::createCluster(const ClusterParams &params,
 cecModel::cecModel(boost::shared_ptr<Algorithm> algorithm,
 		boost::shared_ptr<std::vector<unsigned int> > assignment,
 		const Params &params) :
-		algorithm(algorithm), assignment(assignment), points(params.dataset), killThreshold(
+		assignment(assignment), points(params.dataset), algorithm(algorithm), killThreshold(
 				params.killThreshold) {
 
 	clusters.reserve(params.nrOfClusters);
 
 	int i = 0;
-	if (params.clusterType == kmix)
-		BOOST_FOREACH(boost::shared_ptr<ClusterParams> cluster, params.clusters) {
+	if (params.clusterType == kmix) {
+		BOOST_FOREACH(boost::shared_ptr < ClusterParams > cluster,
+				params.clusters)
+		{
 			clusters.push_back(createCluster(*cluster, i));
 		}
-	else {
+	} else {
 		ClusterParams *cluster;
 		switch (params.clusterType) {
 		case kfsphere: {
@@ -88,7 +93,7 @@ cecModel::cecModel(boost::shared_ptr<Algorithm> algorithm,
 			break;
 		}
 		cluster->type = params.clusterType;
-		for (int i = 0; i < params.nrOfClusters; ++i)
+		for (unsigned int i = 0; i < params.nrOfClusters; ++i)
 			clusters.push_back(createCluster(*cluster, i));
 		delete cluster;
 	}
@@ -108,7 +113,8 @@ void cecModel::singleLoop() {
 
 double cecModel::entropy() {
 	double s = 0.0;
-	BOOST_FOREACH(boost::shared_ptr<Cluster> cluster, clusters) {
+	BOOST_FOREACH(boost::shared_ptr < Cluster > cluster, clusters)
+	{
 		s += cluster->entropy();
 	}
 	return s;
@@ -123,18 +129,19 @@ const arma::mat &cecModel::getPoints() const {
 }
 
 std::vector<arma::rowvec> cecModel::centers() const {
-	std::vector<arma::rowvec> array;
+	std::vector < arma::rowvec > array;
 	array.reserve(clusters.size());
-	for (int i = 0; i < clusters.size(); ++i)
+	for (unsigned int i = 0; i < clusters.size(); ++i) {
 		array.push_back(clusters[i]->getMean());
+	}
 	return array;
 }
 
 std::vector<arma::mat> cecModel::cov() const {
-	std::vector<arma::mat> array;
+	std::vector < arma::mat > array;
 	array.reserve(clusters.size());
 
-	for (int i = 0; i < clusters.size(); ++i) {
+	for (unsigned int i = 0; i < clusters.size(); ++i) {
 		array.push_back(clusters[i]->getCovMat(i, *assignment, *points));
 	}
 
@@ -153,7 +160,6 @@ std::list<double> cecModel::getEnergy() const {
 	return result.energy;
 }
 
-//getDataSet
 boost::shared_ptr<const arma::mat> cecModel::getPtrToPoints() const {
 	return this->points;
 }
@@ -163,12 +169,12 @@ boost::shared_ptr<std::vector<unsigned int> > cecModel::getPtrToAssignement() co
 }
 
 unsigned int cecModel::predict(std::vector<double> vec) const {
-	arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
+	arma::rowvec x = arma::conv_to < arma::rowvec > ::from(vec);
 
 	int assign = 0;
 	double minEntropyChange = std::numeric_limits<double>::max();
 
-	for (int i = 0; i < clusters.size(); ++i) {
+	for (unsigned int i = 0; i < clusters.size(); ++i) {
 
 		boost::shared_ptr<Cluster> oldCluster = clusters[i];
 		boost::shared_ptr<Cluster> newCluster = clusters[i]->addPoint(x);
@@ -184,11 +190,11 @@ unsigned int cecModel::predict(std::vector<double> vec) const {
 }
 
 std::list<double> cecModel::predict(std::vector<double> vec, bool general) {
-	arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
+	arma::rowvec x = arma::conv_to < arma::rowvec > ::from(vec);
 	std::list<double> out;
 
 	if (general)
-		for (int i = 0; i < clusters.size(); ++i) {
+		for (unsigned int i = 0; i < clusters.size(); ++i) {
 			arma::mat covMat = clusters[i]->getCovMat(i, *assignment, *points);
 			arma::rowvec mean = clusters[i]->getMean();
 			if (!invSet[i]) {

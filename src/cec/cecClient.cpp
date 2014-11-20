@@ -10,12 +10,11 @@ cecClient::cecClient(cecConfiguration* config) {
 cecModel* cecClient::findBestCEC() {
 	boost::shared_ptr < std::vector<unsigned int>
 			> assignment(new std::vector<unsigned int>());
-	boost::shared_ptr < Hartigan
-			> hartigan(
-					new Hartigan(this->config.getParams().logNrOfClusters,
-							this->config.getParams().logEnergy));
+	boost::shared_ptr<Hartigan> hartigan(
+			new Hartigan(this->config.getParams().logNrOfClusters,
+					this->config.getParams().logEnergy));
 
-	Assignment *assignmentType;
+	Assignment *assignmentType = NULL;
 	switch (this->config.getParams().assignmentType) {
 	case krandom:
 		assignmentType = new RandomAssignment(
@@ -32,6 +31,8 @@ cecModel* cecClient::findBestCEC() {
 				*(this->config.getParams().dataset),
 				this->config.getParams().centroids);
 		break;
+	case knoAssignment:
+		break; // TODO: handle no assignment
 	}
 
 	assignment->resize(this->config.getParams().dataset->n_rows);
@@ -39,11 +40,12 @@ cecModel* cecClient::findBestCEC() {
 
 	cecModel *currentCEC = NULL;
 	try {
-		currentCEC = new cecModel(hartigan, assignment, this->config.getParams());
+		currentCEC = new cecModel(hartigan, assignment,
+				this->config.getParams());
 
 		currentCEC->loop();
 
-		for (int i = 1; i < cecClient::config.getParams().nstart; ++i) {
+		for (unsigned int i = 1; i < cecClient::config.getParams().nstart; ++i) {
 
 			(*assignmentType)(*assignment);
 			cecModel *nextCEC = new cecModel(hartigan, assignment,
