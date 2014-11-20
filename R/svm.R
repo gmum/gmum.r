@@ -78,6 +78,21 @@ print.svm <- NULL
 #' @docType plot
 plot.svm <- NULL
 
+#' @title summary
+#' 
+#' @description Prints short summary of a trained model.
+#' 
+#' @export
+#' 
+#' @usage summary(svm)
+#' 
+#' @param svm SVM object 
+#' 
+#' @rdname svm-summary-method
+#' 
+#' @docType plot
+summary.svm <- NULL
+
 #' @title dataset.X
 #' 
 #' @description Prints dataset stored in a SVM object, without the labels.
@@ -258,6 +273,16 @@ evalqOnLoad({
                   x$getDegree() ))
   }
   
+  summary.svm <<- function(object) {
+    print(sprintf("Support Vector Machine, library: %s, kernel: %s, preprocess: %s",
+                  object$getLibrary(), 
+                  object$getKernel(), 
+                  object$getPreprocess()))
+    print(sprintf("%d classes with %d support vectors", 
+                  object$get_number_class(), 
+                  object$get_number_sv() ))
+  }
+  
   plot.svm <<- function(x, dim1 = 1, dim2 = 2) {
     df =  data.frame( x$getX() ) 
     if (dim1 > ncol(df) || dim2 > ncol(df)) {
@@ -291,8 +316,9 @@ evalqOnLoad({
   }
   
   setMethod("print", "Rcpp_SVMClient", print.svm)
-  setMethod("predict", signature("Rcpp_SVMClient", "ANY"), predict.svm )
+  setMethod("predict", signature("Rcpp_SVMClient", "ANY"), predict.svm)
   setMethod("plot", "Rcpp_SVMClient",  plot.svm)
+  setMethod("summary", "Rcpp_SVMClient", summary.svm)
 
   #dataset
   setMethod("dataset.X", signature("Rcpp_SVMClient"), dataset.X)

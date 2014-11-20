@@ -16,7 +16,7 @@ enum SVMType {
 };
 
 enum Preprocess {
-	TWOE, VK, NONE, NORM
+	TWOE, NONE
 };
 // NORM is solely for test purposes
 
@@ -80,9 +80,6 @@ public:
 	//universal parameters
 	arma::vec w; //d
 
-	//2eConfig
-//	two
-
 	// constructors
 	SVMConfiguration();
 	SVMConfiguration(bool);
@@ -90,9 +87,6 @@ public:
 	// methods
 	arma::mat getData();
 	void setData(arma::mat);
-
-	void createParams(std::string, std::string, std::string, int, double,
-			double);
 	void setDefaultParams();
 
 	void setFilename(std::string);

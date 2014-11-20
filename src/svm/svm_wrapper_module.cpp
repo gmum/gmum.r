@@ -28,7 +28,6 @@ RCPP_MODULE(svm_wrapper) {
 			.field("shrinking", &SVMConfiguration::shrinking)
 			.field("probability", &SVMConfiguration::probability)
 
-			.method("createParams", &SVMConfiguration::createParams)
 			.method("setPrediction", &SVMConfiguration::setPrediction)
 			.method("setWeights", &SVMConfiguration::setWeights)
 			.method("setLibrary", &SVMConfiguration::setLibrary)
@@ -37,8 +36,6 @@ RCPP_MODULE(svm_wrapper) {
 			;
 	class_<SVMClient>("SVMClient")
 			.constructor<SVMConfiguration*>()
-
-			.field("trained", &SVMClient::trained)
 
 			.method("setX", &SVMClient::setX)
 			.method("setY", &SVMClient::setY)
@@ -70,9 +67,12 @@ RCPP_MODULE(svm_wrapper) {
 			.method("getEps", &SVMClient::getEps)
 			.method("isShrinking", &SVMClient::isShrinking)
 			.method("isProbability", &SVMClient::isProbability)
+      
 			.method("getAlpha", &SVMClient::getAlpha)
 			.method("getBias", &SVMClient::getBias)
 			.method("getW", &SVMClient::getW)
+      .method("get_number_sv", &SVMClient::get_number_sv)
+      .method("get_number_class", &SVMClient::get_number_class)
 
 			.method("train", &SVMClient::train)
 			.method("predict", &SVMClient::predict)
