@@ -1,4 +1,3 @@
-
 library(gmum.r)
 library(igraph)
 library(testthat)
@@ -53,8 +52,7 @@ Sys.sleep(35.0)
 pause(gng)
 plot(gng, start_s=10, mode=gng.plot.2d.errors)
 
-GrowingNeuralGas::number_nodes(gng)
-g <- GrowingNeuralGas::convert_igraph(gng)
+g <- convert_igraph(gng)
 length(V(g))
 
 if("rgl" %in% rownames(installed.packages()) == TRUE) {
@@ -65,7 +63,7 @@ if("rgl" %in% rownames(installed.packages()) == TRUE) {
 
 print("Test::Graph after jumped distribution")
 
-ig <- GrowingNeuralGas::convert_igraph(gng)
+ig <- convert_igraph(gng)
 
 # Running unit tests (almost)
 test_that("GNG has not isolated vertexes", {
