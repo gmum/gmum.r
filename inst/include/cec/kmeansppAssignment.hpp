@@ -2,7 +2,6 @@
 #define KMEANSPP_ASSIGMENT_HPP
 
 #include <list>
-#include <RcppArmadillo.h>
 #include <stdlib.h>
 #include <time.h>
 #include <vector>

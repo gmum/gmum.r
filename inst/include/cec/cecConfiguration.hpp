@@ -1,16 +1,15 @@
 #ifndef CECCONFIGURATION_HPP_
 #define CECCONFIGURATION_HPP_
 
-#include "cec.hpp"
-
-namespace gmum {
+#include "params.hpp"
+#include <Rcpp.h>
 
 class cecConfiguration {
 private:
-	Params params;
+    gmum::Params params;
 public:
 	cecConfiguration();
-	Params getParams();
+    gmum::Params getParams();
 	void setDataSet(const Rcpp::NumericMatrix);
 	void setNrOfClusters(const unsigned int);
 	void setCentroids(const Rcpp::List);
@@ -27,7 +26,5 @@ public:
 	void setNCluster(bool);
 	void setIters(bool);
 };
-
-} /* namespace gmum */
 
 #endif /* CECCONFIGURATION_HPP_ */

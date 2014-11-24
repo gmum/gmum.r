@@ -3,7 +3,6 @@
 
 #include <cmath>
 #include <limits>
-#include <RcppArmadillo.h>
 #include <vector>
 #include "algorithm.hpp"
 #include "cluster.hpp"

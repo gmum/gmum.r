@@ -1,7 +1,6 @@
 #ifndef RANDOM_ASSIGMENT_HPP
 #define RANDOM_ASSIGMENT_HPP
 
-#include <RcppArmadillo.h>
 #include <stdlib.h>
 #include <time.h>
 #include <vector>

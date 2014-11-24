@@ -1,15 +1,8 @@
 #ifndef CECCLIENT_HPP_
 #define CECCLIENT_HPP_
 
-#include "cec.hpp"
 #include "cecConfiguration.hpp"
-#include "hartigan.hpp"
-#include "assignment.hpp"
-#include "randomAssignment.hpp"
-#include "kmeansppAssignment.hpp"
-#include "centroidsAssignment.hpp"
-
-namespace gmum {
+#include "cec.hpp"
 
 class cecClient {
 private:
@@ -20,9 +13,7 @@ public:
 	/**
 	 * Assign points to clusters and learn model config->params.nstart number of times.
 	 */
-	cecModel* findBestCEC();
+    cecModel* findBestCEC();
 };
-
-} /* namespace gmum */
 
 #endif /* CECCLIENT_HPP_ */

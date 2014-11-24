@@ -2,9 +2,9 @@
 #define PARAMS_HPP
 
 #include <string>
-#include "boost/smart_ptr.hpp"
 #include <list>
 #include <vector>
+#include "boost/smart_ptr.hpp"
 #include "clusterParams.hpp"
 
 namespace gmum {

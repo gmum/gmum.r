@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <stdlib.h>
-#include <RcppArmadillo.h>
 #include "assignment.hpp"
 
 namespace gmum {

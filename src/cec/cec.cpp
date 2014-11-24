@@ -1,6 +1,5 @@
 #include "cec.hpp"
-
-namespace gmum {
+using namespace gmum;
 
 boost::shared_ptr<Cluster> cecModel::createCluster(const ClusterParams &params,
 		int i) {
@@ -216,6 +215,4 @@ std::list<double> cecModel::predict(std::vector<double> vec, bool general) {
 		}
 
 	return out;
-}
-
 }

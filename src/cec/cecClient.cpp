@@ -1,6 +1,9 @@
 #include "cecClient.hpp"
-
-namespace gmum {
+#include "hartigan.hpp"
+#include "randomAssignment.hpp"
+#include "kmeansppAssignment.hpp"
+#include "centroidsAssignment.hpp"
+using namespace gmum;
 
 cecClient::cecClient(cecConfiguration* config) {
 	cecConfiguration current_config = *config;
@@ -64,5 +67,3 @@ cecModel* cecClient::findBestCEC() {
 	delete assignmentType;
 	return currentCEC;
 }
-
-} /* namespace gmum */

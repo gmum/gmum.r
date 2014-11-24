@@ -1,7 +1,8 @@
 #include "cecConfiguration.hpp"
 #include "const.hpp"
+#include <boost/foreach.hpp>
+using namespace gmum;
 
-namespace gmum {
 cecConfiguration::cecConfiguration() {
 }
 
@@ -23,10 +24,10 @@ void cecConfiguration::setNrOfClusters(const unsigned int nrOfClusters) {
 	else if (params.clusters.size() > 0)
 		params.nrOfClusters = params.clusters.size();
 	else
-		params.nrOfClusters = CONST::nrOfClustersInit;
+        params.nrOfClusters = CONST::nrOfClustersInit;
 
 	if (params.dataset->n_rows < params.nrOfClusters)
-		Rcpp::stop(CONST::ERRORS::datasetSize);
+        Rcpp::stop(CONST::ERRORS::datasetSize);
 }
 
 void cecConfiguration::setCentroids(const Rcpp::List centroids) {
@@ -235,5 +236,4 @@ void cecConfiguration::setNCluster(bool logNrOfClusters) {
 
 void cecConfiguration::setIters(bool iters) {
 }
-} /* namespace gmum */
 

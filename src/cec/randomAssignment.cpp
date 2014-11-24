@@ -1,4 +1,5 @@
 #include "randomAssignment.hpp"
+#include <Rcpp.h>
 
 namespace gmum {
 
