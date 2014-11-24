@@ -1,5 +1,4 @@
 #include "cluster.hpp"
-//#include <Rcpp.h>
 
 namespace gmum {
 
