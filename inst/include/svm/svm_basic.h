@@ -82,6 +82,9 @@ public:
 
 	Log log;
 
+	//universal parameters
+	arma::vec w; //d
+
 	//2eConfig
 //	two
 

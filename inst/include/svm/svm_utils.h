@@ -1,10 +1,3 @@
-/*
- * utils.h
- *
- *  Created on: Jun 6, 2014
- *      Author: sacherus
- */
-
 #ifndef SVC_UTILS_H_
 #define SVC_UTILS_H_
 #include <svm.h>
@@ -13,9 +6,20 @@
 
 class SvmUtils {
 private:
-	SvmUtils();
+  SvmUtils();
 	virtual ~SvmUtils();
 public:
+
+	static void sqrtInvMat(const arma::mat &matrix, arma::mat &finalMat) {
+		arma::vec eigenValue;
+		arma::mat eigenVector;
+		arma::mat diagonalMat;
+		// Throws runtime decomposition error
+		arma::mat inverse = arma::inv(matrix);
+		arma::eig_sym(eigenValue, eigenVector,inverse);
+		finalMat = eigenVector * arma::sqrt(arma::diagmat(eigenValue))	* eigenVector.t();
+	}
+
 	//convert sparse matrix to armadillo matrix
 	static arma::mat libtoarma(svm_node** svm_nodes, int nr_sv, int dim) {
 		arma::mat ret(nr_sv, dim);
