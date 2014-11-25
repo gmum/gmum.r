@@ -1,8 +1,11 @@
 #include <sstream>
 #include "log.h"
-#include "svm_basic.h"
+
+Log::Log() {
+	verbosity = LogLevel::Info;
+}
 
 void Log::log(int level, std::string text) {
-	if (level <= VERBOSITY)
+	if (level <= verbosity)
 		std::cout << text << std::endl << std::flush;
 }

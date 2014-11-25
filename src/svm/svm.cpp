@@ -458,8 +458,9 @@ void Solver::reconstruct_gradient()
 		if(is_free(j))
 			nr_free++;
 
-	if(2*nr_free < active_size)
-		LOG(LogLevel::Warning, "WARNING: using -h 0 may be faster");
+//	if(2*nr_free < active_size)
+//		LOG(LogLevel::Warning, "WARNING: using -h 0 may be faster");
+//		REPORT_PRODUCTION("WARNING: using -h 0 may be faster");
 
 	if (nr_free*l > 2*active_size*(l-active_size))
 	{
@@ -719,7 +720,9 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 			reconstruct_gradient();
 			active_size = l;
 		}
-		LOG(LogLevel::Warning, "WARNING: reaching max number of iterations");
+//		LOG(LogLevel::Warning, "WARNING: reaching max number of iterations");
+//		REPORT_PRODUCTION("WARNING: reaching max number of iterations");
+
 	}
 
 	// calculate rho
@@ -1494,7 +1497,8 @@ static void solve_nu_svc(
 		alpha, 1.0, 1.0, param->eps, si,  param->shrinking);
 	double r = si->r;
 
-	LOG(LogLevel::Debug, "C = " + to_string(1/r));
+//	LOG(LogLevel::Debug, "C = " + to_string(1/r));
+//	REPORT_PRODUCTION("C = " + to_string(1/r));
 
 	for(i=0;i<l;i++)
 		alpha[i] *= y[i]/r;
@@ -1572,7 +1576,8 @@ static void solve_epsilon_svr(
 		sum_alpha += fabs(alpha[i]);
 	}
 
-	LOG(LogLevel::Debug, "nu = " + to_string(sum_alpha/(param->C*l)));
+//	LOG(LogLevel::Debug, "nu = " + to_string(sum_alpha/(param->C*l)));
+//	REPORT_PRODUCTION("nu = " + to_string(sum_alpha/(param->C*l)));
 
 	delete[] alpha2;
 	delete[] linear_term;
@@ -1607,7 +1612,8 @@ static void solve_nu_svr(
 	s.Solve(2*l, SVR_Q(*prob,*param), linear_term, y,
 		alpha2, C, C, param->eps, si, param->shrinking);
 
-	LOG(LogLevel::Debug, "epsilon = " + to_string(-si->r));
+//	LOG(LogLevel::Debug, "epsilon = " + to_string(-si->r));
+//	REPORT_PRODUCTION("epsilon = " + to_string(-si->r));
 
 	for(i=0;i<l;i++)
 		alpha[i] = alpha2[i] - alpha2[i+l];
@@ -1651,7 +1657,8 @@ static decision_function svm_train_one(
 			break;
 	}
 
-	LOG(LogLevel::Debug, "obj = " + to_string(si.obj) + ", rho = " + to_string(si.rho));
+//	LOG(LogLevel::Debug, "obj = " + to_string(si.obj) + ", rho = " + to_string(si.rho));
+//	REPORT_PRODUCTION("obj = " + to_string(si.obj) + ", rho = " + to_string(si.rho));
 
 	// output SVs
 
@@ -1675,7 +1682,8 @@ static decision_function svm_train_one(
 		}
 	}
 
-	LOG(LogLevel::Debug, "nSV = " + to_string(nSV) + ", nBSV = " + to_string(nBSV));
+//	LOG(LogLevel::Debug, "nSV = " + to_string(nSV) + ", nBSV = " + to_string(nBSV));
+//	REPORT_PRODUCTION("nSV = " + to_string(nSV) + ", nBSV = " + to_string(nBSV));
 
 	decision_function f;
 	f.alpha = alpha;
@@ -1787,13 +1795,15 @@ static void sigmoid_train(
 
 		if (stepsize < min_step)
 		{
-			LOG(LogLevel::Info, "Line search fails in two-class probability estimates");
+//			LOG(LogLevel::Info, "Line search fails in two-class probability estimates");
+//			REPORT_PRODUCTION("Line search fails in two-class probability estimates");
 			break;
 		}
 	}
 
-	if (iter>=max_iter)
-		LOG(LogLevel::Info, "Reaching maximal iterations in two-class probability estimates");
+//	if (iter>=max_iter)
+//		LOG(LogLevel::Info, "Reaching maximal iterations in two-class probability estimates");
+//		REPORT_PRODUCTION("Reaching maximal iterations in two-class probability estimates");
 	free(t);
 }
 
@@ -1864,8 +1874,9 @@ static void multiclass_probability(int k, double **r, double *p)
 			}
 		}
 	}
-	if (iter>=max_iter)
-		LOG(LogLevel::Info, "Exceeds max_iter in multiclass_prob");
+//	if (iter>=max_iter)
+//		LOG(LogLevel::Info, "Exceeds max_iter in multiclass_prob");
+//		REPORT_PRODUCTION("Exceeds max_iter in multiclass_prob");
 	for(t=0;t<k;t++) free(Q[t]);
 	free(Q);
 	free(Qp);
@@ -2132,9 +2143,9 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 
 		// group training data of the same class
 		svm_group_classes(prob,&nr_class,&label,&start,&count,perm);
-		if(nr_class == 1)
-			LOG(LogLevel::Warning, "WARNING: training data in only one class. See README for details.");
-		
+//		if(nr_class == 1)
+//			LOG(LogLevel::Warning, "WARNING: training data in only one class. See README for details.");
+//			REPORT_PRODUCTION("WARNING: training data in only one class. See README for details.");
 		svm_node **x = Malloc(svm_node *,l);
 		int i;
 		for(i=0;i<l;i++)
@@ -2151,10 +2162,12 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 			for(j=0;j<nr_class;j++)
 				if(param->weight_label[i] == label[j])
 					break;
-			if(j == nr_class)
-				LOG(LogLevel::Warning, "WARNING: class label " + to_string(param->weight_label[i]) + " specified in weight is not found")
-			else
-				weighted_C[j] *= param->weight[i];
+			if(j == nr_class) {
+//				LOG(LogLevel::Warning, "WARNING: class label " + to_string(param->weight_label[i]) + " specified in weight is not found")
+//				REPORT_PRODUCTION("WARNING: class label " + to_string(param->weight_label[i]) + " specified in weight is not found");
+			} else {
+ 				weighted_C[j] *= param->weight[i];
+			}
 		}
 
 		// train k*(k-1)/2 models
@@ -2252,7 +2265,8 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 			nz_count[i] = nSV;
 		}
 		
-		LOG(LogLevel::Debug, "Total nSV = " + to_string(total_sv));
+//		LOG(LogLevel::Debug, "Total nSV = " + to_string(total_sv));
+//		REPORT_PRODUCTION("Total nSV = " + to_string(total_sv));
 
 		model->l = total_sv;
 		model->SV = Malloc(svm_node *,total_sv);

@@ -14,13 +14,12 @@
 #include "libsvm_runner.h"
 #include "svm_basic.h"
 #include "svm_utils.h"
-#include "log.h"
 
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
-void read_problem(const char *filename, svm_parameter& param);
+void read_problem(SVMConfiguration& config, const char *filename, svm_parameter& param);
 static char* readline(FILE *input);
-void exit_input_error(int line_num);
-void predict(FILE *input, FILE *output);
+void exit_input_error(SVMConfiguration& config, int line_num);
+void predict(SVMConfiguration& config, FILE *input, FILE *output);
 svm_parameter get_default_params();
 
 //struct svm_parameter param;		// set by parse_command_line
@@ -81,7 +80,7 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 	error_msg = svm_check_parameter(&prob, param);
 
 	if (error_msg) {
-		LOG(LogLevel::Error, "ERROR: " + to_string(error_msg))
+		LOG(config.log, LogLevel::Error, "ERROR: " + to_string(error_msg))
 		return false;
 	}
 	int* nr = Malloc(int, 1);
@@ -135,7 +134,7 @@ svm_model* LibSVMRunner::load_model_from_config(SVMConfiguration& config,
 	error_msg = svm_check_parameter(&prob, param);
 
 	if (error_msg) {
-		LOG(LogLevel::Error, "ERROR: " + to_string(error_msg))
+		LOG(config.log, LogLevel::Error, "ERROR: " + to_string(error_msg))
 		return 0;
 	}
 
@@ -191,14 +190,14 @@ void LibSVMRunner::save_model_to_file(SVMConfiguration& config,
 	error_msg = svm_check_parameter(&prob, param);
 
 	if (error_msg) {
-		LOG(LogLevel::Error, "ERROR: " + to_string(error_msg))
+		LOG(config.log, LogLevel::Error, "ERROR: " + to_string(error_msg))
 		exit(1);
 	}
 
 	model = svm_train(&prob, param);
 
 	if (svm_save_model(model_file_name, model)) {
-		LOG(LogLevel::Error, "can't save model to file " + to_string(model_file_name))
+		LOG(config.log, LogLevel::Error, "can't save model to file " + to_string(model_file_name))
 		exit(1);
 	}
 	svm_free_and_destroy_model(&model);
@@ -318,37 +317,37 @@ void LibSVMRunner::file_prediction(SVMConfiguration& config) {
 
 	input = fopen(input_filename, "r");
 	if (input == NULL) {
-		LOG(LogLevel::Error, "can't open input file " + to_string(input_filename))
+		LOG(config.log, LogLevel::Error, "can't open input file " + to_string(input_filename))
 		exit(1);
 	}
 
 	output = fopen(output_filename, "w");
 	if (output == NULL) {
-		LOG(LogLevel::Error, "can't open output file " + to_string(output_filename))
+		LOG(config.log, LogLevel::Error, "can't open output file " + to_string(output_filename))
 		exit(1);
 	}
 
 	if ((model = svm_load_model(model_filename)) == 0) {
-		LOG(LogLevel::Error, "can't open model file " + to_string(model_filename));
+		LOG(config.log, LogLevel::Error, "can't open model file " + to_string(model_filename));
 		exit(1);
 	}
 
 	x = (struct svm_node *) malloc(max_nr_attr * sizeof(struct svm_node));
 	if (predict_probability) {
 		if (svm_check_probability_model(model) == 0) {
-			LOG(LogLevel::Error, "Model does not support probabiliy estimates");
+			LOG(config.log, LogLevel::Error, "Model does not support probabiliy estimates");
 			exit(1);
 		}
 	} else {
 		if (svm_check_probability_model(model) != 0)
-			LOG(LogLevel::Info, "Model supports probability estimates, but disabled in prediction.");
+			LOG(config.log, LogLevel::Info, "Model supports probability estimates, but disabled in prediction.");
 	}
 
-	predict(input, output);
+	predict(config, input, output);
 
 }
 
-void predict(FILE *input, FILE *output) {
+void predict(SVMConfiguration& config, FILE *input, FILE *output) {
 	int correct = 0;
 	int total = 0;
 	double error = 0;
@@ -361,7 +360,7 @@ void predict(FILE *input, FILE *output) {
 
 	if (predict_probability) {
 		if (svm_type == NU_SVR || svm_type == EPSILON_SVR) {
-			LOG(LogLevel::Info, "Prob. model for test data: target value = predicted value + z,\nz: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma="
+			LOG(config.log, LogLevel::Info, "Prob. model for test data: target value = predicted value + z,\nz: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma="
 							+ to_string(svm_get_svr_probability(model)));
 		}
 		else {
@@ -386,11 +385,11 @@ void predict(FILE *input, FILE *output) {
 
 		label = strtok(line, " \t\n");
 		if (label == NULL) // empty line
-			exit_input_error(total + 1);
+			exit_input_error(config, total + 1);
 
 		target_label = strtod(label, &endptr);
 		if (endptr == label || *endptr != '\0')
-			exit_input_error(total + 1);
+			exit_input_error(config, total + 1);
 
 		while (1) {
 			if (i >= max_nr_attr - 1)	// need one more for index = -1
@@ -409,7 +408,7 @@ void predict(FILE *input, FILE *output) {
 			x[i].index = (int) strtol(idx, &endptr, 10);
 			if (endptr == idx || errno != 0 || *endptr != '\0'
 					|| x[i].index <= inst_max_index)
-				exit_input_error(total + 1);
+				exit_input_error(config, total + 1);
 			else
 				inst_max_index = x[i].index;
 
@@ -417,7 +416,7 @@ void predict(FILE *input, FILE *output) {
 			x[i].value = strtod(val, &endptr);
 			if (endptr == val || errno != 0
 					|| (*endptr != '\0' && !isspace(*endptr)))
-				exit_input_error(total + 1);
+				exit_input_error(config, total + 1);
 
 			++i;
 		}
@@ -446,13 +445,13 @@ void predict(FILE *input, FILE *output) {
 		++total;
 	}
 	if (svm_type == NU_SVR || svm_type == EPSILON_SVR) {
-		LOG(LogLevel::Info, "Mean squared error = " + to_string(error / total) + "(regression)");
-		LOG(LogLevel::Info, "Squared correlation coefficient = "
+		LOG(config.log, LogLevel::Info, "Mean squared error = " + to_string(error / total) + "(regression)");
+		LOG(config.log, LogLevel::Info, "Squared correlation coefficient = "
 				+ to_string(((total * sumpt - sump * sumt) * (total * sumpt - sump * sumt))
 				/ ((total * sumpp - sump * sump)
 				* (total * sumtt - sumt * sumt))) + "(regression)");
 	} else
-		LOG(LogLevel::Info, "Accuracy = " + to_string((double) correct / total * 100) + "(classification)");
+		LOG(config.log, LogLevel::Info, "Accuracy = " + to_string((double) correct / total * 100) + "(classification)");
 	if (predict_probability)
 		free(prob_estimates);
 }
@@ -477,8 +476,8 @@ struct svm_parameter get_default_params() {
 	return param;
 }
 
-void exit_input_error(int line_num) {
-	LOG(LogLevel::Error, "Wrong input format at line " + to_string(line_num));
+void exit_input_error(SVMConfiguration& config, int line_num) {
+	LOG(config.log, LogLevel::Error, "Wrong input format at line " + to_string(line_num));
 	exit(1);
 }
 
@@ -498,14 +497,14 @@ static char* readline(FILE *input) {
 	return line;
 }
 
-void read_problem(const char *filename, svm_parameter& param) {
+void read_problem(SVMConfiguration& config, const char *filename, svm_parameter& param) {
 	int elements, max_index, inst_max_index, i, j;
 	FILE *fp = fopen(filename, "r");
 	char *endptr;
 	char *idx, *val, *label;
 
 	if (fp == NULL) {
-		LOG(LogLevel::Error, "Wcan't open input file " + to_string(filename));
+		LOG(config.log, LogLevel::Error, "Wcan't open input file " + to_string(filename));
 		exit(1);
 	}
 
@@ -541,11 +540,11 @@ void read_problem(const char *filename, svm_parameter& param) {
 		prob.x[i] = &x_space[j];
 		label = strtok(line, " \t\n");
 		if (label == NULL) // empty line
-			exit_input_error(i + 1);
+			exit_input_error(config, i + 1);
 
 		prob.y[i] = strtod(label, &endptr);
 		if (endptr == label || *endptr != '\0')
-			exit_input_error(i + 1);
+			exit_input_error(config, i + 1);
 
 		while (1) {
 			idx = strtok(NULL, ":");
@@ -558,7 +557,7 @@ void read_problem(const char *filename, svm_parameter& param) {
 			x_space[j].index = (int) strtol(idx, &endptr, 10);
 			if (endptr == idx || errno != 0 || *endptr != '\0'
 					|| x_space[j].index <= inst_max_index)
-				exit_input_error(i + 1);
+				exit_input_error(config, i + 1);
 			else
 				inst_max_index = x_space[j].index;
 
@@ -566,7 +565,7 @@ void read_problem(const char *filename, svm_parameter& param) {
 			x_space[j].value = strtod(val, &endptr);
 			if (endptr == val || errno != 0
 					|| (*endptr != '\0' && !isspace(*endptr)))
-				exit_input_error(i + 1);
+				exit_input_error(config, i + 1);
 
 			++j;
 		}
@@ -582,12 +581,12 @@ void read_problem(const char *filename, svm_parameter& param) {
 	if (param.kernel_type == PRECOMPUTED)
 		for (i = 0; i < prob.l; i++) {
 			if (prob.x[i][0].index != 0) {
-				LOG(LogLevel::Error, "Wrong input format: first column must be 0:sample_serial_number");
+				LOG(config.log, LogLevel::Error, "Wrong input format: first column must be 0:sample_serial_number");
 				exit(1);
 			}
 			if ((int) prob.x[i][0].value <= 0
 					|| (int) prob.x[i][0].value > max_index) {
-				LOG(LogLevel::Error, "Wrong input format: sample_serial_number out of range");
+				LOG(config.log, LogLevel::Error, "Wrong input format: sample_serial_number out of range");
 				exit(1);
 			}
 		}
