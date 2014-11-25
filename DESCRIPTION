@@ -7,9 +7,10 @@ Author: Stanislaw Jastrzebski
 Maintainer: Stanislaw Jastrzebski <grimghil@gmail.com>
 Description: More about what it does (maybe more than one line)
 License: MIT
-Depends:
+Depends: 
     Rcpp (>= 0.10.4),
     RcppArmadillo(>= 0.4.300.0),
     ggplot2 (>= 1.0.0)
 LinkingTo: Rcpp
 NeedsCompilation: yes
+Suggests: testthat

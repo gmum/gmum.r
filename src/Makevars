@@ -2,7 +2,7 @@ SOURCES = $(wildcard svm/*.cpp)
 OBJECTS=$(SOURCES:.cpp=.o)
 
 R_HOME :=     $(shell R RHOME)
-RCPPFLAGS := 		$(shell $(R_HOME)/bin/R CMD config --cppflags)
+RCPPFLAGS :=   	$(shell $(R_HOME)/bin/R CMD config --cppflags)
 RLDFLAGS := 		$(shell $(R_HOME)/bin/R CMD config --ldflags)
 RCPPINCL := 		$(shell echo 'Rcpp:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)
 RCPPLIBS := 		$(shell echo 'Rcpp:::LdFlags()'  | $(R_HOME)/bin/R --vanilla --slave)
