@@ -9,6 +9,7 @@
 #include "cluster.hpp"
 #include "clusterCustomFunction.hpp"
 #include "clusterParams.hpp"
+#include "cecConfiguration.hpp"
 #include "exceptions.hpp"
 #include "params.hpp"
 
@@ -21,18 +22,22 @@ private:
 	boost::shared_ptr<std::vector<unsigned int> > assignment;
 	boost::shared_ptr<const arma::mat> points;
     boost::shared_ptr<gmum::Algorithm> algorithm;
-	const double killThreshold;
+    double killThreshold;
 	std::vector<bool> invSet;
 	std::vector<arma::mat> inv;
     boost::shared_ptr<gmum::Cluster> createCluster(const gmum::ClusterParams &params,
 			int i);
+    cecConfiguration config;
+
+    void findBestCEC();
+    void init(boost::shared_ptr<gmum::Algorithm> algorithm,
+              boost::shared_ptr<std::vector<unsigned int> > assignment);
 public:
-    cecModel(boost::shared_ptr<gmum::Algorithm> algorithm,
-			boost::shared_ptr<std::vector<unsigned int> > assignment,
-            const gmum::Params &params);
+    cecModel(cecConfiguration* cfg);
+    cecModel(const cecModel& other);
 
     std::vector<boost::shared_ptr<gmum::Cluster> > clusters;
-	void loop();
+    void loop();
 	void singleLoop();
 	double entropy();
 	std::vector<unsigned int> &getAssignment() const;

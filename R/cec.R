@@ -180,9 +180,8 @@ evalqOnLoad({
         config$setNCluster(log.ncluster)
         config$setIters(log.iters)
       
-      #  cecClient <- new(cecClient, config)
-      #  cecModel <- cecClient$findBestCEC()
-      #  cecModel
+        model <- new(cecModel, config)
+        model
     }
 
     loop.cec <<- function(c) {
@@ -241,15 +240,15 @@ evalqOnLoad({
     setGeneric("log.iters", function(c) standardGeneric("log.iters"))
     setGeneric("nstart", function(c) standardGeneric("nstart"))
     
-    setMethod("loop", "Rcpp_cec", loop.cec)
-    setMethod("entropy", "Rcpp_cec", entropy.cec)
-    setMethod("y", "Rcpp_cec", y.cec)
-    setMethod("centers", "Rcpp_cec", centers.cec)
-    setMethod("cov", "Rcpp_cec", cov.cec)
-    setMethod("predictCluster", "Rcpp_cec", predictCluster.cec)
-    setMethod("predictClusters", "Rcpp_cec", predictClusters.cec)
-    setMethod("log.ncluster", "Rcpp_cec", log.ncluster.cec)
-    setMethod("log.energy", "Rcpp_cec", log.energy.cec)
-    setMethod("log.iters", "Rcpp_cec", log.iters.cec)
-    setMethod("nstart", "Rcpp_cec", nstart.cec)
+    setMethod("loop", "Rcpp_cecModel", loop.cec)
+    setMethod("entropy", "Rcpp_cecModel", entropy.cec)
+    setMethod("y", "Rcpp_cecModel", y.cec)
+    setMethod("centers", "Rcpp_cecModel", centers.cec)
+    setMethod("cov", "Rcpp_cecModel", cov.cec)
+    setMethod("predictCluster", "Rcpp_cecModel", predictCluster.cec)
+    setMethod("predictClusters", "Rcpp_cecModel", predictClusters.cec)
+    setMethod("log.ncluster", "Rcpp_cecModel", log.ncluster.cec)
+    setMethod("log.energy", "Rcpp_cecModel", log.energy.cec)
+    setMethod("log.iters", "Rcpp_cecModel", log.iters.cec)
+    setMethod("nstart", "Rcpp_cecModel", nstart.cec)
 })

@@ -5,14 +5,11 @@
 using namespace Rcpp;
 
 class cecConfiguration;
-class cecClient;
 class cecModel;
 
 RCPP_EXPOSED_CLASS(cecConfiguration)
-RCPP_EXPOSED_CLASS(cecClient)
 RCPP_EXPOSED_CLASS(cecModel)
 
-#include "cecClient.hpp"
 #include "cecConfiguration.hpp"
 #include "cec.hpp"
 using namespace gmum;
@@ -37,10 +34,6 @@ RCPP_MODULE(cec) {
     .method("setIters", &cecConfiguration::setIters);
 	//.field("x", &cecConfiguration::data)
 
-    class_<cecClient>("cecClient")
-    .constructor<cecConfiguration*>()
-    .method("findBestCEC", &cecClient::findBestCEC);
-
     std::list<double> (cecModel::*predict_1)(std::vector<double>,
             bool) = &cecModel::predict;
     unsigned int (cecModel::*predict_2)(
@@ -48,6 +41,7 @@ RCPP_MODULE(cec) {
 
     //TODO
     class_<cecModel>("cecModel")
+    .constructor<cecConfiguration*>()
     .method("loop", &cecModel::loop)
     .method("singleLoop", &cecModel::singleLoop)
     .method("entropy", &cecModel::entropy)
