@@ -85,9 +85,6 @@ public:
 	//universal parameters
 	arma::vec w; //d
 
-	//2eConfig
-//	two
-
 	// constructors
 	SVMConfiguration();
 	SVMConfiguration(bool);
@@ -96,8 +93,7 @@ public:
 	arma::mat getData();
 	void setData(arma::mat);
 
-	void createParams(std::string, std::string, std::string, int, double,
-			double);
+	void createParams(std::string, std::string, std::string, int, double, double);
 	void setDefaultParams();
 
 	void setFilename(std::string);
@@ -116,6 +112,8 @@ public:
 	void setLibrary( std::string );
 	void setKernel( std::string );
 	void setPreprocess( std::string );
+  // logger
+  void set_verbosity( int );
 
 };
 
