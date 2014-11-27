@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include <armadillo>
+#include <<RcppArmadillo>>
 #include <boost/shared_ptr.hpp>
 #include <stdio.h>
 #include <stdlib.h>

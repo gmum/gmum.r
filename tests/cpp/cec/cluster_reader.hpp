@@ -1,7 +1,7 @@
 #ifndef CLUSTER_READER_HPP
 #define CLUSTER_READER_HPP
 
-#include <armadillo>
+#include <<RcppArmadillo>>
 #include <iostream>
 #include <fstream>
 #include <sstream>

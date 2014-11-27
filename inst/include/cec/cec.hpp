@@ -41,17 +41,14 @@ public:
 	void singleLoop();
 	double entropy();
 	std::vector<unsigned int> &getAssignment() const;
-	const arma::mat &getPoints() const;
+    arma::mat getPoints();
 	std::vector<arma::rowvec> centers() const;
 	std::vector<arma::mat> cov() const;
 	unsigned int iters() const;
 	std::list<unsigned int> getNrOfClusters() const;
-	boost::shared_ptr<const arma::mat> getPtrToPoints() const;
-	boost::shared_ptr<std::vector<unsigned int> > getPtrToAssignement() const;
-	std::list<double> getEnergy() const;
+    std::list<double> getEnergy() const;
 	unsigned int predict(std::vector<double> vec) const;
-	std::list<double> predict(std::vector<double> vec, bool general);
-	arma::mat getDataSet();
+    std::list<double> predict(std::vector<double> vec, bool general);
 };
 
 #endif

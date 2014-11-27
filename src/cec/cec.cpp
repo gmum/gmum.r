@@ -196,8 +196,8 @@ std::vector<unsigned int> &cecModel::getAssignment() const {
 	return *assignment;
 }
 
-const arma::mat &cecModel::getPoints() const {
-	return *points;
+arma::mat cecModel::getPoints() {
+    return *points;
 }
 
 std::vector<arma::rowvec> cecModel::centers() const {
@@ -230,14 +230,6 @@ std::list<unsigned int> cecModel::getNrOfClusters() const {
 
 std::list<double> cecModel::getEnergy() const {
 	return result.energy;
-}
-
-boost::shared_ptr<const arma::mat> cecModel::getPtrToPoints() const {
-	return this->points;
-}
-
-boost::shared_ptr<std::vector<unsigned int> > cecModel::getPtrToAssignement() const {
-	return this->assignment;
 }
 
 unsigned int cecModel::predict(std::vector<double> vec) const {
@@ -288,8 +280,4 @@ std::list<double> cecModel::predict(std::vector<double> vec, bool general) {
 		}
 
 	return out;
-}
-
-arma::mat cecModel::getDataSet(){
-	return *(getPtrToPoints());
 }

@@ -3,6 +3,7 @@
 #include <boost/foreach.hpp>
 #include <sstream>
 #include <string.h>
+#include <iostream>
 using namespace gmum;
 
 cecConfiguration::cecConfiguration() {
@@ -14,8 +15,8 @@ Params cecConfiguration::getParams() {
 
 void cecConfiguration::setDataSet(const Rcpp::NumericMatrix proxyDataset) {
 	//reuses memory and avoids extra copy
-	boost::shared_ptr<const arma::mat> points(
-			new arma::mat(proxyDataset.begin(), proxyDataset.nrow(),
+    boost::shared_ptr<const arma::mat> points(
+            new arma::mat(proxyDataset.begin(), proxyDataset.nrow(),
 					proxyDataset.ncol(), false));
 	params.dataset = points;
 }

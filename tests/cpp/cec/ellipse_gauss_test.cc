@@ -5,7 +5,7 @@
 #include "src/CEC.hpp"
 #include "src/Hartigan.hpp"
 #include "src/random_assignment.hpp"
-#include <armadillo>
+#include <<RcppArmadillo>>
 #include <boost/smart_ptr.hpp>
 #include <vector>
 

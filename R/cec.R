@@ -141,7 +141,7 @@ evalqOnLoad({
                      params.centroids = NULL,
                      params.mix = NULL,
                      params.function = "",
-                     control.nstart = 1,
+                     params.nstart = 1,
                      control.eps = 1e-4,
                      control.itmax = 1,
                      log.energy = FALSE,
@@ -156,7 +156,7 @@ evalqOnLoad({
       if (k <= 0)
         stop("Number of clusters should be a positive integer!");
       
-      if (control.nstart <= 0)
+      if (params.nstart <= 0)
         stop("Number of starts should be a positive integer!");
       
       if (control.eps > 1.0 / k)
@@ -172,7 +172,7 @@ evalqOnLoad({
         config$setNrOfClusters(k)
         config$setLogEnergy(log.energy)
         config$setLogCluster(log.ncluster)      
-        config$setNstart(control.nstart)
+        config$setNstart(params.nstart)
         config$setCentroids(params.centroids)
         config$setMethodInit(method.init)              
         config$setMethodType(method.type)

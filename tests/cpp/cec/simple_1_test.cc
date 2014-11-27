@@ -3,7 +3,7 @@
 #include "clustering_comparator.hpp"
 #include "src/CEC.hpp"
 #include "src/Hartigan.hpp"
-#include <armadillo>
+#include <<RcppArmadillo>>
 #include <boost/smart_ptr.hpp>
 #include <vector>
 using namespace gmum;

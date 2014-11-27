@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include <armadillo>
+#include <<RcppArmadillo>>
 #include "src/Cluster.hpp"
 using namespace gmum;
 class ClusterTest: public ::testing::Test {
