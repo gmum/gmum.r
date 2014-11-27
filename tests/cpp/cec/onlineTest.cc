@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <armadillo>
 #include <vector>
-#include "src/Cluster.hpp"
+#include "cluster.hpp"
 #include <boost/shared_ptr.hpp>
 using namespace gmum;
 
@@ -30,7 +30,7 @@ TEST(OnlineFormulas,AddPoint){
   }
   
   
-  boost::shared_ptr<Cluster> m(new Cluster(id,fits,initMatrix));
+  boost::shared_ptr<Cluster> m(new ClusterStandard(id,fits,initMatrix));
   // Dodajemy element o indeksie i  
   for (int i = beg ; i < n-1 ; ++i){
     
@@ -44,11 +44,11 @@ TEST(OnlineFormulas,AddPoint){
 
     arma::rowvec point(data.row(i));
     m = m->addPoint(point);
-    Cluster tmp(id,fits,tmpMatrix);
+    ClusterStandard tmp(id,fits,tmpMatrix);
     arma::rowvec  meanOnlineDifference = m->getMean() - realM;
     arma::mat meanInitDifference = realM - tmp.getMean();
-    arma::mat covOnlineDifference = m->getCovMat() - covariance;
-    arma::mat covInitDifference = covariance - tmp.getCovMat();
+    arma::mat covOnlineDifference = m->getCovMat(id, fits, tmpMatrix) - covariance;
+    arma::mat covInitDifference = covariance - tmp.getCovMat(id, fits, tmpMatrix);
   
     EXPECT_EQ(m->size(),tmp.size());
     
@@ -93,7 +93,7 @@ TEST(OnlineFormulas,removePoint){
   }
   
   
-  boost::shared_ptr<Cluster> m(new Cluster(id,fits,initMatrix));
+  boost::shared_ptr<Cluster> m(new ClusterStandard(id,fits,initMatrix));
   // Dodajemy element o indeksie i  
   for (int i = n-1 ; i > end ; --i){
     
@@ -107,11 +107,11 @@ TEST(OnlineFormulas,removePoint){
 
     arma::rowvec point(data.row(i));
     m = m->removePoint(point);
-    Cluster tmp(id,fits,tmpMatrix);
+    ClusterStandard tmp(id,fits,tmpMatrix);
     arma::rowvec  meanOnlineDifference = m->getMean() - realM;
     arma::mat meanInitDifference = realM - tmp.getMean();
-    arma::mat covOnlineDifference = m->getCovMat() - covariance;
-    arma::mat covInitDifference = covariance - tmp.getCovMat();
+    arma::mat covOnlineDifference = m->getCovMat(id, fits, tmpMatrix) - covariance;
+    arma::mat covInitDifference = covariance - tmp.getCovMat(id, fits, tmpMatrix);
   
     EXPECT_EQ(m->size(),tmp.size());
     

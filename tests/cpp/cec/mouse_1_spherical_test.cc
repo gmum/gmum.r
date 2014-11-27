@@ -1,9 +1,9 @@
 #include "gtest/gtest.h"
 #include "cluster_reader.hpp"
 #include "clustering_comparator.hpp"
-#include "src/Hartigan.hpp"
-#include "src/random_assignment.hpp"
-#include "src/CEC.hpp"
+#include "hartigan.hpp"
+#include "randomAssignment.hpp"
+#include "cec.hpp"
 #include <vector>
 #include <armadillo>
 #include <boost/smart_ptr.hpp>
@@ -20,37 +20,35 @@ protected:
     for(std::vector<unsigned int>::iterator it = clustering->begin();it!=clustering->end() ; ++it) {
       *it -= min;
     }
-    numberOfClusters = 3;
+    params.nrOfClusters = 3;
+    params.killThreshold = 0.0001;
+    params.dataset = points;
+    params.clusterType = ksphere;
     std::cout << "initialized data" << std::endl;
   }
   boost::shared_ptr<std::vector<unsigned int> > clustering;
   boost::shared_ptr<arma::mat> points;
   double energy;
-  int numberOfClusters;
+  Params params;
 };
 
 #define SHOW_CLUSTERING
 
 TEST_F(Mouse1SphericalTest,IsEnergyCorrect) {
-  double killThreshold = 0.0001;
   BestPermutationComparator comparator;
   int t = 20;
   int numberOfTimesAcceptable = 0;  
   std::cout << "Should get energy : " << energy;
   for (int i = 0 ; i < t ; ++i) {
     boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
-    initAssignRandom(*assignment, points->n_rows, numberOfClusters);
+    RandomAssignment randomAssignment(*points, params.nrOfClusters);
+    assignment->resize(params.dataset->n_rows);
+    randomAssignment(*assignment);
     boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
-    std::vector<ClusterType> types;
-    std::vector<float> radius;
-    std::vector<arma::mat> covMatrices;
-    for (int i = 0 ; i < numberOfClusters ; ++i){
-      types.push_back(sphere);
-    }
-    CEC cec(points, assignment, hartigan, killThreshold, types,radius,covMatrices);
+    CEC cec(hartigan, assignment, params);
 
     cec.loop();
-    double percentage = comparator.evaluateClustering(numberOfClusters,*points,*assignment,*clustering);
+    double percentage = comparator.evaluateClustering(params.nrOfClusters,*points,*assignment,*clustering);
     std::cout << "Percentage " << percentage << std::endl;
     std::cout << "Energy " << cec.entropy() << std::endl;
     numberOfTimesAcceptable += (percentage >= 0.9) || (cec.entropy() < energy*1.5);
@@ -67,7 +65,6 @@ TEST_F(Mouse1SphericalTest,IsEnergyCorrect) {
 
 
 TEST_F(Mouse1SphericalTest,StartingFromCorrectAssignment) {
-  double killThreshold = 0.0001;
   BestPermutationComparator comparator;
   int t = 1;
   int numberOfTimesAcceptable = 0;  
@@ -76,18 +73,11 @@ TEST_F(Mouse1SphericalTest,StartingFromCorrectAssignment) {
     boost::shared_ptr<std::vector<unsigned int> > assignment(new std::vector<unsigned int>());
     for (std::vector<unsigned int>::iterator it = clustering->begin();it!=clustering->end(); ++it)
       assignment->push_back(*it);
-    //    initAssignRandom(*assignment, points->n_rows, numberOfClusters);
     boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
-    std::vector<ClusterType> types;
-    std::vector<float> radius;
-    std::vector<arma::mat> covMatrices;
-    for (int i = 0 ; i < numberOfClusters ; ++i){
-      types.push_back(sphere);
-    }
-    CEC cec(points, assignment, hartigan, killThreshold, types,radius,covMatrices);
+    CEC cec(hartigan, assignment, params);
 
     cec.loop();
-    double percentage = comparator.evaluateClustering(numberOfClusters,*points,*assignment,*clustering);
+    double percentage = comparator.evaluateClustering(params.nrOfClusters,*points,*assignment,*clustering);
     std::cout << "Percentage " << percentage << std::endl;
     std::cout << "Energy " << cec.entropy() << std::endl;
     numberOfTimesAcceptable += (percentage >= 0.9) || (cec.entropy() < energy*1.5);
