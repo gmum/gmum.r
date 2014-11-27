@@ -26,6 +26,7 @@ evalqOnLoad({
         if (length(slice)==0) {
             slice = c(1:(dim(d)[2]))
         }
+        
         if (length(slice)==2) {
             plot(d[,slice], col = (x$y() + 1))
         }
@@ -71,5 +72,5 @@ evalqOnLoad({
         }
     }
     
-    setMethod("plot", signature(x="Rcpp_cec"), plot.cec)
+    setMethod("plot", signature(x="Rcpp_cecModel"), plot.cec)
 })

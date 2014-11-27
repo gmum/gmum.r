@@ -13,9 +13,9 @@ boost::shared_ptr<Cluster> cecModel::createCluster(const ClusterParams &params,
 	switch (params.type) {
 	case knoType: // TODO: handle knoType parameter
 	case kmix: // TODO: handle kmix parameter
-        break;
+		break;
 	case kstandard:
-        cluster = boost::shared_ptr < Cluster
+		cluster = boost::shared_ptr < Cluster
 				> (new ClusterStandard(i, *assignment, *points));
 		break;
 	case kfull: {
@@ -51,137 +51,129 @@ boost::shared_ptr<Cluster> cecModel::createCluster(const ClusterParams &params,
 	}
 	return cluster;
 }
-
-cecModel::cecModel(cecConfiguration *cfg)
-    :   config(*cfg)
-{
-    findBestCEC();
+cecModel::cecModel(cecConfiguration *cfg) :
+		config(*cfg) {
+	findBestCEC();
+}
+cecModel::cecModel(const cecModel &other) {
+	result = other.result;
+	killThreshold = other.killThreshold;
+	algorithm = other.algorithm;
+	points = other.points;
+	invSet = other.invSet;
+	inv = other.inv;
+	config = other.config;
+	assignment = boost::shared_ptr < std::vector<unsigned int>
+			> (new std::vector<unsigned int>(*other.assignment));
+	clusters = other.clusters;
 }
 
+void cecModel::init(boost::shared_ptr<Algorithm> algorithm,
+		boost::shared_ptr<std::vector<unsigned int> > assignment) {
+	Params params = config.getParams();
+	this->assignment = assignment;
+	this->points = params.dataset;
+	this->algorithm = algorithm;
+	this->killThreshold = params.killThreshold;
+	clusters.clear();
+	clusters.reserve(params.nrOfClusters);
 
-cecModel::cecModel(const cecModel &other)
-{
-    result = other.result;
-    killThreshold = other.killThreshold;
-    algorithm = other.algorithm;
-    points = other.points;
-    invSet = other.invSet;
-    inv = other.inv;
-    config = other.config;
-    assignment = boost::shared_ptr<std::vector<unsigned int> >(new std::vector<unsigned int>(*other.assignment));
-    clusters = other.clusters;
+	int i = 0;
+	if (params.clusterType == kmix) {
+		BOOST_FOREACH(boost::shared_ptr < ClusterParams > cluster,
+				params.clusters)
+		{
+			clusters.push_back(createCluster(*cluster, i));
+		}
+	} else {
+		ClusterParams *cluster;
+		switch (params.clusterType) {
+		case kfsphere: {
+			ClusterFsphereParams *proxy = new ClusterFsphereParams();
+			proxy->radius = params.radius;
+			cluster = proxy;
+			break;
+		}
+		case kfull: {
+			ClusterFullParams *proxy = new ClusterFullParams();
+			proxy->covMat = params.covMat;
+			cluster = proxy;
+
+			break;
+		}
+		case kcustom: {
+			ClusterCustomParams *proxy = new ClusterCustomParams();
+			proxy->functionName = params.functionName;
+			cluster = proxy;
+			break;
+		}
+		default:
+			/*case standard:
+			 case diagonal:
+			 case sphere:*/
+			cluster = new ClusterParams();
+			break;
+		}
+		cluster->type = params.clusterType;
+		for (unsigned int i = 0; i < params.nrOfClusters; ++i)
+			clusters.push_back(createCluster(*cluster, i));
+		delete cluster;
+	}
 }
 
-void cecModel::init(boost::shared_ptr<Algorithm> algorithm, boost::shared_ptr<std::vector<unsigned int> > assignment)
-{
-    Params params = config.getParams();
-    this->assignment = assignment;
-    this->points = params.dataset;
-    this->algorithm = algorithm;
-    this->killThreshold = params.killThreshold;
-    clusters.clear();
-    clusters.reserve(params.nrOfClusters);
+void cecModel::findBestCEC() {
+	boost::shared_ptr < std::vector<unsigned int>
+			> assignment(new std::vector<unsigned int>());
+	boost::shared_ptr<Hartigan> hartigan(
+			new Hartigan(this->config.getParams().logNrOfClusters,
+					this->config.getParams().logEnergy));
 
-    int i = 0;
-    if (params.clusterType == kmix) {
-        BOOST_FOREACH(boost::shared_ptr < ClusterParams > cluster,
-                params.clusters)
-        {
-            clusters.push_back(createCluster(*cluster, i));
-        }
-    } else {
-        ClusterParams *cluster;
-        switch (params.clusterType) {
-        case kfsphere: {
-            ClusterFsphereParams *proxy = new ClusterFsphereParams();
-            proxy->radius = params.radius;
-            cluster = proxy;
-            break;
-        }
-        case kfull: {
-            ClusterFullParams *proxy = new ClusterFullParams();
-            proxy->covMat = params.covMat;
-            cluster = proxy;
+	Assignment *assignmentType = NULL;
+	switch (this->config.getParams().assignmentType) {
+	case krandom:
+		assignmentType = new RandomAssignment(*(config.getParams().dataset),
+				config.getParams().nrOfClusters);
+		break;
+	case kkmeanspp:
+		assignmentType = new KmeansppAssignment(*(config.getParams().dataset),
+				config.getParams().nrOfClusters);
+		break;
+	case kcentroids:
+		assignmentType = new CentroidsAssignment(*(config.getParams().dataset),
+				config.getParams().centroids);
+		break;
+	case knoAssignment:
+		break; // TODO: handle no assignment
+	}
 
-            break;
-        }
-        case kcustom: {
-            ClusterCustomParams *proxy = new ClusterCustomParams();
-            proxy->functionName = params.functionName;
-            cluster = proxy;
-            break;
-        }
-        default:
-            /*case standard:
-             case diagonal:
-             case sphere:*/
-            cluster = new ClusterParams();
-            break;
-        }
-        cluster->type = params.clusterType;
-        for (unsigned int i = 0; i < params.nrOfClusters; ++i)
-            clusters.push_back(createCluster(*cluster, i));
-        delete cluster;
-    }
-}
+	assignment->resize(config.getParams().dataset->n_rows);
+	(*assignmentType)(*assignment);
 
-void cecModel::findBestCEC()
-{
-    boost::shared_ptr < std::vector<unsigned int>
-            > assignment(new std::vector<unsigned int>());
-    boost::shared_ptr<Hartigan> hartigan(
-            new Hartigan(this->config.getParams().logNrOfClusters,
-                    this->config.getParams().logEnergy));
+	init(hartigan, assignment);
 
-    Assignment *assignmentType = NULL;
-    switch (this->config.getParams().assignmentType) {
-    case krandom:
-        assignmentType = new RandomAssignment(
-                *(config.getParams().dataset),
-                config.getParams().nrOfClusters);
-        break;
-    case kkmeanspp:
-        assignmentType = new KmeansppAssignment(
-                *(config.getParams().dataset),
-                config.getParams().nrOfClusters);
-        break;
-    case kcentroids:
-        assignmentType = new CentroidsAssignment(
-                *(config.getParams().dataset),
-                config.getParams().centroids);
-        break;
-    case knoAssignment:
-        break; // TODO: handle no assignment
-    }
+	try {
+		loop();
+		cecModel best_cec = *this;
+		for (unsigned int i = 1; i < config.getParams().nstart; ++i) {
 
-    assignment->resize(config.getParams().dataset->n_rows);
-    (*assignmentType)(*assignment);
+			(*assignmentType)(*assignment);
+			init(hartigan, assignment);
+			loop();
 
-    init(hartigan, assignment);
-
-    try {
-        loop();
-        cecModel best_cec = *this;
-        for (unsigned int i = 1; i < config.getParams().nstart; ++i) {
-
-            (*assignmentType)(*assignment);
-            init(hartigan, assignment);
-            loop();
-
-            if (entropy() < best_cec.entropy()) {
-                best_cec = *this;
-            }
-        }
-        *this = best_cec;
-    } catch (std::exception &e) {
-        Rcpp::stop(std::string("exception ") + e.what() + " caught in CEC_new");
-    }
-    delete assignmentType;
+			if (entropy() < best_cec.entropy()) {
+				best_cec = *this;
+			}
+		}
+		*this = best_cec;
+	} catch (std::exception &e) {
+		Rcpp::stop(std::string("exception ") + e.what() + " caught in CEC_new");
+	}
+	delete assignmentType;
 }
 
 void cecModel::loop() {
 	result = algorithm->loop(*points, *assignment, killThreshold, clusters);
-    int nrOfClusters = clusters.size();
+	int nrOfClusters = clusters.size();
 	invSet.resize(nrOfClusters, false);
 	inv.resize(nrOfClusters);
 }
@@ -195,7 +187,7 @@ double cecModel::entropy() {
 
 	BOOST_FOREACH(boost::shared_ptr < Cluster > cluster, clusters)
 	{
-        s += cluster->entropy();
+		s += cluster->entropy();
 	}
 	return s;
 }
@@ -296,4 +288,8 @@ std::list<double> cecModel::predict(std::vector<double> vec, bool general) {
 		}
 
 	return out;
+}
+
+arma::mat cecModel::getDataSet(){
+	return *(getPtrToPoints());
 }

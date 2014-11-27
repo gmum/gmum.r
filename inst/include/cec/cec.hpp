@@ -51,6 +51,7 @@ public:
 	std::list<double> getEnergy() const;
 	unsigned int predict(std::vector<double> vec) const;
 	std::list<double> predict(std::vector<double> vec, bool general);
+	arma::mat getDataSet();
 };
 
 #endif

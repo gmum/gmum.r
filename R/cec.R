@@ -128,6 +128,8 @@ log.iters.cec <- NULL
 #' @param c CEC model object
 nstart.cec <- NULL
 
+loadModule('cec', TRUE)
+
 evalqOnLoad({
 
     CEC <<- function(x = NULL,
@@ -135,7 +137,7 @@ evalqOnLoad({
                      method.type = "",
                      method.init = "kmeans++",
                      params.r = 0,
-                     params.cov = NULL,
+                     params.cov = matrix(0),
                      params.centroids = NULL,
                      params.mix = NULL,
                      params.function = "",
@@ -165,19 +167,19 @@ evalqOnLoad({
       
         config <- new(cecConfiguration)
         config$setDataSet(x)
+        config$setEps(control.eps)      
+        config$setMix(params.mix) 
         config$setNrOfClusters(k)
-        config$setMethodInit(method.init)
-        config$setR(params.r)
-       # config$setCov(params.cov)
-        config$setCentroids(params.centroids)
-        config$setMix(params.mix)      
-        config$setMethodType(method.type)
-        config$setFunction(params.function)
-        config$setNstart(control.nstart)
-        config$setEps(control.eps)
-        config$setItmax(control.itmax)
         config$setLogEnergy(log.energy)
-        config$setNCluster(log.ncluster)
+        config$setLogCluster(log.ncluster)      
+        config$setNstart(control.nstart)
+        config$setCentroids(params.centroids)
+        config$setMethodInit(method.init)              
+        config$setMethodType(method.type)
+        config$setCov(params.cov)
+        config$setR(params.r)
+        config$setFunction(params.function)
+        config$setItmax(control.itmax)
         config$setIters(log.iters)
       
         model <- new(cecModel, config)

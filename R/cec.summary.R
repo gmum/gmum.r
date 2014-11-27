@@ -9,6 +9,8 @@ loadModule("cec", TRUE)
 #' @docType methods
 #'
 #' @param object CEC model object
+#' 
+#' @usage summary(cec)
 summary.cec <- NULL
 
 evalqOnLoad({
@@ -29,6 +31,6 @@ evalqOnLoad({
         print(data.frame(names, Length, Class, Mode), row.names=FALSE)
     }
 
-    setMethod("summary","Rcpp_cec",summary.cec)
+    setMethod("summary","Rcpp_cecModel",summary.cec)
 
 })
