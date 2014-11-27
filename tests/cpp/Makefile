@@ -31,7 +31,11 @@ CPPFLAGS := $(INCLUDE_DIRS) $(PKG_CPPFLAGS)
 CXXFLAGS := $(PKG_CXXFLAGS) -g -O2 -s -pthread
 LDLIBS := $(PKG_LIBS) $(LDLIBS) -O1 -larmadillo -O1 -llapack -lblas -lgtest -lgtest_main
 
-TESTS = gng_basic_integration_tests gng_parts_tests svm_2_e_test svm_libsvm_test svm_utils_test
+TESTS = gng_basic_integration_tests gng_parts_tests svm_2_e_test \
+	svm_libsvm_test svm_utils_test cec_big_data_tests \
+	cec_cluster_trace_only_test cec_ellipse_gauss_test \
+	cec_mouse_1_spherical_test cec_mouse_1_test cec_onlineTest \
+	cec_simple_1_test #cec_test_reader
 
 all : $(TESTS)
 
@@ -65,8 +69,29 @@ clean :
 %.o : %.cpp %.h
 	$(CXX) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -c
 
-cec_cluster_test:
-	$(CXX) cec/ClusterTest.cc $(GMUMR_SRC_DIR)/cec/*.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+cec_big_data_tests:
+	$(CXX) cec/big_data_tests.cc $(GMUMR_SRC_DIR)/cec/*.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+
+cec_cluster_trace_only_test:
+	$(CXX) cec/clusterTraceOnlyTest.cc $(GMUMR_SRC_DIR)/cec/*.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+
+cec_ellipse_gauss_test:
+	$(CXX) cec/ellipse_gauss_test.cc $(GMUMR_SRC_DIR)/cec/*.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+
+cec_mouse_1_spherical_test:
+	$(CXX) cec/mouse_1_spherical_test.cc $(GMUMR_SRC_DIR)/cec/*.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+
+cec_mouse_1_test:
+	$(CXX) cec/mouse_1_test.cc $(GMUMR_SRC_DIR)/cec/*.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+
+cec_onlineTest:
+	$(CXX) cec/onlineTest.cc $(GMUMR_SRC_DIR)/cec/*.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+
+cec_simple_1_test:
+	$(CXX) cec/simple_1_test.cc $(GMUMR_SRC_DIR)/cec/*.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+
+cec_test_reader:
+	$(CXX) cec/testReader.cc $(GMUMR_SRC_DIR)/cec/*.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
 gng_basic_integration_tests: $(GMUMR_SRC_DIR)/tinythread/tinythread.o
 	$(CXX) gng/basic_integration_tests.cc $(GMUMR_SRC_DIR)/gng/*.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
