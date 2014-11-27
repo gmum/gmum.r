@@ -64,21 +64,21 @@ clean :
 %.o : %.cpp %.h
 	$(CXX) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -c
 
-libsvm_test:
+svm_libsvm_test:
 	$(CXX) svm/libsvm_test.cc $(GMUMR_SRC_DIR)/svm/svm_basic.cpp $(GMUMR_SRC_DIR)/svm/libsvm_runner.cpp $(GMUMR_SRC_DIR)/svm/svm.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
 svm_utils_test:
 	$(CXX) svm/svm_utils_test.cc $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
-2_e_test:
+svm_2_e_test:
 	$(CXX) svm/2_e_test.cc $(GMUMR_SRC_DIR)/svm/svm_basic.cpp $(GMUMR_SRC_DIR)/svm/libsvm_runner.cpp $(GMUMR_SRC_DIR)/svm/svm.cpp $(GMUMR_SRC_DIR)/svm/two_e_svm_pre.cpp $(GMUMR_SRC_DIR)/svm/two_e_svm_post.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
-svmlight_runner_unittest: $(OBJECTS) $(SVMLIGHT_DIR)/svm_common.o $(SVMLIGHT_DIR)/svm_learn.o $(SVMLIGHT_DIR)/svm_hideo.o
+svm_svmlight_runner_unittest: $(OBJECTS) $(SVMLIGHT_DIR)/svm_common.o $(SVMLIGHT_DIR)/svm_learn.o $(SVMLIGHT_DIR)/svm_hideo.o
 	$(CXX) $(CPPFLAGS) svm/svmlight_runner_unittest.cc $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
 gng_basic_integration_tests: $(GMUMR_SRC_DIR)/tinythread/tinythread.o
-	$(CXX) gng/basic_integration_tests.cpp $(GMUMR_SRC_DIR)/gng/*.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+	$(CXX) gng/basic_integration_tests.cc $(GMUMR_SRC_DIR)/gng/*.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
 gng_parts_tests: $(GMUMR_SRC_DIR)/tinythread/tinythread.o
-	$(CXX) gng/parts_tests.cpp $(GMUMR_SRC_DIR)/gng/*.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+	$(CXX) gng/parts_tests.cc $(GMUMR_SRC_DIR)/gng/*.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
