@@ -1,6 +1,6 @@
-#include "../../inst/include/gng/GNG.h" //TODO: path problems
-#include "../../inst/include/gng/GNGServer.h"
-#include "../../inst/include/gng/Utils.h"
+#include "gng/GNG.h"
+#include "gng/GNGServer.h"
+#include "gng/Utils.h"
 
 #include <gtest/gtest.h>
 #include <algorithm>
@@ -278,5 +278,10 @@ TEST(BasicTests, BasicConvergeLazyHeapUG){
     pair<double, double> results = test_convergence(&config, 10000, 1000);
     ASSERT_GE(results.first, 10.0);
     ASSERT_LE(results.second, 50.0);
+}
+
+int main(int argc, char **argv) {
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }
 

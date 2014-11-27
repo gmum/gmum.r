@@ -1,8 +1,8 @@
-#include "../../inst/include/gng/GNG.h"
-#include "../../inst/include/gng/Utils.h"
-#include "../../inst/include/gng/GNGGraph.h"
-#include "../../inst/include/gng/GNGDataset.h"
-#include "../../inst/include/gng/Threading.h"
+#include "gng/GNG.h"
+#include "gng/Utils.h"
+#include "gng/GNGGraph.h"
+#include "gng/GNGDataset.h"
+#include "gng/Threading.h"
 
 #include <algorithm>
 #include <utility>
@@ -294,5 +294,4 @@ TEST(DatabaseTestsSeq, BasicGraphTest){
 		ASSERT_LE(dataset2.getPosition(c)[0], 0.9);
     }
 }
-
 
