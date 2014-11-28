@@ -20,6 +20,7 @@ library(ggplot2)
 #' @param probability Whether to train a model for probability estimates 
 #' @param cache_size Cache size
 #' @param tol Tolerance of termination criterion
+#' @param verbosity Adjust verbosity level, from 0 - nologging to 6 - trace.
 #' 
 #' @return SVM model object
 #' @examples 
