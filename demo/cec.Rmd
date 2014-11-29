@@ -24,24 +24,21 @@ plot(dataset)
 run cec with default parameters
 
 ```{r fig.width=7, fig.height=6}
-args <- list(k=3, x=dataset)
-c <- CEC(args)
+c <- CEC(k=3, x=dataset)
 plot(c)
 ```
 
 since initial clusterization is random it may be a good idea to run cec multiple times and choose the best result
 
 ```{r fig.width=7, fig.height=6}
-args <- list(k=3, x=dataset, params.nstart=10)
-c <- CEC(args)
+c <- CEC(k=3, x=dataset, control.nstart=10)
 plot(c)
 ```
 
 better than before, however, we know that clusters are spherical; let's inform cec about that
 
 ```{r fig.width=7, fig.height=6}
-args <- list(k=3, x=dataset, params.nstart=10, method.type='sphere')
-c <- CEC(args)
+c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere')
 plot(c)
 ```
 
@@ -73,7 +70,6 @@ plot(c, ellipses=TRUE)
 try the same with random assignment
 
 ```{r fig.width=7, fig.height=6}
-args <- list(k=3, x=dataset, params.nstart=10, method.type='sphere', method.init='random')
-c <- CEC(args)
+c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere', method.init='random')
 plot(c)
 ```
