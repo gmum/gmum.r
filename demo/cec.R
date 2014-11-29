@@ -9,12 +9,12 @@ plot(c)
 # since initial clusterization is random
 # it may be a good idea to run cec multiple times
 # and choose the best result
-c <- CEC(k=3, x=dataset, params.nstart=10)
+c <- CEC(k=3, x=dataset, control.nstart=10)
 plot(c)
 
 # better than before, however, we know that
 # clusters are spherical; let's inform cec about that
-c <- CEC(k=3, x=dataset, params.nstart=10, method.type='sphere')
+c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere')
 plot(c)
 # ain't that great? :D
 
@@ -33,5 +33,5 @@ predictClusters(c, c(1,1))
 plot(c, ellipses=TRUE)
 
 # try the same with random assignment
-c <- CEC(k=3, x=dataset, params.nstart=10, method.type='sphere', method.init='random')
+c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere', method.init='random')
 plot(c)

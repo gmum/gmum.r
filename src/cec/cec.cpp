@@ -4,7 +4,7 @@
 #include "kmeansppAssignment.hpp"
 #include "centroidsAssignment.hpp"
 #include "randomAssignment.hpp"
-#include <iostream>
+
 using namespace gmum;
 
 boost::shared_ptr<Cluster> cecModel::createCluster(const ClusterParams &params,
@@ -56,16 +56,21 @@ cecModel::cecModel(cecConfiguration *cfg) :
 	findBestCEC();
 }
 cecModel::cecModel(const cecModel &other) {
+	*this = other;
+}
+
+cecModel& cecModel::operator=(const cecModel& other) {
 	result = other.result;
-	killThreshold = other.killThreshold;
-	algorithm = other.algorithm;
+	assignment = boost::shared_ptr < std::vector<unsigned int>
+			> (new std::vector<unsigned int>(*other.assignment));
 	points = other.points;
+	algorithm = other.algorithm;
+	killThreshold = other.killThreshold;
 	invSet = other.invSet;
 	inv = other.inv;
 	config = other.config;
-	assignment = boost::shared_ptr < std::vector<unsigned int>
-			> (new std::vector<unsigned int>(*other.assignment));
 	clusters = other.clusters;
+	return *this;
 }
 
 void cecModel::init(boost::shared_ptr<Algorithm> algorithm,
@@ -155,7 +160,6 @@ void cecModel::findBestCEC() {
 		loop();
 		cecModel best_cec = *this;
 		for (unsigned int i = 1; i < config.getParams().nstart; ++i) {
-
 			(*assignmentType)(*assignment);
 			init(hartigan, assignment);
 			loop();
@@ -197,7 +201,7 @@ std::vector<unsigned int> &cecModel::getAssignment() const {
 }
 
 arma::mat cecModel::getPoints() {
-    return *points;
+	return *points;
 }
 
 std::vector<arma::rowvec> cecModel::centers() const {

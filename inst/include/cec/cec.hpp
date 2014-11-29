@@ -35,7 +35,7 @@ private:
 public:
     cecModel(cecConfiguration* cfg);
     cecModel(const cecModel& other);
-
+    cecModel& operator=(const cecModel& other);
     std::vector<boost::shared_ptr<gmum::Cluster> > clusters;
     void loop();
 	void singleLoop();
