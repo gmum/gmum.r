@@ -30,3 +30,11 @@ Add new tests as `*.cc` files in subdirectories. You can create a new directory
 for your own branch/type of tests. To compile its tests add its name inside
 Makefile `TEST_BRANCHES` variable.
 
+## Disabling tests
+
+To disable test, rename its extension. For example from `*.cc` to `*.xcc` is a
+common convention. We want to disable tests when they are for example no longer
+compatible with current architecture or in any other way are blockers for
+continous integration. Disabled tests can be fixed later, while continous
+integration sill goes good.
+

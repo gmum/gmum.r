@@ -1,10 +1,5 @@
 # Binaries
-2_e_test
-libsvm_test
-svm_utils_test
-svmlight_runner_unittest
-gng_basic_integration_tests
-gng_parts_tests
+test_all
 
 # Test temporary files
 *.graphml

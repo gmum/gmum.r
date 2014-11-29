@@ -72,11 +72,7 @@ test_all: $(TEST_OBJECTS) $(OBJECTS)
 	@echo Linking all tests...
 	$(CXX) $^ -lgtest_main -o $@ $(LDLIBS)
 
-%.o : %.cc %.hpp
-	@echo Compiling $@ ...
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
-
-%.o : %.cpp
+%.o : %.cc %.cpp %.hpp
 	@echo Compiling $@ ...
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
