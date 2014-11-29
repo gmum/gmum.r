@@ -7,26 +7,26 @@ This directory contains C++ code tests.
 
 ### GoogleTest
 
-In order to run these tests you need to acquire **GoogleTest** sources.
+To compile these tests you need to install **GoogleTest** >= 1.6.0.
 
-Google Code: [http://code.google.com/p/googletest/downloads/list](http://code.google.com/p/googletest/downloads/list)
-
-After unpacking the sources, write path to its directory (for example in `~/.bashrc`)
-under environment variable `GTEST`.
+Arch Linux package: `gtest`, Debian/Ubuntu package: `libgtest-dev`
 
 ### GMUM.R dependencies
 
-C++ **Armadillo** library and its dependencies ( **Lapack**, **Blas**) need to be installed.
+C++ **Armadillo** library and its dependencies ( **Lapack**, **Blas**) need to
+be installed.
 
 ## Build
 
-In order to build tests `cd` into this directory (`tests/cpp`) and type `make`.
+To build tests `cd` into this directory (`tests/cpp`) and type `make`.
 
 ## Run tests
 
-All test cases are separate executable files. For example:
+Run compiled executable binary: `./test_all`
 
-```
-./libsvm_test
-```
+## Adding tests
+
+Add new tests as `*.cc` files in subdirectories. You can create a new directory
+for your own branch/type of tests. To compile its tests add its name inside
+Makefile `TEST_BRANCHES` variable.
 
