@@ -1,3 +1,2 @@
 useDynLib(gmum.r)
-import(methods)
 exportPattern("^[[:alpha:]]+")
