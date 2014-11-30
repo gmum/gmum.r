@@ -8,7 +8,6 @@
 #include <limits.h>
 #include <locale.h>
 #include "svm.h"
-#include "log.h"
 #include "svm_utils.h"
 
 int libsvm_version = LIBSVM_VERSION;
@@ -1885,7 +1884,7 @@ static void multiclass_probability(int k, double **r, double *p)
 // Cross-validation decision values for probability estimates
 static void svm_binary_svc_probability(
 	const svm_problem *prob, const svm_parameter *param,
-	double Cp, double Cn, double& probA, double& probB)
+	double Cp, double Cn, double& probA, double& probB, Log *log)
 {
 	int i;
 	int nr_fold = 5;
@@ -1951,15 +1950,15 @@ static void svm_binary_svc_probability(
 			subparam.weight_label[1]=-1;
 			subparam.weight[0]=Cp;
 			subparam.weight[1]=Cn;
-			struct svm_model *submodel = svm_train(&subprob,&subparam);
+			struct svm_model *submodel = svm_train(&subprob,&subparam,log);
 			for(j=begin;j<end;j++)
 			{
-				svm_predict_values(submodel,prob->x[perm[j]],&(dec_values[perm[j]]));
+				svm_predict_values(submodel,prob->x[perm[j]],&(dec_values[perm[j]]), log);
 				// ensure +1 -1 order; reason not using CV subroutine
 				dec_values[perm[j]] *= submodel->label[0];
 			}		
-			svm_free_and_destroy_model(&submodel);
-			svm_destroy_param(&subparam);
+			svm_free_and_destroy_model(&submodel, log);
+			svm_destroy_param(&subparam, log);
 		}
 		free(subprob.x);
 		free(subprob.y);
@@ -1971,7 +1970,7 @@ static void svm_binary_svc_probability(
 
 // Return parameter of a Laplace distribution 
 static double svm_svr_probability(
-	const svm_problem *prob, const svm_parameter *param)
+	const svm_problem *prob, const svm_parameter *param, Log *log)
 {
 	int i;
 	int nr_fold = 5;
@@ -1980,7 +1979,7 @@ static double svm_svr_probability(
 
 	svm_parameter newparam = *param;
 	newparam.probability = 0;
-	svm_cross_validation(prob,&newparam,nr_fold,ymv);
+	svm_cross_validation(prob,&newparam,nr_fold,ymv, log);
 	for(i=0;i<prob->l;i++)
 	{
 		ymv[i]=prob->y[i]-ymv[i];
@@ -2082,7 +2081,7 @@ static void svm_group_classes(const svm_problem *prob, int *nr_class_ret, int **
 //
 // Interface functions
 //
-svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
+svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Log* log)
 {
 	svm_model *model = Malloc(svm_model,1);
 	model->param = *param;
@@ -2104,7 +2103,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 		    param->svm_type == NU_SVR))
 		{
 			model->probA = Malloc(double,1);
-			model->probA[0] = svm_svr_probability(prob,param);
+			model->probA[0] = svm_svr_probability(prob,param, log);
 		}
 
 		decision_function f = svm_train_one(prob,param,0,0);
@@ -2207,7 +2206,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 				}
 
 				if(param->probability)
-					svm_binary_svc_probability(&sub_prob,param,weighted_C[i],weighted_C[j],probA[p],probB[p]);
+					svm_binary_svc_probability(&sub_prob,param,weighted_C[i],weighted_C[j],probA[p],probB[p],log);
 
 				f[p] = svm_train_one(&sub_prob,param,weighted_C[i],weighted_C[j]);
 				for(k=0;k<ci;k++)
@@ -2332,7 +2331,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 }
 
 // Stratified cross validation
-void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, int nr_fold, double *target)
+void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, int nr_fold, double *target, Log *log)
 {
 	int i;
 	int *fold_start;
@@ -2432,19 +2431,19 @@ void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, i
 			subprob.y[k] = prob->y[perm[j]];
 			++k;
 		}
-		struct svm_model *submodel = svm_train(&subprob,param);
+		struct svm_model *submodel = svm_train(&subprob,param,log);
 		if(param->probability && 
 		   (param->svm_type == C_SVC || param->svm_type == NU_SVC))
 		{
-			double *prob_estimates=Malloc(double,svm_get_nr_class(submodel));
+			double *prob_estimates=Malloc(double,svm_get_nr_class(submodel, log));
 			for(j=begin;j<end;j++)
-				target[perm[j]] = svm_predict_probability(submodel,prob->x[perm[j]],prob_estimates);
+				target[perm[j]] = svm_predict_probability(submodel,prob->x[perm[j]],prob_estimates, log);
 			free(prob_estimates);
 		}
 		else
 			for(j=begin;j<end;j++)
-				target[perm[j]] = svm_predict(submodel,prob->x[perm[j]]);
-		svm_free_and_destroy_model(&submodel);
+				target[perm[j]] = svm_predict(submodel,prob->x[perm[j]], log);
+		svm_free_and_destroy_model(&submodel, log);
 		free(subprob.x);
 		free(subprob.y);
 	}		
@@ -2453,36 +2452,36 @@ void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, i
 }
 
 
-int svm_get_svm_type(const svm_model *model)
+int svm_get_svm_type(const svm_model *model, Log *log)
 {
 	return model->param.svm_type;
 }
 
-int svm_get_nr_class(const svm_model *model)
+int svm_get_nr_class(const svm_model *model, Log *log)
 {
 	return model->nr_class;
 }
 
-void svm_get_labels(const svm_model *model, int* label)
+void svm_get_labels(const svm_model *model, int* label, Log *log)
 {
 	if (model->label != NULL)
 		for(int i=0;i<model->nr_class;i++)
 			label[i] = model->label[i];
 }
 
-void svm_get_sv_indices(const svm_model *model, int* indices)
+void svm_get_sv_indices(const svm_model *model, int* indices, Log *log)
 {
 	if (model->sv_indices != NULL)
 		for(int i=0;i<model->l;i++)
 			indices[i] = model->sv_indices[i];
 }
 
-int svm_get_nr_sv(const svm_model *model)
+int svm_get_nr_sv(const svm_model *model, Log *log)
 {
 	return model->l;
 }
 
-double svm_get_svr_probability(const svm_model *model)
+double svm_get_svr_probability(const svm_model *model, Log *log)
 {
 	if ((model->param.svm_type == EPSILON_SVR || model->param.svm_type == NU_SVR) &&
 	    model->probA!=NULL)
@@ -2494,7 +2493,7 @@ double svm_get_svr_probability(const svm_model *model)
 	}
 }
 
-double svm_predict_values(const svm_model *model, const svm_node *x, double* dec_values)
+double svm_predict_values(const svm_model *model, const svm_node *x, double* dec_values, Log *log)
 {
 	int i;
 	if(model->param.svm_type == ONE_CLASS ||
@@ -2570,7 +2569,7 @@ double svm_predict_values(const svm_model *model, const svm_node *x, double* dec
 	}
 }
 
-double svm_predict(const svm_model *model, const svm_node *x)
+double svm_predict(const svm_model *model, const svm_node *x, Log *log)
 {
 	int nr_class = model->nr_class;
 	double *dec_values;
@@ -2580,13 +2579,13 @@ double svm_predict(const svm_model *model, const svm_node *x)
 		dec_values = Malloc(double, 1);
 	else 
 		dec_values = Malloc(double, nr_class*(nr_class-1)/2);
-	double pred_result = svm_predict_values(model, x, dec_values);
+	double pred_result = svm_predict_values(model, x, dec_values, log);
 	free(dec_values);
 	return pred_result;
 }
 
 double svm_predict_probability(
-	const svm_model *model, const svm_node *x, double *prob_estimates)
+	const svm_model *model, const svm_node *x, double *prob_estimates, Log *log)
 {
 	if ((model->param.svm_type == C_SVC || model->param.svm_type == NU_SVC) &&
 	    model->probA!=NULL && model->probB!=NULL)
@@ -2594,7 +2593,7 @@ double svm_predict_probability(
 		int i;
 		int nr_class = model->nr_class;
 		double *dec_values = Malloc(double, nr_class*(nr_class-1)/2);
-		svm_predict_values(model, x, dec_values);
+		svm_predict_values(model, x, dec_values, log);
 
 		double min_prob=1e-7;
 		double **pairwise_prob=Malloc(double *,nr_class);
@@ -2621,7 +2620,7 @@ double svm_predict_probability(
 		return model->label[prob_max_idx];
 	}
 	else 
-		return svm_predict(model, x);
+		return svm_predict(model, x, log);
 }
 
 static const char *svm_type_table[] =
@@ -2634,7 +2633,7 @@ static const char *kernel_type_table[]=
 	"linear","polynomial","rbf","sigmoid","precomputed",NULL
 };
 
-int svm_save_model(const char *model_file_name, const svm_model *model)
+int svm_save_model(const char *model_file_name, const svm_model *model, Log *log)
 {
 	FILE *fp = fopen(model_file_name,"w");
 	if(fp==NULL) return -1;
@@ -2757,7 +2756,7 @@ static char* readline(FILE *input)
 // is used
 //
 #define FSCANF(_stream, _format, _var) do{ if (fscanf(_stream, _format, _var) != 1) return false; }while(0)
-bool read_model_header(FILE *fp, svm_model* model)
+bool read_model_header(FILE *fp, svm_model* model, Log *log)
 {
 	svm_parameter& param = model->param;
 	char cmd[81];
@@ -2866,7 +2865,7 @@ bool read_model_header(FILE *fp, svm_model* model)
 
 }
 
-svm_model *svm_load_model(const char *model_file_name)
+svm_model *svm_load_model(const char *model_file_name, Log *log)
 {
 	FILE *fp = fopen(model_file_name,"rb");
 	if(fp==NULL) return NULL;
@@ -2885,7 +2884,7 @@ svm_model *svm_load_model(const char *model_file_name)
 	model->nSV = NULL;
 	
 	// read header
-	if (!read_model_header(fp, model))
+	if (!read_model_header(fp, model, log))
 	{
 		fprintf(stderr, "ERROR: fscanf failed to read model\n");
 		setlocale(LC_ALL, old_locale);
@@ -2971,7 +2970,7 @@ svm_model *svm_load_model(const char *model_file_name)
 	return model;
 }
 
-void svm_free_model_content(svm_model* model_ptr)
+void svm_free_model_content(svm_model* model_ptr, Log *log)
 {
 	if(model_ptr->free_sv && model_ptr->l > 0 && model_ptr->SV != NULL)
 		free((void *)(model_ptr->SV[0]));
@@ -3006,23 +3005,23 @@ void svm_free_model_content(svm_model* model_ptr)
 	model_ptr->nSV = NULL;
 }
 
-void svm_free_and_destroy_model(svm_model** model_ptr_ptr)
+void svm_free_and_destroy_model(svm_model** model_ptr_ptr, Log *log)
 {
 	if(model_ptr_ptr != NULL && *model_ptr_ptr != NULL)
 	{
-		svm_free_model_content(*model_ptr_ptr);
+		svm_free_model_content(*model_ptr_ptr, log);
 		free(*model_ptr_ptr);
 		*model_ptr_ptr = NULL;
 	}
 }
 
-void svm_destroy_param(svm_parameter* param)
+void svm_destroy_param(svm_parameter* param, Log *log)
 {
 	free(param->weight_label);
 	free(param->weight);
 }
 
-const char *svm_check_parameter(const svm_problem *prob, const svm_parameter *param)
+const char *svm_check_parameter(const svm_problem *prob, const svm_parameter *param, Log *log)
 {
 	// svm_type
 
@@ -3143,7 +3142,7 @@ const char *svm_check_parameter(const svm_problem *prob, const svm_parameter *pa
 	return NULL;
 }
 
-int svm_check_probability_model(const svm_model *model)
+int svm_check_probability_model(const svm_model *model, Log *log)
 {
 	return ((model->param.svm_type == C_SVC || model->param.svm_type == NU_SVC) &&
 		model->probA!=NULL && model->probB!=NULL) ||
