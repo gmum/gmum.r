@@ -1,17 +1,17 @@
 include ../../src/Makevars
 
-# Explicit Makevars inheritances adn overrides
+# Explicit Makevars inheritances and overrides
 CXX := $(CXX)
 CPPFLAGS := $(PKG_CPPFLAGS)
-CXXFLAGS := $(PKG_CXXFLAGS) -O2 -g -s
-LDLIBS := $(PKG_LIBS) -O1 -larmadillo -O1 -llapack -lblas -lgtest -lgtest_main
+CXXFLAGS := $(PKG_CXXFLAGS) -g
+LDLIBS := $(PKG_LIBS) -lgtest -lgtest_main
 
 ###
 # Compilation parameters
 ###
 
 # Output executable
-TEST_ALL_BIN := test_all
+TESTS_BIN := run_tests
 
 # Root paths
 ROOT_INCLUDE_PATH := ../../inst/include
@@ -63,12 +63,12 @@ CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
 # Compilation rules
 ###
 
-all: $(TEST_ALL_BIN)
+all: $(TESTS_BIN)
 
 clean :
-	rm -f $(TEST_ALL_BIN) $(TEST_OBJECTS) $(OBJECTS) $(ADDITIONAL_CLEANING)
+	rm -f $(TESTS_BIN) $(TEST_OBJECTS) $(OBJECTS) $(ADDITIONAL_CLEANING)
 
-test_all: $(TEST_OBJECTS) $(OBJECTS)
+$(TESTS_BIN): $(TEST_OBJECTS) $(OBJECTS)
 	@echo Linking all tests...
 	$(CXX) $^ -lgtest_main -o $@ $(LDLIBS)
 
