@@ -3,16 +3,13 @@
 
 #include <iostream>
 #include <string>
-//#include "svm_basic.h"
 
 #ifdef DEBUG
 #define LOG(logger, level, text) logger.log(level, text);
 #define DBG(logger, level, text) logger.log(level, text);
-//#define REPORT_PRODUCTION(x) std::cout << (x) << std::endl << std::flush;
 #else
 #define LOG(logger, level, text) logger.log(level, text);
 #define DBG(logger, level, text)
-//#define REPORT_PRODUCTION(x) std::cout << (x) << std::endl << std::flush;
 #endif
 
 class LogLevel {
@@ -28,12 +25,12 @@ public:
 
 };
 
-class Log {
+class Logger {
 public:
 
 	int verbosity;
 
-	Log();
+	Logger();
 
 	void log(int level, std::string text);
 

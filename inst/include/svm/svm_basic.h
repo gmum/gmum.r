@@ -1,12 +1,10 @@
 #ifndef SVM_BASIC_H
 #define SVM_BASIC_H
 
-#define DEBUG  // Comment this to run production version without logging.
-
 #include <string>
-#include <log.h>
 #include <RcppArmadillo.h>
 #include <R.h>
+#include "log.h"
 
 enum KernelType {
 	_LINEAR, _POLY, _RBF, _SIGMOID // _PRECOMPUTED
@@ -80,7 +78,7 @@ public:
 	arma::vec target;
 	arma::vec result;
 
-	Log log;
+	Logger log;
 
 	//universal parameters
 	arma::vec w; //d

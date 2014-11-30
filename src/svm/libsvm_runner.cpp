@@ -77,7 +77,7 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 
 	const char *error_msg;
 
-	error_msg = svm_check_parameter(&prob, param, &config.log);
+	error_msg = svm_check_parameter(&prob, param, config.log);
 
 	if (error_msg) {
 		LOG(config.log, LogLevel::Error, "ERROR: " + to_string(error_msg))
@@ -86,7 +86,7 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 	int* nr = Malloc(int, 1);
 	int* nclasses = Malloc(int, 1);
 
-	model = svm_train(&prob, param, &config.log);
+	model = svm_train(&prob, param, config.log);
 	*nr = model->l; //support vectors
 	*nclasses = model->nr_class;
 	config.nr_class = model->nr_class;
@@ -105,7 +105,7 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 			config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
 
 	config.sv_indices = (int*) malloc(config.l * sizeof(int));
-	svm_get_sv_indices(model, config.sv_indices, &config.log);
+	svm_get_sv_indices(model, config.sv_indices, config.log);
 
 	config.SV = (svm_node **) malloc(config.l * sizeof(svm_node*));
 	for (int i = 0; i < config.l; i++) {
@@ -121,8 +121,8 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 		memcpy(config.nSV, model->nSV, *nclasses * sizeof(int));
 	}
 
-	svm_destroy_param(param, &config.log);
-	svm_free_and_destroy_model(&model, &config.log);
+	svm_destroy_param(param, config.log);
+	svm_free_and_destroy_model(&model, config.log);
 
 	return true;
 }
@@ -131,7 +131,7 @@ svm_model* LibSVMRunner::load_model_from_config(SVMConfiguration& config,
 		svm_parameter* param) {
 
 	const char *error_msg;
-	error_msg = svm_check_parameter(&prob, param, &config.log);
+	error_msg = svm_check_parameter(&prob, param, config.log);
 
 	if (error_msg) {
 		LOG(config.log, LogLevel::Error, "ERROR: " + to_string(error_msg))
@@ -187,21 +187,21 @@ void LibSVMRunner::save_model_to_file(SVMConfiguration& config,
 
 	const char *error_msg;
 
-	error_msg = svm_check_parameter(&prob, param, &config.log);
+	error_msg = svm_check_parameter(&prob, param, config.log);
 
 	if (error_msg) {
 		LOG(config.log, LogLevel::Error, "ERROR: " + to_string(error_msg))
 		exit(1);
 	}
 
-	model = svm_train(&prob, param, &config.log);
+	model = svm_train(&prob, param, config.log);
 
-	if (svm_save_model(model_file_name, model, &config.log)) {
+	if (svm_save_model(model_file_name, model, config.log)) {
 		LOG(config.log, LogLevel::Error, "can't save model to file " + to_string(model_file_name))
 		exit(1);
 	}
-	svm_free_and_destroy_model(&model, &config.log);
-	svm_destroy_param(param, &config.log);
+	svm_free_and_destroy_model(&model, config.log);
+	svm_destroy_param(param, config.log);
 	free(prob.y);
 	free(prob.x);
 	free(x_space);
@@ -327,19 +327,19 @@ void LibSVMRunner::file_prediction(SVMConfiguration& config) {
 		exit(1);
 	}
 
-	if ((model = svm_load_model(model_filename, &config.log)) == 0) {
+	if ((model = svm_load_model(model_filename, config.log)) == 0) {
 		LOG(config.log, LogLevel::Error, "can't open model file " + to_string(model_filename));
 		exit(1);
 	}
 
 	x = (struct svm_node *) malloc(max_nr_attr * sizeof(struct svm_node));
 	if (predict_probability) {
-		if (svm_check_probability_model(model, &config.log) == 0) {
+		if (svm_check_probability_model(model, config.log) == 0) {
 			LOG(config.log, LogLevel::Error, "Model does not support probabiliy estimates");
 			exit(1);
 		}
 	} else {
-		if (svm_check_probability_model(model, &config.log) != 0)
+		if (svm_check_probability_model(model, config.log) != 0)
 			LOG(config.log, LogLevel::Info, "Model supports probability estimates, but disabled in prediction.");
 	}
 
@@ -353,19 +353,19 @@ void predict(SVMConfiguration& config, FILE *input, FILE *output) {
 	double error = 0;
 	double sump = 0, sumt = 0, sumpp = 0, sumtt = 0, sumpt = 0;
 
-	int svm_type = svm_get_svm_type(model, &config.log);
-	int nr_class = svm_get_nr_class(model, &config.log);
+	int svm_type = svm_get_svm_type(model, config.log);
+	int nr_class = svm_get_nr_class(model, config.log);
 	double *prob_estimates = NULL;
 	int j;
 
 	if (predict_probability) {
 		if (svm_type == NU_SVR || svm_type == EPSILON_SVR) {
 			LOG(config.log, LogLevel::Info, "Prob. model for test data: target value = predicted value + z,\nz: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma="
-							+ to_string(svm_get_svr_probability(model, &config.log)));
+							+ to_string(svm_get_svr_probability(model, config.log)));
 		}
 		else {
 			int *labels = (int *) malloc(nr_class * sizeof(int));
-			svm_get_labels(model, labels, &config.log);
+			svm_get_labels(model, labels, config.log);
 			prob_estimates = (double *) malloc(nr_class * sizeof(double));
 			fprintf(output, "labels");
 			for (j = 0; j < nr_class; j++)
@@ -423,13 +423,13 @@ void predict(SVMConfiguration& config, FILE *input, FILE *output) {
 		x[i].index = -1;
 
 		if (predict_probability && (svm_type == C_SVC || svm_type == NU_SVC)) {
-			predict_label = svm_predict_probability(model, x, prob_estimates, &config.log);
+			predict_label = svm_predict_probability(model, x, prob_estimates, config.log);
 			fprintf(output, "%g", predict_label);
 			for (j = 0; j < nr_class; j++)
 				fprintf(output, " %g", prob_estimates[j]);
 			fprintf(output, "\n");
 		} else {
-			predict_label = svm_predict(model, x, &config.log);
+			predict_label = svm_predict(model, x, config.log);
 			fprintf(output, "%g\n", predict_label);
 		}
 
@@ -606,7 +606,7 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 		m = load_model_from_config(config, params);
 	} else {
 		const char * model_filename = config.getModelFilename().c_str();
-		if ((m = svm_load_model(model_filename, &config.log)) == 0) {
+		if ((m = svm_load_model(model_filename, config.log)) == 0) {
 //			config.error_msg = std::string("Can't open model name. Please provide name for a model");
 			return;
 		}
@@ -618,7 +618,7 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 	double* ret = Malloc(double, training_examples);
 
 	for (int i = 0; i < training_examples; i++)
-		ret[i] = svm_predict(m, train[i], &config.log);
+		ret[i] = svm_predict(m, train[i], config.log);
 
 	arma::vec ret_vec(ret, training_examples);
 	config.result = ret_vec;
@@ -632,7 +632,7 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 	free(train);
 	//TODO: THIS SHOULD WORKING WITH PREDICTIONS 2X, now it's not working
 //	svm_free_and_destroy_model(&m);
-	svm_destroy_param(params, &config.log);
+	svm_destroy_param(params, config.log);
 	free(ret);
 }
 
