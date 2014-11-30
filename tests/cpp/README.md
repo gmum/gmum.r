@@ -59,5 +59,5 @@ common convention.
 We want to disable tests when they are for example no longer compatible with
 current architecture or in any other way are blockers for
 continous integration. Disabled tests can be fixed later, while continous
-integration sill goes good.
+integration still goes good.
 

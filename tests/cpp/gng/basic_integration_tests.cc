@@ -2,10 +2,11 @@
 #include "gng/GNGServer.h"
 #include "gng/Utils.h"
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 #include <algorithm>
 #include <utility>
 #include <vector>
+
 using namespace std;
 using namespace gmum;
 
@@ -23,8 +24,10 @@ pair<double, double> test_convergence(GNGConfiguration * cnf=0, int num_database
 
     GNGServer *s = GNGServer::constructTestServer(config);
 
-    cerr<<s->getGraph().reportPool()<<endl;
 
+
+    cerr<<s->getGraph().reportPool()<<endl;
+    cerr<<config.verbosity<<endl;
 
     s->run();
 
@@ -65,6 +68,7 @@ pair<double, double> test_convergence(GNGConfiguration * cnf=0, int num_database
 
     while(true){
        ++iteration;
+
        REPORT_PRODUCTION(iteration);
        gmum::sleep(sleep_ms);
        REPORT_PRODUCTION(s->getGraph().getNumberNodes());
@@ -222,16 +226,18 @@ TEST(BasicTests, FewDimsSkewedUGConvergence){
     ASSERT_LE(results.second, 50.0);
 }
 
-
 TEST(BasicTests, FewDimsUGConvergence){
 
     GNGConfiguration config = GNGConfiguration::getDefaultConfiguration();
     config.uniformgrid_optimization =  true;
     config.max_nodes = 2000;
+    config.verbosity = 8;
     config.lazyheap_optimization =  true;
     config.dim = 4;
     config.axis = vector<double>(config.dim , 1.0);
     config.orig = vector<double>(config.dim , 0.0);
+
+
 
     pair<double, double> results = test_convergence(&config, 1000, 60000, "fewdimsugconvergence.graphml");
 
