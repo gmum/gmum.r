@@ -20,6 +20,7 @@ library(ggplot2)
 #' @param probability Whether to train a model for probability estimates 
 #' @param cache_size Cache size
 #' @param tol Tolerance of termination criterion
+#' @param verbosity Adjust verbosity level, from 0 - nologging to 6 - trace.
 #' 
 #' @return SVM model object
 #' @examples 
@@ -131,7 +132,8 @@ evalqOnLoad({
                     cweights = NULL,
                     sweights = NULL,
                     cache_size = 100,
-                    tol = 1e-3 ) {
+                    tol = 1e-3,
+                    verbosity=4) {
     
     # check for errors
     
@@ -165,6 +167,9 @@ evalqOnLoad({
     }
     if (kernel=="linear" && gamma != 0.01) {
       warning("Gamma parameter is not used with linear kernel")
+    }
+    if (verbosity < 0 || verbosity > 6) {
+      stop("Wrong verbosity level, should be from 0 to 6")
     }
     
     labels = all.vars(update(formula,.~0))
@@ -206,6 +211,7 @@ evalqOnLoad({
     config$setLibrary(lib)
     config$setKernel(kernel)
     config$setPreprocess(prep)
+    config$set_verbosity(verbosity)
     
     config$C = C
     config$gamma = gamma

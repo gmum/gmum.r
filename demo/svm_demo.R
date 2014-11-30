@@ -9,9 +9,8 @@ svm <- SVM( formula = X1~. ,
             lib = "libsvm",
             kernel = "linear",
             prep = "none",
-            C = 1,
-            gamma = 0.01,
-            coef0 = 0) 
+            C = 10,
+            verbosity=4) 
 
 # You can access the dataset 
 x <- dataset.X(svm)

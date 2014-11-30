@@ -34,7 +34,9 @@ RCPP_MODULE(svm_wrapper) {
 			.method("setLibrary", &SVMConfiguration::setLibrary)
 			.method("setKernel", &SVMConfiguration::setKernel)
 			.method("setPreprocess", &SVMConfiguration::setPreprocess)
-			;
+			.method("set_verbosity", &SVMConfiguration::set_verbosity)
+
+      ;
 	class_<SVMClient>("SVMClient")
 			.constructor<SVMConfiguration*>()
 
