@@ -4,14 +4,14 @@ include ../../src/Makevars
 CXX := $(CXX)
 CPPFLAGS := $(PKG_CPPFLAGS)
 CXXFLAGS := $(PKG_CXXFLAGS) -O2 -g -s
-LDLIBS := $(PKG_LIBS) -O1 -larmadillo -O1 -llapack -lblas -lgtest -lgtest_main
+LDLIBS := $(PKG_LIBS) -lpthread -lgtest -lgtest_main
 
 ###
 # Compilation parameters
 ###
 
 # Output executable
-TEST_ALL_BIN := test_all
+TEST_ALL_BIN := run_tests
 
 # Root paths
 ROOT_INCLUDE_PATH := ../../inst/include
@@ -19,8 +19,8 @@ ROOT_SRC_PATH := ../../src
 ROOT_TEST_PATH := .
 
 # Branches that will be compiled
-GMUMR_BRANCHES := gng svm tinythread
-TEST_BRANCHES := gng svm
+GMUMR_BRANCHES := gng svm cec tinythread
+TEST_BRANCHES := gng svm cec
 
 # Additional cleaning paths
 ADDITIONAL_CLEANING := *.graphml *.bin
@@ -30,13 +30,13 @@ ADDITIONAL_CLEANING := *.graphml *.bin
 ###
 
 SOURCES_WILDCARD := $(patsubst %, $(ROOT_SRC_PATH)/%/*.cpp, $(GMUMR_BRANCHES))
-TEST_SOURCES_WILDCARD := $(patsubst %, $(ROOT_TEST_PATH)/%/*.cc, $(TEST_BRANCHES))
+TEST_SOURCES_WILDCARD := $(patsubst %, $(ROOT_TEST_PATH)/%/*.cpp, $(TEST_BRANCHES))
 
 SOURCES := $(wildcard $(SOURCES_WILDCARD))
 TEST_SOURCES := $(wildcard $(TEST_SOURCES_WILDCARD))
 
 OBJECTS := $(patsubst %.cpp, %.o, $(SOURCES))
-TEST_OBJECTS := $(patsubst %.cc, %.o, $(TEST_SOURCES))
+TEST_OBJECTS := $(patsubst %.cpp, %.o, $(TEST_SOURCES))
 
 ###
 # Includes
@@ -66,13 +66,14 @@ CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
 all: $(TEST_ALL_BIN)
 
 clean :
-	rm -f $(TEST_ALL_BIN) $(TEST_OBJECTS) $(OBJECTS) $(ADDITIONAL_CLEANING)
+	rm -f $(TEST_ALL_BIN) $(TEST_OBJECTS) $(ADDITIONAL_CLEANING)
 
-test_all: $(TEST_OBJECTS) $(OBJECTS)
+$(TEST_ALL_BIN): $(TEST_OBJECTS) $(OBJECTS)
 	@echo Linking all tests...
+	@echo See running options with ./run_tests -h
 	$(CXX) $^ -lgtest_main -o $@ $(LDLIBS)
 
-%.o : %.cc %.cpp %.hpp
+%.o : %.cpp %.hpp
 	@echo Compiling $@ ...
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
