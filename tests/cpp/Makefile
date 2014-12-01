@@ -19,8 +19,8 @@ ROOT_SRC_PATH := ../../src
 ROOT_TEST_PATH := .
 
 # Branches that will be compiled
-GMUMR_BRANCHES := gng svm cec tinythread
-TEST_BRANCHES := gng svm cec
+GMUMR_BRANCHES := gng svm tinythread
+TEST_BRANCHES := gng svm
 
 # Additional cleaning paths
 ADDITIONAL_CLEANING := *.graphml *.bin
@@ -72,6 +72,11 @@ $(TEST_ALL_BIN): $(TEST_OBJECTS) $(OBJECTS)
 	@echo Linking all tests...
 	@echo See running options with ./run_tests -h
 	$(CXX) $^ -lgtest_main -o $@ $(LDLIBS)
+	$(shell echo "#!/bin/bash \n ./run_tests --gtest_filter=-*+BasicTests*" > run_tests_slow.sh)
+	$(shell chmod 700 run_tests_slow.sh)
+	$(shell echo "#!/bin/bash \n ./run_tests --gtest_filter=-BasicTests*" > run_tests_fast.sh)
+	$(shell chmod 700 run_tests_fast.sh)
+
 
 %.o : %.cpp %.hpp
 	@echo Compiling $@ ...
