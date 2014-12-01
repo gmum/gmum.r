@@ -27,6 +27,7 @@ protected:
 		params.nrOfClusters = 3;
 		params.killThreshold = 0.0001;
 		params.dataset = points;
+        params.nstart = 10;
 		//params.clusterType = kstandard;
 		params.clusterType = ksphere;
 		std::cout << "initialized data" << std::endl;
@@ -49,14 +50,15 @@ TEST_F(Mouse1Test,IsEnergyCorrect) {
 		conf->setParams(params);
 		conf->setMethodInit("random");
 		cecModel cec(conf);
-		cec.loop();
-		double percentage = comparator.evaluateClustering(params.nrOfClusters,*points,cec.getAssignment(),*clustering);
+        cec.loop();
+        std::vector<unsigned int> assignment = cec.getAssignment();
+		double percentage = comparator.evaluateClustering(params.nrOfClusters,*points,assignment,*clustering);
 		std::cout << "Percentage " << percentage << std::endl;
 		std::cout << "Energy " << cec.entropy() << std::endl;
 		numberOfTimesAcceptable += (percentage >= 0.9) || (cec.entropy() < energy*1.5);
 #ifdef SHOW_CLUSTERING
 		std::cout << "BEGIN" << std::endl;
-		for (std::vector<unsigned int>::iterator it = cec.getAssignment().begin(); it!=cec.getAssignment().end(); ++it)
+		for (std::vector<unsigned int>::iterator it = assignment.begin(); it!=assignment.end(); ++it)
 		std::cout << *it << std::endl;
 		std::cout << "END" << std::endl;
 #endif

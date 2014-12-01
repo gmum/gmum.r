@@ -41,6 +41,7 @@ TEST(EllipseGauss,real_test) {
 	params.killThreshold = 0.0001;
 	params.dataset = points;
 	params.clusterType = kstandard;
+    params.nstart = 10;
 
 	double numberOfTimesAcceptable = 0;
 	int t = 20;

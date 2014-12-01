@@ -27,6 +27,8 @@ TEST(Simple_1,IsEnergyCorrect) {
 	params.nrOfClusters = 1;
 	params.dataset = points;
 	params.clusterType = kstandard;
+    params.nstart = 10;
+
 	cecConfiguration *conf = new cecConfiguration();
 	conf->setParams(params);
 	// TODO set clustering

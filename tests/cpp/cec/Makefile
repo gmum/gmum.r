@@ -10,6 +10,8 @@ SOURCES_ROOT_DIR = $(GMUMR_ROOT_DIR)/src
 CEC_INCLUDE_DIR = $(INCLUDE_ROOT_DIR)/cec
 CEC_SOURCES_DIR = $(SOURCES_ROOT_DIR)/cec
 
+TEST_DATA_DIR = ../data
+
 CEC_SOURCES = $(wildcard $(CEC_SOURCES_DIR)/*.cpp)
 SOURCES = $(CEC_SOURCES)
 OBJECTS = $(patsubst %.cpp, %.o, $(SOURCES))
@@ -22,6 +24,12 @@ CXXFLAGS := $(PKG_CXXFLAGS) -g -O2 -s -pthread
 LDLIBS := $(PKG_LIBS) $(LDLIBS) -O1 -larmadillo -O1 -llapack -lblas
 
 TESTS = onlineTest ellipse_gauss_test simple_1_test mouse_1_test clusterTraceOnlyTest mouse_1_spherical_test big_data_tests
+
+TEST_DATA = $(TEST_DATA_DIR)/bigData_1/input.txt $(TEST_DATA_DIR)/bigData_1/type.txt $(TEST_DATA_DIR)/bigData_1/dimension.txt \
+			$(TEST_DATA_DIR)/bigData_2/input.txt $(TEST_DATA_DIR)/bigData_2/type.txt $(TEST_DATA_DIR)/bigData_2/dimension.txt \
+			$(TEST_DATA_DIR)/bigData_3/input.txt $(TEST_DATA_DIR)/bigData_3/type.txt $(TEST_DATA_DIR)/bigData_3/dimension.txt \
+			$(TEST_DATA_DIR)/bigData_4/input.txt $(TEST_DATA_DIR)/bigData_4/type.txt $(TEST_DATA_DIR)/bigData_4/dimension.txt
+
 GTEST_HEADERS = $(GTEST)/include/gtest/*.h \
                 $(GTEST)/include/gtest/internal/*.h
 
@@ -35,7 +43,7 @@ debug:
 	@echo $(AR)
 echo :
 	@echo $(R_HOME)
-	@echo $(RCPPFLAGS)
+	@echo $(RCPPFLAGTESTS)
 	@echo $(RLDFLAGS)
 	@echo $(RCPPINCL)
 	@echo $(RCPPLIBS)
@@ -48,7 +56,12 @@ echo :
 clean :
 	rm -f $(TESTS) gtest.a gtest_main.a *.o
 
-.PHONY : echo clean
+download_test_data: $(TEST_DATA)
+
+%.txt:
+	sh big_data_downloader.sh $(subst $(TEST_DATA_DIR)/, , $@) $@ 
+
+.PHONY : echo clean download_test_data 
 
 GTEST_SRCS_ = $(GTEST)/src/*.cc $(GTEST)/src/*.h $(GTEST_HEADERS)
 
@@ -66,28 +79,28 @@ gtest.a : gtest-all.o
 gtest_main.a : gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
 
-#%.o : %.cc
+#%.o : %.cpp
 #	$(CXX) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -c
 
 onlineTest: gtest_main.a 
-	$(CXX) onlineTest.cc $(CEC_SOURCES_DIR)/cluster.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+	$(CXX) onlineTest.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 clusterTraceOnlyTest: gtest_main.a 
-	$(CXX) clusterTraceOnlyTest.cc $(CEC_SOURCES_DIR)/cluster.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+	$(CXX) clusterTraceOnlyTest.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 ellipse_gauss_test: gtest_main.a 
-	$(CXX) ellipse_gauss_test.cc $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cecConfiguration.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/hartigan.cpp $(CEC_SOURCES_DIR)/randomAssignment.cpp $(CEC_SOURCES_DIR)/assignment.cpp $(CEC_SOURCES_DIR)/clusterCustomFunction.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+	$(CXX) ellipse_gauss_test.cpp $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cecConfiguration.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/hartigan.cpp $(CEC_SOURCES_DIR)/randomAssignment.cpp $(CEC_SOURCES_DIR)/assignment.cpp $(CEC_SOURCES_DIR)/clusterCustomFunction.cpp $(CEC_SOURCES_DIR)/kmeansppAssignment.cpp $(CEC_SOURCES_DIR)/centroidsAssignment.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 mouse_1_test: gtest_main.a 
-	$(CXX) mouse_1_test.cc $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cecConfiguration.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/clusterCustomFunction.cpp $(CEC_SOURCES_DIR)/hartigan.cpp $(CEC_SOURCES_DIR)/randomAssignment.cpp  $(CEC_SOURCES_DIR)/assignment.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+	$(CXX) mouse_1_test.cpp $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cecConfiguration.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/clusterCustomFunction.cpp $(CEC_SOURCES_DIR)/hartigan.cpp $(CEC_SOURCES_DIR)/randomAssignment.cpp $(CEC_SOURCES_DIR)/kmeansppAssignment.cpp $(CEC_SOURCES_DIR)/centroidsAssignment.cpp  $(CEC_SOURCES_DIR)/assignment.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 mouse_1_spherical_test: gtest_main.a 
-	$(CXX) mouse_1_spherical_test.cc $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cecConfiguration.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/clusterCustomFunction.cpp $(CEC_SOURCES_DIR)/hartigan.cpp $(CEC_SOURCES_DIR)/randomAssignment.cpp $(CEC_SOURCES_DIR)/assignment.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+	$(CXX) mouse_1_spherical_test.cpp $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cecConfiguration.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/clusterCustomFunction.cpp $(CEC_SOURCES_DIR)/hartigan.cpp $(CEC_SOURCES_DIR)/randomAssignment.cpp $(CEC_SOURCES_DIR)/kmeansppAssignment.cpp $(CEC_SOURCES_DIR)/centroidsAssignment.cpp $(CEC_SOURCES_DIR)/assignment.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 simple_1_test: gtest_main.a 
-	$(CXX) simple_1_test.cc $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cecConfiguration.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/clusterCustomFunction.cpp $(CEC_SOURCES_DIR)/hartigan.cpp  $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+	$(CXX) simple_1_test.cpp $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cecConfiguration.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/clusterCustomFunction.cpp $(CEC_SOURCES_DIR)/hartigan.cpp $(CEC_SOURCES_DIR)/assignment.cpp $(CEC_SOURCES_DIR)/kmeansppAssignment.cpp $(CEC_SOURCES_DIR)/centroidsAssignment.cpp $(CEC_SOURCES_DIR)/randomAssignment.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
-big_data_tests: gtest_main.a 
-	$(CXX) big_data_tests.cc $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cecConfiguration.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/hartigan.cpp $(CEC_SOURCES_DIR)/clusterCustomFunction.cpp $(CEC_SOURCES_DIR)/randomAssignment.cpp $(CEC_SOURCES_DIR)/assignment.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+big_data_tests: gtest_main.a
+	$(CXX) big_data_tests.cpp $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cecConfiguration.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/hartigan.cpp $(CEC_SOURCES_DIR)/clusterCustomFunction.cpp $(CEC_SOURCES_DIR)/randomAssignment.cpp $(CEC_SOURCES_DIR)/kmeansppAssignment.cpp $(CEC_SOURCES_DIR)/centroidsAssignment.cpp $(CEC_SOURCES_DIR)/assignment.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 endif

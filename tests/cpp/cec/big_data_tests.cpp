@@ -4,7 +4,6 @@
 #include "hartigan.hpp"
 #include "randomAssignment.hpp"
 #include "cecConfiguration.hpp"
-#include <RcppArmadillo>
 #include <boost/smart_ptr.hpp>
 #include <vector>
 
@@ -30,6 +29,7 @@ void run(const char * str, int numberOfClusters, int times = 1) {
 	params.nrOfClusters = numberOfClusters;
 	params.dataset = points;
 	params.clusterType = kstandard;
+    params.nstart = 10;
 
 	for (int i = 0; i < times; ++i) {
 		cecConfiguration *conf = new cecConfiguration();
@@ -62,6 +62,7 @@ void runSpherical(const char * str, int numberOfClusters, int times = 1) {
 	params.nrOfClusters = numberOfClusters;
 	params.dataset = points;
 	params.clusterType = kstandard;
+    params.nstart = 10;
 
 //    std::vector<ClusterType> types;
 //    std::vector<float> radius;
@@ -78,10 +79,6 @@ void runSpherical(const char * str, int numberOfClusters, int times = 1) {
 		std::cout << "Energy " << cec.entropy() << std::endl;
 		delete conf;
 	}
-}
-
-TEST(BigData, Normal_1) {
-	run("bigData_1", 3, times);
 }
 
 TEST(BigData, Normal_1) {
