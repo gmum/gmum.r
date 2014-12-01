@@ -24,7 +24,8 @@ To build tests `cd` into this directory (`tests/cpp`) and type `make`.
 
 Run compiled executable binary: `./run_tests`
 
-To run tests individually, refer to `./run_tests -h` from GTest:
+To run tests individually, use helper `./*.sh` scripts or refer to
+`./run_tests -h` from GTest:
 
 ```
 Test Selection:
