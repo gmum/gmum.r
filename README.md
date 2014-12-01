@@ -52,7 +52,13 @@ $ make
 $ ./mouse_1_test #for instance
 ```
 
-To run R tests type
+To run R tests you need *gtools*
+
+To install gtools use
+```R
+> install.packages('gtools')
+```
+To run R tests use
 ```
 $ cd gmum
 $ R
