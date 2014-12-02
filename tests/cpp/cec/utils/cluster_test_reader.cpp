@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+
 ClusterTestReader::ClusterTestReader(std::string _dir) :
 		dir(_dir) {
 }
@@ -57,4 +58,3 @@ void ClusterTestReader::readAnswer(std::vector<int> & out) {
 		std::cout << "Failed to open file " << getAnswerPath() << std::endl;
 	}
 }
-

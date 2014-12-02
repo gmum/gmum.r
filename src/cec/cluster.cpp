@@ -166,8 +166,8 @@ void ClusterStandard::calculateEntropy() {
 
 boost::shared_ptr<ClusterUseCovMat> ClusterStandard::createInstance(int _count,
 		const arma::rowvec &_mean, const arma::mat &_covMat) {
-	return boost::shared_ptr<ClusterUseCovMat>(
-			new ClusterStandard(_count, _mean, _covMat));
+	return boost::shared_ptr < ClusterUseCovMat
+			> (new ClusterStandard(_count, _mean, _covMat));
 }
 
 ClusterStandard::ClusterStandard(int _count, const arma::rowvec &_mean,
@@ -203,8 +203,8 @@ void ClusterCovMat::calculateEntropy() {
 }
 boost::shared_ptr<ClusterUseCovMat> ClusterCovMat::createInstance(int _count,
 		const arma::rowvec & _mean, const arma::mat & _covMat) {
-	return boost::shared_ptr<ClusterUseCovMat>(
-			new ClusterCovMat(invSigma, sigmaDet, _count, _mean, _covMat));
+	return boost::shared_ptr < ClusterUseCovMat
+			> (new ClusterCovMat(invSigma, sigmaDet, _count, _mean, _covMat));
 }
 
 ClusterConstRadius::ClusterConstRadius(double r, unsigned int id,
@@ -225,8 +225,8 @@ void ClusterConstRadius::calculateEntropy() {
 
 boost::shared_ptr<ClusterOnlyTrace> ClusterConstRadius::createInstance(
 		int _count, const arma::rowvec & _mean, double _covMatTrace) {
-	return boost::shared_ptr<ClusterOnlyTrace>(
-			new ClusterConstRadius(r, _count, _mean, _covMatTrace));
+	return boost::shared_ptr < ClusterOnlyTrace
+			> (new ClusterConstRadius(r, _count, _mean, _covMatTrace));
 }
 
 ClusterSpherical::ClusterSpherical(unsigned int id,
@@ -247,8 +247,8 @@ void ClusterSpherical::calculateEntropy() {
 
 boost::shared_ptr<ClusterOnlyTrace> ClusterSpherical::createInstance(int _count,
 		const arma::rowvec & _mean, double _covMatTrace) {
-	return boost::shared_ptr<ClusterOnlyTrace>(
-			new ClusterSpherical(_count, _mean, _covMatTrace));
+	return boost::shared_ptr < ClusterOnlyTrace
+			> (new ClusterSpherical(_count, _mean, _covMatTrace));
 }
 
 ClusterDiagonal::ClusterDiagonal(unsigned int id,
@@ -270,7 +270,7 @@ void ClusterDiagonal::calculateEntropy() {
 
 boost::shared_ptr<ClusterUseCovMat> ClusterDiagonal::createInstance(int _count,
 		const arma::rowvec & _mean, const arma::mat & _covMat) {
-	return boost::shared_ptr<ClusterUseCovMat>(
-			new ClusterDiagonal(_count, _mean, _covMat));
+	return boost::shared_ptr < ClusterUseCovMat
+			> (new ClusterDiagonal(_count, _mean, _covMat));
 }
 }

@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
-#include "src/Cluster.hpp"
-#include <<RcppArmadillo>>
+#include "cluster.hpp"
+#include <RcppArmadillo.h>
 #include <boost/shared_ptr.hpp>
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,7 +45,7 @@ TEST(TraceOnly,AddPoint) {
 		arma::rowvec point(data.row(i));
 		m = m->addPoint(point);
 		ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m.get());
-		Cluster tmp(id,fits,tmpMatrix);
+		ClusterStandard tmp(id,fits,tmpMatrix);
 		arma::rowvec meanOnlineDifference = upref->getMean() - realM;
 		float traceDiff = upref->getCovMatTrace() - arma::trace(covariance);
 		float relativeError = std::abs(traceDiff/arma::trace(covariance));
@@ -55,11 +55,8 @@ TEST(TraceOnly,AddPoint) {
 		std::cout << i << " : " << relativeError << std::endl;
 		for (int j = 0; j < dim; ++j) {
 			EXPECT_LT(std::abs(meanOnlineDifference(j)),acceptableDifference) << "at position" << j << " means differ by more than " << acceptableDifference;
-
 		}
-
 	}
-
 }
 
 TEST(TraceOnly,removePoint) {
@@ -97,7 +94,7 @@ TEST(TraceOnly,removePoint) {
 
 		arma::rowvec point(data.row(i));
 		m = m->removePoint(point);
-		Cluster tmp(id,fits,tmpMatrix);
+		ClusterStandard tmp(id,fits,tmpMatrix);
 
 		ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m.get());
 		arma::rowvec meanOnlineDifference = upref->getMean() - realM;
@@ -109,9 +106,6 @@ TEST(TraceOnly,removePoint) {
 		for (int j = 0; j < dim; ++j) {
 			EXPECT_LT(std::abs(meanOnlineDifference(j)),acceptableDifference) << "at position" << j << " means differ by more than " << acceptableDifference;
 		}
-
 	}
 	ASSERT_TRUE(true);
-
 }
-

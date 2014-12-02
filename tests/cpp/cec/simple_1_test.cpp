@@ -1,9 +1,11 @@
 #include "gtest/gtest.h"
 #include "cluster_reader.hpp"
 #include "clustering_comparator.hpp"
-#include "src/CEC.hpp"
-#include "src/Hartigan.hpp"
-#include <<RcppArmadillo>>
+#include "cecConfiguration.hpp"
+#include "hartigan.hpp"
+#include "cec.hpp"
+#include <vector>
+#include <RcppArmadillo.h>
 #include <boost/smart_ptr.hpp>
 #include <vector>
 using namespace gmum;
@@ -11,7 +13,7 @@ using namespace gmum;
 #define SHOW(x) std::cout << #x << " = " << x << std::endl
 TEST(Simple_1,IsEnergyCorrect) {
 	std::cout.precision(21);
-	boost::shared_ptr<std::vector<unsigned int> > clustering(new std::vector<unsigned int>());
+	boost::shared_ptr<std::vector<unsigned int> > clustering(new std::vector<unsigned int>);
 	ClusterReader clusterReader("simple_1",2);
 	clusterReader.getClustering(*clustering);
 
@@ -20,9 +22,18 @@ TEST(Simple_1,IsEnergyCorrect) {
 	*it -= min;
 
 	boost::shared_ptr<arma::mat> points(new arma::mat(clusterReader.getPointsInMatrix()));
-	double killThreshold = 0.0001;
-	boost::shared_ptr<Hartigan> hartigan(new Hartigan(false,false));
-	CEC cec(points,clustering, hartigan, killThreshold, 1);
+	Params params;
+	params.killThreshold = 0.0001;
+	params.nrOfClusters = 1;
+	params.dataset = points;
+	params.clusterType = kstandard;
+    params.nstart = 10;
+
+	cecConfiguration *conf = new cecConfiguration();
+	conf->setParams(params);
+	// TODO set clustering
+	//conf->setMix(*clustering);
+	cecModel cec(conf);
 
 	std::cout << cec.entropy() << std::endl;
 	std::cout << clusterReader.getEnergy() << std::endl;
@@ -30,6 +41,5 @@ TEST(Simple_1,IsEnergyCorrect) {
 	SHOW(cec.clusters[0]->getMean().n_rows );
 	SHOW(cec.clusters[0]->getMean().n_cols);
 	std::cout << clusterReader.getEnergy() << std::endl;
-	std::cout << " cov : " << cec.clusters[0]->getCovMat() << std::endl;
 	EXPECT_LT(std::abs(cec.entropy() - clusterReader.getEnergy()) , 1e-4);
 }

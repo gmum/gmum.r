@@ -1,5 +1,5 @@
-#ifndef USER_ASSIGMENT_HPP
-#define USER_ASSIGMENT_HPP
+#ifndef CENTROIDASSIGNMENT_HPP
+#define CENTROIDASSIGNMENT_HPP
 
 #include <vector>
 #include <stdlib.h>

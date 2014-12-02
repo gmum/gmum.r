@@ -1,5 +1,5 @@
-#ifndef CLUSTER_TEST_READER_HPP
-#define CLUSTER_TEST_READER_HPP
+#ifndef CLUSTERTESTREADER_HPP
+#define CLUSTERTESTREADER_HPP
 
 #include <Rcpp.h>
 #include <iostream>
@@ -15,7 +15,6 @@ public:
 	ClusterTestReader(std::string _dir);
 	void readData(int dim, std::vector<Rcpp::NumericVector> & out);
 	void readAnswer(std::vector<int> & out);
-
 };
 
 #endif

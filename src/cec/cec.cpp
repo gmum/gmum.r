@@ -200,6 +200,10 @@ std::vector<unsigned int> &cecModel::getAssignment() const {
 	return *assignment;
 }
 
+void cecModel::setAssignment(std::vector<unsigned int> assignment) {
+	//TODO set assignment
+}
+
 arma::mat cecModel::getPoints() {
 	return *points;
 }
