@@ -8,7 +8,7 @@
 #include "algorithm.hpp"
 #include <boost/shared_ptr.hpp>
 #include <vector>
-#include <armadillo>
+#include <RcppArmadillo.h>
 
 using namespace gmum;
 TEST(EllipseGauss,answer_cluster_same_length) {

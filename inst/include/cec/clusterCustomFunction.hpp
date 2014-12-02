@@ -1,7 +1,7 @@
 #ifndef CLUSTERCUSTOMFUNCTION_HPP
 #define CLUSTERCUSTOMFUNCTION_HPP
 
-#include <armadillo>
+#include <RcppArmadillo.h>
 #include <cmath>
 #include <string>
 #include <vector>

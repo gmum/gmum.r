@@ -5,7 +5,7 @@
 #include "hartigan.hpp"
 #include "cec.hpp"
 #include <vector>
-#include <armadillo>
+#include <RcppArmadillo.h>
 #include <boost/smart_ptr.hpp>
 #include <vector>
 using namespace gmum;
