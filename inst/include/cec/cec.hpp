@@ -41,6 +41,7 @@ public:
 	void singleLoop();
 	double entropy();
 	std::vector<unsigned int> &getAssignment() const;
+	void setAssignment(std::vector<unsigned int> assignment);
     arma::mat getPoints();
 	std::vector<arma::rowvec> centers() const;
 	std::vector<arma::mat> cov() const;

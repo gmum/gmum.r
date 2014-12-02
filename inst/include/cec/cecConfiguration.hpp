@@ -1,15 +1,16 @@
-#ifndef CECCONFIGURATION_HPP_
-#define CECCONFIGURATION_HPP_
+#ifndef CECCONFIGURATION_HPP
+#define CECCONFIGURATION_HPP
 
 #include "params.hpp"
 #include <Rcpp.h>
 
 class cecConfiguration {
 private:
-    gmum::Params params;
+	gmum::Params params;
 public:
 	cecConfiguration();
-    gmum::Params getParams();
+	gmum::Params getParams();
+	void setParams(gmum::Params params);
 	void setDataSet(const Rcpp::NumericMatrix);
 	void setEps(const double);
 	void setMix(const Rcpp::List);
@@ -27,4 +28,4 @@ public:
 	void setIters(bool);
 };
 
-#endif /* CECCONFIGURATION_HPP_ */
+#endif /* CECCONFIGURATION_HPP */

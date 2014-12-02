@@ -1,5 +1,5 @@
-#ifndef RANDOM_ASSIGMENT_HPP
-#define RANDOM_ASSIGMENT_HPP
+#ifndef RANDOMASSIGNMENT_HPP
+#define RANDOMASSIGNMENT_HPP
 
 #include <stdlib.h>
 #include <time.h>
@@ -20,6 +20,7 @@ public:
 	}
 
 	virtual void operator()(std::vector<unsigned int> &assignment);
+
 };
 
 }

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
-#include "src/Cluster.hpp"
+#include "cluster.hpp"
 using namespace gmum;
 
 TEST(OnlineFormulas,AddPoint) {
@@ -29,7 +29,7 @@ TEST(OnlineFormulas,AddPoint) {
 		}
 	}
 
-	boost::shared_ptr<Cluster> m(new Cluster(id,fits,initMatrix));
+	boost::shared_ptr<Cluster> m(new ClusterStandard(id,fits,initMatrix));
 	// Dodajemy element o indeksie i
 	for (int i = beg; i < n-1; ++i) {
 
@@ -42,30 +42,26 @@ TEST(OnlineFormulas,AddPoint) {
 
 		arma::rowvec point(data.row(i));
 		m = m->addPoint(point);
-		Cluster tmp(id,fits,tmpMatrix);
+		ClusterStandard tmp(id,fits,tmpMatrix);
 		arma::rowvec meanOnlineDifference = m->getMean() - realM;
 		arma::mat meanInitDifference = realM - tmp.getMean();
-		arma::mat covOnlineDifference = m->getCovMat() - covariance;
-		arma::mat covInitDifference = covariance - tmp.getCovMat();
+		arma::mat covOnlineDifference = m->getCovMat(id, fits, tmpMatrix) - covariance;
+		arma::mat covInitDifference = covariance - tmp.getCovMat(id, fits, tmpMatrix);
 
 		EXPECT_EQ(m->size(),tmp.size());
 
 		for (int j = 0; j < dim; ++j) {
 			EXPECT_LT(std::abs(meanOnlineDifference(j)),acceptableDifference) << "at position" << j << " means differ by more than " << acceptableDifference;
 			EXPECT_LT(std::abs(meanInitDifference(j)),acceptableDifference) << "at position" << j << " means differ by more than " << acceptableDifference;
-
 		}
 
 		for (int j = 0; j < dim; ++j) {
 			for (int k = 0; k < dim; ++k) {
 				EXPECT_LT(std::abs(covOnlineDifference(j,k)),acceptableDifference ) << " at position (" << j << "," << k << ")" << "differs by more than " << acceptableDifference;
 				EXPECT_LT(std::abs(covInitDifference(j,k)),acceptableDifference) << " at position (" << j << "," << k << ")" << "differs by more than " << acceptableDifference;
-
 			}
 		}
-
 	}
-
 }
 
 TEST(OnlineFormulas,removePoint) {
@@ -90,7 +86,7 @@ TEST(OnlineFormulas,removePoint) {
 		}
 	}
 
-	boost::shared_ptr<Cluster> m(new Cluster(id,fits,initMatrix));
+	boost::shared_ptr<Cluster> m(new ClusterStandard(id,fits,initMatrix));
 	// Dodajemy element o indeksie i
 	for (int i = n-1; i > end; --i) {
 
@@ -103,29 +99,25 @@ TEST(OnlineFormulas,removePoint) {
 
 		arma::rowvec point(data.row(i));
 		m = m->removePoint(point);
-		Cluster tmp(id,fits,tmpMatrix);
+		ClusterStandard tmp(id,fits,tmpMatrix);
 		arma::rowvec meanOnlineDifference = m->getMean() - realM;
 		arma::mat meanInitDifference = realM - tmp.getMean();
-		arma::mat covOnlineDifference = m->getCovMat() - covariance;
-		arma::mat covInitDifference = covariance - tmp.getCovMat();
+		arma::mat covOnlineDifference = m->getCovMat(id, fits, tmpMatrix) - covariance;
+		arma::mat covInitDifference = covariance - tmp.getCovMat(id, fits, tmpMatrix);
 
 		EXPECT_EQ(m->size(),tmp.size());
 
 		for (int j = 0; j < dim; ++j) {
 			EXPECT_LT(std::abs(meanOnlineDifference(j)),acceptableDifference) << "at position" << j << " means differ by more than " << acceptableDifference;
 			EXPECT_LT(std::abs(meanInitDifference(j)),acceptableDifference) << "at position" << j << " means differ by more than " << acceptableDifference;
-
 		}
 
 		for (int j = 0; j < dim; ++j) {
 			for (int k = 0; k < dim; ++k) {
 				EXPECT_LT(std::abs(covOnlineDifference(j,k)),acceptableDifference ) << " at position (" << j << "," << k << ")" << "differs by more than " << acceptableDifference;
 				EXPECT_LT(std::abs(covInitDifference(j,k)),acceptableDifference) << " at position (" << j << "," << k << ")" << "differs by more than " << acceptableDifference;
-
 			}
 		}
-
 	}
-
 }
 

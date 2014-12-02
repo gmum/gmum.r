@@ -1,12 +1,11 @@
-#ifndef CLUSTERING_COMPARATOR_HPP
-#define CLUSTERING_COMPARATOR_HPP
+#ifndef CLUSTERINGCOMPARATOR_HPP
+#define CLUSTERINGCOMPARATOR_HPP
 
 #include <RcppArmadillo.h>
 #include <cassert>
+
 class ClusteringComparator {
-
 public:
-
 	virtual std::vector<unsigned int> computePermutation(
 			unsigned int numberOfClusters, arma::mat & points,
 			std::vector<unsigned int> & realFits,

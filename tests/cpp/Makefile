@@ -19,8 +19,8 @@ ROOT_SRC_PATH := ../../src
 ROOT_TEST_PATH := .
 
 # Branches that will be compiled
-GMUMR_BRANCHES := gng svm tinythread
-TEST_BRANCHES := gng svm
+GMUMR_BRANCHES := cec gng svm tinythread
+TEST_BRANCHES := cec gng svm
 
 # Additional cleaning paths
 ADDITIONAL_CLEANING := *.graphml *.bin

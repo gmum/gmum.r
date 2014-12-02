@@ -1,5 +1,5 @@
-#ifndef KMEANSPP_ASSIGMENT_HPP
-#define KMEANSPP_ASSIGMENT_HPP
+#ifndef KMEANSPPASSIGNMENT_HPP
+#define KMEANSPPASSIGNMENT_HPP
 
 #include <list>
 #include <stdlib.h>
@@ -38,7 +38,6 @@ public:
 	KmeansppAssignment(const arma::mat &points, const int nrOfClusters) :
 			Assignment::Assignment(points, nrOfClusters) {
 	}
-
 	virtual void operator()(std::vector<unsigned int> &assignment);
 };
 }

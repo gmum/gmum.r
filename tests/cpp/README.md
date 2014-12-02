@@ -24,6 +24,9 @@ To build tests `cd` into this directory (`tests/cpp`) and type `make`.
 
 Run compiled executable binary: `./run_tests`
 
+Big data tests require external input files, run `big_data_downloader.sh`
+to download them.
+
 To run tests individually, use helper `./*.sh` scripts or refer to
 `./run_tests -h` from GTest:
 

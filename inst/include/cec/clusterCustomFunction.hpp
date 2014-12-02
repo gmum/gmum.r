@@ -1,5 +1,5 @@
-#ifndef CLUSTER_CUSTOM_FUNCTION_HPP_
-#define CLUSTER_CUSTOM_FUNCTION_HPP_
+#ifndef CLUSTERCUSTOMFUNCTION_HPP
+#define CLUSTERCUSTOMFUNCTION_HPP
 
 #include <RcppArmadillo.h>
 #include <cmath>
@@ -26,4 +26,4 @@ public:
 };
 
 }
-#endif  //  CLUSTER_CUSTOM_FUNCTION_HPP_
+#endif  //  CLUSTER_CUSTOM_FUNCTION_HPP

@@ -1,13 +1,17 @@
 loadModule("cec", TRUE)
 
-#' print()
+#' Print
 #'
-#' @title print()
-#' print basic information about clusters found
+#' @title print
+#' 
+#' @description Print basic information about clusters found.
+#' Presents a structure of the cec results object (clusters found)
 #'
 #' @docType methods
 #'
 #' @param x CEC object model
+#'
+#' @usage print(cec)
 print.cec <- NULL
 
 evalqOnLoad({
@@ -21,6 +25,6 @@ evalqOnLoad({
         print(x$cov())
     }
 
-    setMethod("print","Rcpp_cec", print.cec)
+    setMethod("print","Rcpp_cecModel", print.cec)
 
 })

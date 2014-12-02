@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 #include "cluster_reader.hpp"
-#include "src/CEC.hpp"
-#include "src/Hartigan.hpp"
-#include "src/random_assignment.hpp"
+#include "cec/cec.hpp"
+#include "cec/hartigan.hpp"
+#include "cec/random_assignment.hpp"
 #include <RcppArmadillo.h>
 #include <boost/smart_ptr.hpp>
 #include <vector>
