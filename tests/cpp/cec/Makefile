@@ -10,8 +10,6 @@ SOURCES_ROOT_DIR = $(GMUMR_ROOT_DIR)/src
 CEC_INCLUDE_DIR = $(INCLUDE_ROOT_DIR)/cec
 CEC_SOURCES_DIR = $(SOURCES_ROOT_DIR)/cec
 
-TEST_DATA_DIR = ../data
-
 CEC_SOURCES = $(wildcard $(CEC_SOURCES_DIR)/*.cpp)
 SOURCES = $(CEC_SOURCES)
 OBJECTS = $(patsubst %.cpp, %.o, $(SOURCES))
@@ -23,12 +21,7 @@ CPPFLAGS := -I$(INCLUDE_ROOT_DIR) -I$(CEC_INCLUDE_DIR) $(PKG_CPPFLAGS)
 CXXFLAGS := $(PKG_CXXFLAGS) -g -O2 -s -pthread
 LDLIBS := $(PKG_LIBS) $(LDLIBS) -O1 -larmadillo -O1 -llapack -lblas
 
-TESTS = onlineTest ellipse_gauss_test simple_1_test mouse_1_test clusterTraceOnlyTest mouse_1_spherical_test big_data_tests
-
-TEST_DATA = $(TEST_DATA_DIR)/bigData_1/input.txt $(TEST_DATA_DIR)/bigData_1/type.txt $(TEST_DATA_DIR)/bigData_1/dimension.txt \
-			$(TEST_DATA_DIR)/bigData_2/input.txt $(TEST_DATA_DIR)/bigData_2/type.txt $(TEST_DATA_DIR)/bigData_2/dimension.txt \
-			$(TEST_DATA_DIR)/bigData_3/input.txt $(TEST_DATA_DIR)/bigData_3/type.txt $(TEST_DATA_DIR)/bigData_3/dimension.txt \
-			$(TEST_DATA_DIR)/bigData_4/input.txt $(TEST_DATA_DIR)/bigData_4/type.txt $(TEST_DATA_DIR)/bigData_4/dimension.txt
+TESTS = onlineTest ellipse_gauss_test simple_1_test mouse_1_test clusterTraceOnlyTest mouse_1_spherical_test 
 
 GTEST_HEADERS = $(GTEST)/include/gtest/*.h \
                 $(GTEST)/include/gtest/internal/*.h
@@ -56,12 +49,7 @@ echo :
 clean :
 	rm -f $(TESTS) gtest.a gtest_main.a *.o
 
-download_test_data: $(TEST_DATA)
-
-%.txt:
-	sh big_data_downloader.sh $(subst $(TEST_DATA_DIR)/, , $@) $@ 
-
-.PHONY : echo clean download_test_data 
+.PHONY : echo clean 
 
 GTEST_SRCS_ = $(GTEST)/src/*.cc $(GTEST)/src/*.h $(GTEST_HEADERS)
 
@@ -100,7 +88,7 @@ mouse_1_spherical_test: gtest_main.a
 simple_1_test: gtest_main.a 
 	$(CXX) simple_1_test.cpp cluster_reader.cpp $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cecConfiguration.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/clusterCustomFunction.cpp $(CEC_SOURCES_DIR)/hartigan.cpp $(CEC_SOURCES_DIR)/assignment.cpp $(CEC_SOURCES_DIR)/kmeansppAssignment.cpp $(CEC_SOURCES_DIR)/centroidsAssignment.cpp $(CEC_SOURCES_DIR)/randomAssignment.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
-big_data_tests: gtest_main.a
-	$(CXX) big_data_tests.cpp cluster_reader.cpp $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cecConfiguration.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/hartigan.cpp $(CEC_SOURCES_DIR)/clusterCustomFunction.cpp $(CEC_SOURCES_DIR)/randomAssignment.cpp $(CEC_SOURCES_DIR)/kmeansppAssignment.cpp $(CEC_SOURCES_DIR)/centroidsAssignment.cpp $(CEC_SOURCES_DIR)/assignment.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
+#big_data_tests: gtest_main.a
+#	$(CXX) big_data_tests.cpp cluster_reader.cpp $(CEC_SOURCES_DIR)/cec.cpp $(CEC_SOURCES_DIR)/cecConfiguration.cpp $(CEC_SOURCES_DIR)/cluster.cpp $(CEC_SOURCES_DIR)/hartigan.cpp $(CEC_SOURCES_DIR)/clusterCustomFunction.cpp $(CEC_SOURCES_DIR)/randomAssignment.cpp $(CEC_SOURCES_DIR)/kmeansppAssignment.cpp $(CEC_SOURCES_DIR)/centroidsAssignment.cpp $(CEC_SOURCES_DIR)/assignment.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ 
 
 endif

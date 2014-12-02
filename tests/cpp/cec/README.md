@@ -30,4 +30,4 @@ All test cases are separate executable files. For example:
 ./onlineTest
 ```
 
-Big data tests require external input files, type `make R_HOME=/usr download_test_data` to download them.
+Big data tests require external input files, type `sh big_data_downloader.sh` to download them.

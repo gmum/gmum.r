@@ -1,16 +1,9 @@
 #!/bin/bash
 
-if [ "$#" -eq 2 ]; then
-    URL="http://pasieka.ii.uj.edu.pl/~data/bigdata/"
-    FILE=$1
-    DST=$2
-elif [ "$#" -eq 3 ]; then
-    URL=$1
-    FILE=$2
-    DST=$3
-else
-    echo "invalid number of arguments"
-    exit
-fi
-
-wget $URL/$FILE -O $DST
+URL="http://pasieka.ii.uj.edu.pl/~data/bigdata/"
+DATA_DIR="../data"
+FILES=`cat test_data_list`
+for f in $FILES
+do
+    wget $URL/$f -O $DATA_DIR/$f
+done
