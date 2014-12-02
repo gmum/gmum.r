@@ -57,8 +57,7 @@ Makefile `TEST_BRANCHES` variable.
 
 To disable single test case, prefix it with a `DISABLE_` string.
 
-To disable file, rename its extension. For example from `*.cc` to `*.xcc` is a
-common convention.
+To disable file, rename its extension. For example from `*.cpp` to `*.xcpp`.
 
 We want to disable tests when they are for example no longer compatible with
 current architecture or in any other way are blockers for
