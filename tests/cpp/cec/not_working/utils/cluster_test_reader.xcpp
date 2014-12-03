@@ -9,7 +9,7 @@ ClusterTestReader::ClusterTestReader(std::string _dir) :
 }
 
 std::string ClusterTestReader::getPrefix() {
-	std::string result("../data/");
+	std::string result("data/");
 	result.append(dir);
 	return result;
 }

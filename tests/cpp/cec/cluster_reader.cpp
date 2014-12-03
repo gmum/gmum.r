@@ -13,7 +13,7 @@ ClusterReader::ClusterReader(const char * name) {
 }
 
 std::string ClusterReader::prefix() {
-	return std::string("../data/") + folderName + "/";
+	return std::string("data/") + folderName + "/";
 }
 
 std::string ClusterReader::clusterPath() {
