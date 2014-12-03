@@ -29,7 +29,7 @@ cd /usr/src/gtest
 sudo cmake CMakeLists.txt
 sudo make
 
-# Copy libgtest.a and libgtest_main.a to your /usr/lib folder
+# Copy libgtest.a and libgtest_main.a to your /usr/lib
 sudo cp *.a /usr/lib
 ```
 
@@ -50,30 +50,27 @@ Big data tests require external input files, run `big_data_downloader.sh`
 to download them.
 
 To run tests individually, use helper `./*.sh` scripts or refer to
-`./run_tests -h` from GTest:
+`./run_tests -h` from GTest.
 
-```
-Test Selection:
-  --gtest_list_tests
-      List the names of all tests instead of running them. The name of
-      TEST(Foo, Bar) is "Foo.Bar".
-  --gtest_filter=POSTIVE_PATTERNS[-NEGATIVE_PATTERNS]
-      Run only the tests whose name matches one of the positive patterns but
-      none of the negative patterns. '?' matches any single character; '*'
-      matches any substring; ':' separates two patterns.
-```
+Helper scripts:
 
-Examples:
-
-`./run_tests --gtest_filter=TwoESVMTest.*` runs all tests from TwoESVMTest.
-
-`./run_tests --gtest_filter=TwoESVMTest.TestPreprocessor` runs only one test.
+* `run_primary_tests.sh` runs primary coverage tests used in CI
+* `run_secondary_tests.sh` runs long-lasting tests for f.e. validation of
+results of the computations
 
 ## Adding tests
 
 Add new tests as `*.cc` files in subdirectories. You can create a new directory
 for your own branch/type of tests. To compile new directory, add its name to
 Makefile `TEST_BRANCHES` variable.
+
+## Duration of the tests
+
+Please consider adding your test to **secondary tests** if your test usually
+takes more than a minute. You can do that by giving it a name containing
+`NumericTest` string or define your own type of test and append its pattern to
+`SECONDARY_TESTS_TYPES` variable (list) in Makefile. This will include them to
+secondary tests during the compilation.
 
 ## Disabling tests
 
