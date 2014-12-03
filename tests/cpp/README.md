@@ -11,6 +11,28 @@ To compile these tests you need to install **GoogleTest** >= 1.6.0.
 
 Arch Linux package: `gtest`, Debian/Ubuntu package: `libgtest-dev`
 
+Ensure that GTest library has been installed:
+
+`ldconfig -p | grep gtest`
+
+If there is no output, you've just installed sources. You must compile them
+into a library.
+
+Example for Ubuntu:
+
+```
+# Install CMake if you do not have one
+sudo apt-get install cmake
+
+# Compile GTest
+cd /usr/src/gtest
+sudo cmake CMakeLists.txt
+sudo make
+
+# Copy libgtest.a and libgtest_main.a to your /usr/lib folder
+sudo cp *.a /usr/lib
+```
+
 ### GMUM.R dependencies
 
 C++ **Armadillo** library and its dependencies ( **Lapack**, **Blas**) need to
