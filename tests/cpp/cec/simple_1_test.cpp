@@ -31,6 +31,7 @@ TEST(Simple_1,IsEnergyCorrect) {
 
 	cecConfiguration *conf = new cecConfiguration();
 	conf->setParams(params);
+    conf->setMethodInit("random");
 	// TODO set clustering
 	//conf->setMix(*clustering);
 	cecModel cec(conf);
