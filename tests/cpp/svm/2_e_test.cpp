@@ -78,7 +78,3 @@ TEST(TwoESVMTest, TestAll) {
 	ASSERT_EQ(1.0, svm_config.result[3]);
 }
 
-int main(int argc, char** argv) {
-	testing::InitGoogleTest(&argc, argv);
-	RUN_ALL_TESTS();
-}

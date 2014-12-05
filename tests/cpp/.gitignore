@@ -1,5 +1,9 @@
-# Binaries
-2_e_test
-libsvm_test
-svm_utils_test
-svmlight_runner_unittest
+# Make results
+run_tests
+run_primary_tests.sh
+run_secondary_tests.sh
+
+# Test temporary files
+*.graphml
+*.bin
+

@@ -2,8 +2,8 @@
  * File constructs R Interface, exports necessary classes and functions using Rcpp package
  */
 
+#ifdef RCPP_INTERFACE
 
-#include <RcppArmadillo.h>
 #include <RcppCommon.h>
 using namespace Rcpp;
 
@@ -81,4 +81,6 @@ RCPP_MODULE(gng_module){
 			.method("predict", &GNGServer::Rpredict);
 }
 
+#include <RcppArmadillo.h>
 
+#endif

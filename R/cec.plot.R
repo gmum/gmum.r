@@ -1,8 +1,12 @@
 loadModule("cec", TRUE)
 
-#' plot()
-#' @title plot()
-#' plot clustering found
+#' Plot CEC
+#' 
+#' @title plot
+#' 
+#' @description Plot clustering found
+#' 
+#' @usage plot(cec)
 #'
 #' @docType methods
 #'
@@ -10,16 +14,19 @@ loadModule("cec", TRUE)
 #' @param slice list of dimentions chosen for display since plot is 2d
 #' @param ellipses outline clusters
 #' @param centers mark center of every cluster
+#' 
+#' @example plot(cec, ellipses=TRUE, centers=FALSE)
 plot.cec <- NULL
 
 evalqOnLoad({
 
-    plot.cec <- function(x,slice = c(), ellipses = FALSE, centers = FALSE) {
+    plot.cec <- function(x, slice = c(), ellipses = FALSE, centers = FALSE) {
 
         d = x$x()
         if (length(slice)==0) {
             slice = c(1:(dim(d)[2]))
         }
+        
         if (length(slice)==2) {
             plot(d[,slice], col = (x$y() + 1))
         }
@@ -65,5 +72,5 @@ evalqOnLoad({
         }
     }
     
-    setMethod("plot", signature(x="Rcpp_cec"), plot.cec)
+    setMethod("plot", signature(x="Rcpp_cecModel"), plot.cec)
 })

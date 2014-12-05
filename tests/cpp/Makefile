@@ -1,96 +1,106 @@
-ifndef GTEST
-$(error GTEST is not set, add to your .bashrc GTEST env. variable pointing to gtest directory without slash at the end)
-else
-
-GMUMR_SRC_DIR = ../../src
-SVMLIGHT_DIR :=     ../../inst/include/svmlight
-
 include ../../src/Makevars
 
-## Separate include dirs for transparency
-# SVM Wrapper
-SVM_INCLUDE  :=     -I ../../inst/include/svm
-SVMLIGHT_INCLUDE := -I $(SVMLIGHT_DIR)
-# Root directory (to allow explicit including f.e `svmlight/svm_learn.h`)
-INCLUDE_ROOT :=     -I ../../inst/include
-INCLUDE_DIRS :=     $(INCLUDE_ROOT) $(SVM_INCLUDE) -I ../../ -I ..
+# Explicit Makevars inheritances adn overrides
+CXX := $(CXX)
+CPPFLAGS := $(PKG_CPPFLAGS)
+CXXFLAGS := $(PKG_CXXFLAGS) -O2 -g -s
+LDLIBS := $(PKG_LIBS) -lpthread -lgtest -lgtest_main
 
-## Source dirs
-# SVM Wrapper
-SVM_SOURCES :=      $(wildcard $(GMUMR_SRC_DIR)/svm/*.cpp)
-SOURCES :=          $(SVM_SOURCES)
-OBJECTS :=          $(patsubst %.cpp, %.o, $(SOURCES))
+###
+# Compilation parameters
+###
 
-SVMLIGHT_LIBS :=    $(SVMLIGHT_INCLUDE)/svm_learn.o $(SVMLIGHT_INCLUDE)/svm_common.o $(SVMLIGHT_INCLUDE)/svm_hideo.o
+# Output executable
+TEST_MAIN_BIN := run_tests
 
-CXX := $(CXX) -isystem $(GTEST)/include
-CPPFLAGS := $(INCLUDE_DIRS) $(PKG_CPPFLAGS)
-CXXFLAGS := $(PKG_CXXFLAGS) -g -O2 -s -pthread
-LDLIBS := $(PKG_LIBS) $(LDLIBS) -O1 -larmadillo -O1 -llapack -lblas
+# Root paths
+ROOT_INCLUDE_PATH := ../../inst/include
+ROOT_SRC_PATH := ../../src
+ROOT_TEST_PATH := .
 
-TESTS = libsvm_test svm_utils_test 2_e_test #svmlight_runner_unittest
+# Branches that will be compiled
+GMUMR_BRANCHES := cec gng svm tinythread
+TEST_BRANCHES := cec gng svm
 
-GTEST_HEADERS = $(GTEST)/include/gtest/*.h \
-				$(GTEST)/include/gtest/internal/*.h
+# Additional cleaning paths
+ADDITIONAL_CLEANING := *.graphml *.bin
 
-all : $(TESTS)
+# Generate helper scripts for extra tests (run_TESTTYPE_tests.sh)
+HELPER_SCRIPT_PATTERN_1 := run_
+HELPER_SCRIPT_PATTERN_2 := _tests.sh
+PRIMARY_TESTS_NAME := primary
+SECONDARY_TESTS_NAME := secondary
 
-debug:
-	@echo $(CXX)
-	@echo $(CXXFLAGS)
-	@echo $(CPPFLAGS)
-	@echo $(ARFLAGS)
-	@echo $(AR)
-echo :
-	@echo $(R_HOME)
-	@echo $(RCPPFLAGS)
-	@echo $(RLDFLAGS)
-	@echo $(RCPPINCL)
-	@echo $(RCPPLIBS)
-	@echo $(RCPPARMAINCL)
-	@echo $(CXX)
-	@echo $(CPPFLAGS)
-	@echo $(CXXFLAGS)
-	@echo $(LDLIBS)
+# GTest names patterns that should be separated from primary tests
+# See: `./run_tests -h | grep -- --gtest_filter`
+SECONDARY_TESTS_TYPES := *NumericTest*
 
-clean :
-	rm -f $(TESTS) gtest.a gtest_main.a *.o
+###
+# Generic variables
+###
 
-.PHONY : echo clean
+# Compilation
+SOURCES_WILDCARD := $(patsubst %, $(ROOT_SRC_PATH)/%/*.cpp, $(GMUMR_BRANCHES))
+TEST_SOURCES_WILDCARD := $(patsubst %, $(ROOT_TEST_PATH)/%/*.cpp, $(TEST_BRANCHES))
 
-GTEST_SRCS_ = $(GTEST)/src/*.cc $(GTEST)/src/*.h $(GTEST_HEADERS)
+SOURCES := $(wildcard $(SOURCES_WILDCARD))
+TEST_SOURCES := $(wildcard $(TEST_SOURCES_WILDCARD))
 
-gtest-all.o : $(GTEST_SRCS_)
-	$(CXX) $(CPPFLAGS) -I$(GTEST) $(CXXFLAGS) -c \
-			$(GTEST)/src/gtest-all.cc
+OBJECTS := $(patsubst %.cpp, %.o, $(SOURCES))
+TEST_OBJECTS := $(patsubst %.cpp, %.o, $(TEST_SOURCES))
 
-gtest_main.o : $(GTEST_SRCS_)
-	$(CXX) $(CPPFLAGS) -I$(GTEST) $(CXXFLAGS) -c \
-			$(GTEST)/src/gtest_main.cc
+# Helper scripts
+PRIMARY_TESTS_SCRIPT := $(patsubst %, $(HELPER_SCRIPT_PATTERN_1)%$(HELPER_SCRIPT_PATTERN_2), $(PRIMARY_TESTS_NAME))
+SECONDARY_TESTS_SCRIPT := $(patsubst %, $(HELPER_SCRIPT_PATTERN_1)%$(HELPER_SCRIPT_PATTERN_2), $(SECONDARY_TESTS_NAME))
 
-gtest.a : gtest-all.o
-	$(AR) $(ARFLAGS) $@ $^
+###
+# Includes
+###
 
-gtest_main.a : gtest-all.o gtest_main.o
-	$(AR) $(ARFLAGS) $@ $^
+# Root directory (to allow explicit including f.e `#include "svm/svm_basic.h"`)
+ROOT_INCLUDE := -I $(ROOT_INCLUDE_PATH)
 
-#%.o : %.cc
-#	$(CXX) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -c
+# Generic branch includes
+BRANCH_INCLUDES := $(patsubst %, -I $(ROOT_INCLUDE_PATH)/%, $(GMUMR_BRANCHES))
 
-%.o : %.cpp %.h
-	$(CXX) $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -c
+# Sum up
+INCLUDES := $(ROOT_INCLUDE) $(BRANCH_INCLUDES)
 
-libsvm_test: gtest_main.a 
-	$(CXX) svm/libsvm_test.cc $(GMUMR_SRC_DIR)/svm/svm_basic.cpp $(GMUMR_SRC_DIR)/svm/libsvm_runner.cpp $(GMUMR_SRC_DIR)/svm/svm.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+###
+# Internally included libs
+###
+SVMLIGHT_INCLUDE := $(ROOT_INCLUDE_PATH)/svmlight
+SVMLIGHT_LIBS := $(SVMLIGHT_INCLUDE)/svm_learn.o $(SVMLIGHT_INCLUDE)/svm_common.o $(SVMLIGHT_INCLUDE)/svm_hideo.o
 
-svm_utils_test: gtest_main.a 
-	$(CXX) svm/svm_utils_test.cc $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
 
-2_e_test: gtest_main.a
-	$(CXX) svm/2_e_test.cc $(GMUMR_SRC_DIR)/svm/svm_basic.cpp $(GMUMR_SRC_DIR)/svm/libsvm_runner.cpp $(GMUMR_SRC_DIR)/svm/svm.cpp $(GMUMR_SRC_DIR)/svm/two_e_svm_pre.cpp $(GMUMR_SRC_DIR)/svm/two_e_svm_post.cpp $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+###
+# Compilation rules
+###
 
-svmlight_runner_unittest: gtest_main.a $(OBJECTS) $(SVMLIGHT_DIR)/svm_common.o $(SVMLIGHT_DIR)/svm_learn.o $(SVMLIGHT_DIR)/svm_hideo.o
-	$(CXX) $(CPPFLAGS) svm/svmlight_runner_unittest.cc $(LDLIBS) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+all: $(TEST_MAIN_BIN) helper_scripts
+	@echo ... Done!
+	@echo See running options with ./run_tests -h
+	@echo or use helper scripts: $(PRIMARY_TESTS_SCRIPT) $(SECONDARY_TESTS_SCRIPT)
 
+clean:
+	rm -f $(TEST_MAIN_BIN) $(TEST_OBJECTS) $(PRIMARY_TESTS_SCRIPT) \
+	$(SECONDARY_TESTS_SCRIPT) $(ADDITIONAL_CLEANING)
 
-endif
+$(TEST_MAIN_BIN): $(TEST_OBJECTS) $(OBJECTS)
+	@echo Linking all tests...
+	$(CXX) $^ -lgtest_main -o $@ $(LDLIBS)
+
+%.o: %.cpp %.hpp
+	@echo Compiling $@ ...
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+
+helper_scripts:
+	@echo Making helper scripts...
+	make helper_script filename="$(PRIMARY_TESTS_SCRIPT)" pattern=-$(SECONDARY_TESTS_TYPES)
+	make helper_script filename="$(SECONDARY_TESTS_SCRIPT)" pattern=$(SECONDARY_TESTS_TYPES)
+
+helper_script:
+	$(shell printf "#!/usr/bin/env bash\n./run_tests --gtest_filter=$(pattern)\n" > $(filename))
+	$(shell chmod +x $(filename))
+

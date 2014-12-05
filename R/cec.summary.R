@@ -1,12 +1,16 @@
 loadModule("cec", TRUE)
 
-#' summary()
-#' @title summary()
-#' print detailed information about CEC model object
+#' Summary CEC
+#' 
+#' @title summary
+#' 
+#' @description print detailed information about CEC model object
 #'
 #' @docType methods
 #'
 #' @param object CEC model object
+#' 
+#' @usage summary(cec)
 summary.cec <- NULL
 
 evalqOnLoad({
@@ -27,6 +31,6 @@ evalqOnLoad({
         print(data.frame(names, Length, Class, Mode), row.names=FALSE)
     }
 
-    setMethod("summary","Rcpp_cec",summary.cec)
+    setMethod("summary","Rcpp_cecModel",summary.cec)
 
 })

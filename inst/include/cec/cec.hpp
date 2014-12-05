@@ -1,54 +1,55 @@
-#include <vector>
-#include <list>
-#include "boost/smart_ptr.hpp"
-#include "boost/foreach.hpp"
-#include <RcppArmadillo.h>
-#include "cluster.hpp"
-#include "algorithm.hpp"
-#include "exceptions.hpp"
-#include "clusterParams.hpp"
-#include "params.hpp"
-
 #ifndef CEC_HPP
 #define CEC_HPP
 
-namespace gmum {
+#include <list>
+#include <vector>
+#include "boost/foreach.hpp"
+#include "boost/smart_ptr.hpp"
+#include "algorithm.hpp"
+#include "cluster.hpp"
+#include "clusterCustomFunction.hpp"
+#include "clusterParams.hpp"
+#include "cecConfiguration.hpp"
+#include "exceptions.hpp"
+#include "params.hpp"
 
-  /**
-   * instance of this class is CEC model object.
-   */
-  class CEC {
-  private:
-    TotalResult result;
-    boost::shared_ptr<std::vector<unsigned int> > assignment;
-    boost::shared_ptr<const arma::mat> points;
-    boost::shared_ptr<Algorithm> algorithm;
-    const double killThreshold;
-    std::vector<bool> invSet;
-    std::vector<arma::mat> inv;
-    boost::shared_ptr<Cluster> createCluster(const ClusterParams &params, int i);
-  public:
-    CEC(boost::shared_ptr<Algorithm> algorithm,
-	boost::shared_ptr<std::vector<unsigned int> > assignment,
-	const Params &params);
+/**
+ * Instance of this class is CEC model object.
+ */
+class cecModel {
+private:
+    gmum::TotalResult result;
+	boost::shared_ptr<std::vector<unsigned int> > assignment;
+	boost::shared_ptr<const arma::mat> points;
+    boost::shared_ptr<gmum::Algorithm> algorithm;
+    double killThreshold;
+	std::vector<bool> invSet;
+	std::vector<arma::mat> inv;
+    boost::shared_ptr<gmum::Cluster> createCluster(const gmum::ClusterParams &params,
+			int i);
+    cecConfiguration config;
 
-    std::vector<boost::shared_ptr<Cluster> > clusters;
+    void findBestCEC();
+    void init(boost::shared_ptr<gmum::Algorithm> algorithm,
+              boost::shared_ptr<std::vector<unsigned int> > assignment);
+public:
+    cecModel(cecConfiguration* cfg);
+    cecModel(const cecModel& other);
+    cecModel& operator=(const cecModel& other);
+    std::vector<boost::shared_ptr<gmum::Cluster> > clusters;
     void loop();
-    void singleLoop();
-    double entropy();
-    std::vector<unsigned int> &getAssignment() const;
-    const arma::mat &getPoints() const;
-    std::vector<arma::rowvec> centers() const;
-    std::vector<arma::mat> cov() const;
-    unsigned int iters() const;
-    std::list<unsigned int> getNrOfClusters() const;
-    boost::shared_ptr<const arma::mat> getPtrToPoints() const;
-    boost::shared_ptr<std::vector<unsigned int> > getPtrToAssignement() const;
+	void singleLoop();
+	double entropy();
+	std::vector<unsigned int> &getAssignment() const;
+	void setAssignment(std::vector<unsigned int> assignment);
+    arma::mat getPoints();
+	std::vector<arma::rowvec> centers() const;
+	std::vector<arma::mat> cov() const;
+	unsigned int iters() const;
+	std::list<unsigned int> getNrOfClusters() const;
     std::list<double> getEnergy() const;
-    unsigned int predict(std::vector<double> vec) const;
+	unsigned int predict(std::vector<double> vec) const;
     std::list<double> predict(std::vector<double> vec, bool general);
-  };
-
-}
+};
 
 #endif

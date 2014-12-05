@@ -3,22 +3,18 @@ dataset <- as.matrix(read.table("tests/cpp/data/mouse_1_spherical/input.txt"))
 # that is the dataset we want to cluster
 plot(dataset)
 # run cec with default parameters
-args <- list(k=3, x=dataset)
-c <- CEC(args)
+c <- CEC(k=3, x=dataset)
 plot(c)
 
 # since initial clusterization is random
 # it may be a good idea to run cec multiple times
 # and choose the best result
-args <- list(k=3, x=dataset, params.nstart=10)
-c <- CEC(args)
+c <- CEC(k=3, x=dataset, control.nstart=10)
 plot(c)
 
 # better than before, however, we know that
 # clusters are spherical; let's inform cec about that
-
-args <- list(k=3, x=dataset, params.nstart=10, method.type='sphere')
-c <- CEC(args)
+c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere')
 plot(c)
 # ain't that great? :D
 
@@ -37,6 +33,5 @@ predictClusters(c, c(1,1))
 plot(c, ellipses=TRUE)
 
 # try the same with random assignment
-args <- list(k=3, x=dataset, params.nstart=10, method.type='sphere', method.init='random')
-c <- CEC(args)
+c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere', method.init='random')
 plot(c)

@@ -1,6 +1,6 @@
-#include "../../inst/include/gng/GNG.h" //TODO: path problems
-#include "../../inst/include/gng/GNGServer.h"
-#include "../../inst/include/gng/Utils.h"
+#include "gng/GNG.h"
+#include "gng/GNGServer.h"
+#include "gng/Utils.h"
 
 #include <gtest/gtest.h>
 #include <algorithm>
@@ -91,7 +91,7 @@ pair<double, double> test_convergence(GNGConfiguration * cnf=0, int num_database
 
 
     if(save_filename!=""){
-        cerr<<"BasicTests::Saving to GraphML\n";
+        cerr<<"GNGNumericTest::Saving to GraphML\n";
         writeToGraphML(s->getGraph(), save_filename);
     }
 
@@ -101,7 +101,7 @@ pair<double, double> test_convergence(GNGConfiguration * cnf=0, int num_database
  }
 #include <cmath>
 
-TEST(BasicTests, BasicConvergenceUtility){
+TEST(GNGNumericTest, BasicConvergenceUtility){
 
     GNGConfiguration config = GNGConfiguration::getDefaultConfiguration();
     config.experimental_utility_option = GNGConfiguration::UtilityBasicOn;
@@ -111,7 +111,7 @@ TEST(BasicTests, BasicConvergenceUtility){
     ASSERT_LE(fabs(results.second), 50.0);
 }
 
-TEST(BasicTests, Serialization){
+TEST(GNGNumericTest, Serialization){
 
     GNGConfiguration config = GNGConfiguration::getDefaultConfiguration();
     config.uniformgrid_optimization = true;
@@ -187,7 +187,7 @@ TEST(BasicTests, Serialization){
 }
 
 
-TEST(BasicTests, BasicConvergence){
+TEST(GNGNumericTest, BasicConvergence){
 
     GNGConfiguration config = GNGConfiguration::getDefaultConfiguration();
     pair<double, double> results = test_convergence(&config, 1000, 6000,
@@ -196,7 +196,7 @@ TEST(BasicTests, BasicConvergence){
     ASSERT_LE(fabs(results.second), 50.0);
 }
 
-TEST(BasicTests, FewDimsSkewedUGConvergence){
+TEST(GNGNumericTest, FewDimsSkewedUGConvergence){
 
     GNGConfiguration config = GNGConfiguration::getDefaultConfiguration();
     config.uniformgrid_optimization =  true;
@@ -223,7 +223,7 @@ TEST(BasicTests, FewDimsSkewedUGConvergence){
 }
 
 
-TEST(BasicTests, FewDimsUGConvergence){
+TEST(GNGNumericTest, FewDimsUGConvergence){
 
     GNGConfiguration config = GNGConfiguration::getDefaultConfiguration();
     config.uniformgrid_optimization =  true;
@@ -238,7 +238,7 @@ TEST(BasicTests, FewDimsUGConvergence){
     ASSERT_GE(results.first, 10.0);
     ASSERT_LE(results.second, 5.0);
 }
-TEST(BasicTests, ManyDimsUGConvergence){
+TEST(GNGNumericTest, ManyDimsUGConvergence){
 
     GNGConfiguration config = GNGConfiguration::getDefaultConfiguration();
     config.uniformgrid_optimization =  true;
@@ -253,8 +253,8 @@ TEST(BasicTests, ManyDimsUGConvergence){
 }
 
 
-TEST(BasicTests, ManyDimsNoUG){
-    cerr<<"BasicTests::ManyDimsNoUG"<<endl;
+TEST(GNGNumericTest, ManyDimsNoUG){
+    cerr<<"GNGNumericTest::ManyDimsNoUG"<<endl;
 
     GNGConfiguration config = GNGConfiguration::getDefaultConfiguration();
     config.uniformgrid_optimization =  false;
@@ -267,7 +267,7 @@ TEST(BasicTests, ManyDimsNoUG){
     ASSERT_LE(fabs(results.second), 2000.0);
 }
 
-TEST(BasicTests, BasicConvergeLazyHeapUG){
+TEST(GNGNumericTest, BasicConvergeLazyHeapUG){
 
     GNGConfiguration config = GNGConfiguration::getDefaultConfiguration();
     config.lazyheap_optimization = true;
