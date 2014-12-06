@@ -101,6 +101,10 @@ void SVMConfiguration::setPreprocess( std::string preprocess ) {
 	}
 }
 
+void SVMConfiguration::set_verbosity(int verbosity){
+  this->log.verbosity = verbosity;
+}
+
 void SVMConfiguration::setDefaultParams() {
 	library = LIBSVM;
 	svm_type = C_SVC;
