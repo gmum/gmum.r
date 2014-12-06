@@ -1,9 +1,8 @@
-loadModule("cec", TRUE)
-
-#' CEC()
+#' CEC
 #' 
 #' @title CEC()
-#' Create CEC model object
+#' 
+#' @description Create CEC model object
 #'
 #' @export
 #'
@@ -11,7 +10,7 @@ loadModule("cec", TRUE)
 #'
 #' @docType methods
 #'
-#' @param x dataset
+#' @param x numeric matrix of data
 #' @param k initial number of clusters
 #' @param method.type Gauss family
 #' @param method.init method to initialize clusters
@@ -20,54 +19,59 @@ loadModule("cec", TRUE)
 #' @param params.centroids list of centroids
 #' @param control.nstart how many times to perform algorithm
 #' @param control.eps what change of value should terminate algorithm
-#' @param control.itmax maximum number of iterations
+#' @param control.itmax maximum number of iterations at each start
 #' @param log.energy record collected energy of all clusters in each iteration
 #' @param log.ncluster record number of clusters in each iteration
 #' @param log.iters record number of iterations
 CEC <- NULL
 
-#' @title loop()
-#' start loop of the algorithm where learning is done
+#' @title loop
+#' 
+#' @description Start loop of the algorithm where learning is done
 #'
 #' @docType methods
 #'
 #' @param c CEC model object
 loop.cec <- NULL
 
-#' @title entropy()
-#' print result entropy of clustering found
+#' @title entropy
+#' 
+#' @description Print result entropy of clustering found
 #' 
 #' @docType methods
 #'
 #' @param c CEC model object
 entropy.cec <- NULL
 
-#' @title y()
-#' print labels assigned
-#' #' 
+#' @title y
+#' @description Print labels assigned
+#' 
 #' @docType methods
 #'
 #' @param c CEC model object
 y.cec <- NULL
 
-#' @title centers()
-#' print centers of clusters
+#' @title centers
+#' 
+#' @description Print centers of clusters
 #'
 #' @docType methods
 #'
 #' @param c CEC model object
 centers.cec <- NULL
 
-#' @title cov()
-#' print covariances of clusters
+#' @title cov
+#' 
+#' @description Print covariances of clusters
 #'
 #' @docType methods
 #'
 #' @param c CEC model object
 cov.cec <- NULL
 
-#' @title predictCluster()
-#' for given point predict cluster where it belongs
+#' @title predictCluster
+#' 
+#' @description For given point predict cluster where it belongs
 #' 
 #' @docType methods
 #'
@@ -75,8 +79,9 @@ cov.cec <- NULL
 #' @param vec given point
 predictCluster.cec <- NULL
 
-#' @title predictClusters()
-#' for given point print propabilities of belonging to each cluster
+#' @title predictClusters
+#' 
+#' @description For given point print propabilities of belonging to each cluster
 #' 
 #' @docType methods
 #'
@@ -84,8 +89,9 @@ predictCluster.cec <- NULL
 #' @param vec given point
 predictClusters.cec <- NULL
 
-#' @title log.ncluster.cec()
-#' print number of clusters that has been recorded at each stage of learning.
+#' @title log.ncluster.cec
+#' 
+#' @description Print number of clusters that has been recorded at each stage of learning.
 #' Data is recorded only if you has chosen to when you created CEC model object.
 #' 
 #' @docType methods
@@ -93,8 +99,9 @@ predictClusters.cec <- NULL
 #' @param c CEC model object
 log.ncluster.cec <- NULL
 
-#' @title log.energy.cec()
-#' print energy recorded that has been recorded at each stage of learning.
+#' @title log.energy.cec
+#' 
+#' @description Print energy recorded that has been recorded at each stage of learning.
 #' Data is recorded only if you has chosen to when you created CEC model object.
 #'  
 #' @docType methods
@@ -102,16 +109,18 @@ log.ncluster.cec <- NULL
 #' @param c CEC model object
 log.energy.cec <- NULL
 
-#' @title log.iters.cec()
-#' print how many iterations it took to learn CEC model
+#' @title log.iters.cec
+#' 
+#' @description Print how many iterations it took to learn CEC model
 #'  
 #' @docType methods
 #'
 #' @param c CEC model object
 log.iters.cec <- NULL
 
-#' @title nstart()
-#' print number of times CEC algorithm is to be performed. The best outcome
+#' @title nstart
+#' 
+#' @description Print number of times CEC algorithm is to be performed. The best outcome
 #' is chosen as result.
 #'  
 #' @docType methods
@@ -119,10 +128,62 @@ log.iters.cec <- NULL
 #' @param c CEC model object
 nstart.cec <- NULL
 
+loadModule('cec', TRUE)
+
 evalqOnLoad({
 
-    CEC <<- function(args){
-        new(cec, args)
+    CEC <<- function(x = NULL,
+                     k = 0,
+                     method.type = "",
+                     method.init = "kmeans++",
+                     params.r = 0,
+                     params.cov = matrix(0),
+                     params.centroids = NULL,
+                     params.mix = NULL,
+                     params.function = "",
+                     control.nstart = 1,
+                     control.eps = 1e-4,
+                     control.itmax = 1,
+                     log.energy = FALSE,
+                     log.ncluster= FALSE,
+                     log.iters = FALSE){
+      
+      # check for errors
+      
+      if (is.null(x))
+        stop("Dataset is required!");
+      
+      if (k <= 0)
+        stop("Number of clusters should be a positive integer!");
+      
+      if (control.nstart <= 0)
+        stop("Number of starts should be a positive integer!");
+      
+      if (control.eps > 1.0 / k)
+        stop("killThreshold " + contorl.eps + " is too high");  
+      
+      if (control.itmax <= 0)
+        stop("Max number of iterations should be a positive integer!");
+      
+        config <- new(cecConfiguration)
+        config$setDataSet(x)
+        config$setEps(control.eps)      
+        config$setMix(params.mix) 
+        config$setNrOfClusters(k)
+        config$setLogEnergy(log.energy)
+        config$setLogCluster(log.ncluster)      
+        config$setNstart(control.nstart)
+        config$setCentroids(params.centroids)
+        config$setMethodInit(method.init)              
+        config$setMethodType(method.type)
+        config$setCov(params.cov)
+        config$setR(params.r)
+        config$setFunction(params.function)
+        config$setItmax(control.itmax)
+        config$setIters(log.iters)
+      
+        model <- new(cecModel, config)
+        model
     }
 
     loop.cec <<- function(c) {
@@ -170,35 +231,26 @@ evalqOnLoad({
     }
     
     setGeneric("loop", function(c) standardGeneric("loop"))
-    setMethod("loop", "Rcpp_cec", loop.cec)
-    
     setGeneric("entropy", function(c) standardGeneric("entropy"))
-    setMethod("entropy", "Rcpp_cec", entropy.cec)
-
     setGeneric("y", function(c) standardGeneric("y"))
-    setMethod("y", "Rcpp_cec", y.cec)
-
     setGeneric("centers", function(c) standardGeneric("centers"))
-    setMethod("centers", "Rcpp_cec", centers.cec)
-
     setGeneric("cov", function(c) standardGeneric("cov"))
-    setMethod("cov", "Rcpp_cec", cov.cec)
-
     setGeneric("predictCluster", function(c, ...) standardGeneric("predictCluster"))
-    setMethod("predictCluster", "Rcpp_cec", predictCluster.cec)
-
     setGeneric("predictClusters", function(c, ...) standardGeneric("predictClusters"))
-    setMethod("predictClusters", "Rcpp_cec", predictClusters.cec)
-
     setGeneric("log.ncluster", function(c) standardGeneric("log.ncluster"))
-    setMethod("log.ncluster", "Rcpp_cec", log.ncluster.cec)
-
     setGeneric("log.energy", function(c) standardGeneric("log.energy"))
-    setMethod("log.energy", "Rcpp_cec", log.energy.cec)
-
     setGeneric("log.iters", function(c) standardGeneric("log.iters"))
-    setMethod("log.iters", "Rcpp_cec", log.iters.cec)
-
     setGeneric("nstart", function(c) standardGeneric("nstart"))
-    setMethod("nstart", "Rcpp_cec", nstart.cec)
+    
+    setMethod("loop", "Rcpp_cecModel", loop.cec)
+    setMethod("entropy", "Rcpp_cecModel", entropy.cec)
+    setMethod("y", "Rcpp_cecModel", y.cec)
+    setMethod("centers", "Rcpp_cecModel", centers.cec)
+    setMethod("cov", "Rcpp_cecModel", cov.cec)
+    setMethod("predictCluster", "Rcpp_cecModel", predictCluster.cec)
+    setMethod("predictClusters", "Rcpp_cecModel", predictClusters.cec)
+    setMethod("log.ncluster", "Rcpp_cecModel", log.ncluster.cec)
+    setMethod("log.energy", "Rcpp_cecModel", log.energy.cec)
+    setMethod("log.iters", "Rcpp_cecModel", log.iters.cec)
+    setMethod("nstart", "Rcpp_cecModel", nstart.cec)
 })

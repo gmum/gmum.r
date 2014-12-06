@@ -23,8 +23,8 @@ correctness <- function(correct_assignment, my_assignment, npoints, nclusters)
 }
 
 test_that("corectness works", {
-  dataset_clusters <- as.vector(read.table("../cpp/data/EllipseGauss/cluster.txt")[,1])
-  dataset_points <- as.matrix(read.table("../cpp/data/EllipseGauss/input.txt"))
+  dataset_clusters <- as.vector(read.table("tests/cpp/data/EllipseGauss/cluster.txt")[,1])
+  dataset_points <- as.matrix(read.table("tests/cpp/data/EllipseGauss/input.txt"))
   nclusters <- 4
   npoints = dim(dataset_points)[1]
     
@@ -33,9 +33,9 @@ test_that("corectness works", {
 })
 
 test_that("EllipseGauss random assignment is correct", {
-  dataset_clusters <- as.vector(read.table("../cpp/data/EllipseGauss/cluster.txt")[,1])
-  dataset_points <- as.matrix(read.table("../cpp/data/EllipseGauss/input.txt"))
-  expected_energy <- as.numeric(read.table("../cpp/data/EllipseGauss/energy.txt"))
+  dataset_clusters <- as.vector(read.table("tests/cpp/data/EllipseGauss/cluster.txt")[,1])
+  dataset_points <- as.matrix(read.table("tests/cpp/data/EllipseGauss/input.txt"))
+  expected_energy <- as.numeric(read.table("tests/cpp/data/EllipseGauss/energy.txt"))
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
   
   t <- 20
@@ -50,13 +50,13 @@ test_that("EllipseGauss random assignment is correct", {
       accepted <- accepted + 1
     }
   }
-  expect_that(accepted, is_more_than(t / 2))
+  expect_that(accepted > t/2.0, is_true())
 })
 
 test_that("mouse_1 random assignment is correct", {
-  dataset_clusters <- as.vector(read.table("../cpp/data/mouse_1/cluster.txt")[,1])
-  dataset_points <- as.matrix(read.table("../cpp/data/mouse_1/input.txt"))
-  expected_energy <- as.numeric(read.table("../cpp/data/mouse_1/energy.txt"))
+  dataset_clusters <- as.vector(read.table("tests/cpp/data/mouse_1/cluster.txt")[,1])
+  dataset_points <- as.matrix(read.table("tests/cpp/data/mouse_1/input.txt"))
+  expected_energy <- as.numeric(read.table("tests/cpp/data/mouse_1/energy.txt"))
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
 
   t <- 20
@@ -73,13 +73,13 @@ test_that("mouse_1 random assignment is correct", {
       accepted <- accepted + 1
     }
   }
-  expect_that(accepted, is_more_than(t / 2))
+  expect_that(accepted>t/2.0, is_true())
 })
 
 test_that("mouse_1_spherical random assignment is correct", {
-  dataset_clusters <- as.vector(read.table("../cpp/data/mouse_1_spherical/cluster.txt")[,1])
-  dataset_points <- as.matrix(read.table("../cpp/data/mouse_1_spherical/input.txt"))
-  expected_energy <- as.numeric(read.table("../cpp/data/mouse_1_spherical/energy.txt"))
+  dataset_clusters <- as.vector(read.table("tests/cpp/data/mouse_1_spherical/cluster.txt")[,1])
+  dataset_points <- as.matrix(read.table("tests/cpp/data/mouse_1_spherical/input.txt"))
+  expected_energy <- as.numeric(read.table("tests/cpp/data/mouse_1_spherical/energy.txt"))
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
   
   t <- 20
@@ -94,6 +94,6 @@ test_that("mouse_1_spherical random assignment is correct", {
       accepted <- accepted + 1
     }
   }
-  expect_that(accepted, is_more_than(t / 2))
+  expect_that(accepted>t/2.0, is_true())
 })
 
