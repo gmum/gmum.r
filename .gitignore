@@ -1,5 +1,8 @@
-_site
+# Directories
+_site/
+.idea/
 
+# Files
 *.swp
 *.vim
 *.lock

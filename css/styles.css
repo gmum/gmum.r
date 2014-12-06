@@ -269,12 +269,6 @@ hr.primary {
     color: #fff;
 }
 
-#quotes {
-    background: center no-repeat fixed url('../assets/img/sunset.jpg');
-    background-size: cover;
-    color: #fff;
-}
-
 #contribute {
     background-color: #fff;
     color: #aaa;
@@ -302,7 +296,7 @@ hr.primary {
 }
 
 #academy {
-    background: center no-repeat fixed url('../assets/img/building.jpg');
+    background: center no-repeat fixed #d95c5c url('../assets/img/building.jpg');
     background-size: cover;
     color: #fff;
 }
