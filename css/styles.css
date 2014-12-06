@@ -15,8 +15,11 @@ author: bootply.com
 
 html, body {
     height: 100%;
-    /*background:center no-repeat fixed url('../assets/example/bg_suburb.jpg');*/
     background-size: cover;
+}
+
+body {
+    overflow-x: hidden;
 }
 
 section {
@@ -82,8 +85,12 @@ hr.primary {
     padding: 0 7px;
     position: relative;
     top: -46px;
-    font-family: "FontAwesome";
+    font-family: 'FontAwesome';
     text-align: center;
+}
+
+.italic {
+    font-style: italic;
 }
 
 .inline-link {
@@ -96,9 +103,9 @@ hr.primary {
     margin-right: 10px;
 }
 
-.project-content, .contact-person {
+.project-content {
     border: 1px solid #fff;
-    border-radius: 3px;
+    border-radius: 10px;
     margin: 20px;
     padding: 10px;
 }
@@ -107,20 +114,73 @@ hr.primary {
     border: 1px solid #fff;
 }
 
-.contact-person {
-    border: 1px solid #999;
-}
-
-.project-content h2, .contact-person h2 {
+.project-content h2 {
     margin: 10px auto;
 }
 
-.contact-person i, .contact-person a {
+.publication {
+    margin: 80px auto;
+}
+
+.publication-name {
+    width: 80px;
+    height: 80px;
+}
+
+.publication-name p {
+    background-color: #888;
+    border-radius: 40px;
+    width: 80px;
+    height: 80px;
+    color: #333;
+}
+
+.member {
+    border: 1px solid transparent;
+    border-radius: 10px;
+    width: 80%;
+    margin: 0 auto;
+    padding: 30px 0;
+}
+
+.member p {
+    margin-bottom: 1px;
+}
+
+.member .detail {
+    visibility: hidden;
+}
+
+.member img {
+    width: 150px;
+    height: 150px;
+    border-radius: 75px;
+}
+
+.member a, .member i {
+    color: #999;
+}
+
+.member .member-name {
+    margin-top: 10px;
+    line-height: 120%;
+}
+
+.member .member-name {
     color: #d95c5c;
 }
 
-.lead.italic {
-    font-style: italic;
+.member .member-position {
+    font-weight: bold;
+    color: #777;
+}
+
+.member:hover {
+    border-color: #ddd;
+}
+
+.member:hover .detail {
+    visibility: visible !important;
 }
 
 .quote .author {
@@ -132,6 +192,11 @@ hr.primary {
 .lead {
     font-size: 26px;
     line-height: 170%;
+}
+
+.cell {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 .post {
@@ -187,9 +252,17 @@ hr.primary {
     color: #686868;
 }
 
+#about hr.primary {
+    border-color: #686868;
+}
+
 #contents {
     background-color: #d95c5c;
     color: #fff;
+}
+
+#contents hr.primary {
+    border-color: #fff;
 }
 
 #contents .inline-link {
@@ -207,6 +280,10 @@ hr.primary {
     color: #aaa;
 }
 
+#contribute hr.primary {
+    border-color: #aaa;
+}
+
 #contribute .inline-link {
     color: #d95c5c;
 }
@@ -214,6 +291,10 @@ hr.primary {
 #theory {
     background-color: #333;
     color: #888;
+}
+
+#theory hr.primary {
+    border-color: #888;
 }
 
 #theory .inline-link {
@@ -226,9 +307,13 @@ hr.primary {
     color: #fff;
 }
 
-#contact {
+#team {
     background-color: #fff;
-    color: #999;
+    color: #888;
+}
+
+#team hr.primary {
+    border-color: #888;
 }
 
 footer {
