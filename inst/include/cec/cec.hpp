@@ -7,9 +7,9 @@
 #include "boost/smart_ptr.hpp"
 #include "algorithm.hpp"
 #include "cluster.hpp"
-#include "clusterCustomFunction.hpp"
-#include "clusterParams.hpp"
-#include "cecConfiguration.hpp"
+#include "cluster_custom_function.hpp"
+#include "cluster_params.hpp"
+#include "cec_configuration.hpp"
 #include "exceptions.hpp"
 #include "params.hpp"
 

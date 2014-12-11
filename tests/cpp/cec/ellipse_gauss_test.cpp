@@ -2,9 +2,9 @@
 #include "cluster_reader.hpp"
 #include "clustering_comparator.hpp"
 #include "hartigan.hpp"
-#include "randomAssignment.hpp"
+#include "random_assignment.hpp"
 #include "cec.hpp"
-#include "cecConfiguration.hpp"
+#include "cec_configuration.hpp"
 #include "algorithm.hpp"
 #include <boost/shared_ptr.hpp>
 #include <vector>

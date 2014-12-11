@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "cluster_reader.hpp"
 #include "clustering_comparator.hpp"
-#include "cecConfiguration.hpp"
+#include "cec_configuration.hpp"
 #include "hartigan.hpp"
 #include "cec.hpp"
 #include <vector>

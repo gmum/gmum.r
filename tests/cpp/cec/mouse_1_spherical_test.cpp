@@ -2,8 +2,8 @@
 #include "cluster_reader.hpp"
 #include "clustering_comparator.hpp"
 #include "hartigan.hpp"
-#include "randomAssignment.hpp"
-#include "cecConfiguration.hpp"
+#include "random_assignment.hpp"
+#include "cec_configuration.hpp"
 #include "cec.hpp"
 #include <vector>
 #include <RcppArmadillo.h>

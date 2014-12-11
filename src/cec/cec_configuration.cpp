@@ -1,4 +1,4 @@
-#include "cecConfiguration.hpp"
+#include "cec_configuration.hpp"
 #include "const.hpp"
 #include <boost/foreach.hpp>
 #include <sstream>

@@ -1,4 +1,4 @@
-#include "centroidsAssignment.hpp"
+#include "centroids_assignment.hpp"
 
 namespace gmum {
 

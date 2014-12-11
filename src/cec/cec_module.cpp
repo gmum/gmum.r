@@ -10,7 +10,7 @@ class cecModel;
 RCPP_EXPOSED_CLASS (cecConfiguration)
 RCPP_EXPOSED_CLASS (cecModel)
 
-#include "cecConfiguration.hpp"
+#include "cec_configuration.hpp"
 #include "cec.hpp"
 using namespace gmum;
 

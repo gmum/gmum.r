@@ -1,9 +1,9 @@
 #include "cec.hpp"
 #include "hartigan.hpp"
 #include "assignment.hpp"
-#include "kmeansppAssignment.hpp"
-#include "centroidsAssignment.hpp"
-#include "randomAssignment.hpp"
+#include "kmeanspp_assignment.hpp"
+#include "centroids_assignment.hpp"
+#include "random_assignment.hpp"
 
 using namespace gmum;
 

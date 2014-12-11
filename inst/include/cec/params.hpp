@@ -5,7 +5,7 @@
 #include <list>
 #include <vector>
 #include "boost/smart_ptr.hpp"
-#include "clusterParams.hpp"
+#include "cluster_params.hpp"
 
 namespace gmum {
 
