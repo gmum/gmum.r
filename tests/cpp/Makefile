@@ -46,7 +46,7 @@ TEST_SOURCES_WILDCARD := $(patsubst %, $(ROOT_TEST_PATH)/%/*.cpp, $(TEST_BRANCHE
 SOURCES := $(wildcard $(SOURCES_WILDCARD))
 TEST_SOURCES := $(wildcard $(TEST_SOURCES_WILDCARD))
 
-OBJECTS := $(patsubst %.cpp, %.o, $(SOURCES))
+OBJECTS := $(patsubst %.cpp, %.o, $(SOURCES)) $(wildcard $(ROOT_INCLUDE_PATH)/svmlight/*o)
 TEST_OBJECTS := $(patsubst %.cpp, %.o, $(TEST_SOURCES))
 
 # Helper scripts
