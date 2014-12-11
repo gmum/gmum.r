@@ -38,7 +38,8 @@ SECONDARY_TESTS_TYPES := *NumericTest*
 ###
 # Externally compiled libraries
 ###
-SVMLIGHT_ROOT_PATH := $(ROOT_INCLUDE_PATH)/svmlight
+SVMLIGHT_INCLUDE_PATH := $(ROOT_INCLUDE_PATH)/svmlight
+SVMLIGHT_SRC_PATH := $(ROOT_SRC_PATH)/svmlight
 SVMLIGHT_OBJECT_FILENAMES := svm_common.o svm_hideo.o svm_learn.o
 
 ###
@@ -52,11 +53,11 @@ TEST_SOURCES_WILDCARD := $(patsubst %, $(ROOT_TEST_PATH)/%/*.cpp, $(TEST_BRANCHE
 SOURCES := $(wildcard $(SOURCES_WILDCARD))
 TEST_SOURCES := $(wildcard $(TEST_SOURCES_WILDCARD))
 
-OBJECTS := $(patsubst %.cpp, %.o, $(SOURCES)) $(wildcard $(ROOT_INCLUDE_PATH)/svmlight/*o)
+OBJECTS := $(patsubst %.cpp, %.o, $(SOURCES))
 TEST_OBJECTS := $(patsubst %.cpp, %.o, $(TEST_SOURCES))
 
 # Externally compiled libraries objects
-SVMLIGHT_OBJECT_PATHS := $(patsubst %, $(SVMLIGHT_ROOT_PATH)/%, $(SVMLIGHT_OBJECT_FILENAMES))
+SVMLIGHT_OBJECT_PATHS := $(patsubst %, $(SVMLIGHT_SRC_PATH)/%, $(SVMLIGHT_OBJECT_FILENAMES))
 
 # Sum up compiled libraries objects
 COMPILED_LIBRARIES_OBJECTS := $(SVMLIGHT_OBJECT_PATHS)
@@ -75,8 +76,12 @@ ROOT_INCLUDE := -I $(ROOT_INCLUDE_PATH)
 # Generic branch includes
 BRANCH_INCLUDES := $(patsubst %, -I $(ROOT_INCLUDE_PATH)/%, $(GMUMR_BRANCHES))
 
-# Sum up
-INCLUDES := $(ROOT_INCLUDE) $(BRANCH_INCLUDES)
+# Sum up compiled libraries includes
+SVMLIGHT_INCLUDE := -I $(SVMLIGHT_INCLUDE_PATH)
+COMPILED_LIBRARIES_INCLUDES := $(SVMLIGHT_INCLUDE)
+
+# Sum up all
+INCLUDES := $(ROOT_INCLUDE) $(BRANCH_INCLUDES) $(COMPILED_LIBRARIES_INCLUDES)
 
 ###
 # Compilation rules
