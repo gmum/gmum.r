@@ -4,7 +4,7 @@
 #include <string>
 #include <RcppArmadillo.h>
 #include <R.h>
-
+#include "log.h"
 
 enum KernelType {
 	_LINEAR, _POLY, _RBF, _SIGMOID // _PRECOMPUTED
@@ -16,7 +16,7 @@ enum SVMType {
 };
 
 enum Preprocess {
-	TWOE, VK, NONE, NORM
+	TWOE, NONE
 };
 // NORM is solely for test purposes
 
@@ -24,6 +24,7 @@ enum Preprocess {
 class SVMConfiguration {
 
 public:
+
 	std::string filename; //filename with data
 	std::string model_filename;
 	std::string output_filename;
@@ -77,11 +78,10 @@ public:
 	arma::vec target;
 	arma::vec result;
 
+	Logger log;
+
 	//universal parameters
 	arma::vec w; //d
-
-	//2eConfig
-//	two
 
 	// constructors
 	SVMConfiguration();
@@ -91,8 +91,6 @@ public:
 	arma::mat getData();
 	void setData(arma::mat);
 
-	void createParams(std::string, std::string, std::string, int, double,
-			double);
 	void setDefaultParams();
 
 	void setFilename(std::string);
@@ -111,6 +109,8 @@ public:
 	void setLibrary( std::string );
 	void setKernel( std::string );
 	void setPreprocess( std::string );
+  // logger
+  void set_verbosity( int );
 
 };
 

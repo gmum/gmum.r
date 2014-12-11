@@ -48,18 +48,6 @@ void SVMConfiguration::setPrediction(bool prediction) {
 	this->prediction = prediction;
 }
 
-void SVMConfiguration::createParams(std::string kernel_type,
-		std::string svm_type, std::string preprocess, int degree, double gamma,
-		double coef0) {
-	if (preprocess == "norm") {
-		Preprocess prep = NORM;
-		this->preprocess = prep;
-	} else {
-		Preprocess prep = NONE;
-		this->preprocess = prep;
-	}
-}
-
 void SVMConfiguration::setWeights( Rcpp::NumericVector weights ) {
 	this->nr_weight = weights.size();
 	this->weight = new double[nr_weight];

@@ -62,21 +62,21 @@ arma::vec SVMClient::getPrediction() {
 }
 std::string SVMClient::getLibrary(){
 	switch(config.svm_type) {
-	case LIBSVM : return "libsvm"; break;
+	case LIBSVM : return "libsvm";
 	}
 }
 std::string SVMClient::getKernel(){
 	switch(config.kernel_type) {
-	case _LINEAR : return "linear"; break;
-	case _POLY : return "poly"; break;
-	case _RBF : return "rbf"; break;
-	case _SIGMOID : return "sigmoid"; break;
+	case _LINEAR : return "linear"; 
+	case _POLY : return "poly"; 
+	case _RBF : return "rbf";
+	case _SIGMOID : return "sigmoid";
 	}
 }
 std::string SVMClient::getPreprocess() {
 	switch(config.preprocess) {
-	case TWOE : return "2e"; break;
-	case NONE : return "none"; break;
+	case TWOE : return "2e"; 
+	case NONE : return "none";
 	}
 }
 double SVMClient::getCacheSize(){
@@ -179,17 +179,9 @@ void SVMClient::createFlow() {
 	// 				break;
 	// 			}
 
-	case VK:
-		break; // TODO
-
 	case NONE:
 		break;
-
-	case NORM: {
-		NormRunner norm_runner;
-		handlers.push_back(&norm_runner);
-		break;
-	}
+    
 	default:
 		break;
 	}

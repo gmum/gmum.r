@@ -28,7 +28,6 @@ RCPP_MODULE(svm_wrapper) {
 			.field("shrinking", &SVMConfiguration::shrinking)
 			.field("probability", &SVMConfiguration::probability)
 
-			.method("createParams", &SVMConfiguration::createParams)
 			.method("setPrediction", &SVMConfiguration::setPrediction)
 			.method("setWeights", &SVMConfiguration::setWeights)
 			.method("setLibrary", &SVMConfiguration::setLibrary)
