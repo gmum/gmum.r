@@ -35,6 +35,7 @@ read.libsvm <- function(filename, dimensionality) {
 
 svm.dataset.breast_cancer <- function() {
   bc = read.libsvm( breast_cancer.path, 10 )
+  bc$X2 = NULL
   return(bc)
 }
 

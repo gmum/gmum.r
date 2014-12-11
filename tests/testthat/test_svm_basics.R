@@ -30,7 +30,7 @@ test_that('formulas and data storing works', {
   expect_that(all.equal(x1,x2,check.attributes=FALSE), is_true())
   expect_that(all.equal(y1,y2,check.attributes=FALSE), is_true())
   
-  formula = X1 ~ X2 + X3 + X4
+  formula = X1 ~ X3 + X4 + X5
   data = all.vars(update(formula,0~.))
   x3 = data.matrix( dataset[,data] )
   y3 = data.matrix( dataset[,"X1"] )

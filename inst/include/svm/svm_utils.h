@@ -52,4 +52,11 @@ public:
 
 };
 
+template <typename T>
+static std::string to_string(T const& value) {
+    std::stringstream sstr;
+    sstr << value;
+    return sstr.str();
+}
+
 #endif /* SVC_UTILS_H_ */

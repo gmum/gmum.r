@@ -20,7 +20,6 @@ library(ggplot2)
 #' @param probability Whether to train a model for probability estimates 
 #' @param cache_size Cache size
 #' @param tol Tolerance of termination criterion
-#' @param verbosity Adjust verbosity level, from 0 - nologging to 6 - trace.
 #' 
 #' @return SVM model object
 #' @examples 
@@ -68,16 +67,33 @@ print.svm <- NULL
 #' 
 #' @export
 #' 
-#' @usage plot(svm, dim1, dim2)
+#' @usage plot(svm, pca=TRUE, log="x")
+#' @usage plot(svm, dim1=3, dim2=4)
 #' 
-#' @param dim1 (optional) Dimension of x to plot on x axis, by default 1
-#' 
-#' @param dim2 (optional) Dimension of x to plot on y axis, by default 2
+#' @param pca Bool, use Principal Component Analysis for plot
+#' @param dim1 (optional) Dimension of dataset to plot on x axis, by default 1
+#' @param dim2 (optional) Dimension of dataset to plot on y axis, by default 2
+#' @param log (optional) Use logarthic transformation for an axis, "x", "y", or "xy"
 #' 
 #' @rdname plot-dataset-methods
 #' 
 #' @docType plot
 plot.svm <- NULL
+
+#' @title summary
+#' 
+#' @description Prints short summary of a trained model.
+#' 
+#' @export
+#' 
+#' @usage summary(svm)
+#' 
+#' @param svm SVM object 
+#' 
+#' @rdname svm-summary-method
+#' 
+#' @docType plot
+summary.svm <- NULL
 
 #' @title dataset.X
 #' 
@@ -132,8 +148,7 @@ evalqOnLoad({
                     cweights = NULL,
                     sweights = NULL,
                     cache_size = 100,
-                    tol = 1e-3,
-                    verbosity=4) {
+                    tol = 1e-3 ) {
     
     # check for errors
     
@@ -167,9 +182,6 @@ evalqOnLoad({
     }
     if (kernel=="linear" && gamma != 0.01) {
       warning("Gamma parameter is not used with linear kernel")
-    }
-    if (verbosity < 0 || verbosity > 6) {
-      stop("Wrong verbosity level, should be from 0 to 6")
     }
     
     labels = all.vars(update(formula,.~0))
@@ -211,7 +223,6 @@ evalqOnLoad({
     config$setLibrary(lib)
     config$setKernel(kernel)
     config$setPreprocess(prep)
-    config$set_verbosity(verbosity)
     
     config$C = C
     config$gamma = gamma
@@ -242,10 +253,6 @@ evalqOnLoad({
     client 
   } 
     
-  if ( !isGeneric("predict") ) {
-    setGeneric("predict", function( object, x, ... ) standardGeneric("predict") )
-  }
-
   if (!isGeneric("dataset.X")  ) {
     setGeneric( "dataset.X", function( object, ... ) standardGeneric("dataset.X") )
   }
@@ -264,15 +271,54 @@ evalqOnLoad({
                   x$getDegree() ))
   }
   
-  plot.svm <<- function(x, dim1 = 1, dim2 = 2) {
-    df =  data.frame( x$getX() ) 
-    if (dim1 > ncol(df) || dim2 > ncol(df)) {
-      stop("Too large dimensions")
-    }
+  summary.svm <<- function(object) {
+    print(sprintf("Support Vector Machine, library: %s, kernel: %s, preprocess: %s",
+                  object$getLibrary(), 
+                  object$getKernel(), 
+                  object$getPreprocess()))
+    print(sprintf("%d classes with %d support vectors", 
+                  object$get_number_class(), 
+                  object$get_number_sv() ))
+  }
+  
+  plot.svm <<- function(x, pca=TRUE, dim1 = 1, dim2 = 2, log="") {
+    df =  data.frame( x$getX() )
     t = x$getY()
-    x = df[,dim1]
-    y = df[,dim2]
-    qplot(data=df, x=x, y=y, color=t) # + scale_colour_gradientn(colours=rainbow(2),breaks = c(2,4))
+    w = c(x$getW())
+    if (pca) {
+      print("Pca")
+      pca_data = prcomp(df, scale=TRUE)
+      scores = data.frame(df, pca_data$x[,1:2])
+ 
+      w = w %*% pca_data$rotation
+      A = w[1]
+      B = w[2]
+      C = x$getBias()
+      
+      s = -A/B
+      int = -C/B
+      
+      plot = ggplot() +
+          geom_point(data=scores, aes(PC1, PC2), colour=factor(t+3)) + geom_abline(slope=s, intercept=int)
+      plot
+    }
+    else { 
+      if (dim1 > ncol(df) || dim2 > ncol(df)) {
+        stop("Too large dimensions")
+      }
+      #x = df[,'X1']
+      #y = df[,'X2']
+      A = w[1]
+      B = w[2]
+      C = x$getBias()
+      
+      s = -A/B
+      int = -C/B
+      print("No pca")
+      plot = ggplot() + geom_point(data=df, aes(X1, X2), colour=factor(t+3))  +
+        geom_abline(slope=s, intercept=int)
+      plot
+    }
   }
   
   predict.svm <<- function(object, x) {
@@ -297,8 +343,9 @@ evalqOnLoad({
   }
   
   setMethod("print", "Rcpp_SVMClient", print.svm)
-  setMethod("predict", "Rcpp_SVMClient", predict.svm )
+  setMethod("predict", signature("Rcpp_SVMClient"), predict.svm)
   setMethod("plot", "Rcpp_SVMClient",  plot.svm)
+  setMethod("summary", "Rcpp_SVMClient", summary.svm)
 
   #dataset
   setMethod("dataset.X", signature("Rcpp_SVMClient"), dataset.X)
