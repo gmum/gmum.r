@@ -1,6 +1,6 @@
 loadModule("cec", TRUE)
 
-#' Print
+#' Print CEC
 #'
 #' @title print
 #' 
@@ -9,22 +9,24 @@ loadModule("cec", TRUE)
 #'
 #' @docType methods
 #'
-#' @param x CEC object model
-#'
+#' @param x CEC object model.
+#' 
+#' @export
+#' 
 #' @usage print(cec)
 print.cec <- NULL
 
 evalqOnLoad({
-
-    print.cec <<- function(x) {
-        print(sprintf("Cec clustring, %d clusters with %f entropy",
-                      length(x$centers()), x$entropy()))
-        print("Centers : ")
-        print(x$centers())
-        print("Covariances : ")
-        print(x$cov())
-    }
-
-    setMethod("print","Rcpp_cecModel", print.cec)
-
+  
+  print.cec <<- function(x) {
+    print(sprintf("Cec clustering, %d clusters with %f entropy",
+                  length(x$centers()), x$entropy()))
+    print("Centers : ")
+    print(x$centers())
+    print("Covariances : ")
+    print(x$cov())
+  }
+  
+  setMethod("print", "Rcpp_cecModel", print.cec)
+  
 })
