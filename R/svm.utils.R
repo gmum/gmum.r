@@ -1,5 +1,5 @@
-breast_cancer.path <- system.file("data","svm","breast_cancer.data", package="gmum.r")
-twoe_data.path <- system.file("data","svm","2e.data", package="gmum.r")
+breast_cancer.path <- system.file("data_sets","svm","breast_cancer.data", package="gmum.r")
+twoe_data.path <- system.file("data_sets","svm","2e.data", package="gmum.r")
 
 read.libsvm <- function(filename, dimensionality) {
   
