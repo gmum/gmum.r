@@ -296,9 +296,15 @@ hr.primary {
 }
 
 #academy {
-    background: center no-repeat fixed #d95c5c url('../assets/img/building.jpg');
+    background: center no-repeat fixed #d95c5c url('http://gmum.net/files/gmum.r/img/page/building.jpg');
     background-size: cover;
     color: #fff;
+}
+
+#academy .lead.layer {
+    background-color: #fff;
+    padding: 20px;
+    color: #888;
 }
 
 #team {
