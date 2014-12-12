@@ -27,8 +27,8 @@ void TwoeSVMPostprocessor::processRequest(SVMConfiguration &data) {
 		double b_dash = data.getB() - (p_plus - p_minus) / (p_plus + p_minus);
 		data.rho[0] = -b_dash;
 	}
-	data.data = data.tmp_data;
-	data.target = data.tmp_target;
+	// data.data = data.tmp_data;
+	// data.target = data.tmp_target;
 }
 
 bool TwoeSVMPostprocessor::canHandle(SVMConfiguration& data) {

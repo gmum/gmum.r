@@ -29,6 +29,9 @@ mat invert_matrix(arma::mat A) {
 // template void print_matrix<arma::cx_mat>(arma::cx_mat matrix);
 
 void TwoeSVMPreprocessor::processRequest(SVMConfiguration& data) {
+  data.tmp_data = data.data;
+  data.tmp_target = data.target;
+
   if (!data.prediction) {
   		double targets[2] = {std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
   		for(unsigned i = 0; i < data.target.n_rows; i++) {
@@ -47,8 +50,6 @@ void TwoeSVMPreprocessor::processRequest(SVMConfiguration& data) {
   				}
   			}
   		}
-    data.tmp_data = data.data;
-    data.tmp_target = data.target;
 
   	data.pos_target = targets[0] > targets[1] ? targets[0] : targets[1];
   	data.neg_target = targets[0] > targets[1] ? targets[1] : targets[0];
