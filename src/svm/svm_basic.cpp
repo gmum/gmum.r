@@ -90,6 +90,10 @@ void SVMConfiguration::setPreprocess( std::string preprocess ) {
 	}
 }
 
+void SVMConfiguration::set_verbosity(int verbosity){
+  this->log.verbosity = verbosity;
+}
+
 double SVMConfiguration::getB() {
   return -rho[0];
 }

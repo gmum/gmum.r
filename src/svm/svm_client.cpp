@@ -193,7 +193,10 @@ void SVMClient::createFlow() {
 	 				handlers.push_back( post_runner );
 	 				break;
 	  }
-	  default: break;
+	case NONE:
+		break; 
+	default:
+		break;
 	}
 
 	this->SVMHandlers = handlers;

@@ -11,7 +11,8 @@ svm <- SVM( formula = X1~. ,
             prep = "none",
             C = 1,
             gamma = 0.01,
-            coef0 = 0) 
+            coef0 = 0,
+            verbosity=4) 
 
 # You can access the dataset 
 x <- dataset.X(svm)

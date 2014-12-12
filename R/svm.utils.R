@@ -1,5 +1,5 @@
-breast_cancer.path <- paste( getwd(),'/data/svm/breast_cancer.data', sep="/..")
-twoe_data.path <- paste(getwd(),'/data/svm/2e.data', sep="/..")
+breast_cancer.path <- system.file("data_sets","svm","breast_cancer.data", package="gmum.r")
+twoe_data.path <- system.file("data_sets","svm","2e.data", package="gmum.r")
 
 read.libsvm <- function(filename, dimensionality) {
   

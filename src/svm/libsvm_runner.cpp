@@ -56,16 +56,16 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 
 	const char *error_msg;
 
-	error_msg = svm_check_parameter(&prob, param);
+	error_msg = svm_check_parameter(&prob, param, config.log);
 
-	if (error_msg) {
-		fprintf(stderr, "ERROR: %s\n", error_msg);
+  if (error_msg) {
+		LOG(config.log, LogLevel::Error, "ERROR: " + to_string(error_msg))
 		return false;
 	}
 	int* nr = Malloc(int, 1);
 	int* nclasses = Malloc(int, 1);
 
-	model = svm_train(&prob, param);
+	model = svm_train(&prob, param, config.log);
 	*nr = model->l; //support vectors
 	*nclasses = model->nr_class;
 	config.nr_class = model->nr_class;
@@ -84,7 +84,7 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 			config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
 
 	config.sv_indices = (int*) malloc(config.l * sizeof(int));
-	svm_get_sv_indices(model, config.sv_indices);
+	svm_get_sv_indices(model, config.sv_indices, config.log);
 
 	int dim = config.data.n_cols;
 	ASSERT(dim > 0);
@@ -104,8 +104,8 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 		memcpy(config.nSV, model->nSV, *nclasses * sizeof(int));
 	}
 
-	svm_destroy_param(param);
-	svm_free_and_destroy_model(&model);
+	svm_destroy_param(param,config.log);
+	svm_free_and_destroy_model(&model,config.log);
 
 	return true;
 }
@@ -114,10 +114,10 @@ svm_model* LibSVMRunner::load_model_from_config(SVMConfiguration& config,
 		svm_parameter* param) {
 
 	const char *error_msg;
-	error_msg = svm_check_parameter(&prob, param);
+	error_msg = svm_check_parameter(&prob, param,config.log);
 
-	if (error_msg) {
-		fprintf(stderr, "ERROR: %s\n", error_msg);
+  if (error_msg) {
+		LOG(config.log, LogLevel::Error, "ERROR: " + to_string(error_msg))
 		return 0;
 	}
 
@@ -283,7 +283,7 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 	double* ret = Malloc(double, training_examples);
 
 	for (int i = 0; i < training_examples; i++)
-		ret[i] = svm_predict(m, train[i]);
+		ret[i] = svm_predict(m, train[i],config.log);
 
 	arma::vec ret_vec(ret, training_examples);
 	config.result = ret_vec;
@@ -297,7 +297,7 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 	free(train);
 	//TODO: THIS SHOULD WORK WITH PREDICTIONS 2X, now it's not working
 //	svm_free_and_destroy_model(&m);
-	svm_destroy_param(params);
+	svm_destroy_param(params,config.log);
 	free(ret);
 }
 

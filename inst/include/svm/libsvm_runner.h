@@ -15,7 +15,6 @@
 #include "svm_handler.h"
 #include "svm_basic.h"
 
-
 class LibSVMRunner: public SVMHandler {
 public:
 	LibSVMRunner();
