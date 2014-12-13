@@ -286,11 +286,14 @@ evalqOnLoad({
                   object$get_number_sv() ))
   }
   
-  plot.svm <<- function(x, pca=TRUE, dim1 = 1, dim2 = 2, log="") {
+  plot.svm <<- function(x, mode="pca", dim1 = 1, dim2 = 2, log="") {
+    if (mode != "pca" && mode != "normal" && mode != "test" ) {
+      stop() # handle error 
+    }
     df =  data.frame( x$getX() )
     t = x$getY()
     w = c(x$getW())
-    if (pca) {
+    if (mode == "pca") {
       print("Pca")
       pca_data = prcomp(df, scale=TRUE)
       scores = data.frame(df, pca_data$x[,1:2])
@@ -307,7 +310,7 @@ evalqOnLoad({
           geom_point(data=scores, aes(PC1, PC2), colour=factor(t+3)) + geom_abline(slope=s, intercept=int)
       plot
     }
-    else { 
+    else if (mode == "normal") { 
       if (dim1 > ncol(df) || dim2 > ncol(df)) {
         stop("Too large dimensions")
       }
@@ -323,6 +326,31 @@ evalqOnLoad({
       plot = ggplot() + geom_point(data=df, aes(X1, X2), colour=factor(t+3))  +
         geom_abline(slope=s, intercept=int)
       plot
+    }
+    else if (mode == "test") {    # test mode
+      x_col = ds[colnames(ds)[1]]
+      y_col = ds[colnames(ds)[2]]
+      
+      x_max = max(x_col)
+      x_min = min(x_col) 
+      y_max = max(y_col)
+      y_min = min(y_col)
+      
+      x_axis = seq(from=x_min, to=x_max, length.out=300)
+      y_axis = seq(from=y_min, to=y_max, length.out=300)
+      grid = data.frame(x_axis,y_axis)
+      grid <- expand.grid(x=x_axis,y=y_axis)
+      target = predict(x, grid)
+      A = w[1]
+      B = w[2]
+      C = x$getBias()
+      
+      s = -A/B
+      int = -C/B
+
+      grid["target"] = target
+      plot <- ggplot(grid, aes(x=x,y=y))
+      plot + geom_tile(aes(fill=target)) +  geom_abline(slope=s, intercept=int)
     }
   }
   
