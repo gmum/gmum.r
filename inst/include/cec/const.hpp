@@ -60,7 +60,7 @@ const char* CONST::energy = "log.energy";
 const char* CONST::logClusters = "log.ncluster";
 
 const char* CONST::CLUSTERS::type = "method.type";
-const char* CONST::CLUSTERS::standard = "std";
+const char* CONST::CLUSTERS::standard = "standard";
 const char* CONST::CLUSTERS::full = "full";
 const char* CONST::CLUSTERS::diagonal = "diagonal";
 const char* CONST::CLUSTERS::sphere = "sphere";
