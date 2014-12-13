@@ -112,8 +112,8 @@ double* SVMClient::getAlpha() {
 	return config.rho;
 }
 
-double SVMClient::getBias() {	// where is the bias in config?
-	return -config.rho[0];		// temporary
+double SVMClient::getBias() {	
+	return config.getB();		
 }
 
 arma::vec SVMClient::getW() {		// where is W in config?

@@ -71,10 +71,6 @@ public:
 	double nu; /* for NU_SVC, ONE_CLASS, and NU_SVR */
 	double p; /* for EPSILON_SVR */
 
-	//universal parameters
-	arma::mat two_e_cov_inv_sqrt;
-	arma::mat two_e_b_dash;
-
 	arma::mat data;		// armadillo matrix and vector (double)
 	arma::vec target;
 	arma::vec result;

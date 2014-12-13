@@ -288,13 +288,12 @@ evalqOnLoad({
   
   plot.svm <<- function(x, mode="pca", dim1 = 1, dim2 = 2, log="") {
     if (mode != "pca" && mode != "normal" && mode != "test" ) {
-      stop() # handle error 
+      stop("Wrong mode!") 
     }
     df =  data.frame( x$getX() )
     t = x$getY()
     w = c(x$getW())
     if (mode == "pca") {
-      print("Pca")
       pca_data = prcomp(df, scale=TRUE)
       scores = data.frame(df, pca_data$x[,1:2])
  
@@ -322,14 +321,12 @@ evalqOnLoad({
       
       s = -A/B
       int = -C/B
-      print("No pca")
-      print(length(t))
-      print(length(df$X1))
       plot = ggplot() + geom_point(data=df, aes(X1, X2), colour=factor(t+3))  +
         geom_abline(slope=s, intercept=int)
       plot
     }
     else if (mode == "test") {    # test mode
+      warning("This is a test mode, it will change your svm model!")
       test_svm = x
       x_col = df[colnames(df)[1]]
       y_col = df[colnames(df)[2]]
