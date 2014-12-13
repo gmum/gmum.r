@@ -20,6 +20,8 @@ for (c in seq(-6,5,1) ){
     svm <- SVM(formula, train, lib="libsvm", kernel="linear", prep = "none", C=10^c);
     twoe_svm <- SVM(formula, train, lib="libsvm", kernel="linear", prep = "2e", C=10^c);
     
+    print("----------")
+    
     test_x = subset(test, select = -c(X1))
     target = test[,"X1"]
     
