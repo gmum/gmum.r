@@ -331,8 +331,8 @@ evalqOnLoad({
     }
     else if (mode == "test") {    # test mode
       test_svm = x
-      x_col = ds[colnames(ds)[1]]
-      y_col = ds[colnames(ds)[2]]
+      x_col = df[colnames(df)[1]]
+      y_col = df[colnames(df)[2]]
       
       x_max = max(x_col)
       x_min = min(x_col) 
@@ -352,8 +352,11 @@ evalqOnLoad({
       int = -C/B
 
       grid["target"] = target
-      plot <- ggplot(grid, aes(x=x,y=y))
-      plot + geom_tile(aes(fill=target)) +  geom_abline(slope=s, intercept=int)
+      plot <- ggplot()
+      plot + 
+        geom_tile(data=grid, aes(x=x,y=y,fill=target)) +
+        geom_abline(slope=s, intercept=int)  +
+        geom_point(data=df, aes(X1, X2), colour=factor(t+6))
     }
   }
   
