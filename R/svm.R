@@ -323,11 +323,14 @@ evalqOnLoad({
       s = -A/B
       int = -C/B
       print("No pca")
+      print(length(t))
+      print(length(df$X1))
       plot = ggplot() + geom_point(data=df, aes(X1, X2), colour=factor(t+3))  +
         geom_abline(slope=s, intercept=int)
       plot
     }
     else if (mode == "test") {    # test mode
+      test_svm = x
       x_col = ds[colnames(ds)[1]]
       y_col = ds[colnames(ds)[2]]
       
@@ -340,10 +343,10 @@ evalqOnLoad({
       y_axis = seq(from=y_min, to=y_max, length.out=300)
       grid = data.frame(x_axis,y_axis)
       grid <- expand.grid(x=x_axis,y=y_axis)
-      target = predict(x, grid)
+      target = predict(test_svm, grid)
       A = w[1]
       B = w[2]
-      C = x$getBias()
+      C = test_svm$getBias()
       
       s = -A/B
       int = -C/B
