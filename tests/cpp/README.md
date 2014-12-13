@@ -77,7 +77,7 @@ results of the computations
 
 ## Adding tests
 
-Add new tests as `*.cc` files in subdirectories. You can create a new directory
+Add new tests as `*.cpp` files in subdirectories. You can create a new directory
 for your own branch/type of tests. To compile new directory, add its name to
 Makefile `TEST_BRANCHES` variable.
 
