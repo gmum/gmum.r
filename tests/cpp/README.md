@@ -48,6 +48,8 @@ $ sudo cp -a include/gtest /usr/include
 $ sudo cp -a lib/.libs/* /usr/lib/
 ```
 
+Update ldconfig by simply running `sudo ldconfig`.
+
 ### GMUM.R dependencies
 
 C++ **Armadillo** library and its dependencies ( **Lapack**, **Blas**) need to
