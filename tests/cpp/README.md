@@ -9,28 +9,43 @@ This directory contains C++ code tests.
 
 To compile these tests you need to install **GoogleTest** >= 1.6.0.
 
-Arch Linux package: `gtest`, Debian/Ubuntu package: `libgtest-dev`
-
-Ensure that GTest library has been installed:
+Ensure that GTest library is installed:
 
 `ldconfig -p | grep gtest`
 
-If there is no output, you've just installed sources. You must compile them
-into a library.
+If there is no output, you must istall gtest package or compile gtest into a
+library (shared object).
 
-Example for Ubuntu:
+#### Arch Linux
+
+`pacman -Sy gtest`
+
+#### Debian / Ubuntu
+
+Download latest version of GTest from here:
+
+https://code.google.com/p/googletest/downloads/list
+
+For example:
 
 ```
-# Install CMake if you do not have one
-sudo apt-get install cmake
+$ wget https://googletest.googlecode.com/files/gtest-1.7.0.zip
+```
 
-# Compile GTest
-cd /usr/src/gtest
-sudo cmake CMakeLists.txt
-sudo make
+Unzip, configure and make gtest:
 
-# Copy libgtest.a and libgtest_main.a to your /usr/lib
-sudo cp *.a /usr/lib
+```
+$ unzip gtest-1.7.0.zip
+$ cd gtest-1.7.0
+$ ./configure
+$ make
+```
+
+Copy includes and shared objects into system directories (of Debian / Ubuntu):
+
+```
+$ sudo cp -a include/gtest /usr/include
+$ sudo cp -a lib/.libs/* /usr/lib/
 ```
 
 ### GMUM.R dependencies
