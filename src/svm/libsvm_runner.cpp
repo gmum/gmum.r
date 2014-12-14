@@ -58,8 +58,8 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 
 	error_msg = svm_check_parameter(&prob, param, config.log);
 
-  if (error_msg) {
-		LOG(config.log, LogLevel::Error, "ERROR: " + to_string(error_msg))
+	if (error_msg) {
+		LOG(config.log, LogLevel::ERR, "ERROR: " + to_string(error_msg))
 		return false;
 	}
 	int* nr = Malloc(int, 1);
@@ -116,8 +116,8 @@ svm_model* LibSVMRunner::load_model_from_config(SVMConfiguration& config,
 	const char *error_msg;
 	error_msg = svm_check_parameter(&prob, param,config.log);
 
-  if (error_msg) {
-		LOG(config.log, LogLevel::Error, "ERROR: " + to_string(error_msg))
+	if (error_msg) {
+		LOG(config.log, LogLevel::ERR, "ERROR: " + to_string(error_msg))
 		return 0;
 	}
 

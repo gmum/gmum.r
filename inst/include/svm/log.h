@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 
 #ifdef DEBUG
 #define LOG(logger, level, text) logger.log(level, text);
@@ -15,13 +16,13 @@
 class LogLevel {
 public:
 
-	static const int NoLogging  = 0;
-	static const int Fatal      = 1;
-	static const int Error      = 2;
-	static const int Warning    = 3;
-	static const int Info       = 4;
-	static const int Debug      = 5;
-	static const int Trace      = 6;
+	static const int NO_LOGGING  = 0;
+	static const int FATAL       = 1;
+	static const int ERR         = 2;
+	static const int WARNING     = 3;
+	static const int INFO        = 4;
+	static const int DEBUG       = 5;
+	static const int TRACE       = 6;
 
 };
 
@@ -30,10 +31,16 @@ public:
 
 	int verbosity;
 
-	Logger();
+	Logger() {
+		verbosity = LogLevel::INFO;
+	}
 
-	void log(int level, std::string text);
+	void log(int level, std::string text) {
+		if (level <= verbosity)
+			std::cout << text << std::endl << std::flush;
+	}
 
 };
 
 #endif /* LOG_H */
+
