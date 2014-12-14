@@ -44,6 +44,7 @@ RCPP_MODULE(cec) {
 	.method("loop", &cecModel::loop)
 	.method("singleLoop", &cecModel::singleLoop)
 	.method("entropy", &cecModel::entropy)
+    .method("energy", &cecModel::getEnergy)
 	.method("y", &cecModel::getAssignment)
 	.method("clustering",&cecModel::getAssignment)
 	.method("centers", &cecModel::centers)
