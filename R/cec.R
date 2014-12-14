@@ -194,6 +194,10 @@ evalqOnLoad({
         c$entropy()
     }
 
+    energy.cec <<- function(c) {
+        c$energy()
+    }
+
     y.cec <<- function(c) {
         c$y()
     }
@@ -232,6 +236,7 @@ evalqOnLoad({
     
     setGeneric("loop", function(c) standardGeneric("loop"))
     setGeneric("entropy", function(c) standardGeneric("entropy"))
+    setGeneric("energy", function(c) standardGeneric("energy"))
     setGeneric("y", function(c) standardGeneric("y"))
     setGeneric("centers", function(c) standardGeneric("centers"))
     setGeneric("cov", function(c) standardGeneric("cov"))
@@ -244,6 +249,7 @@ evalqOnLoad({
     
     setMethod("loop", "Rcpp_cecModel", loop.cec)
     setMethod("entropy", "Rcpp_cecModel", entropy.cec)
+    setMethod("energy", "Rcpp_cecModel", energy.cec)
     setMethod("y", "Rcpp_cecModel", y.cec)
     setMethod("centers", "Rcpp_cecModel", centers.cec)
     setMethod("cov", "Rcpp_cecModel", cov.cec)
