@@ -1,5 +1,6 @@
 breast_cancer.path <- system.file("data_sets","svm","breast_cancer.data", package="gmum.r")
 twoe_data.path <- system.file("data_sets","svm","2e.data", package="gmum.r")
+circles_data.path <- system.file("data_sets","svm","circles.data", package="gmum.r")
 
 read.libsvm <- function(filename, dimensionality) {
   
@@ -41,6 +42,11 @@ svm.dataset.breast_cancer <- function() {
 
 svm.dataset.2e <- function() {
   te = read.table(twoe_data.path, quote="\"")
+  return(te)
+}
+
+svm.dataset.circles <- function() {
+  te = read.table(circles_data.path, quote="\"")
   return(te)
 }
 
