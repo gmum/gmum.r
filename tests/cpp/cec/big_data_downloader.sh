@@ -1,6 +1,6 @@
 #!/bin/bash
 
-URL="http://pasieka.ii.uj.edu.pl/~data/bigdata"
+URL="http://data.gmum.net/gmum.r_big_tests"
 DATA_DIR="../data"
 DIRS=`cat test_data_dirs_list`
 FILES=`cat test_data_list`
