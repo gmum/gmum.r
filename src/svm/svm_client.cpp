@@ -138,6 +138,29 @@ void SVMClient::train() {
 }
 
 void SVMClient::predict( arma::mat problem ) {
+    // Number of docs is a number of rows in data matrix
+    size_t n_docs = problem.n_rows;
+    config.result = arma::randu<arma::vec>(n_docs);
+    
+    // For every doc
+    for (int i=0; i < n_docs; ++i) {
+        double doc_result = 0;
+        // For every support vector
+        for (int j=0; j < config.l; ++j) {
+            double sum_j = arma::dot(
+                problem.row(i),
+                config.support_vectors.row(j)
+            );
+            sum_j *= config.alpha_y(j);
+            doc_result += sum_j;
+        }
+        doc_result -= config.threshold_b;
+        config.result[i] = doc_result;
+    }
+
+}
+
+void SVMClient::requestPredict( arma::mat problem ) {
 	config.setData(problem);
 	if ( SVMHandlers.size() > 0 ) {
 		config.setPrediction(true);
