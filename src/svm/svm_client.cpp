@@ -63,6 +63,7 @@ arma::vec SVMClient::getPrediction() {
 std::string SVMClient::getLibrary(){
 	switch(config.svm_type) {
 	case LIBSVM : return "libsvm";
+  case SVMLIGHT : return "svmlight";
 	}
 }
 std::string SVMClient::getKernel(){
@@ -160,10 +161,11 @@ void SVMClient::createFlow() {
 				handlers.push_back(runner);
 				break;
 			}
-	//		case SVMLIGHT : {	SVMLightRunner runner;		// Wating for svm light runner implementation
-	//			handlers.push_back( &runner );
-	//			break;
-	//		}
+			case SVMLIGHT : {	
+        SVMLightRunner *runner = new SVMLightRunner();		// Wating for svm light runner implementation
+				handlers.push_back(runner);
+				break;
+			}
 			default: {
 				LibSVMRunner *runner = new LibSVMRunner();				// dafault will be libsvm
 				handlers.push_back(runner);

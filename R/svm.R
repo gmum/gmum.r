@@ -137,9 +137,9 @@ evalqOnLoad({
     
     # check for errors
     
-    if ( lib != "libsvm" ) { # || lib != "svmlight"
+    if ( lib != "libsvm" && lib != "svmlight") { 
       stop(paste(GMUM_WRONG_LIBRARY, ": bad library" )) 
-      # log error No such library, available are: libsvm
+      # log error No such library, available are: libsvm, svmlight
     }
     
     if ( kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid" ) {

@@ -62,7 +62,10 @@ void SVMConfiguration::setLibrary( std::string library ) {
 		this->library = LIBSVM;
 		this->svm_type = C_SVC;
 	}
-	// else if
+	else if (library == "svmlight" ) {
+    this->library = SVMLIGHT;
+    this->svm_type = C_SVC;
+	}
 }
 
 void SVMConfiguration::setKernel( std::string kernel ) {

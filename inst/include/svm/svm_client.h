@@ -3,6 +3,7 @@
 
 #include "svm_handler.h"
 #include "libsvm_runner.h"
+#include "svmlight_runner.h"
 #include "svm_basic.h"
 #include <vector>
 
