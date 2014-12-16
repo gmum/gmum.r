@@ -7,30 +7,30 @@
 
 using namespace gmum;
 
-cecConfiguration::cecConfiguration() {
+CecConfiguration::CecConfiguration() {
 }
 
-Params cecConfiguration::getParams() {
-	return this->params;
+Params CecConfiguration::get_params() {
+	return this->m_params;
 }
 
-void cecConfiguration::setParams(Params params) {
-	this->params = params;
+void CecConfiguration::set_params(Params params) {
+    this->m_params = params;
 }
 
-void cecConfiguration::setDataSet(const Rcpp::NumericMatrix proxyDataset) {
-	//reuses memory and avoids extra copy
+void CecConfiguration::set_data_set(const Rcpp::NumericMatrix proxy_dataset) {
+    //reuses memory and avoids extra copy
 	boost::shared_ptr<const arma::mat> points(
-			new arma::mat(proxyDataset.begin(), proxyDataset.nrow(),
-					proxyDataset.ncol(), false));
-	params.dataset = points;
+            new arma::mat(proxy_dataset.begin(), proxy_dataset.nrow(),
+                    proxy_dataset.ncol(), false));
+	m_params.dataset = points;
 }
 
-void cecConfiguration::setEps(const double killThreshold) {
-	params.killThreshold = killThreshold;
+void CecConfiguration::set_eps(const double kill_threshold) {
+    m_params.kill_threshold = kill_threshold;
 }
 
-void cecConfiguration::setMix(const Rcpp::List clusters) {
+void CecConfiguration::set_mix(const Rcpp::List clusters) {
 	if (!Rf_isNull(clusters)) {
 		Rcpp::List desc = Rcpp::as < Rcpp::List > (clusters);
 		for (Rcpp::List::iterator it = desc.begin(); it != desc.end(); ++it) {
@@ -38,7 +38,7 @@ void cecConfiguration::setMix(const Rcpp::List clusters) {
 			boost::shared_ptr<ClusterParams> cluster;
 			if (!list.containsElementNamed(CONST::CLUSTERS::type)) {
 				cluster.reset(new ClusterParams());
-				cluster->type = knoType;
+				cluster->type = kno_type;
 			} else {
 				std::string typeStr = Rcpp::as < std::string
 						> (list[CONST::CLUSTERS::type]);
@@ -48,25 +48,25 @@ void cecConfiguration::setMix(const Rcpp::List clusters) {
 				} else if (typeStr.compare(CONST::CLUSTERS::full) == 0) {
 					ClusterFullParams *ptr = new ClusterFullParams();
 					ptr->type = kfull;
-					if (list.containsElementNamed(CONST::CLUSTERS::covMat)) {
-						ptr->covMatSet = true;
+                    if (list.containsElementNamed(CONST::CLUSTERS::cov_mat)) {
+                        ptr->cov_mat_set = true;
 						Rcpp::NumericMatrix temp = Rcpp::as
 								< Rcpp::NumericMatrix
-								> (list[CONST::CLUSTERS::covMat]);
-						ptr->covMat = arma::mat(temp.begin(), temp.nrow(),
+                                > (list[CONST::CLUSTERS::cov_mat]);
+                        ptr->cov_mat = arma::mat(temp.begin(), temp.nrow(),
 								temp.ncol());
 					} else
-						ptr->covMatSet = false;
+                        ptr->cov_mat_set = false;
 					cluster.reset(ptr);
 				} else if (typeStr.compare(CONST::CLUSTERS::fsphere) == 0) {
 					ClusterFsphereParams *ptr = new ClusterFsphereParams();
 					ptr->type = kfsphere;
 					if (list.containsElementNamed(CONST::CLUSTERS::radius)) {
-						ptr->radiusSet = true;
+                        ptr->radius_set = true;
 						ptr->radius = Rcpp::as<double>(
 								list[CONST::CLUSTERS::radius]);
 					} else
-						ptr->radiusSet = false;
+                        ptr->radius_set = false;
 					cluster.reset(ptr);
 				} else if (typeStr.compare(CONST::CLUSTERS::sphere) == 0) {
 					cluster.reset(new ClusterParams());
@@ -77,98 +77,98 @@ void cecConfiguration::setMix(const Rcpp::List clusters) {
 				} else if (typeStr.compare(CONST::CLUSTERS::custom) == 0) {
 					ClusterCustomParams *ptr = new ClusterCustomParams();
 					ptr->type = kcustom;
-					if (list.containsElementNamed(CONST::CLUSTERS::functionName)
+                    if (list.containsElementNamed(CONST::CLUSTERS::function_name)
 							== 0) {
-						ptr->functionNameSet = true;
-						ptr->functionName = Rcpp::as < std::string
-								> (list[CONST::CLUSTERS::functionName]);
+                        ptr->function_name_set = true;
+                        ptr->function_name = Rcpp::as < std::string
+                                > (list[CONST::CLUSTERS::function_name]);
 					} else {
-						ptr->functionNameSet = false;
+                        ptr->function_name_set = false;
 					}
 					cluster.reset(ptr);
 				} else {
 					cluster.reset(new ClusterParams());
-					cluster->type = knoType;
+					cluster->type = kno_type;
 				}
 			}
 
-			params.clusters.push_back(cluster);
+			m_params.clusters.push_back(cluster);
 		}
 	}
 }
 
-void cecConfiguration::setNrOfClusters(const unsigned int nrOfClusters) {
-	if (nrOfClusters != 0)
-		params.nrOfClusters = nrOfClusters;
-	else if (params.clusters.size() > 0)
-		params.nrOfClusters = params.clusters.size();
+void CecConfiguration::set_nclusters(const unsigned int nclusters) {
+    if (nclusters != 0)
+        m_params.nclusters = nclusters;
+	else if (m_params.clusters.size() > 0)
+        m_params.nclusters = m_params.clusters.size();
 	else
-		params.nrOfClusters = CONST::nrOfClustersInit;
+        m_params.nclusters = CONST::nclusters_init;
 
-	if (params.dataset->n_rows < params.nrOfClusters)
-		Rcpp::stop(CONST::ERRORS::datasetSize);
+    if (m_params.dataset->n_rows < m_params.nclusters)
+        Rcpp::stop(CONST::ERRORS::dataset_size);
 }
 
-void cecConfiguration::setLogEnergy(bool logEnergy) {
-	params.logEnergy = logEnergy;
+void CecConfiguration::set_log_energy(bool log_energy) {
+    m_params.log_energy = log_energy;
 }
 
-void cecConfiguration::setLogCluster(bool logNrOfClusters) {
-	params.logNrOfClusters = logNrOfClusters;
+void CecConfiguration::set_log_cluster(bool log_nclusters) {
+    m_params.log_nclusters = log_nclusters;
 }
 
-void cecConfiguration::setNstart(const unsigned int nstart) {
-	params.nstart = nstart;
+void CecConfiguration::set_nstart(const unsigned int nstart) {
+	m_params.nstart = nstart;
 }
 
-void cecConfiguration::setCentroids(const Rcpp::List centroids) {
+void CecConfiguration::set_centroids(const Rcpp::List centroids) {
 	if (!Rf_isNull(centroids)) {
 		Rcpp::List desc = Rcpp::as < Rcpp::List > (centroids);
 		for (Rcpp::List::iterator it = desc.begin(); it != desc.end(); ++it)
-			params.centroids.push_back(Rcpp::as < std::vector<double> > (*it));
-		params.centroidsSet = true;
+			m_params.centroids.push_back(Rcpp::as < std::vector<double> > (*it));
+        m_params.centroids_set = true;
 	} else
-		params.centroidsSet = false;
+        m_params.centroids_set = false;
 }
 
-void cecConfiguration::setMethodInit(const std::string init) {
-	params.assignmentType = CONST::defaultAssignment;
+void CecConfiguration::set_method_init(const std::string init) {
+    m_params.assignment_type = CONST::default_assignment;
 	if (init.compare(CONST::CLUSTERS::random) == 0)
-		params.assignmentType = krandom;
+        m_params.assignment_type = krandom;
 	else if (init.compare(CONST::CLUSTERS::kmeanspp) == 0)
-		params.assignmentType = kkmeanspp;
+        m_params.assignment_type = kkmeanspp;
 	else if (init.compare(CONST::CLUSTERS::centroids) == 0) {
-		params.assignmentType = kcentroids;
+        m_params.assignment_type = kcentroids;
 	}
 
-	if (params.assignmentType == knoAssignment)
-		Rcpp::stop(CONST::ERRORS::assignmentError);
-	if (params.assignmentType == kcentroids
-			&& params.centroids.size() != params.nrOfClusters)
-		Rcpp::stop(CONST::ERRORS::centroidsError);
-	switch (params.clusterType) {
+    if (m_params.assignment_type == kno_assignment)
+        Rcpp::stop(CONST::ERRORS::assignment_error);
+    if (m_params.assignment_type == kcentroids
+            && m_params.centroids.size() != m_params.nclusters)
+        Rcpp::stop(CONST::ERRORS::centroids_error);
+    switch (m_params.cluster_type) {
 	case kstandard: // TODO: handle kstandard parameter
 	case kdiagonal: // TODO: handle kdiagonal parameter
 	case ksphere: // TODO: handle ksphere parameter
 		break;
 	case kfull:
-		if (!params.covMatSet)
-			Rcpp::stop(CONST::ERRORS::covMatReq);
+        if (!m_params.cov_mat_set)
+            Rcpp::stop(CONST::ERRORS::cov_mat_req);
 		break;
 	case kfsphere:
-		if (!params.radiusSet)
-			Rcpp::stop(CONST::ERRORS::radiusReq);
+        if (!m_params.radius_set)
+            Rcpp::stop(CONST::ERRORS::radius_req);
 		break;
-	case knoType:
-		Rcpp::stop(CONST::ERRORS::clusterRecError);
+	case kno_type:
+        Rcpp::stop(CONST::ERRORS::cluster_rec_error);
 		break;
 	case kcustom:
-		if (!params.functionNameSet)
-			Rcpp::stop(CONST::ERRORS::functionNameReq);
+        if (!m_params.function_name_set)
+            Rcpp::stop(CONST::ERRORS::function_name_req);
 		break;
 	case kmix:
 		BOOST_FOREACH(boost::shared_ptr < ClusterParams > cluster,
-				params.clusters)
+				m_params.clusters)
 		{
 			switch (cluster->type) {
 			case kstandard:
@@ -179,85 +179,85 @@ void cecConfiguration::setMethodInit(const std::string init) {
 			case kfull: {
 				ClusterFullParams &ptr =
 						static_cast<ClusterFullParams&>(*cluster);
-				if (!ptr.covMatSet)
-					Rcpp::stop(CONST::ERRORS::covMatReq);
+				if (!ptr.cov_mat_set)
+                    Rcpp::stop(CONST::ERRORS::cov_mat_req);
 				break;
 			}
 			case kfsphere: {
 				ClusterFsphereParams &ptr =
 						static_cast<ClusterFsphereParams&>(*cluster);
-				if (!ptr.radiusSet)
-					Rcpp::stop(CONST::ERRORS::radiusReq);
+				if (!ptr.radius_set)
+                    Rcpp::stop(CONST::ERRORS::radius_req);
 				break;
 			}
-			case knoType:
-				Rcpp::stop(CONST::ERRORS::clusterRecError);
+			case kno_type:
+                Rcpp::stop(CONST::ERRORS::cluster_rec_error);
 				break;
 			case kcustom:
 				ClusterCustomParams &ptr =
 						static_cast<ClusterCustomParams&>(*cluster);
-				if (!ptr.functionNameSet)
-					Rcpp::stop(CONST::ERRORS::functionNameReq);
+				if (!ptr.function_name_set)
+                    Rcpp::stop(CONST::ERRORS::function_name_req);
 				break;
 			}
 		}
 	}
 }
 
-void cecConfiguration::setMethodType(const std::string type) {
-	if (params.clusters.size() > 0)
-		params.clusterType = kmix;
+void CecConfiguration::set_method_type(const std::string type) {
+	if (m_params.clusters.size() > 0)
+        m_params.cluster_type = kmix;
 	else {
-		params.clusterType = kstandard;
+        m_params.cluster_type = kstandard;
 		if (type.empty())
 			return;
 		else if (type.compare(CONST::CLUSTERS::standard) == 0) {
 			//nothing but recognises
 		} else if (type.compare(CONST::CLUSTERS::full) == 0) {
-			params.clusterType = kfull;
+            m_params.cluster_type = kfull;
 		} else if (type.compare(CONST::CLUSTERS::diagonal) == 0) {
-			params.clusterType = kdiagonal;
+            m_params.cluster_type = kdiagonal;
 		} else if (type.compare(CONST::CLUSTERS::sphere) == 0) {
-			params.clusterType = ksphere;
+            m_params.cluster_type = ksphere;
 		} else if (type.compare(CONST::CLUSTERS::fsphere) == 0) {
-			params.clusterType = kfsphere;
+            m_params.cluster_type = kfsphere;
 		} else if (type.compare(CONST::CLUSTERS::custom) == 0) {
-			params.clusterType = kcustom;
+            m_params.cluster_type = kcustom;
 		} else{
-			Rcpp::stop(CONST::ERRORS::clusterRecError);
+            Rcpp::stop(CONST::ERRORS::cluster_rec_error);
 		}
 	}
 }
-void cecConfiguration::setCov(const Rcpp::NumericMatrix covMatProxy) {
+void CecConfiguration::set_cov(const Rcpp::NumericMatrix cov_mat_proxy) {
 //TODO better check is empty matrix
-	if (!Rf_isNull(covMatProxy) && params.clusters.empty()) {
-		params.covMatSet = true;
-		params.covMat = arma::mat(covMatProxy.begin(), covMatProxy.nrow(),
-				covMatProxy.ncol());
+    if (!Rf_isNull(cov_mat_proxy) && m_params.clusters.empty()) {
+        m_params.cov_mat_set = true;
+        m_params.cov_mat = arma::mat(cov_mat_proxy.begin(), cov_mat_proxy.nrow(),
+                cov_mat_proxy.ncol());
 	} else
-		params.covMatSet = false;
+        m_params.cov_mat_set = false;
 }
 
-void cecConfiguration::setR(const double radius) {
-	if (radius != 0 && params.clusters.empty()) {
-		params.radiusSet = true;
-		params.radius = radius;
+void CecConfiguration::set_r(const double radius) {
+	if (radius != 0 && m_params.clusters.empty()) {
+        m_params.radius_set = true;
+		m_params.radius = radius;
 	} else
-		params.radiusSet = false;
+        m_params.radius_set = false;
 }
 
-void cecConfiguration::setFunction(const std::string functionName) {
-	if (!functionName.empty() && params.clusters.empty()) {
-		params.functionNameSet = true;
-		params.functionName = functionName;
+void CecConfiguration::set_function(const std::string function_name) {
+    if (!function_name.empty() && m_params.clusters.empty()) {
+        m_params.function_name_set = true;
+        m_params.function_name = function_name;
 	} else {
-		params.functionNameSet = false;
+        m_params.function_name_set = false;
 	}
 }
 
-void cecConfiguration::setItmax(const unsigned int) {
+void CecConfiguration::set_it_max(const unsigned int it_max) {
 }
 
-void cecConfiguration::setIters(bool iters) {
+void CecConfiguration::set_iters(bool iters) {
 }
 

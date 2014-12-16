@@ -11,28 +11,28 @@
 class ClusterReader {
 protected:
 	std::string prefix();
-	std::string inputPath();
-	std::string clusterPath();
-	std::string energyPath();
-	std::string dimensionPath();
-	std::string folderName;
-	std::vector<std::vector<double> > points;
-	std::vector<unsigned int> clustering;
-	double energy;
-	unsigned int dim;
+    std::string input_path();
+    std::string cluster_path();
+    std::string energy_path();
+    std::string dimension_path();
+    std::string m_folder_name;
+    std::vector<std::vector<double> > m_points;
+    std::vector<unsigned int> m_clustering;
+    double m_energy;
+    unsigned int m_dim;
 public:
-	ClusterReader(const char * _name, unsigned int _dim);
-	ClusterReader(const char * _name);
-	void readPoints();
-	void readClustering();
-	void readDimension();
+    ClusterReader(const char * name, unsigned int dim);
+    ClusterReader(const char * name);
+    void read_points();
+    void read_clustering();
+    void read_dimension();
 
-	void getPoints(std::vector<std::vector<double> > & out);
-	void getClustering(std::vector<unsigned int> & out);
-	void readEnergy();
-	double getEnergy();
-	double getDimension();
-	arma::mat getPointsInMatrix();
+    void get_points(std::vector<std::vector<double> > & out);
+    void get_clustering(std::vector<unsigned int> & out);
+    void read_energy();
+    double get_energy();
+    double get_dimension();
+    arma::mat get_points_in_matrix();
 
 };
 

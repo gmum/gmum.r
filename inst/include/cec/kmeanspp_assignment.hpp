@@ -13,20 +13,20 @@
 namespace gmum {
 
 struct Pair {
-	unsigned int pointNumber;
+    unsigned int point_number;
 	float distance;
 	Pair(unsigned int n) :
-			pointNumber(n), distance(0) {
+            point_number(n), distance(0) {
 	}
 	bool operator<(Pair p) {
 		return distance >= p.distance;
 	}
 };
 
-void initAssignKmeanspp(std::vector<unsigned int> &assignment,
-		const arma::mat &points, unsigned int nrOfClusters);
+void init_assign_kmeanspp(std::vector<unsigned int> &assignment,
+        const arma::mat &points, unsigned int nclusters);
 
-void calculateDistance(const std::vector<unsigned int> &centers,
+void calculate_distance(const std::vector<unsigned int> &centers,
 		std::list<Pair> &selected, const arma::mat &points);
 
 std::list<Pair>::iterator choose(
@@ -35,8 +35,8 @@ std::list<Pair>::iterator choose(
 
 class KmeansppAssignment: public Assignment {
 public:
-	KmeansppAssignment(const arma::mat &points, const int nrOfClusters) :
-			Assignment::Assignment(points, nrOfClusters) {
+    KmeansppAssignment(const arma::mat &points, const int nclusters) :
+            Assignment::Assignment(points, nclusters) {
 	}
 	virtual void operator()(std::vector<unsigned int> &assignment);
 };

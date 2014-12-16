@@ -6,7 +6,7 @@
 namespace gmum {
 
 enum ClusterType {
-	kstandard, kfull, kdiagonal, ksphere, kfsphere, knoType, kmix, kcustom
+    kstandard, kfull, kdiagonal, ksphere, kfsphere, kno_type, kmix, kcustom
 };
 
 /**
@@ -14,22 +14,21 @@ enum ClusterType {
  */
 struct ClusterParams {
 	ClusterType type;
-	//virtual ~ClusterParams(){};
 };
 
 struct ClusterFullParams: public ClusterParams {
-	bool covMatSet;
-	arma::mat covMat;
+    bool cov_mat_set;
+    arma::mat cov_mat;
 };
 
 struct ClusterFsphereParams: public ClusterParams {
-	bool radiusSet;
+    bool radius_set;
 	double radius;
 };
 
 struct ClusterCustomParams: public ClusterParams {
-	bool functionNameSet;
-	std::string functionName;
+    bool function_name_set;
+    std::string function_name;
 };
 
 }

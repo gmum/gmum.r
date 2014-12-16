@@ -14,33 +14,33 @@ using namespace gmum;
 TEST(Simple_1,IsEnergyCorrect) {
 	std::cout.precision(21);
 	boost::shared_ptr<std::vector<unsigned int> > clustering(new std::vector<unsigned int>);
-	ClusterReader clusterReader("simple_1",2);
-	clusterReader.getClustering(*clustering);
+    ClusterReader cluster_reader("simple_1",2);
+    cluster_reader.get_clustering(*clustering);
 
 	int min = *(std::min_element(clustering->begin(),clustering->end()));
 	for (std::vector<unsigned int>::iterator it = clustering->begin(); it!= clustering->end(); ++it)
 	*it -= min;
 
-	boost::shared_ptr<arma::mat> points(new arma::mat(clusterReader.getPointsInMatrix()));
+    boost::shared_ptr<arma::mat> points(new arma::mat(cluster_reader.get_points_in_matrix()));
 	Params params;
-	params.killThreshold = 0.0001;
-	params.nrOfClusters = 1;
+	params.kill_threshold = 0.0001;
+	params.nclusters = 1;
 	params.dataset = points;
-	params.clusterType = kstandard;
+	params.cluster_type = kstandard;
     params.nstart = 10;
 
-	cecConfiguration *conf = new cecConfiguration();
-	conf->setParams(params);
-    conf->setMethodInit("random");
+    CecConfiguration conf;
+    conf.set_params(params);
+    conf.set_method_init("random");
 	// TODO set clustering
 	//conf->setMix(*clustering);
-	cecModel cec(conf);
+    CecModel cec(&conf);
 
 	std::cout << cec.entropy() << std::endl;
-	std::cout << clusterReader.getEnergy() << std::endl;
-	std::cout << " mean : " << cec.clusters[0]->getMean() << std::endl;
-	SHOW(cec.clusters[0]->getMean().n_rows );
-	SHOW(cec.clusters[0]->getMean().n_cols);
-	std::cout << clusterReader.getEnergy() << std::endl;
-	EXPECT_LT(std::abs(cec.entropy() - clusterReader.getEnergy()) , 1e-4);
+    std::cout << cluster_reader.get_energy() << std::endl;
+    std::cout << " mean : " << cec.get_clusters()[0]->get_mean() << std::endl;
+    SHOW(cec.get_clusters()[0]->get_mean().n_rows );
+    SHOW(cec.get_clusters()[0]->get_mean().n_cols);
+    std::cout << cluster_reader.get_energy() << std::endl;
+    EXPECT_LT(std::abs(cec.entropy() - cluster_reader.get_energy()) , 1e-4);
 }

@@ -5,67 +5,67 @@ namespace gmum {
 void KmeansppAssignment::operator()(std::vector<unsigned int> &assignment) {
 
 	std::vector<unsigned int> centers;
-	centers.reserve(nrOfClusters);
+	centers.reserve(m_nclusters);
 
-	unsigned int nrOfPoints = assignment.size();
+    unsigned int npoints = assignment.size();
 
 	static int seed = time(NULL);
 	static boost::random::mt19937 gen(seed);
 
 	//select points for centers
 	std::list<Pair> selected;
-	unsigned int nrOfSections = 100;
-	unsigned int section = nrOfPoints / nrOfSections;
+    unsigned int nsections = 100;
+    unsigned int section = npoints / nsections;
 	if (section <= 1)
-		for (unsigned int i = 0; i < nrOfPoints; ++i)
+        for (unsigned int i = 0; i < npoints; ++i)
 			selected.push_back(i);
 	else {
 		boost::random::uniform_int_distribution<> uniform(0, section - 1);
 		unsigned int k = 0;
 		//nrOfPoints > section
-		for (; k < nrOfPoints - section; k += section) {
+        for (; k < npoints - section; k += section) {
 			unsigned int target = k + uniform(gen);
 			selected.push_back(target);
 		}
 		k += uniform(gen);
-		if (k >= nrOfPoints)
-			k = nrOfPoints - 1;
+        if (k >= npoints)
+            k = npoints - 1;
 		selected.push_back(k);
 	}
 
-	int centersLeft = nrOfClusters;
+    int centers_left = m_nclusters;
 	//first center
-	centers.push_back(selected.front().pointNumber);
+    centers.push_back(selected.front().point_number);
 	selected.pop_front();
-	--centersLeft;
+    --centers_left;
 
 	//choose other centers
 	float bernoulli_p = 0.8;
 	boost::random::bernoulli_distribution<> bernoulli(bernoulli_p);
 
-	for (; centersLeft > 0; --centersLeft) {
-		calculateDistance(centers, selected, points);
+    for (; centers_left > 0; --centers_left) {
+		calculate_distance(centers, selected, m_points);
 		choose(bernoulli, gen, selected);
-		centers.push_back(selected.front().pointNumber);
+        centers.push_back(selected.front().point_number);
 		selected.pop_front();
 	}
 
-	assignPoints(assignment, centers, points);
+	assign_points(assignment, centers, m_points);
 }
 
-void calculateDistance(const std::vector<unsigned int> &centers,
+void calculate_distance(const std::vector<unsigned int> &centers,
 		std::list<Pair> &selected, const arma::mat &points) {
 
 	for (std::list<Pair>::iterator it = selected.begin(); it != selected.end();
 			++it) {
-		arma::rowvec point = points.row(it->pointNumber);
+        arma::rowvec point = points.row(it->point_number);
 		float distance = std::numeric_limits<float>::max();
 
 		for (unsigned int i = 0; i < centers.size(); ++i) {
 			arma::rowvec vec = points.row(centers[i]) - point;
-			float tempDist = arma::as_scalar(vec * vec.t());
-			if (distance > tempDist)
-				distance = tempDist;
+            float temp_dist = arma::as_scalar(vec * vec.t());
+            if (distance > temp_dist)
+                distance = temp_dist;
 		}
 
 		it->distance = distance;

@@ -1,31 +1,30 @@
 #include "cluster_custom_function.hpp"
 
 namespace gmum {
-ClusterCustomFunction::ClusterCustomFunction(int _count,
-		const arma::rowvec& _mean, const arma::mat& _covMat,
-		const std::string& _functionName) :
-		ClusterUseCovMat(_count, _mean, _covMat), functionName(_functionName) {
-	calculateEntropy();
+ClusterCustomFunction::ClusterCustomFunction(int count,
+        const arma::rowvec& mean, const arma::mat& cov_mat,
+        const std::string& function_name) :
+        ClusterUseCovMat(count, mean, cov_mat), m_function_name(function_name) {
+	calculate_entropy();
 }
 
-ClusterCustomFunction::ClusterCustomFunction(unsigned int _id,
-		const std::vector<unsigned int> &_assignment, const arma::mat &_points,
-		const std::string &_functionName) :
-		ClusterUseCovMat(_id, _assignment, _points), functionName(_functionName) {
-	calculateEntropy();
+ClusterCustomFunction::ClusterCustomFunction(unsigned int id,
+        const std::vector<unsigned int> &assignment, const arma::mat &points,
+        const std::string &function_name) :
+        ClusterUseCovMat(id, assignment, points), m_function_name(function_name) {
+	calculate_entropy();
 }
 
-void ClusterCustomFunction::calculateEntropy() {
-	Rcpp::Environment myEnv = Rcpp::Environment::global_env();
-	Rcpp::Function myFunction = myEnv[functionName];
-	_entropy = Rcpp::as<double>(
-			myFunction(Rcpp::Named("m", Rcpp::wrap(mean)),
-					Rcpp::Named("sigma", Rcpp::wrap(covMat))));
+void ClusterCustomFunction::calculate_entropy() {
+    Rcpp::Environment my_env = Rcpp::Environment::global_env();
+    Rcpp::Function my_function = my_env[m_function_name];
+	m_entropy = Rcpp::as<double>(
+            my_function(Rcpp::Named("m", Rcpp::wrap(m_mean)),
+					Rcpp::Named("sigma", Rcpp::wrap(m_cov_mat))));
 }
-boost::shared_ptr<ClusterUseCovMat> ClusterCustomFunction::createInstance(
-		int _count, const arma::rowvec& _mean, const arma::mat& _mat) {
+boost::shared_ptr<ClusterUseCovMat> ClusterCustomFunction::create_instance(int count, const arma::rowvec& mean, const arma::mat& mat) {
 	return boost::shared_ptr<ClusterUseCovMat>(
-			new ClusterCustomFunction(_count, _mean, _mat, functionName));
+            new ClusterCustomFunction(count, mean, mat, m_function_name));
 }
 }
 
