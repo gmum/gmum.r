@@ -46,7 +46,7 @@ double Cluster::entropy() const {
 
 void ClusterUseCovMat::initializeCovarianceMatrix(unsigned int id,
 		const std::vector<unsigned int> &assignment, const arma::mat &points) {
-	int dimension = points.n_cols;
+    int dimension = points.n_cols;
 	arma::rowvec m = mean;
 	arma::mat out(dimension, dimension, arma::fill::zeros);
 	for (unsigned int i = 0; i < points.n_rows; i++)
@@ -242,7 +242,7 @@ ClusterSpherical::ClusterSpherical(int _count, const arma::rowvec &_mean,
 }
 
 void ClusterSpherical::calculateEntropy() {
-	_entropy = N * log(2 * M_PI * M_E / N) / 2 + N * log(covMatTrace) / 2;
+    _entropy = N * log(2 * M_PI * M_E / N) / 2 + N * log(covMatTrace) / 2;
 }
 
 boost::shared_ptr<ClusterOnlyTrace> ClusterSpherical::createInstance(int _count,

@@ -159,12 +159,13 @@ void cecModel::findBestCEC() {
 	try {
 		loop();
 		cecModel best_cec = *this;
-		for (unsigned int i = 1; i < config.getParams().nstart; ++i) {
+        gmum::Params params = config.getParams();
+        for (unsigned int i = 1; i < params.nstart; ++i) {
 			(*assignmentType)(*assignment);
 			init(hartigan, assignment);
 			loop();
 
-			if (entropy() < best_cec.entropy()) {
+            if (result.min_energy < best_cec.getResult().min_energy) {
 				best_cec = *this;
 			}
 		}
@@ -288,4 +289,9 @@ std::list<double> cecModel::predict(std::vector<double> vec, bool general) {
 		}
 
 	return out;
+}
+
+const gmum::TotalResult& cecModel::getResult() const
+{
+    return result;
 }

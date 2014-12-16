@@ -223,8 +223,9 @@ void cecConfiguration::setMethodType(const std::string type) {
 			params.clusterType = kfsphere;
 		} else if (type.compare(CONST::CLUSTERS::custom) == 0) {
 			params.clusterType = kcustom;
-		} else
-			params.clusterType = knoType;
+		} else{
+			Rcpp::stop(CONST::ERRORS::clusterRecError);
+		}
 	}
 }
 void cecConfiguration::setCov(const Rcpp::NumericMatrix covMatProxy) {

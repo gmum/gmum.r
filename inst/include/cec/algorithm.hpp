@@ -21,6 +21,8 @@ struct TotalResult {
 	int iterations;
 	std::list<unsigned int> nrOfClusters;
 	std::list<double> energy;
+    double min_energy;
+
 	TotalResult() :
 			iterations(0) {
 	}

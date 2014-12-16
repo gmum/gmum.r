@@ -1,3 +1,4 @@
+#include <climits>
 #include "hartigan.hpp"
 
 namespace gmum {
@@ -8,27 +9,29 @@ namespace gmum {
             double killThreshold, std::vector<boost::shared_ptr<Cluster> > &clusters) {
         TotalResult result;
         SingleResult sr;
+        double min_energy = std::numeric_limits<double>::max();
 
         do {
             sr = singleLoop(points, assignment, killThreshold, clusters);
+            min_energy = std::min(min_energy, sr.energy);
             result.append(sr, logNrOfClusters, logEnergy);
         } while(sr.switched > 0);
-
+        result.min_energy = min_energy;
         return result;
     }
 
-    double Hartigan::calcWholeEntropy(double crossEntropy,
+    double Hartigan::calcEnergy(double crossEntropy,
             int pointsInCluster, 
             int numberOfPoints) {
         double p = 1.0*pointsInCluster/numberOfPoints;
         return p*(crossEntropy-log(p));
     }
 
-    double Hartigan::calcEntropyChange(const Cluster &A,
+    double Hartigan::calcEnergyChange(const Cluster &A,
             const Cluster &B,
             int numberOfPoints) {
-        double entropyA = calcWholeEntropy(A.entropy(), A.size(), numberOfPoints);
-        double entropyB = calcWholeEntropy(B.entropy(), B.size(), numberOfPoints);
+        double entropyA = calcEnergy(A.entropy(), A.size(), numberOfPoints);
+        double entropyB = calcEnergy(B.entropy(), B.size(), numberOfPoints);
         return entropyA - entropyB;
     }
 
@@ -56,9 +59,9 @@ namespace gmum {
                         newTarget = clusters[k]->addPoint(point);
 
                         double sourceEntropyChange =
-                            calcEntropyChange(*newSource, *oldSource, numberOfPoints);
+                            calcEnergyChange(*newSource, *oldSource, numberOfPoints);
                         double targetEntropyChange = 
-                            calcEntropyChange(*newTarget, *oldTarget, numberOfPoints);
+                            calcEnergyChange(*newTarget, *oldTarget, numberOfPoints);
 
                         wholeEntropyChange = targetEntropyChange+sourceEntropyChange;
 
@@ -98,8 +101,10 @@ namespace gmum {
         }  //for iterates points
 
         double energy = 0;
-        if(logEnergy)
-            for(unsigned int i=0; i<clusters.size(); ++i) energy += clusters[i]->entropy();
+        for(unsigned int i=0; i<clusters.size(); ++i)
+        {
+            energy += calcEnergy(clusters[i]->entropy(), clusters[i]->size(), numberOfPoints);
+        }
 
         return SingleResult(switched, clusters.size(), energy);
     }
@@ -119,28 +124,28 @@ namespace gmum {
             if(assignment[j] == source) {
 
                 arma::rowvec pointToAssign = points.row(j);
-                int minEntropyChangeElementIndex = -1;
-                boost::shared_ptr<Cluster> minEntropyChangeCluster;
-                double minEntropyChange = std::numeric_limits<double>::max();
+                int minEnergyChangeElementIndex = -1;
+                boost::shared_ptr<Cluster> minEnergyChangeCluster;
+                double minEnergyChange = std::numeric_limits<double>::max();
 
                 //find the best cluster to assign the point to it 
                 for(unsigned int l = 0; l < clusters.size(); l++){
                     boost::shared_ptr<Cluster> oldTarget = clusters[l];
                     boost::shared_ptr<Cluster> newTarget = clusters[l]->addPoint(pointToAssign);
 
-                    double entropyChange = 
-                        calcEntropyChange(*newTarget, *oldTarget, numberOfPoints);
+                    double energyChange =
+                        calcEnergyChange(*newTarget, *oldTarget, numberOfPoints);
 
-                    if(entropyChange < minEntropyChange){
-                        minEntropyChange = entropyChange;
-                        minEntropyChangeElementIndex = l;
-                        minEntropyChangeCluster = newTarget;						
+                    if(energyChange < minEnergyChange){
+                        minEnergyChange = energyChange;
+                        minEnergyChangeElementIndex = l;
+                        minEnergyChangeCluster = newTarget;
                     }
                 }
 
                 //assert(minEntropyChangeElementIndex > -1);
-                clusters[minEntropyChangeElementIndex] = minEntropyChangeCluster;
-                assignment[j] = minEntropyChangeElementIndex;
+                clusters[minEnergyChangeElementIndex] = minEnergyChangeCluster;
+                assignment[j] = minEnergyChangeElementIndex;
 
             } else if(assignment[j] > source) assignment[j]--;
             //number of clusters is expected to be small in comparison to number
