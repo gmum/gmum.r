@@ -13,7 +13,7 @@ enum ClusterType {
  * You need to store somewhere data about cluster. Each type can have its own.
  */
 struct ClusterParams {
-	ClusterType type;
+    ClusterType type;
 };
 
 struct ClusterFullParams: public ClusterParams {
@@ -23,7 +23,7 @@ struct ClusterFullParams: public ClusterParams {
 
 struct ClusterFsphereParams: public ClusterParams {
     bool radius_set;
-	double radius;
+    double radius;
 };
 
 struct ClusterCustomParams: public ClusterParams {

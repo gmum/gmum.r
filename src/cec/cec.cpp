@@ -8,55 +8,55 @@
 using namespace gmum;
 
 boost::shared_ptr<Cluster> CecModel::create_cluster(const ClusterParams &params,
-		int i) {
-	boost::shared_ptr<Cluster> cluster;
-	switch (params.type) {
+                                                    int i) {
+    boost::shared_ptr<Cluster> cluster;
+    switch (params.type) {
     case kno_type: // TODO: handle knoType parameter
-	case kmix: // TODO: handle kmix parameter
-		break;
-	case kstandard:
-		cluster = boost::shared_ptr < Cluster
+    case kmix: // TODO: handle kmix parameter
+        break;
+    case kstandard:
+        cluster = boost::shared_ptr < Cluster
                 > (new ClusterStandard(i, *m_assignment, *m_points));
-		break;
-	case kfull: {
-		const ClusterFullParams &ptr =
-				static_cast<const ClusterFullParams&>(params);
-		cluster = boost::shared_ptr < Cluster
+        break;
+    case kfull: {
+        const ClusterFullParams &ptr =
+                static_cast<const ClusterFullParams&>(params);
+        cluster = boost::shared_ptr < Cluster
                 > (new ClusterCovMat(ptr.cov_mat, i, *m_assignment, *m_points));
-		break;
-	}
-	case kdiagonal:
-		cluster = boost::shared_ptr < Cluster
+        break;
+    }
+    case kdiagonal:
+        cluster = boost::shared_ptr < Cluster
                 > (new ClusterDiagonal(i, *m_assignment, *m_points));
-		break;
-	case ksphere:
-		cluster = boost::shared_ptr < Cluster
+        break;
+    case ksphere:
+        cluster = boost::shared_ptr < Cluster
                 > (new ClusterSpherical(i, *m_assignment, *m_points));
-		break;
-	case kfsphere: {
-		const ClusterFsphereParams &ptr =
-				static_cast<const ClusterFsphereParams&>(params);
-		cluster = boost::shared_ptr < Cluster
+        break;
+    case kfsphere: {
+        const ClusterFsphereParams &ptr =
+                static_cast<const ClusterFsphereParams&>(params);
+        cluster = boost::shared_ptr < Cluster
                 > (new ClusterConstRadius(ptr.radius, i, *m_assignment, *m_points));
-		break;
-	}
-	case kcustom: {
-		const ClusterCustomParams &ptr =
-				static_cast<const ClusterCustomParams&>(params);
-		cluster = boost::shared_ptr < Cluster
+        break;
+    }
+    case kcustom: {
+        const ClusterCustomParams &ptr =
+                static_cast<const ClusterCustomParams&>(params);
+        cluster = boost::shared_ptr < Cluster
                 > (new ClusterCustomFunction(i, *m_assignment, *m_points,
-						ptr.function_name));
-		break;
-	}
-	}
-	return cluster;
+                                             ptr.function_name));
+        break;
+    }
+    }
+    return cluster;
 }
 CecModel::CecModel(CecConfiguration *cfg) :
-		m_config(*cfg) {
+    m_config(*cfg) {
     find_best_cec();
 }
 CecModel::CecModel(const CecModel &other) {
-	*this = other;
+    *this = other;
 }
 
 CecModel& CecModel::operator=(const CecModel& other) {
@@ -68,14 +68,14 @@ CecModel& CecModel::operator=(const CecModel& other) {
     m_kill_threshold = other.m_kill_threshold;
     m_inv_set = other.m_inv_set;
     m_inv = other.m_inv;
-	m_config = other.m_config;
+    m_config = other.m_config;
     m_clusters = other.m_clusters;
-	return *this;
+    return *this;
 }
 
 void CecModel::init(boost::shared_ptr<Algorithm> algorithm,
-		boost::shared_ptr<std::vector<unsigned int> > assignment) {
-	Params params = m_config.get_params();
+                    boost::shared_ptr<std::vector<unsigned int> > assignment) {
+    Params params = m_config.get_params();
     this->m_assignment = assignment;
     this->m_points = params.dataset;
     this->m_algorithm = algorithm;
@@ -83,96 +83,96 @@ void CecModel::init(boost::shared_ptr<Algorithm> algorithm,
     m_clusters.clear();
     m_clusters.reserve(params.nclusters);
 
-	int i = 0;
-	if (params.cluster_type == kmix) {
-		BOOST_FOREACH(boost::shared_ptr < ClusterParams > cluster,
-				params.clusters)
-		{
+    int i = 0;
+    if (params.cluster_type == kmix) {
+        BOOST_FOREACH(boost::shared_ptr < ClusterParams > cluster,
+                      params.clusters)
+        {
             m_clusters.push_back(create_cluster(*cluster, i));
-		}
-	} else {
-		ClusterParams *cluster;
-		switch (params.cluster_type) {
-		case kfsphere: {
-			ClusterFsphereParams *proxy = new ClusterFsphereParams();
-			proxy->radius = params.radius;
-			cluster = proxy;
-			break;
-		}
-		case kfull: {
-			ClusterFullParams *proxy = new ClusterFullParams();
+        }
+    } else {
+        ClusterParams *cluster;
+        switch (params.cluster_type) {
+        case kfsphere: {
+            ClusterFsphereParams *proxy = new ClusterFsphereParams();
+            proxy->radius = params.radius;
+            cluster = proxy;
+            break;
+        }
+        case kfull: {
+            ClusterFullParams *proxy = new ClusterFullParams();
             proxy->cov_mat = params.cov_mat;
-			cluster = proxy;
+            cluster = proxy;
 
-			break;
-		}
-		case kcustom: {
-			ClusterCustomParams *proxy = new ClusterCustomParams();
+            break;
+        }
+        case kcustom: {
+            ClusterCustomParams *proxy = new ClusterCustomParams();
             proxy->function_name = params.function_name;
-			cluster = proxy;
-			break;
-		}
-		default:
-			/*case standard:
-			 case diagonal:
-			 case sphere:*/
-			cluster = new ClusterParams();
-			break;
-		}
-		cluster->type = params.cluster_type;
-		for (unsigned int i = 0; i < params.nclusters; ++i)
+            cluster = proxy;
+            break;
+        }
+        default:
+            /*case standard:
+             case diagonal:
+             case sphere:*/
+            cluster = new ClusterParams();
+            break;
+        }
+        cluster->type = params.cluster_type;
+        for (unsigned int i = 0; i < params.nclusters; ++i)
             m_clusters.push_back(create_cluster(*cluster, i));
-		delete cluster;
-	}
+        delete cluster;
+    }
 }
 
 void CecModel::find_best_cec() {
-	boost::shared_ptr < std::vector<unsigned int>
-			> assignment(new std::vector<unsigned int>());
-	boost::shared_ptr<Hartigan> hartigan(
-			new Hartigan(this->m_config.get_params().log_nclusters,
-					this->m_config.get_params().log_energy));
+    boost::shared_ptr < std::vector<unsigned int>
+            > assignment(new std::vector<unsigned int>());
+    boost::shared_ptr<Hartigan> hartigan(
+                new Hartigan(this->m_config.get_params().log_nclusters,
+                             this->m_config.get_params().log_energy));
 
     Assignment *assignment_type = NULL;
-	switch (this->m_config.get_params().assignment_type) {
-	case krandom:
+    switch (this->m_config.get_params().assignment_type) {
+    case krandom:
         assignment_type = new RandomAssignment(*(m_config.get_params().dataset),
-				m_config.get_params().nclusters);
-		break;
-	case kkmeanspp:
+                                               m_config.get_params().nclusters);
+        break;
+    case kkmeanspp:
         assignment_type = new KmeansppAssignment(*(m_config.get_params().dataset),
-				m_config.get_params().nclusters);
-		break;
-	case kcentroids:
+                                                 m_config.get_params().nclusters);
+        break;
+    case kcentroids:
         assignment_type = new CentroidsAssignment(*(m_config.get_params().dataset),
-				m_config.get_params().centroids);
-		break;
+                                                  m_config.get_params().centroids);
+        break;
     case kno_assignment:
-		break; // TODO: handle no assignment
-	}
+        break; // TODO: handle no assignment
+    }
 
-	assignment->resize(m_config.get_params().dataset->n_rows);
+    assignment->resize(m_config.get_params().dataset->n_rows);
     (*assignment_type)(*assignment);
 
-	init(hartigan, assignment);
+    init(hartigan, assignment);
 
-	try {
-		loop();
+    try {
+        loop();
         CecModel best_cec = *this;
         gmum::Params params = m_config.get_params();
         for (unsigned int i = 1; i < params.nstart; ++i) {
             (*assignment_type)(*assignment);
-			init(hartigan, assignment);
-			loop();
+            init(hartigan, assignment);
+            loop();
 
             if (m_result.min_energy < best_cec.get_result().min_energy) {
-				best_cec = *this;
-			}
-		}
-		*this = best_cec;
-	} catch (std::exception &e) {
-		Rcpp::stop(std::string("exception ") + e.what() + " caught in CEC_new");
-	}
+                best_cec = *this;
+            }
+        }
+        *this = best_cec;
+    } catch (std::exception &e) {
+        Rcpp::stop(std::string("exception ") + e.what() + " caught in CEC_new");
+    }
     delete assignment_type;
 }
 
@@ -188,13 +188,13 @@ void CecModel::single_loop() {
 }
 
 double CecModel::entropy() {
-	double s = 0.0;
+    double s = 0.0;
 
     BOOST_FOREACH(boost::shared_ptr < Cluster > cluster, m_clusters)
-	{
-		s += cluster->entropy();
-	}
-	return s;
+    {
+        s += cluster->entropy();
+    }
+    return s;
 }
 
 std::vector<unsigned int> &CecModel::get_assignment() const {
@@ -202,7 +202,7 @@ std::vector<unsigned int> &CecModel::get_assignment() const {
 }
 
 void CecModel::set_assignment(std::vector<unsigned int> assignment) {
-	//TODO set assignment
+    //TODO set assignment
 }
 
 arma::mat CecModel::get_points() {
@@ -210,23 +210,23 @@ arma::mat CecModel::get_points() {
 }
 
 std::vector<arma::rowvec> CecModel::centers() const {
-	std::vector < arma::rowvec > array;
+    std::vector < arma::rowvec > array;
     array.reserve(m_clusters.size());
     for (unsigned int i = 0; i < m_clusters.size(); ++i) {
         array.push_back(m_clusters[i]->get_mean());
-	}
-	return array;
+    }
+    return array;
 }
 
 std::vector<arma::mat> CecModel::cov() const {
-	std::vector < arma::mat > array;
+    std::vector < arma::mat > array;
     array.reserve(m_clusters.size());
 
     for (unsigned int i = 0; i < m_clusters.size(); ++i) {
         array.push_back(m_clusters[i]->get_cov_mat(i, *m_assignment, *m_points));
-	}
+    }
 
-	return array;
+    return array;
 }
 
 unsigned int CecModel::iters() const {
@@ -242,9 +242,9 @@ std::list<double> CecModel::get_energy() const {
 }
 
 unsigned int CecModel::predict(std::vector<double> vec) const {
-	arma::rowvec x = arma::conv_to < arma::rowvec > ::from(vec);
+    arma::rowvec x = arma::conv_to < arma::rowvec > ::from(vec);
 
-	int assign = 0;
+    int assign = 0;
     double min_entropy_change = std::numeric_limits<double>::max();
 
     for (unsigned int i = 0; i < m_clusters.size(); ++i) {
@@ -255,40 +255,40 @@ unsigned int CecModel::predict(std::vector<double> vec) const {
 
         if (entropy_change < min_entropy_change) {
             min_entropy_change = entropy_change;
-			assign = i;
-		}
-	}
+            assign = i;
+        }
+    }
 
-	return assign;
+    return assign;
 }
 
 std::list<double> CecModel::predict(std::vector<double> vec, bool general) {
-	arma::rowvec x = arma::conv_to < arma::rowvec > ::from(vec);
-	std::list<double> out;
+    arma::rowvec x = arma::conv_to < arma::rowvec > ::from(vec);
+    std::list<double> out;
 
-	if (general)
+    if (general)
         for (unsigned int i = 0; i < m_clusters.size(); ++i) {
             arma::mat cov_mat = m_clusters[i]->get_cov_mat(i, *m_assignment, *m_points);
             arma::rowvec mean = m_clusters[i]->get_mean();
             if (!m_inv_set[i]) {
-				arma::mat Q, R;
+                arma::mat Q, R;
                 arma::qr_econ(Q, R, cov_mat);
-				int dim = mean.n_cols;
-				arma::mat Id = arma::eye(dim, dim);
+                int dim = mean.n_cols;
+                arma::mat Id = arma::eye(dim, dim);
                 m_inv[i] = solve(R, Id) * Q.t();
                 m_inv_set[i] = true;
-			}
+            }
 
             double const_multiplier = sqrt(
-                    1.0 / (pow(2 * M_PI, x.n_cols) * arma::det(cov_mat)));
-			double scalar = arma::as_scalar(
-                    (x - mean) * m_inv[i] * ((x - mean).t()));
-			double exponens = exp(-0.5 * scalar);
+                        1.0 / (pow(2 * M_PI, x.n_cols) * arma::det(cov_mat)));
+            double scalar = arma::as_scalar(
+                        (x - mean) * m_inv[i] * ((x - mean).t()));
+            double exponens = exp(-0.5 * scalar);
 
             out.push_back(const_multiplier * exponens);
-		}
+        }
 
-	return out;
+    return out;
 }
 
 const gmum::TotalResult& CecModel::get_result() const

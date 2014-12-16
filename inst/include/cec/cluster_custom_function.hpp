@@ -15,7 +15,7 @@ namespace gmum {
 class ClusterCustomFunction: public ClusterUseCovMat {
 private:
     std::string m_function_name;
-	void calculate_entropy();
+    void calculate_entropy();
     boost::shared_ptr<ClusterUseCovMat> create_instance(int count, const arma::rowvec& mean, const arma::mat& mat);
 public:
     ClusterCustomFunction(int count, const arma::rowvec& mean, const arma::mat& cov_mat, const std::string& function_name);

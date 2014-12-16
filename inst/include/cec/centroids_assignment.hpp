@@ -14,11 +14,11 @@ class CentroidsAssignment: public Assignment {
 protected:
     const std::list<std::vector<double> > &m_centroids;
 public:
-	CentroidsAssignment(const arma::mat &points,
-			const std::list<std::vector<double> > &centr) :
-            Assignment::Assignment(points, m_nclusters), m_centroids(centr) {
-	}
-	virtual void operator()(std::vector<unsigned int> &assignment);
+    CentroidsAssignment(const arma::mat &points,
+                        const std::list<std::vector<double> > &centr) :
+        Assignment::Assignment(points, m_nclusters), m_centroids(centr) {
+    }
+    virtual void operator()(std::vector<unsigned int> &assignment);
 };
 
 }

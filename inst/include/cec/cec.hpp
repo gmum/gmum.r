@@ -29,7 +29,7 @@ private:
     CecConfiguration m_config;
 
     boost::shared_ptr<gmum::Cluster> create_cluster(const gmum::ClusterParams &params,
-			int i);    
+                                                    int i);
     void find_best_cec();
     void init(boost::shared_ptr<gmum::Algorithm> algorithm,
               boost::shared_ptr<std::vector<unsigned int> > assignment);
@@ -40,16 +40,16 @@ public:
 
     void loop();
     void single_loop();
-	double entropy();
+    double entropy();
     std::vector<unsigned int> &get_assignment() const;
     void set_assignment(std::vector<unsigned int> m_assignment);
     arma::mat get_points();
-	std::vector<arma::rowvec> centers() const;
-	std::vector<arma::mat> cov() const;
-	unsigned int iters() const;
+    std::vector<arma::rowvec> centers() const;
+    std::vector<arma::mat> cov() const;
+    unsigned int iters() const;
     std::list<unsigned int> get_nclusters() const;
     std::list<double> get_energy() const;
-	unsigned int predict(std::vector<double> vec) const;
+    unsigned int predict(std::vector<double> vec) const;
     std::list<double> predict(std::vector<double> vec, bool general);
     const gmum::TotalResult& get_result() const;
     const std::vector<boost::shared_ptr<gmum::Cluster> >& get_clusters() const;

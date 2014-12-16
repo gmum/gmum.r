@@ -11,13 +11,13 @@ public:
             std::vector<unsigned int> & real_fits,
             std::vector<unsigned int> & my_fits) = 0;
 
-	double correct(std::vector<unsigned int> f,
-            std::vector<unsigned int> & real_fits,
-            std::vector<unsigned int> & my_fits, unsigned int nelements);
+    double correct(std::vector<unsigned int> f,
+                   std::vector<unsigned int> & real_fits,
+                   std::vector<unsigned int> & my_fits, unsigned int nelements);
 
     double evaluate_clustering(unsigned int nclusters, arma::mat & points,
-            std::vector<unsigned int> & real_fits,
-            std::vector<unsigned int> & my_fits);
+                               std::vector<unsigned int> & real_fits,
+                               std::vector<unsigned int> & my_fits);
 };
 
 class BestPermutationComparator: public ClusteringComparator {

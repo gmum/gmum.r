@@ -10,11 +10,11 @@ struct SingleResult {
     int switched;
     int nclusters;
     double energy;
-	SingleResult() {
-	}
+    SingleResult() {
+    }
     SingleResult(int switched, int nclusters, double energy) :
-            switched(switched), nclusters(nclusters), energy(energy) {
-	}
+        switched(switched), nclusters(nclusters), energy(energy) {
+    }
 };
 
 struct TotalResult {
@@ -24,16 +24,16 @@ struct TotalResult {
     std::list<double> energy;
     double min_energy;
 
-	TotalResult() :
-            iterations(0) {
-	}
+    TotalResult() :
+        iterations(0) {
+    }
     void append(SingleResult result, bool log_nlusters, bool log_energy) {
         iterations++;
         if (log_nlusters)
             nclusters.push_back(result.nclusters);
         if (log_energy)
             energy.push_back(result.energy);
-	}
+    }
 };
 
 class Algorithm {
@@ -41,16 +41,16 @@ protected:
     bool m_log_nclusters, m_log_energy;
 public:
     Algorithm(bool log_nclusters, bool log_energy) :
-            m_log_nclusters(log_nclusters), m_log_energy(log_energy) {
-	}
-	virtual TotalResult loop(const arma::mat &points,
-            std::vector<unsigned int> &assignment, double kill_threshold,
-			std::vector<boost::shared_ptr<Cluster> > &clusters)=0;
-	virtual SingleResult single_loop(const arma::mat &points,
-            std::vector<unsigned int> &assignment, double kill_threshold,
-			std::vector<boost::shared_ptr<Cluster> > &clusters)=0;
-	virtual ~Algorithm() {
-	}
+        m_log_nclusters(log_nclusters), m_log_energy(log_energy) {
+    }
+    virtual TotalResult loop(const arma::mat &points,
+                             std::vector<unsigned int> &assignment, double kill_threshold,
+                             std::vector<boost::shared_ptr<Cluster> > &clusters)=0;
+    virtual SingleResult single_loop(const arma::mat &points,
+                                     std::vector<unsigned int> &assignment, double kill_threshold,
+                                     std::vector<boost::shared_ptr<Cluster> > &clusters)=0;
+    virtual ~Algorithm() {
+    }
 
 };
 

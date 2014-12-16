@@ -10,7 +10,7 @@
 
 class ClusterReader {
 protected:
-	std::string prefix();
+    std::string prefix();
     std::string input_path();
     std::string cluster_path();
     std::string energy_path();

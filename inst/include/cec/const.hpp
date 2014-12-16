@@ -6,39 +6,39 @@
 namespace gmum {
 
 struct CONST {
-	static const char* dataset;
+    static const char* dataset;
     static const char* nclusters;
-	static const char* clusters;
-	static const char* nstart;
+    static const char* clusters;
+    static const char* nstart;
     static const char* centroids_list;
     static const char* kill_threshold;
-	static const char* itmax;
-	static const char* energy;
+    static const char* itmax;
+    static const char* energy;
     static const char* log_clusters;
 
-	struct CLUSTERS {
-		static const char* type;
-		static const char* standard;
-		static const char* full;
-		static const char* diagonal;
-		static const char* sphere;
-		static const char* fsphere;
-		static const char* custom;
+    struct CLUSTERS {
+        static const char* type;
+        static const char* standard;
+        static const char* full;
+        static const char* diagonal;
+        static const char* sphere;
+        static const char* fsphere;
+        static const char* custom;
 
-		static const char* init;
-		static const char* kmeanspp;
-		static const char* random;
-		static const char* centroids;
+        static const char* init;
+        static const char* kmeanspp;
+        static const char* random;
+        static const char* centroids;
 
         static const char* cov_mat;
-		static const char* radius;
+        static const char* radius;
         static const char* function_name;
-	};
+    };
 
     static const unsigned int nclusters_init;
     static const AssignmentType default_assignment;
 
-	struct ERRORS {
+    struct ERRORS {
         static const char* dataset_size;
         static const char* assignment_error;
         static const char* cov_mat_req;
@@ -46,7 +46,7 @@ struct CONST {
         static const char* cluster_rec_error;
         static const char* centroids_error;
         static const char* function_name_req;
-	};
+    };
 };
 
 const char* CONST::dataset = "x";
@@ -79,14 +79,14 @@ const char* CONST::CLUSTERS::function_name = "params.function";
 const unsigned int CONST::nclusters_init = 10;
 const AssignmentType CONST::default_assignment = kkmeanspp;
 const char* CONST::ERRORS::dataset_size =
-		"Size of dataset cannot be less than number of clusters!";
+        "Size of dataset cannot be less than number of clusters!";
 const char* CONST::ERRORS::assignment_error =
-		"Cannot recognize assignment initiation method";
+        "Cannot recognize assignment initiation method";
 const char* CONST::ERRORS::cov_mat_req = "Cavariance matrix required";
 const char* CONST::ERRORS::radius_req = "Radius is required";
 const char* CONST::ERRORS::cluster_rec_error = "Cannot recognise cluster type";
 const char* CONST::ERRORS::centroids_error =
-		"Number of centroids is different than number of clusters";
+        "Number of centroids is different than number of clusters";
 const char* CONST::ERRORS::function_name_req = "Function is required";
 
 }

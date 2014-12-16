@@ -17,41 +17,41 @@ std::string ClusterReader::prefix() {
 }
 
 std::string ClusterReader::cluster_path() {
-	return prefix() + "cluster.txt";
+    return prefix() + "cluster.txt";
 }
 
 std::string ClusterReader::input_path() {
-	return prefix() + "input.txt";
+    return prefix() + "input.txt";
 }
 
 std::string ClusterReader::energy_path() {
-	return prefix() + "energy.txt";
+    return prefix() + "energy.txt";
 }
 
 std::string ClusterReader::dimension_path() {
-	return prefix() + "dimension.txt";
+    return prefix() + "dimension.txt";
 }
 
 void ClusterReader::read_points() {
-	std::cout << " read points " << std::endl;
+    std::cout << " read points " << std::endl;
     std::ifstream file(input_path().c_str());
-	if (file.is_open()) {
-		std::string line;
-		while (file.good()) {
-			std::getline(file, line);
-			std::stringstream ss(line);
+    if (file.is_open()) {
+        std::string line;
+        while (file.good()) {
+            std::getline(file, line);
+            std::stringstream ss(line);
             std::vector<double> current_vector;
             if (line.size() < m_dim)
-				continue;
+                continue;
             for (unsigned int i = 0; i < m_dim; ++i) {
-				double x;
-				ss >> x;
+                double x;
+                ss >> x;
                 current_vector.push_back(x);
-			}
+            }
             m_points.push_back(current_vector);
-		}
-		file.close();
-	} else {
+        }
+        file.close();
+    } else {
         std::cerr << "Failed to open " << input_path() << std::endl;
         throw input_path() + "Failed to open ";
     }
@@ -59,55 +59,55 @@ void ClusterReader::read_points() {
 }
 
 void ClusterReader::read_clustering() {
-	std::cout << "reading clusters " << std::endl;
+    std::cout << "reading clusters " << std::endl;
     std::ifstream file(cluster_path().c_str());
-	if (file.is_open()) {
-		std::string line;
-		while (file.good()) {
-			std::getline(file, line);
-			std::stringstream ss(line);
-			if (line.size() == 0)
-				continue;
-			unsigned int x;
-			ss >> x;
+    if (file.is_open()) {
+        std::string line;
+        while (file.good()) {
+            std::getline(file, line);
+            std::stringstream ss(line);
+            if (line.size() == 0)
+                continue;
+            unsigned int x;
+            ss >> x;
             m_clustering.push_back(x);
-		}
-		file.close();
-	} else {
+        }
+        file.close();
+    } else {
         std::cerr << "Failed to open " << cluster_path() << std::endl;
         throw cluster_path() + "Failed to open ";
-	}
+    }
     std::cout << "Finished reading clusters. Read " << m_clustering.size()
-			<< std::endl;
+              << std::endl;
 }
 
 void ClusterReader::read_energy() {
     std::ifstream file(energy_path().c_str());
-	if (file.is_open()) {
+    if (file.is_open()) {
         file >> m_energy;
-		file.close();
-	} else {
+        file.close();
+    } else {
         std::cerr << "Failed to open " << energy_path() << std::endl;
         throw energy_path() + "Failed to open ";
-	}
+    }
 }
 
 void ClusterReader::read_dimension() {
     std::ifstream file(dimension_path().c_str());
-	if (file.is_open()) {
+    if (file.is_open()) {
         file >> m_dim;
-		file.close();
-	} else {
+        file.close();
+    } else {
         std::cerr << "Failed to open " << dimension_path() << std::endl;
         throw dimension_path() + "Failed to open ";
-	}
+    }
 }
 void ClusterReader::get_points(std::vector<std::vector<double> > & out) {
     if (m_points.size() == 0)
         read_points();
     for (std::vector<std::vector<double> >::iterator it = m_points.begin();
-            it != m_points.end(); ++it)
-		out.push_back(*it);
+         it != m_points.end(); ++it)
+        out.push_back(*it);
 
 }
 
@@ -115,8 +115,8 @@ void ClusterReader::get_clustering(std::vector<unsigned int> & out) {
     if (m_clustering.size() == 0)
         read_clustering();
     for (std::vector<unsigned int>::iterator it = m_clustering.begin();
-            it != m_clustering.end(); ++it)
-		out.push_back(*it);
+         it != m_clustering.end(); ++it)
+        out.push_back(*it);
 }
 
 double ClusterReader::get_energy() {
@@ -134,11 +134,11 @@ arma::mat ClusterReader::get_points_in_matrix() {
         read_points();
     unsigned int n = m_points.size();
     arma::mat result(n, m_dim);
-	for (unsigned int i = 0; i < n; ++i) {
+    for (unsigned int i = 0; i < n; ++i) {
         for (unsigned int j = 0; j < m_dim; ++j) {
             result(i, j) = m_points[i][j];
-		}
-	}
-	return result;
+        }
+    }
+    return result;
 }
 

@@ -14,31 +14,31 @@ namespace gmum {
 
 struct Pair {
     unsigned int point_number;
-	float distance;
-	Pair(unsigned int n) :
-            point_number(n), distance(0) {
-	}
-	bool operator<(Pair p) {
-		return distance >= p.distance;
-	}
+    float distance;
+    Pair(unsigned int n) :
+        point_number(n), distance(0) {
+    }
+    bool operator<(Pair p) {
+        return distance >= p.distance;
+    }
 };
 
 void init_assign_kmeanspp(std::vector<unsigned int> &assignment,
-        const arma::mat &points, unsigned int nclusters);
+                          const arma::mat &points, unsigned int nclusters);
 
 void calculate_distance(const std::vector<unsigned int> &centers,
-		std::list<Pair> &selected, const arma::mat &points);
+                        std::list<Pair> &selected, const arma::mat &points);
 
 std::list<Pair>::iterator choose(
-		boost::random::bernoulli_distribution<> &bernoulli,
-		boost::random::mt19937 &gen, std::list<Pair> &selected);
+        boost::random::bernoulli_distribution<> &bernoulli,
+        boost::random::mt19937 &gen, std::list<Pair> &selected);
 
 class KmeansppAssignment: public Assignment {
 public:
     KmeansppAssignment(const arma::mat &points, const int nclusters) :
-            Assignment::Assignment(points, nclusters) {
-	}
-	virtual void operator()(std::vector<unsigned int> &assignment);
+        Assignment::Assignment(points, nclusters) {
+    }
+    virtual void operator()(std::vector<unsigned int> &assignment);
 };
 }
 
