@@ -12,7 +12,7 @@ using namespace gmum;
 
 #define SHOW(x) std::cout << #x << " = " << x << std::endl
 TEST(Simple_1,IsEnergyCorrect) {
-    std::cout.precision(21);
+    // std::cout.precision(21);
     boost::shared_ptr<std::vector<unsigned int> > clustering(new std::vector<unsigned int>);
     ClusterReader cluster_reader("simple_1",2);
     cluster_reader.get_clustering(*clustering);
@@ -36,11 +36,11 @@ TEST(Simple_1,IsEnergyCorrect) {
     //conf->setMix(*clustering);
     CecModel cec(&conf);
 
-    std::cout << cec.entropy() << std::endl;
-    std::cout << cluster_reader.get_energy() << std::endl;
-    std::cout << " mean : " << cec.get_clusters()[0]->get_mean() << std::endl;
-    SHOW(cec.get_clusters()[0]->get_mean().n_rows );
-    SHOW(cec.get_clusters()[0]->get_mean().n_cols);
-    std::cout << cluster_reader.get_energy() << std::endl;
+    // std::cout << cec.entropy() << std::endl;
+    // std::cout << cluster_reader.get_energy() << std::endl;
+    // std::cout << " mean : " << cec.get_clusters()[0]->get_mean() << std::endl;
+    // SHOW(cec.get_clusters()[0]->get_mean().n_rows );
+    // SHOW(cec.get_clusters()[0]->get_mean().n_cols);
+    // std::cout << cluster_reader.get_energy() << std::endl;
     EXPECT_LT(std::abs(cec.entropy() - cluster_reader.get_energy()) , 1e-4);
 }

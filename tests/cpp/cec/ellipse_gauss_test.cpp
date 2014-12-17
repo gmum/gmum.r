@@ -19,8 +19,8 @@ TEST(EllipseGauss,answer_cluster_same_length) {
     cluster_reader.get_points(points);
     cluster_reader.get_clustering(clustering);
     arma::mat m = cluster_reader.get_points_in_matrix();
-    std::cout << "clustering.size() : " << clustering.size() << std::endl;
-    std::cout << "points.size() : " << points.size() << std::endl;
+    // std::cout << "clustering.size() : " << clustering.size() << std::endl;
+    // std::cout << "points.size() : " << points.size() << std::endl;
     EXPECT_EQ(points.size(), clustering.size());
     EXPECT_EQ(points.size(), m.n_rows);
     EXPECT_EQ(points[0].size(), m.n_cols);
@@ -55,7 +55,7 @@ TEST(EllipseGauss,real_test) {
         SingleResult sr;
         cec.loop();
         double percentage = comparator.evaluate_clustering(params.nclusters, *points, cec.get_assignment(), clustering);
-        std::cout << "Percentage " << percentage << std::endl;
+        // std::cout << "Percentage " << percentage << std::endl;
         // EXPECT_GT(percentage, 0.9);
         number_of_times_acceptable += (percentage >= 0.9) || (cec.entropy() < cluster_reader.get_energy()*1.5);
 

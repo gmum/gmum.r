@@ -30,7 +30,7 @@ protected:
         params.nstart = 10;
         //params.clusterType = kstandard;
         params.cluster_type = ksphere;
-        std::cout << "initialized data" << std::endl;
+        // std::cout << "initialized data" << std::endl;
     }
     boost::shared_ptr<std::vector<unsigned int> > clustering;
     boost::shared_ptr<arma::mat> points;
@@ -38,13 +38,11 @@ protected:
     Params params;
 };
 
-#define SHOW_CLUSTERING
-
 TEST_F(Mouse1Test,IsEnergyCorrect) {
     BestPermutationComparator comparator;
     int t = 20;
     int number_of_times_acceptable = 0;
-    std::cout << "Should get energy : " << energy;
+    // std::cout << "Should get energy : " << energy;
     for (int i = 0; i < t; ++i) {
         CecConfiguration conf;
         conf.set_params(params);
@@ -53,8 +51,8 @@ TEST_F(Mouse1Test,IsEnergyCorrect) {
         cec.loop();
         std::vector<unsigned int> assignment = cec.get_assignment();
         double percentage = comparator.evaluate_clustering(params.nclusters,*points,assignment,*clustering);
-        std::cout << "Percentage " << percentage << std::endl;
-        std::cout << "Energy " << cec.entropy() << std::endl;
+        // std::cout << "Percentage " << percentage << std::endl;
+        // std::cout << "Energy " << cec.entropy() << std::endl;
         number_of_times_acceptable += (percentage >= 0.9) || (cec.entropy() < energy*1.5);
 #ifdef SHOW_CLUSTERING
         std::cout << "BEGIN" << std::endl;

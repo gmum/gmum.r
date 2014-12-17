@@ -1,4 +1,4 @@
-dataset <- as.matrix(read.table("tests/cpp/data/mouse_1_spherical/input.txt"))
+dataset <- as.matrix(read.table("inst/data_sets/cec/mouse_1_spherical/input.txt"))
 
 # that is the dataset we want to cluster
 plot(dataset)
