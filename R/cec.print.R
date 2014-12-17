@@ -25,6 +25,6 @@ evalqOnLoad({
         print(x$cov())
     }
 
-    setMethod("print","Rcpp_cecModel", print.cec)
+    setMethod("print","Rcpp_CecModel", print.cec)
 
 })
