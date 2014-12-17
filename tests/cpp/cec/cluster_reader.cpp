@@ -13,7 +13,7 @@ ClusterReader::ClusterReader(const char * name) {
 }
 
 std::string ClusterReader::prefix() {
-    return std::string("data/") + m_folder_name + "/";
+    return std::string("../../inst/data_sets/cec/") + m_folder_name + "/";
 }
 
 std::string ClusterReader::cluster_path() {
@@ -33,7 +33,7 @@ std::string ClusterReader::dimension_path() {
 }
 
 void ClusterReader::read_points() {
-    std::cout << " read points " << std::endl;
+    // std::cout << " read points " << std::endl;
     std::ifstream file(input_path().c_str());
     if (file.is_open()) {
         std::string line;
@@ -55,11 +55,11 @@ void ClusterReader::read_points() {
         std::cerr << "Failed to open " << input_path() << std::endl;
         throw input_path() + "Failed to open ";
     }
-    std::cout << "Finish reading opening. Read " << m_points.size() << std::endl;
+    // std::cout << "Finish reading opening. Read " << m_points.size() << std::endl;
 }
 
 void ClusterReader::read_clustering() {
-    std::cout << "reading clusters " << std::endl;
+    // std::cout << "reading clusters " << std::endl;
     std::ifstream file(cluster_path().c_str());
     if (file.is_open()) {
         std::string line;
@@ -77,8 +77,7 @@ void ClusterReader::read_clustering() {
         std::cerr << "Failed to open " << cluster_path() << std::endl;
         throw cluster_path() + "Failed to open ";
     }
-    std::cout << "Finished reading clusters. Read " << m_clustering.size()
-              << std::endl;
+    // std::cout << "Finished reading clusters. Read " << m_clustering.size() << std::endl;
 }
 
 void ClusterReader::read_energy() {

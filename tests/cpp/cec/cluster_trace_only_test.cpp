@@ -48,11 +48,11 @@ TEST(TraceOnly,AddPoint) {
         ClusterStandard tmp(id,fits,tmp_matrix);
         arma::rowvec mean_online_difference = upref->get_mean() - real_m;
         float trace_diff = upref->get_cov_mat_trace() - arma::trace(covariance);
-        float relative_error = std::abs(trace_diff/arma::trace(covariance));
+        // float relative_error = std::abs(trace_diff/arma::trace(covariance));
 
         EXPECT_EQ(m->size(),tmp.size());
         EXPECT_LT(std::abs(trace_diff),acceptable_difference);
-        std::cout << i << " : " << relative_error << std::endl;
+        // std::cout << i << " : " << relative_error << std::endl;
         for (int j = 0; j < dim; ++j) {
             EXPECT_LT(std::abs(mean_online_difference(j)),acceptable_difference) << "at position" << j << " means differ by more than " << acceptable_difference;
         }
@@ -99,8 +99,8 @@ TEST(TraceOnly,removePoint) {
         ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m.get());
         arma::rowvec mean_online_difference = upref->get_mean() - real_m;
         float trace_diff = upref->get_cov_mat_trace() - arma::trace(covariance);
-        float relative_error = std::abs(trace_diff/arma::trace(covariance));
-        std::cout << i << " " << relative_error << std::endl;
+        // float relative_error = std::abs(trace_diff/arma::trace(covariance));
+        // std::cout << i << " " << relative_error << std::endl;
         EXPECT_EQ(m->size(),tmp.size());
         EXPECT_LT(std::abs(trace_diff), acceptable_difference);
         for (int j = 0; j < dim; ++j) {
