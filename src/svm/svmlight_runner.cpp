@@ -13,6 +13,8 @@
 
 #include "svmlight_runner.h"
 
+#define sign(x) ( ( (x) < 0 )  ?  -1   : ( (x) > 0 ) )
+
 
 SVMLightRunner::SVMLightRunner() {
 }
@@ -45,7 +47,7 @@ void SVMLightRunner::predict(SVMConfiguration &config) {
     // Number of docs is a number of rows in data matrix
     size_t n_docs = config.data.n_rows;
     config.result = arma::randu<arma::vec>(n_docs);
-    
+
     // For every doc
     for (int i=0; i < n_docs; ++i) {
         double doc_result = 0;
@@ -59,7 +61,8 @@ void SVMLightRunner::predict(SVMConfiguration &config) {
             doc_result += sum_j;
         }
         doc_result -= config.threshold_b;
-        config.result[i] = doc_result;
+        // Store only a class label
+        config.result[i] = sign(doc_result);
     }
 }
 
@@ -809,8 +812,7 @@ char * SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     for (long int j = 1; j <= config.data.n_cols; ++j) {
         ss << ' ' << j << ':' << std::setprecision(8) << config.data(line_num, j-1);
     }
-    ss << std::endl;
-    ss << "  ";
+    ss << ' ';
     line_string = ss.str();
 
     return (char*)line_string.c_str();
