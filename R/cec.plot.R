@@ -72,5 +72,5 @@ evalqOnLoad({
         }
     }
     
-    setMethod("plot", signature(x="Rcpp_cecModel"), plot.cec)
+    setMethod("plot", signature(x="Rcpp_CecModel"), plot.cec)
 })
