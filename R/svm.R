@@ -286,8 +286,8 @@ evalqOnLoad({
                   object$get_number_sv() ))
   }
   
-  plot.svm <<- function(x, mode="pca", dim1 = 1, dim2 = 2, log="") {
-    if (mode != "pca" && mode != "normal" && mode != "test" ) {
+  plot.svm <<- function(x, mode="normal", dim1 = 1, dim2 = 2, log="") {
+    if (mode != "pca" && mode != "normal" && mode != "contour" ) {
       stop("Wrong mode!") 
     }
     df =  data.frame( x$getX() )
@@ -325,8 +325,8 @@ evalqOnLoad({
         geom_abline(slope=s, intercept=int)
       plot
     }
-    else if (mode == "test") {    # test mode
-      warning("This is a test mode, it will change your svm model!")
+    else if (mode == "contour") {    # test mode
+      temp_target = x$getY()
       test_svm = x
       x_col = df[colnames(df)[1]]
       y_col = df[colnames(df)[2]]
@@ -349,11 +349,13 @@ evalqOnLoad({
       int = -C/B
 
       grid["target"] = target
+      x$setY(temp_target)
+      x$setX(data.matrix(df))
       plot <- ggplot()
       plot + 
-        geom_tile(data=grid, aes(x=x,y=y,fill=target)) +
-        geom_abline(slope=s, intercept=int)  +
+        geom_tile(data=grid, aes(x=x,y=y,fill=target)) + theme(legend.position="none") +
         geom_point(data=df, aes(X1, X2), colour=factor(t+6))
+      
     }
   }
   
