@@ -33,13 +33,10 @@ RCPP_MODULE(svm_wrapper) {
 			.method("setLibrary", &SVMConfiguration::setLibrary)
 			.method("setKernel", &SVMConfiguration::setKernel)
 			.method("setPreprocess", &SVMConfiguration::setPreprocess)
-			.method("set_verbosity", &SVMConfiguration::set_verbosity)
-
-      ;
+      .method("set_verbosity", &SVMConfiguration::set_verbosity)
+			;
 	class_<SVMClient>("SVMClient")
 			.constructor<SVMConfiguration*>()
-
-			.field("trained", &SVMClient::trained)
 
 			.method("setX", &SVMClient::setX)
 			.method("setY", &SVMClient::setY)
@@ -71,9 +68,13 @@ RCPP_MODULE(svm_wrapper) {
 			.method("getEps", &SVMClient::getEps)
 			.method("isShrinking", &SVMClient::isShrinking)
 			.method("isProbability", &SVMClient::isProbability)
+      
 			.method("getAlpha", &SVMClient::getAlpha)
 			.method("getBias", &SVMClient::getBias)
 			.method("getW", &SVMClient::getW)
+      .method("get_number_sv", &SVMClient::get_number_sv)
+      .method("get_number_class", &SVMClient::get_number_class)
+      .method("get_SV", &SVMClient::getSV)
 
 			.method("train", &SVMClient::train)
 			.method("predict", &SVMClient::predict)

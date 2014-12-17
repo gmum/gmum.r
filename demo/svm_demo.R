@@ -18,6 +18,9 @@ svm <- SVM( formula = X1~. ,
 x <- dataset.X(svm)
 y <- dataset.Y(svm)
 
+# You can print short summary of your SVM object
+summary(svm)
+
 # Classify your dataset using predict function
 prediction <- predict(svm, x)
 

@@ -3,6 +3,8 @@
 
 #include "svm_handler.h"
 #include "libsvm_runner.h"
+#include "two_e_svm_pre.h"
+#include "two_e_svm_post.h"
 #include "svm_basic.h"
 #include <vector>
 
@@ -15,7 +17,6 @@ private:
 public:
 	//constructors
 	SVMClient(SVMConfiguration*);
-	bool trained;
 
 	// data setters
 	void setX( arma::mat );
@@ -61,9 +62,12 @@ public:
 
 	// model getters
  // double** getSV(); // double**, std::vector, arma:mat ?
+  int get_number_sv();
+  int get_number_class();
 	double* getAlpha();
 	double getBias();
-	double* getW();
+	arma::vec getW();
+  arma::mat getSV();
 };
 
 #endif

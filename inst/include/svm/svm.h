@@ -1,5 +1,5 @@
-#ifndef _LIBSVM_H
-#define _LIBSVM_H
+#ifndef LIBSVM_H
+#define LIBSVM_H
 
 #define LIBSVM_VERSION 318
 
@@ -13,7 +13,7 @@ extern int libsvm_version;
 
 struct svm_node
 {
-	int index;
+  int index;
 	double value;
 };
 

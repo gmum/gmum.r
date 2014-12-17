@@ -7,27 +7,30 @@
 #include "svm_utils.h"
 
 using namespace arma;
-
+using namespace std;
 
 void TwoeSVMPostprocessor::processRequest(SVMConfiguration &data) {
   if (!data.prediction) {
-		int dim = data.data.n_cols;
-		mat arma_sv = SvmUtils::libtoarma(data.SV, data.l, dim);
-		vec arma_coefs = SvmUtils::arrtoarmavec(data.sv_coef, data.l);
-		//Xk is already transposed
-		//examples x dim
-		//DIM W: (nsv x 1)^T x nsv x dim = 1 x dim
-		mat tmp_w = arma_coefs.t() * arma_sv;
-		data.w = tmp_w.t();
+		// int dim = data.data.n_cols;
+		// cout << "SVs: " << data.l << endl;
+		// cout << "dim: " << dim << endl;
+		// cout << "Classes: " << data.nr_class << endl;
+		// for(int i = 0; i < data.nr_class; i++) {
+		// 	cout << "Class: " << i << " SVs: " << data.nSV[i];
+
 		//TODO: Use copying memory for better memory optimalization
 		//DIM PROJECTION: examps x dim x dim x 1 = exams x 1
-		double p_plus = stddev(SvmUtils::matrixByValue(data.data, data.target, 1) * data.w);
-		double p_minus = stddev(SvmUtils::matrixByValue(data.data, data.target, -1) * data.w);
+    data.w = data.inv_of_sqrt_of_cov.t() * data.w;
+		double p_plus = stddev(SvmUtils::matrixByValue(data.data, data.target, data.pos_target) * data.w);
+		double p_minus = stddev(SvmUtils::matrixByValue(data.data, data.target, data.neg_target) * data.w);
+    
 		//-rho = b
 		//TODO: consider multiclass examples
-		double b_dash = -(data.rho[0]) - (p_plus - p_minus) / (p_plus + p_minus);
+		double b_dash = data.getB() + (p_plus - p_minus) / (p_plus + p_minus);
 		data.rho[0] = -b_dash;
 	}
+	data.data = data.tmp_data;
+	data.target = data.tmp_target;
 }
 
 bool TwoeSVMPostprocessor::canHandle(SVMConfiguration& data) {
