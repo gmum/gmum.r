@@ -306,22 +306,20 @@ evalqOnLoad({
       int = -C/B
       
       plot = ggplot() +
-          geom_point(data=scores, aes(PC1, PC2), colour=factor(t+3)) + geom_abline(slope=s, intercept=int)
+          geom_point(data=scores, aes(PC1, PC2), colour=factor(t+2)) + geom_abline(slope=s, intercept=int)
       plot
     }
     else if (mode == "normal") { 
       if (dim1 > ncol(df) || dim2 > ncol(df)) {
         stop("Too large dimensions")
       }
-      #x = df[,'X1']
-      #y = df[,'X2']
       A = w[1]
       B = w[2]
       C = x$getBias()
       
       s = -A/B
       int = -C/B
-      plot = ggplot() + geom_point(data=df, aes(X1, X2), colour=factor(t+3))  +
+      plot = ggplot() + geom_point(data=df, aes(X1, X2), colour=factor(t+6))  +
         geom_abline(slope=s, intercept=int)
       plot
     }
