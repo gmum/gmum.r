@@ -103,19 +103,94 @@ hr.primary {
     margin-right: 10px;
 }
 
-.project-content {
-    border: 1px solid #fff;
-    border-radius: 10px;
+.project-feature {
     margin: 20px;
     padding: 10px;
 }
 
-.project-content {
-    border: 1px solid #fff;
+.project-feature h2 {
+    margin-bottom: 20px !important;
+    font-size: 55px;
+    font-weight: 300;
 }
 
-.project-content h2 {
+.project-feature .description {
+    border-top: 3px dashed #444;
+    padding-top: 20px;
+    font-size: 17px;
+}
+
+.project-module {
+    border: 3px dashed #c95353;
+    border-radius: 15px;
+    margin: 20px;
+    padding: 10px;
+}
+
+.project-module h2 {
     margin: 10px auto;
+    font-size: 55px;
+    font-weight: 300;
+}
+
+.project-module .description {
+    margin: 30px 0;
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.8;
+}
+
+.project-module.cec .feature {
+    margin: 40px auto 40px 10px;
+}
+
+.project-module.cec .feature i {
+    font-size: 22px;
+}
+
+.project-module.cec .feature span {
+    margin-left: 10px;
+    font-size: 22px;
+    line-height: 1.4;
+}
+
+.footer {
+    border-radius: 15px;
+    margin: 0;
+    padding: 10px 0;
+    line-height: 1.4;
+}
+
+#about .footer {
+    background-color: #d0d0d0;
+    display: inline-block;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+#about .footer .inline-link {
+    color: #686868;
+}
+
+#modules .footer {
+    background-color: #c95353;
+}
+
+#modules .footer .inline-link {
+    color: #fff;
+}
+
+.footer .inline-graphical-link {
+    margin: 0 10px;
+}
+
+.footer .inline-graphical-link a {
+    margin: 5px !important;
+    font-size: 30px;
+}
+
+.footer .inline-graphical-link i {
+    font-size: 30px;
 }
 
 .publication {
@@ -201,6 +276,7 @@ hr.primary {
 
 .post {
     background-color: #eee;
+    padding: 50px 0 0 0 !important;
 }
 
 .post .row {
@@ -215,13 +291,12 @@ hr.primary {
 }
 
 .post-info {
-    padding: 0 !important;
+    padding: 80px 0 !important;
     position: relative;
     color: #555;
 }
 
 .post-info .fixed {
-    border-right: 1px solid #ddd;
     padding: 0 40px !important;
     position: fixed;
 }
@@ -231,7 +306,8 @@ hr.primary {
 }
 
 .post-content {
-    padding-left: 50px !important;
+    background-color: #fff;
+    padding: 80px 50px !important;
     font-size: 120% !important;
     color: #555;
 }
@@ -244,7 +320,7 @@ hr.primary {
     margin-bottom: 12px;
     font-size: 18px;
     font-weight: 200;
-    line-height: 1.4
+    line-height: 1.4;
 }
 
 #about {
@@ -256,17 +332,18 @@ hr.primary {
     border-color: #686868;
 }
 
-#contents {
+#features {
+    background-color: #333;
+    color: #888;
+}
+
+#modules {
     background-color: #d95c5c;
     color: #fff;
 }
 
-#contents hr.primary {
+#modules hr.primary {
     border-color: #fff;
-}
-
-#contents .inline-link {
-    color: #fff;
 }
 
 #contribute {
