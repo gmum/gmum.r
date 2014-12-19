@@ -5,7 +5,7 @@
  * @copyright   GPLv3
  */
 
-
+#include <string.h>
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -416,9 +416,10 @@ int SVMLightRunner::librarySVMClassifyMain(
         newline = false;
         if (totdoc < config.target.n_rows) {
             newline = true;
-            //std::string stringline = "";
-            //line = (char*)stringline.c_str();
-            line = SVMConfigurationToSVMLightLearnInputLine(config, totdoc);
+            std::string str = SVMConfigurationToSVMLightLearnInputLine(config, totdoc);
+            line = new char[str.size() + 1];
+            std::copy(str.begin(), str.end(), line);
+            line[str.size()] = '\0';
         }
     }
     while(newline) {
@@ -478,9 +479,10 @@ int SVMLightRunner::librarySVMClassifyMain(
           newline = false;
           if (totdoc < config.target.n_rows) {
               newline = true;
-              //std::string stringline = "";
-              //line = (char*)stringline.c_str();
-              line = SVMConfigurationToSVMLightLearnInputLine(config, totdoc);
+              std::string str = SVMConfigurationToSVMLightLearnInputLine(config, totdoc);
+              line = new char[str.size() + 1];
+              std::copy(str.begin(), str.end(), line);
+              line[str.size()] = '\0';
           }
       }
     }  
@@ -739,9 +741,10 @@ void SVMLightRunner::libraryReadDocuments (
         newline = false;
         if (dnum < config.target.n_rows) {
             newline = true;
-            //std::string stringline = "";
-            //line = (char*)stringline.c_str();
-            line = SVMConfigurationToSVMLightLearnInputLine(config, dnum);
+            std::string str = SVMConfigurationToSVMLightLearnInputLine(config, dnum);
+            line = new char[str.size() + 1];
+            std::copy(str.begin(), str.end(), line);
+            line[str.size()] = '\0';
         }
     }
     while(newline) {
@@ -783,7 +786,10 @@ void SVMLightRunner::libraryReadDocuments (
           newline = false;
           if (dnum < config.target.n_rows) {
               newline = true;
-              line = SVMConfigurationToSVMLightLearnInputLine(config, dnum);
+              std::string str = SVMConfigurationToSVMLightLearnInputLine(config, dnum);
+              line = new char[str.size() + 1];
+              std::copy(str.begin(), str.end(), line);
+              line[str.size()] = '\0';
           }
       }
       // GMUM.R changes }
@@ -801,7 +807,7 @@ void SVMLightRunner::libraryReadDocuments (
 }
 
 
-char * SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
+std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     SVMConfiguration &config, long int line_num
 ) {
     std::cout << "[SVMLightRunner] SVMConfigurationToSVMLightLearnInputLine()" << std::endl;
@@ -812,10 +818,10 @@ char * SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     for (long int j = 1; j <= config.data.n_cols; ++j) {
         ss << ' ' << j << ':' << std::setprecision(8) << config.data(line_num, j-1);
     }
-    ss << ' ';
+    ss << std::endl;
     line_string = ss.str();
 
-    return (char*)line_string.c_str();
+    return line_string;
 }
 
 
@@ -838,6 +844,7 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
 }
 
 
+// TODO: Remove
 char ** SVMLightRunner::SVMConfigurationToSVMLightModelFile(
     SVMConfiguration &config
 ) {

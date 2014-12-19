@@ -8,6 +8,8 @@
 #ifndef SVMLIGHT_RUNNER_H
 #define SVMLIGHT_RUNNER_H
 
+#include <string>
+
 #include "svm_handler.h"
 
 
@@ -104,7 +106,7 @@ protected:
     /**
      * Convert SVMConfiguration to one line of SVMLight's `svm_learn` input
      */
-    char * SVMConfigurationToSVMLightLearnInputLine(
+    std::string SVMConfigurationToSVMLightLearnInputLine(
         SVMConfiguration &config, long int line_num
     );
 
