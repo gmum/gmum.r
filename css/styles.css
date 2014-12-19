@@ -323,6 +323,12 @@ hr.primary {
     line-height: 1.4;
 }
 
+.post-content .demo {
+    width: 100%;
+    display: block;
+    margin: auto;
+}
+
 #about {
     background-color: #e0e0e0;
     color: #686868;
@@ -346,13 +352,18 @@ hr.primary {
     border-color: #fff;
 }
 
-#contribute {
+#getting-started {
     background-color: #fff;
-    color: #aaa;
+    color: #888;
+}
+
+#contribute {
+    background-color: #e0e0e0;
+    color: #686868;
 }
 
 #contribute hr.primary {
-    border-color: #aaa;
+    border-color: #686868;
 }
 
 #contribute .inline-link {

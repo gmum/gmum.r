@@ -65,3 +65,7 @@ kramdown:
 
 redcloth:
   hard_breaks: true
+
+syntax-highlighting:
+  enabled: true
+  css: syntax.css
