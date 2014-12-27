@@ -140,15 +140,15 @@ hr.primary {
     line-height: 1.8;
 }
 
-.project-module.cec .feature {
+.project-module .feature {
     margin: 40px auto 40px 10px;
 }
 
-.project-module.cec .feature i {
+.project-module .feature i {
     font-size: 22px;
 }
 
-.project-module.cec .feature span {
+.project-module .feature span {
     margin-left: 10px;
     font-size: 22px;
     line-height: 1.4;
@@ -159,25 +159,6 @@ hr.primary {
     margin: 0;
     padding: 10px 0;
     line-height: 1.4;
-}
-
-#about .footer {
-    background-color: #d0d0d0;
-    display: inline-block;
-    margin: 0 auto;
-    padding: 10px;
-}
-
-#about .footer .inline-link {
-    color: #686868;
-}
-
-#modules .footer {
-    background-color: #c95353;
-}
-
-#modules .footer .inline-link {
-    color: #fff;
 }
 
 .footer .inline-graphical-link {
@@ -334,6 +315,17 @@ hr.primary {
     color: #686868;
 }
 
+#about .footer {
+    background-color: #d0d0d0;
+    display: inline-block;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+#about .footer .inline-link {
+    color: #686868;
+}
+
 #about hr.primary {
     border-color: #686868;
 }
@@ -352,6 +344,14 @@ hr.primary {
     border-color: #fff;
 }
 
+#modules .footer {
+    background-color: #c95353;
+}
+
+#modules .footer .inline-link {
+    color: #fff;
+}
+
 #getting-started {
     background-color: #fff;
     color: #888;
@@ -366,7 +366,14 @@ hr.primary {
     border-color: #686868;
 }
 
-#contribute .inline-link {
+#contribute .footer {
+    background-color: rgba(217, 92, 92, 0.1);
+    display: inline-block;
+    margin: auto 10px;
+    padding: 10px;
+}
+
+#contribute .footer .inline-graphical-link i, #contribute .footer .inline-graphical-link a {
     color: #d95c5c;
 }
 
