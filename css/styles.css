@@ -36,6 +36,15 @@ h2 {
     font-size: 40px;
 }
 
+pre {
+    background-color: #f0f0f0;
+}
+
+code {
+    font-family: monospace, 'Courier New', sans-serif;
+    font-size: 16px;
+}
+
 .icon-bar {
     background-color: #fff;
 }
@@ -355,6 +364,14 @@ hr.primary {
 #getting-started {
     background-color: #fff;
     color: #888;
+}
+
+#getting-started .lead {
+    margin: 20px 0;
+}
+
+#getting-started code {
+    font-size: 18px;
 }
 
 #contribute {
