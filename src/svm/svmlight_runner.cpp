@@ -13,8 +13,6 @@
 
 #include "svmlight_runner.h"
 
-#define sign(x) ( ( (x) < 0 )  ?  -1   : ( (x) > 0 ) )
-
 
 SVMLightRunner::SVMLightRunner() {
 }
@@ -36,7 +34,7 @@ void SVMLightRunner::processRequest(SVMConfiguration &config) {
         librarySVMLearnMain(0, argv, true, config);
     } else {
         predict(config);
-        // Below is a SVMLight library version
+        // SVMLight library version
         //librarySVMClassifyMain(0, argv, true, config);
     }
 }
@@ -61,8 +59,22 @@ void SVMLightRunner::predict(SVMConfiguration &config) {
             doc_result += sum_j;
         }
         doc_result -= config.threshold_b;
+
         // Store only a class label
-        config.result[i] = sign(doc_result);
+        arma::vec doc_result_vec;
+        doc_result_vec << doc_result << arma::endr;
+        arma::vec result_sign_vec = arma::sign(doc_result_vec);
+        doc_result = result_sign_vec[0];
+
+        // Store user-defined label
+        if (doc_result < 0) {
+            config.result[i] = config.label_negative;
+        } else if (doc_result > 0) {
+            config.result[i] = config.label_positive;
+        } else {
+            config.result[i] = 0;
+        }
+        //config.result[i] = doc_result;
     }
 }
 
@@ -814,7 +826,24 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     std::string line_string = "";
 
     std::ostringstream ss;
-    ss << std::setprecision(32) << config.target[line_num];
+    int target_value = config.target[line_num];
+    // Handle user-defined labels
+    if (target_value == config.label_negative) {
+        ss << -1;
+    } else if (target_value == config.label_positive) {
+        ss << 1;
+    } else if (!target_value) {
+        ss << 0;
+    } else {
+        // Init user-defined labels
+        if (!config.label_negative) {
+            config.label_negative = target_value;
+            ss << -1;
+        } else if (!config.label_positive) {
+            config.label_positive = target_value;
+            ss << 1;
+        }
+    }
     for (long int j = 1; j <= config.data.n_cols; ++j) {
         ss << ' ' << j << ':' << std::setprecision(8) << config.data(line_num, j-1);
     }

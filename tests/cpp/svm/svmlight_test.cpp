@@ -24,12 +24,16 @@ protected:
             << 0.4 << 1.1 << 1.0 << 0.0 << arma::endr;
         learing_target_01 << -1 << -1 << 1 << 1 << 1;
 
+        learing_target_02 << 2 << 2 << 4 << 4 << 4;
+
         testing_data_01
             << 0.4 << 0.9 << 0.0 << 1.0 << arma::endr
             << 0.5 << 0.9 << 0.0 << 1.0 << arma::endr
             << 0.4 << 1.0 << 1.0 << 0.0 << arma::endr
             << 0.5 << 1.0 << 1.0 << 0.0 << arma::endr;
         testing_target_01 << -1 << -1 << 1 << 1;
+
+        testing_target_02 << 2 << 2 << 4 << 4;
     }
 
     virtual ~SVMLightRunnerTest() {}
@@ -46,8 +50,10 @@ protected:
 
     arma::mat learing_data_01;
     arma::vec learing_target_01;
+    arma::vec learing_target_02;
     arma::mat testing_data_01;
     arma::vec testing_target_01;
+    arma::vec testing_target_02;
 };
 
 
@@ -104,9 +110,32 @@ TEST_F(SVMLightRunnerTest, processRequest_classification) {
     svm_config.setPrediction(true);
     svmlr.processRequest(svm_config);
 
-    ASSERT_DOUBLE_EQ(svm_config.result[0], -0.77104032841091008);
-    ASSERT_DOUBLE_EQ(svm_config.result[1], -0.77104080978434542);
-    ASSERT_DOUBLE_EQ(svm_config.result[2], 0.99999861699854542);
-    ASSERT_DOUBLE_EQ(svm_config.result[3], 0.9999981356251102);
+    ASSERT_DOUBLE_EQ(svm_config.result[0], -1);
+    ASSERT_DOUBLE_EQ(svm_config.result[1], -1);
+    ASSERT_DOUBLE_EQ(svm_config.result[2], 1);
+    ASSERT_DOUBLE_EQ(svm_config.result[3], 1);
+}
+
+TEST_F(SVMLightRunnerTest, processRequest_classification_tagged_classes) {
+    SVMLightRunner svmlr;
+    SVMConfiguration svm_config;
+
+    svm_config.data = learing_data_01;
+    svm_config.target = learing_target_02;
+    svm_config.setPrediction(false);
+    svmlr.processRequest(svm_config);
+
+    svm_config.data = testing_data_01;
+    svm_config.target = testing_target_02;
+    svm_config.setPrediction(true);
+    svmlr.processRequest(svm_config);
+
+    std::cout << svm_config.label_negative << std::endl;
+    std::cout << svm_config.label_positive << std::endl;
+
+    ASSERT_DOUBLE_EQ(svm_config.result[0], 2);
+    ASSERT_DOUBLE_EQ(svm_config.result[1], 2);
+    ASSERT_DOUBLE_EQ(svm_config.result[2], 4);
+    ASSERT_DOUBLE_EQ(svm_config.result[3], 4);
 }
 

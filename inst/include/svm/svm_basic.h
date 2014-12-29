@@ -65,6 +65,9 @@ public:
     char *kernel_parm_custom;   // Custom kernel parameter(s)
     arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
     arma::mat support_vectors;
+    // User-defined classification mode labels
+    int label_negative;
+    int label_positive;
 
 
 	/* for classification only */
