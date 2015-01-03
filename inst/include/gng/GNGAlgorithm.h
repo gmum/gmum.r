@@ -5,18 +5,22 @@
  * Created on 11 sierpień 2012, 10:02
  */
 
+
 #ifndef GNGALGORITHM_H
 #define GNGALGORITHM_H
 
 #include <memory>
 
+#include "utils/threading.h"
+#include "utils/circular_buffer.h"
+
 #include "GNGGlobals.h"
 #include "GNGGraph.h"
 #include "GNGDataset.h"
-#include "Threading.h"
 #include "UniformGrid.h"
 #include "GNGLazyErrorHeap.h"
 #include <string>
+#include <limits>
 using namespace std;
 
 namespace gmum {
@@ -25,14 +29,12 @@ namespace gmum {
  * The main class of the implementation dealing with computations.
  * It should be agnostic of inner working (memory management etc.) of the graph and database.
  * Also should not be concerned with locking logic.
- *
- * @note TODO: Implement GNG on GPU.
  */
 class GNGAlgorithm {
 public:
 	typedef std::list<int> Node;
 
-	double m_error; //error of the network
+	circular_buffer<double> m_mean_error; //error of the network
 	int m_lambda; //lambda parameter
 	double m_eps_w, m_eps_n; //epsilon of the winner and of the neighbour
 	int m_max_age;
@@ -43,6 +45,7 @@ public:
 
 	double m_utility_k;
 	int m_utility_option;
+
 
 	double m_alpha, m_betha;
 	double * m_betha_powers;
@@ -77,7 +80,12 @@ public:
 		None, BasicUtility
 	};
 
-	gmum::gmum_recursive_mutex status_change_mutex;
+
+	//For each iteration
+	gmum::fast_mutex m_statistics_mutex;
+
+
+	gmum::recursive_mutex status_change_mutex;
 	gmum::gmum_condition status_change_condition;
 
 	GngStatus gng_status() {
@@ -142,9 +150,31 @@ public:
 		return m_iteration;
 	}
 
-	double CalculateAccumulatedError();
+	double getMeanError() {
 
-	void TestAgeCorrectness();
+		gmum::scoped_lock<gmum::fast_mutex> alg_lock(m_statistics_mutex);
+		DBG(m_logger, 3, gmum::to_string(m_mean_error.size()));
+		if(m_mean_error.size() == 0){
+
+			return std::numeric_limits<double>::max();
+		}else{
+
+			return m_mean_error[m_mean_error.size()-1];
+		}
+	}
+
+	vector<double> getMeanErrorStatistics() {
+		gmum::scoped_lock<gmum::fast_mutex> alg_lock(m_statistics_mutex);
+		if(m_mean_error.size() == 0){
+			return vector<double>(1, std::numeric_limits<double>::max());
+		}else{
+			return vector<double>(m_mean_error.begin(), m_mean_error.end());
+		}
+	}
+
+	double calculateAccumulatedError();
+
+	void testAgeCorrectness();
 
 	virtual ~GNGAlgorithm() {
 		delete[] m_betha_powers_to_n;
@@ -155,7 +185,7 @@ private:
 
 	void resetUniformGrid(double * orig, double *axis, double l) {
 		ug->purge(orig, axis, l);
-		int maximum_index = m_g.getMaximumIndex();
+		int maximum_index = m_g.get_maximum_index();
 
 		REP(i, maximum_index + 1)
 		{
@@ -168,36 +198,33 @@ private:
 
 	GNGNode ** LargestErrorNodes();
 
-	/**
-	 * @brief Return two closest nodes (neurons) to the given example
-	 * @param[in] position Vector of coordinates of the example
-	 */
 	GNGNode ** TwoNearestNodes(const double * position);
 
-	void RandomInit();
+	void randomInit();
 
-	void AddNewNode();
+	void addNewNode();
 
-	void Adapt(const double * ex, const double * extra);
+	double adapt(const double * ex, const double * extra);
 
-	void ResizeUniformGrid();
+	void resizeUniformGrid();
 
 	bool stoppingCriterion() {
-		return m_g.getNumberNodes() > m_max_nodes;
+		return m_g.get_number_nodes() > m_max_nodes;
 	}
 
-	void IncreaseErrorNew(GNGNode * node, double error) {
-		FixErrorNew(node);
+	void increaseErrorNew(GNGNode * node, double error) {
+		fixErrorNew(node);
 		assert(m_lambda - s <= m_betha_powers_size -1);
 		node->error += m_betha_powers[m_lambda - s] * error;
 		errorHeap.updateLazy(node->nr);
 	}
 
-	void FixErrorNew(GNGNode * node) {
+	void fixErrorNew(GNGNode * node) {
+
 		if (node->error_cycle == c)
 			return;
 
-		if(c - node->error_cycle >= m_betha_powers_to_n_length){
+		while(c - node->error_cycle > m_betha_powers_to_n_length - 1){
 			DBG_2(m_logger, 5, "Recreating m_betha_powers_to_n");
 			delete[] m_betha_powers_to_n;
 			m_betha_powers_to_n_length *= 2;
@@ -210,88 +237,83 @@ private:
 
 		node->error = m_betha_powers_to_n[c - node->error_cycle] * node->error;
 		node->error_cycle = c;
+
 	}
 
-	double GetMaximumError() const {
+	double getMaximumError() const {
 		double max_error = 0;
-		int maximumIndex = m_g.getMaximumIndex();
-		REP(i,maximumIndex+1)
-		{
-			if (m_g.existsNode(i)) {
+		int maximum_index = m_g.get_maximum_index();
+		REP(i,maximum_index+1)
+			if (m_g.existsNode(i))
 				max_error = std::max(max_error, m_g[i].error);
-			}
-		}
 		return max_error;
 	}
 
-	void DecreaseAllErrorsNew() {
+	void decreaseAllErrorsNew() {
 		return;
 	}
 
-	void DecreaseErrorNew(GNGNode * node) {
-		FixErrorNew(node);
+	void decreaseErrorNew(GNGNode * node) {
+		fixErrorNew(node);
 		node->error = m_alpha * node->error;
 		errorHeap.updateLazy(node->nr);
 	}
 
-	void SetErrorNew(GNGNode * node, double error) {
+	void setErrorNew(GNGNode * node, double error) {
 		node->error = error;
 		node->error_cycle = c;
 		errorHeap.insertLazy(node->nr);
 	}
 
-	void IncreaseError(GNGNode * node, double error) {
+	void increaseError(GNGNode * node, double error) {
 		node->error += error;
 	}
 
-	void DecreaseAllErrors() {
-		int maximumIndex = m_g.getMaximumIndex();
-		REP(i,maximumIndex+1)
-		{
-			if (m_g.existsNode(i)) {
+	void decreaseAllErrors() {
+		int maximum_index = m_g.get_maximum_index();
+		REP(i,maximum_index+1)
+			if (m_g.existsNode(i))
 				m_g[i].error = m_betha * m_g[i].error;
-			}
-		}
 	}
 
-	void DecreaseError(GNGNode * node) {
+	void decreaseError(GNGNode * node) {
 		node->error = m_alpha * node->error;
 	}
 
-	void SetError(GNGNode * node, double error) {
+	void setError(GNGNode * node, double error) {
 		node->error = error;
 	}
 
 	// Note: this code is not optimal and is inserted only for research purposes
 
-	double get_utility(int i) {
+	double getUtility(int i) {
 		return m_g[i].utility;
 	}
 
-	void set_utility(int i, double u) {
+	void setUtility(int i, double u) {
 		m_g[i].utility = u;
 	}
 
-	void utility_criterion_check() {
+	void utilityCriterionCheck() {
 
-		if (m_g.getNumberNodes() < 10)
+		if (m_g.get_number_nodes() < 10)
 			return; //just in case
 
-		double max_error = this->GetMaximumError();
-		int maximumIndex = m_g.getMaximumIndex();
+		double max_error = this->getMaximumError();
+		int maximum_index = m_g.get_maximum_index();
 
 		double min_utility = 100000000;
 		int min_utility_index = -1;
-		for (int i = 0; i <= maximumIndex; ++i) {
-			if (min_utility > get_utility(i)) {
-				min_utility = get_utility(i);
+
+		for (int i = 0; i <= maximum_index; ++i)
+			if (min_utility > getUtility(i)) {
+				min_utility = getUtility(i);
 				min_utility_index = i;
 			}
-		}
 
-		if (m_g.existsNode(min_utility_index)
-				&& max_error / get_utility(min_utility_index) > m_utility_k) {
-			DBG(m_logger,2, "GNGAlgorithm:: removing node with utility "+gmum::to_string(get_utility(min_utility_index)) + " max error "+gmum::to_string(max_error));
+		if (m_g.existsNode(min_utility_index) && max_error / getUtility(min_utility_index) > m_utility_k) {
+
+			DBG(m_logger,2, "GNGAlgorithm:: removing node with utility "+gmum::to_string(getUtility(min_utility_index)) + " max error "+gmum::to_string(max_error));
 
 			DBG(m_logger,2,gmum::to_string<double>(max_error));
 
@@ -302,18 +324,15 @@ private:
 			}
 
 			m_g.deleteNode(min_utility_index);
-			set_utility(min_utility_index, 0);
+			setUtility(min_utility_index, 0);
 		}
 
 	}
-	void decrease_all_utility() {
-		int maximumIndex = m_g.getMaximumIndex();
-		for (int i = 0; i <= maximumIndex; ++i) {
-			if (m_g.existsNode(i)) {
-				set_utility(i, get_utility(i) * (m_betha));
-			}
-		}
-
+	void decreaseAllUtility() {
+		int maximum_index = m_g.get_maximum_index();
+		for (int i = 0; i <= maximum_index; ++i)
+			if (m_g.existsNode(i))
+				setUtility(i, getUtility(i) * (m_betha));
 	}
 };
 
@@ -321,12 +340,10 @@ private:
 struct GNGGraphAccessHack {
 	static GNGGraph * pool;
 	static double dist(int index, double *position) {
-		return pool->getEuclideanDist((*pool)[index].position, position);
+		return pool->get_euclidean_dist((*pool)[index].position, position);
 	}
 };
 
-//	typedef boost::posix_time::ptime Time;
-//	typedef boost::posix_time::time_duration TimeDuration;
 
 }
 
