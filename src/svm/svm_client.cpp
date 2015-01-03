@@ -1,4 +1,8 @@
 #include "svm_client.h"
+#include "libsvm_runner.h"
+#include "svmlight_runner.h"
+#include "two_e_svm_pre.h"
+#include "two_e_svm_post.h"
 
 // Constructor
 SVMClient::SVMClient(SVMConfiguration *config) {
