@@ -7,6 +7,7 @@ SVMConfiguration::SVMConfiguration() {
 	this->prediction = false;
 	SVMConfiguration::setDefaultParams();
 }
+
 SVMConfiguration::SVMConfiguration(bool prediction) {
 	this->prediction = prediction;
 }
@@ -46,18 +47,6 @@ bool SVMConfiguration::isPrediction() {
 
 void SVMConfiguration::setPrediction(bool prediction) {
 	this->prediction = prediction;
-}
-
-void SVMConfiguration::createParams(std::string kernel_type,
-		std::string svm_type, std::string preprocess, int degree, double gamma,
-		double coef0) {
-	if (preprocess == "norm") {
-		Preprocess prep = NORM;
-		this->preprocess = prep;
-	} else {
-		Preprocess prep = NONE;
-		this->preprocess = prep;
-	}
 }
 
 void SVMConfiguration::setWeights( Rcpp::NumericVector weights ) {
@@ -101,10 +90,19 @@ void SVMConfiguration::setPreprocess( std::string preprocess ) {
 	}
 }
 
+void SVMConfiguration::set_verbosity(int verbosity){
+  this->log.verbosity = verbosity;
+}
+
+double SVMConfiguration::getB() {
+  return -rho[0];
+}
+
 void SVMConfiguration::setDefaultParams() {
 	library = LIBSVM;
 	svm_type = C_SVC;
 	kernel_type = _LINEAR;
+  preprocess = NONE;
 	degree = 3;
 	gamma = 0;	// 1/num_features
 	coef0 = 0;
@@ -116,7 +114,7 @@ void SVMConfiguration::setDefaultParams() {
 	nr_weight = 0;
 	weight_label = NULL;
 	weight = NULL;
-
+	cov_eps_smoothing = 1.0e-10;
 //	Probably not necessery
 	nu = 0.5;
 	p = 0.1;

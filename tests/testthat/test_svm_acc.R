@@ -33,7 +33,7 @@ test_that('accuracy checks input size', {
   
   expect_error(svm.accuracy(target,pred), "Prediction's and target's length don't match!")          
 })
-print("test::accuracy error")
+print("test::accuracy chcecks inputs size")
 
 
 

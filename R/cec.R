@@ -165,7 +165,7 @@ evalqOnLoad({
       if (control.itmax <= 0)
         stop("Max number of iterations should be a positive integer!");
       
-        config <- new(cecConfiguration)
+        config <- new(CecConfiguration)
         config$setDataSet(x)
         config$setEps(control.eps)      
         config$setMix(params.mix) 
@@ -182,7 +182,7 @@ evalqOnLoad({
         config$setItmax(control.itmax)
         config$setIters(log.iters)
       
-        model <- new(cecModel, config)
+        model <- new(CecModel, config)
         model
     }
 
@@ -192,6 +192,10 @@ evalqOnLoad({
 
     entropy.cec <<- function(c) {
         c$entropy()
+    }
+
+    energy.cec <<- function(c) {
+        c$energy()
     }
 
     y.cec <<- function(c) {
@@ -232,6 +236,7 @@ evalqOnLoad({
     
     setGeneric("loop", function(c) standardGeneric("loop"))
     setGeneric("entropy", function(c) standardGeneric("entropy"))
+    setGeneric("energy", function(c) standardGeneric("energy"))
     setGeneric("y", function(c) standardGeneric("y"))
     setGeneric("centers", function(c) standardGeneric("centers"))
     setGeneric("cov", function(c) standardGeneric("cov"))
@@ -242,15 +247,16 @@ evalqOnLoad({
     setGeneric("log.iters", function(c) standardGeneric("log.iters"))
     setGeneric("nstart", function(c) standardGeneric("nstart"))
     
-    setMethod("loop", "Rcpp_cecModel", loop.cec)
-    setMethod("entropy", "Rcpp_cecModel", entropy.cec)
-    setMethod("y", "Rcpp_cecModel", y.cec)
-    setMethod("centers", "Rcpp_cecModel", centers.cec)
-    setMethod("cov", "Rcpp_cecModel", cov.cec)
-    setMethod("predictCluster", "Rcpp_cecModel", predictCluster.cec)
-    setMethod("predictClusters", "Rcpp_cecModel", predictClusters.cec)
-    setMethod("log.ncluster", "Rcpp_cecModel", log.ncluster.cec)
-    setMethod("log.energy", "Rcpp_cecModel", log.energy.cec)
-    setMethod("log.iters", "Rcpp_cecModel", log.iters.cec)
-    setMethod("nstart", "Rcpp_cecModel", nstart.cec)
+    setMethod("loop", "Rcpp_CecModel", loop.cec)
+    setMethod("entropy", "Rcpp_CecModel", entropy.cec)
+    setMethod("energy", "Rcpp_CecModel", energy.cec)
+    setMethod("y", "Rcpp_CecModel", y.cec)
+    setMethod("centers", "Rcpp_CecModel", centers.cec)
+    setMethod("cov", "Rcpp_CecModel", cov.cec)
+    setMethod("predictCluster", "Rcpp_CecModel", predictCluster.cec)
+    setMethod("predictClusters", "Rcpp_CecModel", predictClusters.cec)
+    setMethod("log.ncluster", "Rcpp_CecModel", log.ncluster.cec)
+    setMethod("log.energy", "Rcpp_CecModel", log.energy.cec)
+    setMethod("log.iters", "Rcpp_CecModel", log.iters.cec)
+    setMethod("nstart", "Rcpp_CecModel", nstart.cec)
 })

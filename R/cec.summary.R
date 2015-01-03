@@ -31,6 +31,6 @@ evalqOnLoad({
         print(data.frame(names, Length, Class, Mode), row.names=FALSE)
     }
 
-    setMethod("summary","Rcpp_cecModel",summary.cec)
+    setMethod("summary","Rcpp_CecModel",summary.cec)
 
 })
