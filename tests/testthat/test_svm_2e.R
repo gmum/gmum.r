@@ -3,9 +3,9 @@ library('gmum.r')
 
 test_that("2e svm works with 2e dataset", {
   
-  ds = svm.dataset.2e()
-  formula = V3 ~ .
-  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "2e", C=10);
+  ds <- svm.dataset.2e()
+  formula <- V3 ~ .
+  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep="2e", C=10);
   
   x <- svm$getX()
   target <- svm$getY()
@@ -18,9 +18,9 @@ print("test::2eSVM works with 2e dataset")
 
 test_that("2e svm works with breast cancer dataset", {
   
-  ds = svm.dataset.breast_cancer()
-  formula = X1 ~ .
-  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "2e", C=10);
+  ds <- svm.dataset.breast_cancer()
+  formula <- X1 ~ .
+  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep="2e", C=10);
   
   x <- svm$getX()
   target <- svm$getY()
@@ -34,12 +34,12 @@ print("test::2eSVM works with breast cancer dataset")
 
 test_that("2e svm works better then normal SVM with breast cancer dataset", {
   
-  ds = svm.dataset.breast_cancer()
-  ds2 = svm.dataset.breast_cancer()
-  formula = X1 ~ .
+  ds <- svm.dataset.breast_cancer()
+  ds2 <- svm.dataset.breast_cancer()
+  formula <- X1 ~ .
   
-  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "none", C=10);
-  twoe_svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "2e", C=10);
+  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep="none", C=10);
+  twoe_svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep="2e", C=10);
   
   x <- svm$getX()
   target <- svm$getY()
