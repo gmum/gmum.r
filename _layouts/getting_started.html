@@ -1,0 +1,90 @@
+{% include header.html %}
+
+{% include navbar.html %}
+
+<section class="container-fluid" id="getting-started">
+    <div class="row head">
+        <div class="col-sm-8 col-sm-offset-2 text-center">
+            <h1>getting started</h1>
+            <hr class="primary">
+            <i class="fa fa-power-off fa-2x title-decoration" style="background-color: #fff;"></i>
+        </div>
+    </div>
+
+    <div class="col-sm-8 col-sm-offset-2">
+        <p class="lead">
+            We would like to help you get started. At first, let's include packages required for this presentation:
+        </p>
+
+        <pre><code class="r">library(gmum.r)<br>library(ggplot2)</code></pre>
+
+        <p class="lead">
+            Now we might prepare two simple ellipsoids, which act as a data set for further computation:
+        </p>
+
+        <pre><code class="r">dataset <- svm.dataset.2e()</code></pre>
+
+        <p class="lead">
+            Let's make the column names be more descriptive and drop them with class labels:
+        </p>
+
+        <pre><code class="r">colnames(dataset) <- c("X", "Y", "Target")<br>dataset <- dataset[c("X", "Y")]</code></pre>
+
+        <p class="lead">
+            If we plot this data set, we should see something like this:
+        </p>
+
+        <img src="http://gmum.net/files/gmum.r/img/page/svm-sample-plot.png">
+
+        <p class="lead">
+            Such data set can be easily clustered in the next step. In this example we would like to get two
+            clusters from the data set, so we set <i>k</i> to be equal to 2:
+        </p>
+
+        <pre><code class="r">clusters <- CEC(x=dataset, k=2)</code></pre>
+
+        <p class="lead">
+            Clusters appear in the plot like this:
+        </p>
+
+        <img src="http://gmum.net/files/gmum.r/img/page/cec-sample-plot.png">
+
+        <p class="lead">
+            We need labels to be able to train SVM, let's add them:
+        </p>
+
+        <pre><code class="r">target <- clusters$y()<br>dataset['Target'] = target</code></pre>
+
+        <p class="lead">
+            Now it's a high time we trained SVM:
+        </p>
+
+        <pre><code class="r">formula <- Target ~ .<br>svm <- SVM(formula, data=dataset, lib='libsvm', kernel='linear', C=10)</code></pre>
+
+        <p class="lead">
+            The decision boundary should be as follows:
+        </p>
+
+        <img src="http://gmum.net/files/gmum.r/img/page/svm-decision-boundary-plot.png">
+
+        <p class="lead">
+            Alright, SVM has been trained. Next we may test our SVM on some sample data. Let's pick a sample matrix:
+        </p>
+
+        <pre><code class="r">test <- matrix(rnorm(200, mean=0, sd=2), , 2)</code></pre>
+
+        <p class="lead">
+            And run prediction:
+        </p>
+
+        <pre><code class="r">prediction <- predict(svm, test)<br>df <- data.frame(X=test[,1], Y=test[,2], Target=prediction)<br>result <- ggplot() + geom_point(data=df, mapping=aes(X,Y), colour=factor(df$Target + 1))</code></pre>
+
+        <p class="lead">
+            Finally, we can plot the result and see effects of our prediction:
+        </p>
+
+        <img src="http://gmum.net/files/gmum.r/img/page/result-plot.png">
+    </div>
+</section>
+
+{% include footer.html %}

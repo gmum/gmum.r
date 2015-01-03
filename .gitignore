@@ -6,3 +6,4 @@ _site/
 *.swp
 *.vim
 *.lock
+*.DS_Store

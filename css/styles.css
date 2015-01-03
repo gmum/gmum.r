@@ -374,6 +374,10 @@ hr.primary {
     font-size: 18px;
 }
 
+#getting-started img {
+    width: 100%;
+}
+
 #contribute {
     background-color: #e0e0e0;
     color: #686868;
