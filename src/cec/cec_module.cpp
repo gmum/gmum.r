@@ -32,7 +32,6 @@ RCPP_MODULE(cec) {
             .method("setFunction", &CecConfiguration::set_function)
             .method("setItmax", &CecConfiguration::set_it_max)
             .method("setIters", &CecConfiguration::set_iters);
-    //.field("x", &cecConfiguration::data)
 
     std::list<double> (CecModel::*predict_1)(std::vector<double>,
                                              bool) = &CecModel::predict;
