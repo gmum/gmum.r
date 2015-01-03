@@ -1,5 +1,5 @@
 library(testthat)
-library("GrowingNeuralGas")
+library('gmum.r')
 library(igraph)
 
 
