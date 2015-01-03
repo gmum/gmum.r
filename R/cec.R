@@ -23,6 +23,7 @@
 #' @param log.energy record collected energy of all clusters in each iteration
 #' @param log.ncluster record number of clusters in each iteration
 #' @param log.iters record number of iterations
+#' 
 CEC <- NULL
 
 #' @title loop
@@ -32,6 +33,7 @@ CEC <- NULL
 #' @docType methods
 #'
 #' @param c CEC model object
+#' 
 loop.cec <- NULL
 
 #' @title entropy
@@ -41,6 +43,7 @@ loop.cec <- NULL
 #' @docType methods
 #'
 #' @param c CEC model object
+#' 
 entropy.cec <- NULL
 
 #' @title y
@@ -49,6 +52,7 @@ entropy.cec <- NULL
 #' @docType methods
 #'
 #' @param c CEC model object
+#' 
 y.cec <- NULL
 
 #' @title centers
@@ -58,6 +62,7 @@ y.cec <- NULL
 #' @docType methods
 #'
 #' @param c CEC model object
+#' 
 centers.cec <- NULL
 
 #' @title cov
@@ -67,6 +72,7 @@ centers.cec <- NULL
 #' @docType methods
 #'
 #' @param c CEC model object
+#' 
 cov.cec <- NULL
 
 #' @title predictCluster
@@ -77,7 +83,9 @@ cov.cec <- NULL
 #'
 #' @param c CEC model object
 #' @param vec given point
+#' 
 predictCluster.cec <- NULL
+
 
 #' @title predictClusters
 #' 
@@ -87,6 +95,7 @@ predictCluster.cec <- NULL
 #'
 #' @param c CEC model object
 #' @param vec given point
+#' 
 predictClusters.cec <- NULL
 
 #' @title log.ncluster.cec
@@ -97,6 +106,7 @@ predictClusters.cec <- NULL
 #' @docType methods
 #'
 #' @param c CEC model object
+#' 
 log.ncluster.cec <- NULL
 
 #' @title log.energy.cec
@@ -107,6 +117,7 @@ log.ncluster.cec <- NULL
 #' @docType methods
 #'
 #' @param c CEC model object
+#' 
 log.energy.cec <- NULL
 
 #' @title log.iters.cec
@@ -116,6 +127,7 @@ log.energy.cec <- NULL
 #' @docType methods
 #'
 #' @param c CEC model object
+#' 
 log.iters.cec <- NULL
 
 #' @title nstart
@@ -126,6 +138,7 @@ log.iters.cec <- NULL
 #' @docType methods
 #'
 #' @param c CEC model object
+#' 
 nstart.cec <- NULL
 
 loadModule('cec', TRUE)
