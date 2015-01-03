@@ -14,16 +14,16 @@
 int libsvm_version = LIBSVM_VERSION;
 typedef float Qfloat;
 typedef signed char schar;
-#ifndef min
-template <class T> static inline T min(T x,T y) { return (x<y)?x:y; }
-#endif
-#ifndef max
-template <class T> static inline T max(T x,T y) { return (x>y)?x:y; }
-#endif
-template <class T> static inline void swap(T& x, T& y) { T t=x; x=y; y=t; }
+//#ifndef min
+//template <class T> static inline T min(T x,T y) { return (x<y)?x:y; }
+//#endif
+//#ifndef max
+//template <class T> static inline T max(T x,T y) { return (x>y)?x:y; }
+//#endif
+//template <class T> static inline void swap(T& x, T& y) { T t=x; x=y; y=t; }
 template <class S, class T> static inline void clone(T*& dst, S* src, int n)
 {
-	dst = new T[n];
+  dst = new T[n];
 	memcpy((void *)dst,(void *)src,sizeof(T)*n);
 }
 static inline double powi(double base, int times)
@@ -459,7 +459,7 @@ void Solver::reconstruct_gradient(Logger &log)
 			nr_free++;
 
 	if(2*nr_free < active_size)
-		LOG(log, LogLevel::Warning, "WARNING: using -h 0 may be faster");
+		LOG(log, LogLevel::WARNING, "WARNING: using -h 0 may be faster");
 
 	if (nr_free*l > 2*active_size*(l-active_size))
 	{
@@ -717,7 +717,7 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 			reconstruct_gradient(log);
 			active_size = l;
 		}
-		LOG(log, LogLevel::Warning, "WARNING: reaching max number of iterations");
+		LOG(log, LogLevel::WARNING, "WARNING: reaching max number of iterations");
 
 	}
 
@@ -752,7 +752,7 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 	si->upper_bound_p = Cp;
 	si->upper_bound_n = Cn;
 
-	LOG(log, LogLevel::Debug, "optimization finished, #iter = " + to_string(iter));
+	LOG(log, LogLevel::INFO, "optimization finished, #iter = " + to_string(iter));
 
 	delete[] p;
 	delete[] y;
@@ -1443,7 +1443,7 @@ static void solve_c_svc(
 		sum_alpha += alpha[i];
 
 	if (Cp==Cn)
-		LOG(log, LogLevel::Debug, "nu = " + to_string(sum_alpha/(Cp*prob->l)));
+		LOG(log, LogLevel::DEBUG, "nu = " + to_string(sum_alpha/(Cp*prob->l)));
 
 	for(i=0;i<l;i++)
 		alpha[i] *= y[i];
@@ -1493,7 +1493,7 @@ static void solve_nu_svc(
 		alpha, 1.0, 1.0, param->eps, si,  param->shrinking, log);
 	double r = si->r;
 
-	LOG(log, LogLevel::Debug, "C = " + to_string(1/r));
+	LOG(log, LogLevel::DEBUG, "C = " + to_string(1/r));
 
 	for(i=0;i<l;i++)
 		alpha[i] *= y[i]/r;
@@ -1571,7 +1571,7 @@ static void solve_epsilon_svr(
 		sum_alpha += fabs(alpha[i]);
 	}
 
-	LOG(log, LogLevel::Debug, "nu = " + to_string(sum_alpha/(param->C*l)));
+	LOG(log, LogLevel::DEBUG, "nu = " + to_string(sum_alpha/(param->C*l)));
 
 	delete[] alpha2;
 	delete[] linear_term;
@@ -1606,7 +1606,7 @@ static void solve_nu_svr(
 	s.Solve(2*l, SVR_Q(*prob,*param), linear_term, y,
 		alpha2, C, C, param->eps, si, param->shrinking, log);
 
-	LOG(log, LogLevel::Debug, "epsilon = " + to_string(-si->r));
+	LOG(log, LogLevel::DEBUG, "epsilon = " + to_string(-si->r));
 
 	for(i=0;i<l;i++)
 		alpha[i] = alpha2[i] - alpha2[i+l];
@@ -1650,7 +1650,7 @@ static decision_function svm_train_one(
 			break;
 	}
 
-	LOG(log, LogLevel::Debug, "obj = " + to_string(si.obj) + ", rho = " + to_string(si.rho));
+	LOG(log, LogLevel::DEBUG, "obj = " + to_string(si.obj) + ", rho = " + to_string(si.rho));
 
 	// output SVs
 
@@ -1674,7 +1674,7 @@ static decision_function svm_train_one(
 		}
 	}
 
-	LOG(log, LogLevel::Debug, "nSV = " + to_string(nSV) + ", nBSV = " + to_string(nBSV));
+	LOG(log, LogLevel::DEBUG, "nSV = " + to_string(nSV) + ", nBSV = " + to_string(nBSV));
 
 	decision_function f;
 	f.alpha = alpha;
@@ -1786,13 +1786,13 @@ static void sigmoid_train(
 
 		if (stepsize < min_step)
 		{
-			LOG(logger, LogLevel::Info, "Line search fails in two-class probability estimates");
+			LOG(logger, LogLevel::INFO, "Line search fails in two-class probability estimates");
 			break;
 		}
 	}
 
 	if (iter>=max_iter)
-		LOG(logger, LogLevel::Info, "Reaching maximal iterations in two-class probability estimates");
+		LOG(logger, LogLevel::INFO, "Reaching maximal iterations in two-class probability estimates");
 	free(t);
 }
 
@@ -1864,7 +1864,7 @@ static void multiclass_probability(int k, double **r, double *p, Logger &log)
 		}
 	}
 	if (iter>=max_iter)
-		LOG(log, LogLevel::Info, "Exceeds max_iter in multiclass_prob");
+		LOG(log, LogLevel::INFO, "Exceeds max_iter in multiclass_prob");
 	for(t=0;t<k;t++) free(Q[t]);
 	free(Q);
 	free(Qp);
@@ -1984,7 +1984,7 @@ static double svm_svr_probability(
 		else 
 			mae+=fabs(ymv[i]);
 	mae /= (prob->l-count);
-	LOG(log, LogLevel::Debug,
+	LOG(log, LogLevel::DEBUG,
 			"Prob. model for test data: target value = predicted value + z,\nz: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma= " + to_string(mae));
 	free(ymv);
 	return mae;
@@ -2133,7 +2133,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 		// group training data of the same class
 		svm_group_classes(prob,&nr_class,&label,&start,&count,perm);
 		if(nr_class == 1)
-			LOG(log, LogLevel::Warning, "WARNING: training data in only one class. See README for details.");
+			LOG(log, LogLevel::WARNING, "WARNING: training data in only one class. See README for details.");
 		svm_node **x = Malloc(svm_node *,l);
 		int i;
 		for(i=0;i<l;i++)
@@ -2151,7 +2151,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 				if(param->weight_label[i] == label[j])
 					break;
 			if(j == nr_class) {
-				LOG(log, LogLevel::Warning, "WARNING: class label " + to_string(param->weight_label[i]) + " specified in weight is not found")
+				LOG(log, LogLevel::WARNING, "WARNING: class label " + to_string(param->weight_label[i]) + " specified in weight is not found")
 			} else {
  				weighted_C[j] *= param->weight[i];
 			}
@@ -2252,7 +2252,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 			nz_count[i] = nSV;
 		}
 		
-		LOG(log, LogLevel::Debug, "Total nSV = " + to_string(total_sv));
+		LOG(log, LogLevel::DEBUG, "Total nSV = " + to_string(total_sv));
 
 		model->l = total_sv;
 		model->SV = Malloc(svm_node *,total_sv);

@@ -1,38 +1,27 @@
-#Growing Neural Gas in R
+gmum.r - SVM Wrapper
+======
 
-Easy to install and use package for fast **online** GNG algorithm.
+SVM Wrapper is a part of the gmum.R project which provides a popular Support Vector Machine inplementations wrapped in the R package.
 
-Part of gmum.R project. See gmum research group page [here](http://gmum.ii.uj.edu.pl).
+## Prerelease version
 
-##General
-------
+Right now the only avaiable SVM implementation is the libSVM. We also provide [2e SVM pre-/postprocess algorithm](http://gmum.ii.uj.edu.pl/gmum.r/SVM/2eSVM.pdf).
 
-This package contains **fast** C++ implementation 
-of **online** clustering algorithm Growing Neural Gas wrapped as R package using Rcpp.
-It produces topological graph, that you can easily convert to igraph, or you can
-dump your model to optimized binary file and load it later on.
+## Two Ellipsoids SVM example plots
 
-This algorithms is widely used for dynamic clustering problem. Package is designed with
-focus on **big datasets**. It is already possible to cluster dataset without making its
-copy, with different dataset types (bagging, sequential or probability
-sampling). In the near future it will be possible to stream dataset from csv file.
+![2e Iris example](./doc/svm/img/2e.png "2e Iris example")
 
-<small>Comparision of performance of original implementation and with
-improvements suggested by D. Fiser, J. Faigl, M. Kulich </small>
-<center><img src="https://raw.github.com/kudkudak/Growing-Neural-Gas/dev/doc/img/plot_speed.png" width="50%"></img></center>
+## Main methods
 
 * **SVM**(formula, dataset, ... ) - create svm object.
 
-<small>MNIST dataset clustering (raw images)</small>
-<center><img src="https://raw.github.com/kudkudak/Growing-Neural-Gas/dev/doc/img/mnist1.png" width="60%"></img></center>
+* **predict**(svm, x) - predict class of given examples using a SVM object.
 
 ## Dataset methods
 
 * **dataset.X**(svm) - print unlabeled data.
 
-```Matlab
-devtools::install_github("kudkudak/Growing-Neural-Gas")
-```
+* **dataset.Y**(svm) - print labels.
 
 * **svm.dataset.breast_cancer**() - load breast cancer dataset.
 
@@ -44,8 +33,7 @@ devtools::install_github("kudkudak/Growing-Neural-Gas")
 
 * **acc**(prediction, target) - calculated accuracy of a prediction.
 
-# Find closest node to vector [1,1,1]
-predict(gng, c(1,1,1))
+For detailed documentation please refer to provided documentation.
 
 ## Example usage
 
@@ -60,9 +48,7 @@ predict(gng, c(1,1,1))
                     lib = "libsvm",
                     kernel = "linear",
                     prep = "none",
-                    C = 1,
-                    gamma = 0.01,
-                    coef0 = 0) 
+                    C = 10) 
         
         # You can access the dataset 
         x <- dataset.X(svm)
@@ -73,4 +59,3 @@ predict(gng, c(1,1,1))
         
         # Check models accuracy
         acc <- svm.accuracy(prediction=y, target=prediction)
-

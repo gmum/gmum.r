@@ -81,17 +81,25 @@ public:
 	double nu; /* for NU_SVC, ONE_CLASS, and NU_SVR */
 	double p; /* for EPSILON_SVR */
 
-	arma::mat two_e_cov_inv_sqrt;
-	arma::mat two_e_b_dash;
-
 	arma::mat data;		// armadillo matrix and vector (double)
 	arma::vec target;
 	arma::vec result;
 
+
+	arma::mat tmp_data;
+	arma::mat tmp_target;
+	
 	Logger log;
 
 	//universal parameters
 	arma::vec w; //d
+	double pos_target;
+	double neg_target;
+	arma::mat arma_SV;
+
+	//2eParameters
+	double cov_eps_smoothing;
+	arma::mat inv_of_sqrt_of_cov;
 
 	// constructors
 	SVMConfiguration();
@@ -100,7 +108,6 @@ public:
 	// methods
 	arma::mat getData();
 	void setData(arma::mat);
-
 	void setDefaultParams();
 
 	void setFilename(std::string);
@@ -119,9 +126,9 @@ public:
 	void setLibrary( std::string );
 	void setKernel( std::string );
 	void setPreprocess( std::string );
+  double getB();
   // logger
   void set_verbosity( int );
-
 };
 
 #endif

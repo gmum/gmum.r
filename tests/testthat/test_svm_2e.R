@@ -38,8 +38,8 @@ test_that("2e svm works better then normal SVM with breast cancer dataset", {
   ds2 = svm.dataset.breast_cancer()
   formula = X1 ~ .
   
-  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "none", C=1);
-  twoe_svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "2e", C=1);
+  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "none", C=10);
+  twoe_svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "2e", C=10);
   
   x <- svm$getX()
   target <- svm$getY()
