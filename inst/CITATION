@@ -1,0 +1,44 @@
+citHeader("To cite gmum.R in publications, please use any of the following (use toBibtex to show LateX entries):")
+
+citEntry(entry="inProceedings",
+    year="2013",
+    isbn="978-3-319-00968-1",
+    booktitle="Proceedings of the 8th International Conference on Computer Recognition Systems CORES 2013",
+    volume="226",
+    series="Advances in Intelligent Systems and Computing",
+    doi="10.1007/978-3-319-00969-8_62",
+    title="Density Invariant Detection of Osteoporosis Using Growing Neural Gas",
+    url="http://dx.doi.org/10.1007/978-3-319-00969-8_62",
+    publisher="Springer International Publishing",
+    author="Podolak, IgorT. and Jastrzebski, StanislawK.",
+    pages="629-638",
+    textVersion="Podolak, Igor T., Jastrzebski, Stanislaw K. (2013) Density Invariant Detection of Osteoporosis Using Growing Neural Gas.",
+)
+
+citEntry(entry="article",
+title = "Two ellipsoid Support Vector Machines ",
+textVersion = "Czarnecki, Wojciech M., Tabor Jacek (2014) Two ellipsoid Support Vector Machines.",
+journal = "Expert Systems with Applications ",
+volume = "41",
+number = "18",
+pages = "8211 - 8224",
+year = "2014",
+issn = "0957-4174",
+url = "http://www.sciencedirect.com/science/article/pii/S0957417414004138",
+author = "Wojciech Marian Czarnecki and Jacek Tabor"
+)
+
+citEntry(entry="article",
+title = "Cross-entropy clustering ",
+textVersion = "Tabor Jacek, Spurek Przemyslaw (2014) Cross-entropy clustering,",
+journal = "Pattern Recognition ",
+volume = "47",
+number = "9",
+pages = "3046 - 3059",
+year = "2014",
+issn = "0031-3203",
+url = "http://www.sciencedirect.com/science/article/pii/S0031320314000764",
+author = "J. Tabor and P. Spurek"
+)
+
+
