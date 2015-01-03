@@ -82,11 +82,11 @@ const char* CONST::ERRORS::dataset_size =
         "Size of dataset cannot be less than number of clusters!";
 const char* CONST::ERRORS::assignment_error =
         "Cannot recognize assignment initiation method";
-const char* CONST::ERRORS::cov_mat_req = "Cavariance matrix required";
+const char* CONST::ERRORS::cov_mat_req = "Covariance matrix required";
 const char* CONST::ERRORS::radius_req = "Radius is required";
 const char* CONST::ERRORS::cluster_rec_error = "Cannot recognise cluster type";
 const char* CONST::ERRORS::centroids_error =
-        "Number of centroids is different than number of clusters";
+        "Number of centroids is different from number of clusters";
 const char* CONST::ERRORS::function_name_req = "Function is required";
 
 }

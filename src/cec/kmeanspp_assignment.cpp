@@ -13,7 +13,7 @@ void KmeansppAssignment::operator()(std::vector<unsigned int> &assignment) {
     static boost::random::mt19937 gen(seed);
 
     //select points for centers
-    std::list<Pair> selected;
+    std::list<Point> selected;
     unsigned int nsections = 100;
     unsigned int section = npoints / nsections;
     if (section <= 1)
@@ -54,9 +54,9 @@ void KmeansppAssignment::operator()(std::vector<unsigned int> &assignment) {
 }
 
 void calculate_distance(const std::vector<unsigned int> &centers,
-                        std::list<Pair> &selected, const arma::mat &points) {
+                        std::list<Point> &selected, const arma::mat &points) {
 
-    for (std::list<Pair>::iterator it = selected.begin(); it != selected.end();
+    for (std::list<Point>::iterator it = selected.begin(); it != selected.end();
          ++it) {
         arma::rowvec point = points.row(it->point_number);
         float distance = std::numeric_limits<float>::max();
@@ -74,11 +74,11 @@ void calculate_distance(const std::vector<unsigned int> &centers,
     selected.sort();
 }
 
-std::list<Pair>::iterator choose(
+std::list<Point>::iterator choose(
         boost::random::bernoulli_distribution<> &bernoulli,
-        boost::random::mt19937 &gen, std::list<Pair> &selected) {
+        boost::random::mt19937 &gen, std::list<Point> &selected) {
 
-    std::list<Pair>::iterator it = selected.begin();
+    std::list<Point>::iterator it = selected.begin();
     for (; !bernoulli(gen) && it != selected.end(); ++it)
         ;
 
