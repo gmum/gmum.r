@@ -291,12 +291,10 @@ std::list<double> CecModel::predict(std::vector<double> vec, bool general) {
     return out;
 }
 
-const gmum::TotalResult& CecModel::get_result() const
-{
-    return m_result;
+const gmum::TotalResult& CecModel::get_result() const {
+	return m_result;
 }
 
-const std::vector<boost::shared_ptr<gmum::Cluster> >& CecModel::get_clusters() const
-{
-    return m_clusters;
+const std::vector<boost::shared_ptr<gmum::Cluster> >& CecModel::get_clusters() const {
+	return m_clusters;
 }

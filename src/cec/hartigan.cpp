@@ -34,7 +34,7 @@ double Hartigan::calc_energy_change(const Cluster& a, const Cluster &b, int npoi
 SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned int> &assignment,
                                    double kill_threshold, std::vector<boost::shared_ptr<Cluster> > &clusters) {
 
-    int switched = 0;  //numer of points who has been moved to another cluster
+    int switched = 0;  //number of point which has been moved to another cluster
     int dimension = points.n_cols;
     unsigned int npoints = points.n_rows;
     for(unsigned int i = 0; i < npoints; i++) {
