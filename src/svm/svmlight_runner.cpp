@@ -167,7 +167,7 @@ int SVMLightRunner::librarySVMLearnMain(
     if (!use_gmumr) {
         write_model(modelfile,model);
     } else {
-        SVMLightModelToSVMConfiguration(model, &config);
+        SVMLightModelToSVMConfiguration(model, config);
     }
     // GMUM.R changes }
 
@@ -956,10 +956,10 @@ char ** SVMLightRunner::SVMConfigurationToSVMLightModelFile(
 
 
 void SVMLightRunner::SVMLightModelToSVMConfiguration(
-    MODEL *model, SVMConfiguration *config
+    MODEL *model, SVMConfiguration &config
 ) {
     LOG(
-        config->log,
+        config.log,
         LogLevel::DEBUG,
         __debug_prefix__ + ".SVMLightModelToSVMConfiguration() Started."
     );
@@ -969,43 +969,43 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
 
     /* 0=linear, 1=poly, 2=rbf, 3=sigmoid, 4=custom -- same as GMUM.R! */
     // FIXME: No conversion?
-    config->kernel_type = (KernelType) model->kernel_parm.kernel_type;
+    config.kernel_type = (KernelType) model->kernel_parm.kernel_type;
     // -d int      -> parameter d in polynomial kernel
-    config->degree = model->kernel_parm.poly_degree;
+    config.degree = model->kernel_parm.poly_degree;
     // -g float    -> parameter gamma in rbf kernel
-    config->gamma = model->kernel_parm.rbf_gamma;
+    config.gamma = model->kernel_parm.rbf_gamma;
     // -s float    -> parameter s in sigmoid/poly kerne
-    config->coef0 = model->kernel_parm.coef_lin;
+    config.coef0 = model->kernel_parm.coef_lin;
     // -r float    -> parameter c in sigmoid/poly kernel
-    config->C = model->kernel_parm.coef_const;
+    config.C = model->kernel_parm.coef_const;
     // -u string   -> parameter of user defined kernel
-    config->kernel_parm_custom = model->kernel_parm.custom;
+    config.kernel_parm_custom = model->kernel_parm.custom;
     // highest feature index - no assignment to read-only data
     //config->data.n_cols = model->totwords;
     // number of training documents - no assignment to read-only data
     //config->target.n_rows = model->totdoc;
     // number of support vectors plus 1 (!)
-    config->l = model->sv_num - 1;
+    config.l = model->sv_num - 1;
     // threshold b
-    config->threshold_b = model->b;
+    config.threshold_b = model->b;
 
-    config->alpha_y = arma::randu<arma::vec>(config->l);
-    config->support_vectors = arma::randu<arma::mat>(config->l, model->totwords);
+    config.alpha_y = arma::randu<arma::vec>(config.l);
+    config.support_vectors = arma::randu<arma::mat>(config.l, model->totwords);
     for(i=1;i<model->sv_num;i++) {
       for(v=model->supvec[i]->fvec;v;v=v->next) {
-        config->alpha_y(i-1) = model->alpha[i]*v->factor;
+        config.alpha_y(i-1) = model->alpha[i]*v->factor;
         for (j=0; (v->words[j]).wnum; j++) {
             printf("%ld:%.8g ",
             (long)(v->words[j]).wnum,
             (double)(v->words[j]).weight);
-            config->support_vectors(i-1,j) = v->words[j].weight;
+            config.support_vectors(i-1,j) = v->words[j].weight;
         }
         //printf("#%s\n",v->userdefined);
       }
     }
 
     LOG(
-        config->log,
+        config.log,
         LogLevel::DEBUG,
         __debug_prefix__ + ".SVMLightModelToSVMConfiguration() Done."
     );

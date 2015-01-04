@@ -126,7 +126,7 @@ protected:
      * NOTE: It does not clean unnecessary data!
      */
     void SVMLightModelToSVMConfiguration(
-        MODEL *model, SVMConfiguration *config
+        MODEL *model, SVMConfiguration &config
     );
 };
 
