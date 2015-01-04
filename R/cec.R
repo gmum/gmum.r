@@ -272,4 +272,8 @@ evalqOnLoad({
     setMethod("log.energy", "Rcpp_CecModel", log.energy.cec)
     setMethod("log.iters", "Rcpp_CecModel", log.iters.cec)
     setMethod("nstart", "Rcpp_CecModel", nstart.cec)
+    
+    setMethod("predict", "Rcpp_CecModel", function(object, vec) {
+      object$predict(vec)
+    })
 })

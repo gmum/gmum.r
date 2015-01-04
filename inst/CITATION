@@ -1,4 +1,4 @@
-citHeader("To cite gmum.R in publications, please use any of the following (use toBibtex to show LateX entries):")
+citHeader("If you use any of the models from gmum.R package please cite appropriate paper (use toBibtex to show LateX entries):")
 
 citEntry(entry="inProceedings",
     year="2013",
