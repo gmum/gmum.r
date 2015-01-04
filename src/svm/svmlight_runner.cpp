@@ -240,7 +240,7 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     strcpy (learn_parm->predfile, "trans_predictions");
     strcpy (learn_parm->alphafile, "");
     strcpy (restartfile, "");
-    (*verbosity)=1;
+    (*verbosity)=config.log.verbosity;//1;
     learn_parm->biased_hyperplane=1;
     learn_parm->sharedslack=0;
     learn_parm->remove_inconsistent=0;
@@ -1036,9 +1036,6 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
       for(v=model->supvec[i]->fvec;v;v=v->next) {
         config.alpha_y(i-1) = model->alpha[i]*v->factor;
         for (j=0; (v->words[j]).wnum; j++) {
-            printf("%ld:%.8g ",
-            (long)(v->words[j]).wnum,
-            (double)(v->words[j]).weight);
             config.support_vectors(i-1,j) = v->words[j].weight;
         }
         //printf("#%s\n",v->userdefined);

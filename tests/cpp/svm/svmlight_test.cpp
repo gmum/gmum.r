@@ -123,9 +123,6 @@ TEST_F(SVMLightRunnerTest, processRequest_classification_tagged_classes) {
     svm_config.setPrediction(true);
     svmlr.processRequest(svm_config);
 
-    std::cout << svm_config.label_negative << std::endl;
-    std::cout << svm_config.label_positive << std::endl;
-
     ASSERT_DOUBLE_EQ(svm_config.result[0], 2);
     ASSERT_DOUBLE_EQ(svm_config.result[1], 2);
     ASSERT_DOUBLE_EQ(svm_config.result[2], 4);
