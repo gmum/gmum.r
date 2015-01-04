@@ -12,6 +12,11 @@
 #include <vector>
 
 #include "svmlight_runner.h"
+#include "svm/log.h"
+
+const std::string __file__ = "svmlight_runner.cpp";
+const std::string __runner_class__ = "SVMLightRunner";
+const std::string __debug_prefix__ = __file__ + "." + __runner_class__;
 
 
 SVMLightRunner::SVMLightRunner() {
@@ -41,7 +46,7 @@ void SVMLightRunner::processRequest(SVMConfiguration &config) {
 
 // TODO: More than linear
 void SVMLightRunner::predict(SVMConfiguration &config) {
-    std::cout << "[SVMLightRunner] predict()" << std::endl;
+    LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".predict() Started.");
     // Number of docs is a number of rows in data matrix
     size_t n_docs = config.data.n_rows;
     config.result = arma::randu<arma::vec>(n_docs);
@@ -76,6 +81,12 @@ void SVMLightRunner::predict(SVMConfiguration &config) {
         }
         //config.result[i] = doc_result;
     }
+
+    LOG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".predict() Done."
+    );
 }
 
 /* Library functionalities wrappers */
@@ -91,7 +102,11 @@ char restartfile[200];       /* file with initial alphas */
 int SVMLightRunner::librarySVMLearnMain(
     int argc, char **argv, bool use_gmumr, SVMConfiguration &config
 ) {
-    std::cout << "[SVMLightRunner] librarySVMLearnMain()" << std::endl;
+    LOG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".librarySVMLearnMain() Started."
+    );
     DOC **docs;  /* training examples */
     long totwords,totdoc,i;
     double *target;
@@ -163,7 +178,12 @@ int SVMLightRunner::librarySVMLearnMain(
     free(docs);
     free(target);
 
-    std::cout << "[SVMLightRunner] librarySVMLearnMain done." << std::endl;
+    LOG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".librarySVMLearnMain() Done."
+    );
+
     return(0);
 }
 
@@ -173,7 +193,12 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     long *verbosity, LEARN_PARM *learn_parm, KERNEL_PARM *kernel_parm,
     bool use_gmumr, SVMConfiguration &config
 ) {
-    std::cout << "[SVMLightRunner] librarySVMLearnReadInputParameters()" << std::endl;
+    LOG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".librarySVMClassifyReadInputParameters() Started."
+    );
+
     long i;
     char type[100];
   
@@ -370,7 +395,11 @@ char predictionsfile[200];
 int SVMLightRunner::librarySVMClassifyMain(
     int argc, char **argv, bool use_gmumr, SVMConfiguration &config
 ) {
-    std::cout << "[SVMLightRunner] librarySVMClassifyMain()" << std::endl;
+    LOG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".librarySVMClassifyMain() Started."
+    );
     DOC *doc;   /* test example */
     WORD *words;
     long max_docs,max_words_doc,lld;
@@ -515,7 +544,7 @@ int SVMLightRunner::librarySVMClassifyMain(
   /*        0.01 secs, the timer was underflowing.                       */
       printf("Runtime (without IO) in cpu-seconds: %.2f\n",
          (float)(runtime/100.0));
-      
+
     }
     if((!no_accuracy) && (verbosity>=1)) {
       printf("Accuracy on test set: %.2f%% (%ld correct, %ld incorrect, %ld total)\n",(float)(correct)*100.0/totdoc,correct,incorrect,totdoc);
@@ -531,10 +560,13 @@ void SVMLightRunner::librarySVMClassifyReadInputParameters(
     char *predictionsfile, long int *verbosity, long int *pred_format,
     bool use_gmumr, SVMConfiguration &config
 ) {
-    std::cout << "[SVMLightRunner] librarySVMClassifyReadInputParameters()"
-              << std::endl;
+    LOG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".librarySVMClassifyReadInputParameters() Started."
+    );
     long i;
-    
+
     /* set default */
     strcpy (modelfile, "svm_model");
     strcpy (predictionsfile, "svm_predictions"); 
@@ -576,7 +608,11 @@ void SVMLightRunner::librarySVMClassifyReadInputParameters(
 MODEL * SVMLightRunner::libraryReadModel(
     char *modelfile, bool use_gmumr, SVMConfiguration &config
 ) {
-    std::cout << "[SVMLightRunner] libraryReadModel()" << std::endl;
+    LOG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".libraryReadModel() Started."
+    );
     FILE *modelfl;
     long i,queryid,slackid;
     double costfactor;
@@ -624,7 +660,12 @@ MODEL * SVMLightRunner::libraryReadModel(
         max_words = config.data.n_cols;
         words = (WORD *)my_malloc(sizeof(WORD)*(max_words+10));
 
-        std::cout << "[SVMLightRunner] libraryReadModel/converting..." << std::endl;
+        LOG(
+            config.log,
+            LogLevel::DEBUG,
+            __debug_prefix__ + ".libraryReadModel() Converting config to model..."
+        );
+
         /* 0=linear, 1=poly, 2=rbf, 3=sigmoid, 4=custom -- same as GMUM.R! */
         model->kernel_parm.kernel_type = (long int) config.kernel_type;
         // -d int      -> parameter d in polynomial kernel
@@ -647,7 +688,12 @@ MODEL * SVMLightRunner::libraryReadModel(
         model->sv_num = config.l + 1;
         // threshold b
         model->b = config.threshold_b;
-        std::cout << "[SVMLightRunner] libraryReadModel/converting done." << std::endl;
+
+        LOG(
+            config.log,
+            LogLevel::DEBUG,
+            __debug_prefix__ + ".libraryReadModel() Converting config done."
+        );
     }
     // GMUM.R changes }
 
@@ -693,7 +739,13 @@ MODEL * SVMLightRunner::libraryReadModel(
     if(verbosity>=1) {
       fprintf(stdout, "OK. (%d support vectors read)\n",(int)(model->sv_num-1));
     }
-    std::cout << "[SVMLightRunner] libraryReadModel done." << std::endl;
+
+    LOG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".libraryReadModel() Done."
+    );
+
     return(model);
 }
 
@@ -701,7 +753,12 @@ void SVMLightRunner::libraryReadDocuments (
     char *docfile, DOC ***docs, double **label, long int *totwords,
     long int *totdoc, bool use_gmumr, SVMConfiguration &config
 ) {
-    std::cout << "[SVMLightRunner] libraryReadDocuments()" << std::endl;
+    LOG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".libraryReadDocuments() Started."
+    );
+
     char *line,*comment;
     WORD *words;
     long dnum=0,wpos,dpos=0,dneg=0,dunlab=0,queryid,slackid,max_docs;
@@ -822,7 +879,12 @@ void SVMLightRunner::libraryReadDocuments (
 std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     SVMConfiguration &config, long int line_num
 ) {
-    std::cout << "[SVMLightRunner] SVMConfigurationToSVMLightLearnInputLine()" << std::endl;
+    LOG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".SVMConfigurationToSVMLightLearnInputLine() Started."
+    );
+
     std::string line_string = "";
 
     std::ostringstream ss;
@@ -857,7 +919,12 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
 char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
     SVMConfiguration &config, long int line_num
 ) {
-    std::cout << "[SVMLightRunner] SVMConfigurationToSVMLightModelSVLine()" << std::endl;
+    LOG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".SVMConfigurationToSVMLightModelSVLine() Started."
+    );
+
     std::string line_string = "";
 
     std::ostringstream ss;
@@ -868,7 +935,12 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
     ss << std::endl;
     line_string = ss.str();
 
-    std::cout << "[SVMLightRunner] SVMConfigurationToSVMLightModelSVLine done." << std::endl;
+    LOG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".SVMConfigurationToSVMLightModelSVLine() Done."
+    );
+
     return (char*)line_string.c_str();
 }
 
@@ -886,7 +958,12 @@ char ** SVMLightRunner::SVMConfigurationToSVMLightModelFile(
 void SVMLightRunner::SVMLightModelToSVMConfiguration(
     MODEL *model, SVMConfiguration *config
 ) {
-    std::cout << "[SVMLightRunner] SVMLightModelToSVMConfiguration()" << std::endl;
+    LOG(
+        config->log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".SVMLightModelToSVMConfiguration() Started."
+    );
+
     long i, j;
     SVECTOR *v;
 
@@ -926,7 +1003,12 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
         //printf("#%s\n",v->userdefined);
       }
     }
-    std::cout << "[SVMLightRunner] SVMLightModelToSVMConfiguration done." << std::endl;
+
+    LOG(
+        config->log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".SVMLightModelToSVMConfiguration() Done."
+    );
 }
 
 void wait_any_key()

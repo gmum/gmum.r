@@ -17,8 +17,6 @@ extern "C" {
 #include "svmlight/svm_common.h"
 #include "svmlight/svm_learn.h"
 }
-#define SVMLightRunner_temp_model_file "svmlightrunner_temp_model_file"
-#define SVMLightRunner_temp_output_file "svmlightrunner_temp_output_file"
 
 /// SVMLight library implementation of SVMHandler
 class SVMLightRunner: public SVMHandler {

@@ -1,8 +1,9 @@
 #include <armadillo>
 #include <iostream>
 #include <string>
-
 #include "gtest/gtest.h"
+
+#include "svm/log.h"
 #include "svmlight_runner.h"
 #include "svm_basic.h"
 
@@ -14,7 +15,9 @@ class SVMLightRunnerTest: public ::testing::Test {
 protected:
 
     SVMLightRunnerTest() {
-        svmLightRunner = SVMLightRunner();
+        svmlr = SVMLightRunner();
+        svm_config = SVMConfiguration();
+        svm_config.log.verbosity = LogLevel::TRACE;
 
         learing_data_01
             << 0.5 << 1.0 << 0.0 << 1.0 << arma::endr
@@ -46,7 +49,8 @@ protected:
 
     /* Objects declared here can be used by all tests in the test case */
 
-    SVMLightRunner svmLightRunner;
+    SVMLightRunner svmlr;
+    SVMConfiguration svm_config;
 
     arma::mat learing_data_01;
     arma::vec learing_target_01;
@@ -62,11 +66,6 @@ protected:
 /* Fixture tests */
 
 TEST_F(SVMLightRunnerTest, processRequest_learning) {
-    std::cout << "SVMLightRunner..." << std::endl;
-    SVMLightRunner svmlr;
-    std::cout << "SVMConfiguration..." << std::endl;
-    SVMConfiguration svm_config;
-
     std::cout << "SVMConfiguration data..." << std::endl;
     svm_config.data = learing_data_01;
     std::cout << "SVMConfiguration target..." << std::endl;
@@ -97,9 +96,6 @@ TEST_F(SVMLightRunnerTest, processRequest_learning) {
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_classification) {
-    SVMLightRunner svmlr;
-    SVMConfiguration svm_config;
-
     svm_config.data = learing_data_01;
     svm_config.target = learing_target_01;
     svm_config.setPrediction(false);
@@ -117,9 +113,6 @@ TEST_F(SVMLightRunnerTest, processRequest_classification) {
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_classification_tagged_classes) {
-    SVMLightRunner svmlr;
-    SVMConfiguration svm_config;
-
     svm_config.data = learing_data_01;
     svm_config.target = learing_target_02;
     svm_config.setPrediction(false);
