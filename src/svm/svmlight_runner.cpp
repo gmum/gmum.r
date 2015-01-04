@@ -154,6 +154,9 @@ int SVMLightRunner::librarySVMLearnMain(
         argc, argv, docfile, modelfile, restartfile, &verbosity, &learn_parm,
         &kernel_parm, use_gmumr, config
     );
+
+    kernel_parm.kernel_type = static_cast<long int>(config.kernel_type);
+
     libraryReadDocuments(
         docfile, &docs, &target, &totwords, &totdoc, use_gmumr, config
     );
@@ -491,7 +494,7 @@ int SVMLightRunner::librarySVMClassifyMain(
         newline = (!feof(docfl)) && fgets(line,(int)lld,docfl);
     } else {
         newline = false;
-        if (totdoc < config.target.n_rows) {
+        if (totdoc < config.data.n_rows) {
             newline = true;
             std::string str = SVMConfigurationToSVMLightLearnInputLine(config, totdoc);
             line = new char[str.size() + 1];
@@ -558,7 +561,7 @@ int SVMLightRunner::librarySVMClassifyMain(
           // Store prediction result in config
           config.result[totdoc-1] = dist;
           // Read next line
-          if (totdoc < config.target.n_rows) {
+          if (totdoc < config.data.n_rows) {
               newline = true;
               std::string str = SVMConfigurationToSVMLightLearnInputLine(config, totdoc);
               line = new char[str.size() + 1];
@@ -611,7 +614,13 @@ void SVMLightRunner::librarySVMClassifyReadInputParameters(
     /* set default */
     strcpy (modelfile, "svm_model");
     strcpy (predictionsfile, "svm_predictions"); 
-    (*verbosity)=2;
+    // GMUM.R changes {
+    if (!use_gmumr) {
+        (*verbosity)=2;
+    } else {
+        (*verbosity) = config.log.verbosity;
+    }
+    // GMUM.R changes }
     (*pred_format)=1;
 
     for(i=1;(i<argc) && ((argv[i])[0] == '-');i++) {
@@ -708,7 +717,7 @@ MODEL * SVMLightRunner::libraryReadModel(
         );
 
         /* 0=linear, 1=poly, 2=rbf, 3=sigmoid, 4=custom -- same as GMUM.R! */
-        model->kernel_parm.kernel_type = (long int) config.kernel_type;
+        model->kernel_parm.kernel_type = static_cast<long int>(config.kernel_type);
         // -d int      -> parameter d in polynomial kernel
         model->kernel_parm.poly_degree = config.degree;
         // -g float    -> parameter gamma in rbf kernel
@@ -1009,8 +1018,7 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     SVECTOR *v;
 
     /* 0=linear, 1=poly, 2=rbf, 3=sigmoid, 4=custom -- same as GMUM.R! */
-    // FIXME: No conversion?
-    config.kernel_type = (KernelType) model->kernel_parm.kernel_type;
+    config.kernel_type = static_cast<KernelType>(model->kernel_parm.kernel_type);
     // -d int      -> parameter d in polynomial kernel
     config.degree = model->kernel_parm.poly_degree;
     // -g float    -> parameter gamma in rbf kernel

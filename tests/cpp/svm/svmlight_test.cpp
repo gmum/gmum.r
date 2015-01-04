@@ -96,36 +96,72 @@ TEST_F(SVMLightRunnerTest, processRequest_learning) {
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_classification) {
+    std::cout << "Testing learing..." << std::endl << std::flush;
     svm_config.data = learing_data_01;
     svm_config.target = learing_target_01;
     svm_config.setPrediction(false);
     svmlr.processRequest(svm_config);
 
+    std::cout << "Testing prediction..." << std::endl << std::flush;
     svm_config.data = testing_data_01;
-    svm_config.target = testing_target_01;
     svm_config.setPrediction(true);
     svmlr.processRequest(svm_config);
 
-    ASSERT_DOUBLE_EQ(svm_config.result[0], -1);
-    ASSERT_DOUBLE_EQ(svm_config.result[1], -1);
-    ASSERT_DOUBLE_EQ(svm_config.result[2], 1);
-    ASSERT_DOUBLE_EQ(svm_config.result[3], 1);
+    for (int i = 0; i < 4; ++i) {
+        ASSERT_DOUBLE_EQ(svm_config.result[i], testing_target_01[i]);
+    }
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_classification_tagged_classes) {
+    std::cout << "Testing learing..." << std::endl << std::flush;
     svm_config.data = learing_data_01;
     svm_config.target = learing_target_02;
     svm_config.setPrediction(false);
     svmlr.processRequest(svm_config);
 
+    std::cout << "Testing prediction..." << std::endl << std::flush;
     svm_config.data = testing_data_01;
-    svm_config.target = testing_target_02;
     svm_config.setPrediction(true);
     svmlr.processRequest(svm_config);
 
-    ASSERT_DOUBLE_EQ(svm_config.result[0], 2);
-    ASSERT_DOUBLE_EQ(svm_config.result[1], 2);
-    ASSERT_DOUBLE_EQ(svm_config.result[2], 4);
-    ASSERT_DOUBLE_EQ(svm_config.result[3], 4);
+    for (int i = 0; i < 4; ++i) {
+        ASSERT_DOUBLE_EQ(svm_config.result[i], testing_target_02[i]);
+    }
+}
+
+TEST_F(SVMLightRunnerTest, processRequest_with_poly_kernel) {
+    std::cout << "Testing learing..." << std::endl << std::flush;
+    svm_config.setKernel(std::string("poly"));
+    svm_config.data = learing_data_01;
+    svm_config.target = learing_target_02;
+    svm_config.setPrediction(false);
+    svmlr.processRequest(svm_config);
+
+    std::cout << "Testing prediction..." << std::endl << std::flush;
+    svm_config.data = testing_data_01;
+    svm_config.setPrediction(true);
+    svmlr.processRequest(svm_config);
+
+    for (int i = 0; i < 4; ++i) {
+        ASSERT_DOUBLE_EQ(svm_config.result[i], testing_target_02[i]);
+    }
+}
+
+TEST_F(SVMLightRunnerTest, processRequest_with_rbf_kernel) {
+    std::cout << "Testing learing..." << std::endl << std::flush;
+    svm_config.setKernel(std::string("rbf"));
+    svm_config.data = learing_data_01;
+    svm_config.target = learing_target_02;
+    svm_config.setPrediction(false);
+    svmlr.processRequest(svm_config);
+
+    std::cout << "Testing prediction..." << std::endl << std::flush;
+    svm_config.data = testing_data_01;
+    svm_config.setPrediction(true);
+    svmlr.processRequest(svm_config);
+
+    for (int i = 0; i < 4; ++i) {
+        ASSERT_DOUBLE_EQ(svm_config.result[i], testing_target_02[i]);
+    }
 }
 
