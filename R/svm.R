@@ -67,50 +67,33 @@ print.svm <- NULL
 #' 
 #' @export
 #' 
-#' @usage plot(svm, dim1, dim2)
+#' @usage plot(svm, pca=TRUE, log="x")
+#' @usage plot(svm, dim1=3, dim2=4)
 #' 
-#' @param dim1 (optional) Dimension of x to plot on x axis, by default 1
-#' 
-#' @param dim2 (optional) Dimension of x to plot on y axis, by default 2
+#' @param pca Bool, use Principal Component Analysis for plot
+#' @param dim1 (optional) Dimension of dataset to plot on x axis, by default 1
+#' @param dim2 (optional) Dimension of dataset to plot on y axis, by default 2
+#' @param log (optional) Use logarthic transformation for an axis, "x", "y", or "xy"
 #' 
 #' @rdname plot-dataset-methods
 #' 
 #' @docType plot
 plot.svm <- NULL
 
-#' @title dataset.X
+#' @title summary
 #' 
-#' @description Prints dataset stored in a SVM object, without the labels.
-#' 
-#' @rdname print-x-methods
+#' @description Prints short summary of a trained model.
 #' 
 #' @export
 #' 
-#' @usage dataset.X(svm)
+#' @usage summary(svm)
 #' 
-#' @param object SVM object.
+#' @param svm SVM object 
 #' 
-#' @docType methods
+#' @rdname svm-summary-method
 #' 
-#' @aliases dataset
-dataset.X <- NULL
-
-#' @title dataset.Y
-#' 
-#' @description Prints lables stored in a SVM object.
-#' 
-#' @rdname print-y-methods
-#' 
-#' @export
-#' 
-#' @usage dataset.Y(svm)
-#' 
-#' @param object SVM object.
-#' 
-#' @docType methods
-#' 
-#' @aliases dataset
-dataset.Y <- NULL
+#' @docType plot
+summary.svm <- NULL
 
 loadModule('svm_wrapper', TRUE)
 
@@ -131,7 +114,8 @@ evalqOnLoad({
                     cweights = NULL,
                     sweights = NULL,
                     cache_size = 100,
-                    tol = 1e-3 ) {
+                    tol = 1e-3,
+                    verbosity=4) {
     
     # check for errors
     
@@ -165,6 +149,9 @@ evalqOnLoad({
     }
     if (kernel=="linear" && gamma != 0.01) {
       warning("Gamma parameter is not used with linear kernel")
+    }
+    if (verbosity < 0 || verbosity > 6) {
+      stop("Wrong verbosity level, should be from 0 to 6")
     }
     
     labels = all.vars(update(formula,.~0))
@@ -206,6 +193,7 @@ evalqOnLoad({
     config$setLibrary(lib)
     config$setKernel(kernel)
     config$setPreprocess(prep)
+    config$set_verbosity(verbosity)
     
     config$C = C
     config$gamma = gamma
@@ -235,17 +223,7 @@ evalqOnLoad({
 
     client 
   } 
-    
-  if ( !isGeneric("predict") ) {
-    setGeneric("predict", function( object, x, ... ) standardGeneric("predict") )
-  }
 
-  if (!isGeneric("dataset.X")  ) {
-    setGeneric( "dataset.X", function( object, ... ) standardGeneric("dataset.X") )
-  }
-  if (!isGeneric("dataset.Y")  ) {
-    setGeneric( "dataset.Y", function( object,  ... ) standardGeneric("dataset.Y") )
-  }
 
   print.svm <- function(x) {
     print(sprintf("SVM object with: library: %s, kernel: %s, preprocess: %s, C: %.1f, gamma: %.3f, coef0: %.3f, degree: %d",
@@ -258,15 +236,85 @@ evalqOnLoad({
                   x$getDegree() ))
   }
   
-  plot.svm <<- function(x, dim1 = 1, dim2 = 2) {
-    df =  data.frame( x$getX() ) 
-    if (dim1 > ncol(df) || dim2 > ncol(df)) {
-      stop("Too large dimensions")
+  summary.svm <<- function(object) {
+    print(sprintf("Support Vector Machine, library: %s, kernel: %s, preprocess: %s",
+                  object$getLibrary(), 
+                  object$getKernel(), 
+                  object$getPreprocess()))
+    print(sprintf("%d classes with %d support vectors", 
+                  object$get_number_class(), 
+                  object$get_number_sv() ))
+  }
+  
+  plot.svm <<- function(x, mode="normal", dim1 = 1, dim2 = 2, log="") {
+    if (mode != "pca" && mode != "normal" && mode != "contour" ) {
+      stop("Wrong mode!") 
     }
+    df =  data.frame( x$getX() )
     t = x$getY()
-    x = df[,dim1]
-    y = df[,dim2]
-    qplot(data=df, x=x, y=y, color=t) # + scale_colour_gradientn(colours=rainbow(2),breaks = c(2,4))
+    w = c(x$getW())
+    if (mode == "pca") {
+      pca_data = prcomp(df, scale=TRUE)
+      scores = data.frame(df, pca_data$x[,1:2])
+ 
+      w = w %*% pca_data$rotation
+      A = w[1]
+      B = w[2]
+      C = x$getBias()
+      
+      s = -A/B
+      int = -C/B
+      
+      plot = ggplot() +
+          geom_point(data=scores, aes(PC1, PC2), colour=factor(t+2)) + geom_abline(slope=s, intercept=int)
+      plot
+    }
+    else if (mode == "normal") { 
+      if (dim1 > ncol(df) || dim2 > ncol(df)) {
+        stop("Too large dimensions")
+      }
+      A = w[1]
+      B = w[2]
+      C = x$getBias()
+      
+      s = -A/B
+      int = -C/B
+      plot = ggplot() + geom_point(data=df, aes(X1, X2), colour=factor(t+6))  +
+        geom_abline(slope=s, intercept=int)
+      plot
+    }
+    else if (mode == "contour") {    # test mode
+      temp_target = x$getY()
+      test_svm = x
+      x_col = df[colnames(df)[1]]
+      y_col = df[colnames(df)[2]]
+      
+      x_max = max(x_col)
+      x_min = min(x_col) 
+      y_max = max(y_col)
+      y_min = min(y_col)
+      
+      x_axis = seq(from=x_min, to=x_max, length.out=300)
+      y_axis = seq(from=y_min, to=y_max, length.out=300)
+      grid = data.frame(x_axis,y_axis)
+      grid <- expand.grid(x=x_axis,y=y_axis)
+      target = predict(test_svm, grid)
+      A = w[1]
+      B = w[2]
+      C = test_svm$getBias()
+      
+      s = -A/B
+      int = -C/B
+
+      grid["target"] = target
+      x$setY(temp_target)
+      x$setX(data.matrix(df))
+      plot <- ggplot()
+      plot + 
+        geom_tile(data=grid, aes(x=x,y=y,fill=target)) + theme(legend.position="none") +
+        geom_point(data=df, aes(X1, X2), colour=factor(t+6))
+      
+    }
   }
   
   predict.svm <<- function(object, x) {
@@ -282,22 +330,13 @@ evalqOnLoad({
     prediction
   }
   
-  dataset.X <- function(object) {
-      object$getX()
-  }
-  
-  dataset.Y <- function(object) {
-      object$getY()
-  }
   
   setMethod("print", "Rcpp_SVMClient", print.svm)
-  setMethod("predict", "Rcpp_SVMClient", predict.svm )
+  setMethod("predict", signature("Rcpp_SVMClient"), predict.svm)
   setMethod("plot", "Rcpp_SVMClient",  plot.svm)
+  setMethod("summary", "Rcpp_SVMClient", summary.svm)
 
-  #dataset
-  setMethod("dataset.X", signature("Rcpp_SVMClient"), dataset.X)
-  setMethod("dataset.Y", signature("Rcpp_SVMClient"), dataset.Y)
-    
+
 })
 
 

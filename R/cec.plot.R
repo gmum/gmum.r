@@ -19,6 +19,7 @@ loadModule("cec", TRUE)
 #' 
 #' @examples plot(cec)
 #' @examples plot(cec, ellipses=TRUE, centers=FALSE)
+
 plot.cec <- NULL
 
 evalqOnLoad({
@@ -63,8 +64,7 @@ evalqOnLoad({
           ddd <- (lineAll%*%t(veE)) + meansMultiply
           points(ddd,col = "black", type = "l", lwd = 2)
           #dataEllipse(d[x$y() == (i-1),],plot.points=FALSE,add = TRUE, levels = c(0.9))
-        }
-        
+        }        
       }
       
       if(centers) {
@@ -73,6 +73,6 @@ evalqOnLoad({
       }
     }
   }
+    setMethod("plot", signature(x="Rcpp_CecModel"), plot.cec)
   
-  setMethod("plot", signature(x="Rcpp_cecModel"), plot.cec)
 })

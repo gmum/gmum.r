@@ -26,6 +26,7 @@
 #' 
 #' @usage CEC(k=3, x=dataset)
 #' @usage CEC(k=3, x=dataset, control.nstart=10, method.type='sphere')
+#' 
 CEC <- NULL
 
 #' @title loop
@@ -35,6 +36,7 @@ CEC <- NULL
 #' @docType methods
 #'
 #' @param c CEC model object.
+#' 
 loop.cec <- NULL
 
 #' @title entropy
@@ -44,14 +46,17 @@ loop.cec <- NULL
 #' @docType methods
 #'
 #' @param c CEC model object.
+#' 
 entropy.cec <- NULL
 
 #' @title y
+#' 
 #' @description Print labels assigned
 #' 
 #' @docType methods
 #'
 #' @param c CEC model object.
+#' 
 y.cec <- NULL
 
 #' @title centers
@@ -59,8 +64,9 @@ y.cec <- NULL
 #' @description Print centers of clusters
 #'
 #' @docType methods
-#'
+#' 
 #' @param c CEC model object.
+#' 
 centers.cec <- NULL
 
 #' @title cov
@@ -70,49 +76,38 @@ centers.cec <- NULL
 #' @docType methods
 #'
 #' @param c CEC model object.
+#' 
 cov.cec <- NULL
 
 #' @title predictCluster
 #' 
-#' @description For given point predict cluster where it belongs
-#' 
-#' @rdname cec-predict-methods
-#' 
-#' @docType methods
-#'
-#' @param c CEC model object.
-#' @param vec Given points.
-predictCluster.cec <- NULL
-
-#' @title predictClusters
-#' 
-#' @description For given point print propabilities of belonging to each cluster
-#' 
-#' @rdname cec-predict-methods
-#' 
-#' @docType methods
-#'
-#' @param c CEC model object.
-#' @param vec Given points.
-predictClusters.cec <- NULL
-
-#' @title Predict
-#' 
-#' @description Returns predicted classes for provided test examples.
+#' @description Returns cluster where belong given point.
 #' 
 #' @rdname cec-predict-methods
 #' 
 #' @export
 #' 
-#' @usage predict(cec, x)
+#' @docType methods
 #' 
-#' @param object Trained CEC object.
-#' @param x Unlabeled data, note that each entry needs to be the same dimentionality as training examples.
+#' @param c Trained CEC model object.
+#' @param vec Given point.
+#' 
+predictCluster.cec <- NULL
+
+#' @title predictClusters
+#' 
+#' @description Returns propabilities of belonging to each cluster for given point.
+#' 
+#' @rdname cec-predict-methods
+#' 
+#' @export
 #' 
 #' @docType methods
 #' 
-#' @aliases test
-alaMaKota.cec <- NULL
+#' @param c Trained CEC model object.
+#' @param vec Given point.
+#' 
+predictClusters.cec <- NULL
 
 #' @title log.ncluster.cec
 #' 
@@ -122,6 +117,7 @@ alaMaKota.cec <- NULL
 #' @docType methods
 #'
 #' @param c CEC model object.
+#' 
 log.ncluster.cec <- NULL
 
 #' @title log.energy.cec
@@ -132,6 +128,7 @@ log.ncluster.cec <- NULL
 #' @docType methods
 #'
 #' @param c CEC model object.
+#' 
 log.energy.cec <- NULL
 
 #' @title log.iters.cec
@@ -141,6 +138,7 @@ log.energy.cec <- NULL
 #' @docType methods
 #'
 #' @param c CEC model object.
+#' 
 log.iters.cec <- NULL
 
 #' @title nstart
@@ -151,6 +149,7 @@ log.iters.cec <- NULL
 #' @docType methods
 #'
 #' @param c CEC model object.
+#' 
 nstart.cec <- NULL
 
 loadModule('cec', TRUE)
@@ -190,7 +189,7 @@ evalqOnLoad({
     if (control.itmax <= 0)
       stop("Max number of iterations should be a positive integer!");
     
-    config <- new(cecConfiguration)
+    config <- new(CecConfiguration)
     config$setDataSet(x)
     config$setEps(control.eps)      
     config$setMix(params.mix) 
@@ -207,7 +206,7 @@ evalqOnLoad({
     config$setItmax(control.itmax)
     config$setIters(log.iters)
     
-    model <- new(cecModel, config)
+    model <- new(CecModel, config)
     model
   }
   
@@ -217,6 +216,10 @@ evalqOnLoad({
   
   entropy.cec <<- function(c) {
     c$entropy()
+  }
+  
+  energy.cec <<- function(c) {
+    c$energy()
   }
   
   y.cec <<- function(c) {
@@ -252,50 +255,50 @@ evalqOnLoad({
     }
     c$predict(x, TRUE)
   }
-  
-  alaMaKota.cec <<- function(c, x) {
-    predictClusters.cec(c, x)
-  }
-  
-  log.ncluster.cec <<- function(c) {
-    c$log.ncluster()
-  }
-  
-  log.energy.cec <<- function(c) {
-    c$log.energy()
-  }
-  
-  log.iters.cec <<- function(c) {
-    c$log.iters()
-  }
-  
-  nstart.cec <<- function(c) {
-    c$nstart()
-  }
-  
-  setGeneric("loop", function(c) standardGeneric("loop"))
-  setGeneric("entropy", function(c) standardGeneric("entropy"))
-  setGeneric("y", function(c) standardGeneric("y"))
-  setGeneric("centers", function(c) standardGeneric("centers"))
-  setGeneric("cov", function(c) standardGeneric("cov"))
-  setGeneric("predictCluster", function(c, ...) standardGeneric("predictCluster"))
-  setGeneric("predictClusters", function(c, ...) standardGeneric("predictClusters"))
-  setGeneric("alaMaKota", function(c, x) standardGeneric("alaMaKota"))
-  setGeneric("log.ncluster", function(c) standardGeneric("log.ncluster"))
-  setGeneric("log.energy", function(c) standardGeneric("log.energy"))
-  setGeneric("log.iters", function(c) standardGeneric("log.iters"))
-  setGeneric("nstart", function(c) standardGeneric("nstart"))
-  
-  setMethod("loop", "Rcpp_cecModel", loop.cec)
-  setMethod("entropy", "Rcpp_cecModel", entropy.cec)
-  setMethod("y", "Rcpp_cecModel", y.cec)
-  setMethod("centers", "Rcpp_cecModel", centers.cec)
-  setMethod("cov", "Rcpp_cecModel", cov.cec)
-  setMethod("predictCluster", "Rcpp_cecModel", predictCluster.cec)
-  setMethod("predictClusters", "Rcpp_cecModel", predictClusters.cec)
-  setMethod("alaMaKota", "Rcpp_cecModel", alaMaKota.cec)
-  setMethod("log.ncluster", "Rcpp_cecModel", log.ncluster.cec)
-  setMethod("log.energy", "Rcpp_cecModel", log.energy.cec)
-  setMethod("log.iters", "Rcpp_cecModel", log.iters.cec)
-  setMethod("nstart", "Rcpp_cecModel", nstart.cec)
+    
+    log.ncluster.cec <<- function(c) {
+      c$log.ncluster()
+    }
+    
+    log.energy.cec <<- function(c) {
+      c$log.energy()
+    }
+    
+    log.iters.cec <<- function(c) {
+      c$log.iters()
+    }
+    
+    nstart.cec <<- function(c) {
+      c$nstart()
+    }
+    
+    setGeneric("loop", function(c) standardGeneric("loop"))
+    setGeneric("entropy", function(c) standardGeneric("entropy"))
+    setGeneric("energy", function(c) standardGeneric("energy"))
+    setGeneric("y", function(c) standardGeneric("y"))
+    setGeneric("centers", function(c) standardGeneric("centers"))
+    setGeneric("cov", function(c) standardGeneric("cov"))
+    setGeneric("predictCluster", function(c, ...) standardGeneric("predictCluster"))
+    setGeneric("predictClusters", function(c, ...) standardGeneric("predictClusters"))
+    setGeneric("log.ncluster", function(c) standardGeneric("log.ncluster"))
+    setGeneric("log.energy", function(c) standardGeneric("log.energy"))
+    setGeneric("log.iters", function(c) standardGeneric("log.iters"))
+    setGeneric("nstart", function(c) standardGeneric("nstart"))
+    
+    setMethod("loop", "Rcpp_CecModel", loop.cec)
+    setMethod("entropy", "Rcpp_CecModel", entropy.cec)
+    setMethod("energy", "Rcpp_CecModel", energy.cec)
+    setMethod("y", "Rcpp_CecModel", y.cec)
+    setMethod("centers", "Rcpp_CecModel", centers.cec)
+    setMethod("cov", "Rcpp_CecModel", cov.cec)
+    setMethod("predictCluster", "Rcpp_CecModel", predictCluster.cec)
+    setMethod("predictClusters", "Rcpp_CecModel", predictClusters.cec)
+    setMethod("log.ncluster", "Rcpp_CecModel", log.ncluster.cec)
+    setMethod("log.energy", "Rcpp_CecModel", log.energy.cec)
+    setMethod("log.iters", "Rcpp_CecModel", log.iters.cec)
+    setMethod("nstart", "Rcpp_CecModel", nstart.cec)
+    
+    setMethod("predict", "Rcpp_CecModel", function(object, vec) {
+      object$predict(vec)
+    })
 })

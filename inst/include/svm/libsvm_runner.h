@@ -11,17 +11,14 @@
 #include <sstream>
 #include <cstdlib>
 #include <time.h>
-#include "svm.h"
+#include "svm.h" 
 #include "svm_handler.h"
 #include "svm_basic.h"
-
 
 class LibSVMRunner: public SVMHandler {
 public:
 	LibSVMRunner();
 	virtual ~LibSVMRunner();
-	void save_model_to_file(SVMConfiguration&, svm_parameter*, svm_problem&);
-	void file_prediction(SVMConfiguration&);
 	bool save_model_to_config(SVMConfiguration&, svm_parameter*, svm_problem&);
 	svm_model* load_model_from_config(SVMConfiguration&, svm_parameter*);
 	/*public interface
@@ -35,6 +32,9 @@ private:
 	double *	vectlib(arma::vec); //arma vector to lisvm
 	void arma_prediction(SVMConfiguration&);
 	svm_parameter* configuration_to_problem(SVMConfiguration&);
+
+	struct svm_model *model;
+	struct svm_problem prob;
 };
 
 #endif /* LIBSVMRUNNER_H_ */
