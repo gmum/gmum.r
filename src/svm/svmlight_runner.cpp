@@ -13,6 +13,7 @@
 
 #include "svmlight_runner.h"
 #include "svm/log.h"
+#include "svm_basic.h"
 
 const std::string __file__ = "svmlight_runner.cpp";
 const std::string __runner_class__ = "SVMLightRunner";
@@ -35,16 +36,26 @@ bool SVMLightRunner::canHandle(SVMConfiguration &config) {
 
 void SVMLightRunner::processRequest(SVMConfiguration &config) {
     char **argv;
+
     if (!config.isPrediction()) {
+        // Learning
         librarySVMLearnMain(0, argv, true, config);
+
     } else {
-        predict(config);
-        // SVMLight library version
-        //librarySVMClassifyMain(0, argv, true, config);
+        // Prediction
+        if (config.kernel_type == _LINEAR) {
+            // Our implementation
+            predict(config);
+        } else {
+            // SVMLight
+            librarySVMClassifyMain(0, argv, true, config);
+        }
+        // Convert sign to label
+        resultsToLabels(config);
     }
 }
 
-// TODO: More than linear
+
 void SVMLightRunner::predict(SVMConfiguration &config) {
     LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".predict() Started.");
     // Number of docs is a number of rows in data matrix
@@ -64,12 +75,34 @@ void SVMLightRunner::predict(SVMConfiguration &config) {
             doc_result += sum_j;
         }
         doc_result -= config.threshold_b;
+        config.result[i] = doc_result;
+    }
+
+    LOG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".predict() Done."
+    );
+}
+
+
+void SVMLightRunner::resultsToLabels(SVMConfiguration &config) {
+    LOG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".resultsToLabels() Started."
+    );
+
+    size_t n_docs = config.result.n_rows;
+    double doc_result = 0;
+    for (int i=0; i < n_docs; ++i) {
+        doc_result = config.result[i];
 
         // Store only a class label
-        arma::vec doc_result_vec;
-        doc_result_vec << doc_result << arma::endr;
-        arma::vec result_sign_vec = arma::sign(doc_result_vec);
-        doc_result = result_sign_vec[0];
+        //arma::vec doc_result_vec;
+        //doc_result_vec << doc_result << arma::endr;
+        //arma::vec result_sign_vec = arma::sign(doc_result_vec);
+        //doc_result = result_sign_vec[0];
 
         // Store user-defined label
         if (doc_result < 0) {
@@ -79,15 +112,15 @@ void SVMLightRunner::predict(SVMConfiguration &config) {
         } else {
             config.result[i] = 0;
         }
-        //config.result[i] = doc_result;
     }
 
     LOG(
         config.log,
         LogLevel::DEBUG,
-        __debug_prefix__ + ".predict() Done."
+        __debug_prefix__ + ".resultsToLabels() Done."
     );
 }
+
 
 /* Library functionalities wrappers */
 
@@ -426,6 +459,9 @@ int SVMLightRunner::librarySVMClassifyMain(
     } else {
         max_docs = config.target.n_rows;
         max_words_doc = config.data.n_cols;
+        config.result = arma::randu<arma::vec>(max_docs);
+        // Prevent writing to the file
+        pred_format = -1;
         // lld used only for file reading
     }
     max_words_doc+=2;
@@ -446,9 +482,9 @@ int SVMLightRunner::librarySVMClassifyMain(
 
     // GMUM.R changes {
     bool newline;
+    if (!use_gmumr) {
         if ((predfl = fopen (predictionsfile, "w")) == NULL)
         { perror (predictionsfile); exit (1); }
-    if (!use_gmumr) {
         if ((docfl = fopen (docfile, "r")) == NULL)
         { perror (docfile); exit (1); }
 
@@ -507,17 +543,21 @@ int SVMLightRunner::librarySVMClassifyMain(
       if(pred_format==1) { /* output the value of decision function */
         fprintf(predfl,"%.8g\n",dist);
       }
-      if((int)(0.01+(doc_label*doc_label)) != 1) 
+      if((int)(0.01+(doc_label*doc_label)) != 1)
         { no_accuracy=1; } /* test data is not binary labeled */
       if(verbosity>=2) {
         if(totdoc % 100 == 0) {
       printf("%ld..",totdoc); fflush(stdout);
         }
       }
+      // GMUM.R changes {
       if (!use_gmumr) {
           newline = (!feof(docfl)) && fgets(line,(int)lld,docfl);
       } else {
           newline = false;
+          // Store prediction result in config
+          config.result[totdoc-1] = dist;
+          // Read next line
           if (totdoc < config.target.n_rows) {
               newline = true;
               std::string str = SVMConfigurationToSVMLightLearnInputLine(config, totdoc);
@@ -526,12 +566,13 @@ int SVMLightRunner::librarySVMClassifyMain(
               line[str.size()] = '\0';
           }
       }
-    }  
-    fclose(predfl);
+    }
     if (!use_gmumr) {
+        fclose(predfl);
         fclose(docfl);
         free(line);
     }
+    // GMUM.R changes }
     free(words);
     free_model(model,1);
 

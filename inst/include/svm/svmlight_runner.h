@@ -37,8 +37,15 @@ public:
 
 protected:
     
-    // TODO: Move this method to SVMHandler?
+    /**
+     * GMUM.R's implementation of prediction
+     */
     void predict(SVMConfiguration &);
+
+    /**
+     * Store numeric results as user-defined labels
+     */
+    void resultsToLabels(SVMConfiguration &);
 
     /** @name Library functionalities wrappers
      *  Following methods are direct library functionalities wrappers with
