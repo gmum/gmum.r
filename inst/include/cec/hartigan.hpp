@@ -10,22 +10,22 @@
 namespace gmum {
 
 class Hartigan: public Algorithm {
-	void removeCluster(unsigned int source, const arma::mat &points,
-			std::vector<unsigned int> &assignment,
-			std::vector<boost::shared_ptr<Cluster> > &clusters);
-	double calcWholeEntropy(double crossEntropy, int pointsInCluster,
-			int numberOfPoints);
-	double calcEntropyChange(const Cluster &A, const Cluster &B,
-			int numberOfPoints);
+    void remove_cluster(unsigned int source, const arma::mat &points,
+                        std::vector<unsigned int> &assignment,
+                        std::vector<boost::shared_ptr<Cluster> > &clusters);
+    double calc_energy(double cross_entropy, int points_in_cluster,
+                       int npoints);
+    double calc_energy_change(const Cluster& a, const Cluster &b,
+                              int npoints);
 public:
-	Hartigan(bool logNrOfClusters, bool logEnergy);
-	TotalResult loop(const arma::mat &points,
-			std::vector<unsigned int> &assignment, double killThreshold,
-			std::vector<boost::shared_ptr<Cluster> > &clusters);
-	SingleResult singleLoop(const arma::mat &points,
-			std::vector<unsigned int> &assignment, double killThreshold,
-			std::vector<boost::shared_ptr<Cluster> > &clusters);
-	double entropy(boost::shared_ptr<Cluster> ptrToCluster, int numberOfPoints);
+    Hartigan(bool m_log_nclusters, bool m_log_energy);
+    TotalResult loop(const arma::mat &points,
+                     std::vector<unsigned int> &assignment, double kill_threshold,
+                     std::vector<boost::shared_ptr<Cluster> > &clusters);
+    SingleResult single_loop(const arma::mat &points,
+                             std::vector<unsigned int> &assignment, double kill_threshold,
+                             std::vector<boost::shared_ptr<Cluster> > &clusters);
+    double entropy(boost::shared_ptr<Cluster> ptr_to_cluster, int npoints);
 };
 
 }

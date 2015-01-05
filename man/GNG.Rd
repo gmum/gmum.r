@@ -10,7 +10,7 @@ GNG(dataset_type = gng.dataset.sequential, beta = 0.99, alpha = 0.5,
   experimental_utility_option = gng.experimental.utility.option.off,
   experimental_utility_k = 1.5, max_edge_age = 200,
   experimental_vertex_extra_data = FALSE, lambda = 200,
-  load_model_filename = "", use_cosine = FALSE)
+  load_model_filename = "", verbosity = 0)
 }
 \arguments{
 \item{beta}{coefficient. Decrease the error variables of all node nodes by this fraction. Forgetting rate. Default 0.99}

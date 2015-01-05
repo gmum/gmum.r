@@ -4,7 +4,6 @@
 SVMClient::SVMClient(SVMConfiguration *config) {
 	SVMConfiguration current_config = *config;
 	this->config = current_config;
-	trained = false;
 }
 
 // Setters
@@ -62,21 +61,25 @@ arma::vec SVMClient::getPrediction() {
 }
 std::string SVMClient::getLibrary(){
 	switch(config.svm_type) {
-	case LIBSVM : return "libsvm"; break;
+	case LIBSVM : return "libsvm";
+  case SVMLIGHT : return "svmlight";
+  default : return "error"; 
 	}
 }
 std::string SVMClient::getKernel(){
 	switch(config.kernel_type) {
-	case _LINEAR : return "linear"; break;
-	case _POLY : return "poly"; break;
-	case _RBF : return "rbf"; break;
-	case _SIGMOID : return "sigmoid"; break;
+	case _LINEAR : return "linear";
+	case _POLY : return "poly"; 
+	case _RBF : return "rbf"; 
+	case _SIGMOID : return "sigmoid"; 
+  default : return "error"; 
 	}
 }
 std::string SVMClient::getPreprocess() {
 	switch(config.preprocess) {
-	case TWOE : return "2e"; break;
-	case NONE : return "none"; break;
+	case TWOE : return "2e";
+	case NONE : return "none";
+  default : return "error";
 	}
 }
 double SVMClient::getCacheSize(){
@@ -109,17 +112,29 @@ double* SVMClient::getAlpha() {
 	return config.rho;
 }
 
-double SVMClient::getBias() {	// where is the bias in config?
-	return 0.0;			// temporary
+double SVMClient::getBias() {	
+	return config.getB();		
 }
 
-double* SVMClient::getW() {		// where is W in config?
+arma::vec SVMClient::getW() {		// where is W in config?
 	if ( config.kernel_type == _LINEAR ) {
-		return new double[2];	// temporary
+		return config.w;
 	}
 	else {
 		return 0;
 	}
+}
+
+int SVMClient::get_number_sv() {
+  return config.l;
+}
+
+int SVMClient::get_number_class() {
+  return config.nr_class;
+}
+
+arma::mat SVMClient::getSV(){
+  return config.arma_SV;
 }
 
 // Runners
@@ -134,7 +149,6 @@ void SVMClient::run() {
 void SVMClient::train() {
 	config.setPrediction(false);
 	run();
-	trained = true;
 }
 
 void SVMClient::predict( arma::mat problem ) {
@@ -172,24 +186,15 @@ void SVMClient::createFlow() {
 		}
 
 	switch (preprocess) {
-	// case TWOE :	{	TwoeSVMPostprocessor post_runner;
-	// 				TwoeSVMPreprocessor pre_runner;
-	// 				handles.insert( handlers.bedin(), pre_runner );
-	// 				handlers.push_back( post_runner );
-	// 				break;
-	// 			}
-
-	case VK:
-		break; // TODO
-
+	  case TWOE :	{	
+          TwoeSVMPostprocessor *post_runner = new TwoeSVMPostprocessor();
+	 				TwoeSVMPreprocessor *pre_runner = new TwoeSVMPreprocessor();
+	 				handlers.insert( handlers.begin(), pre_runner );
+	 				handlers.push_back( post_runner );
+	 				break;
+	  }
 	case NONE:
-		break;
-
-	case NORM: {
-		NormRunner norm_runner;
-		handlers.push_back(&norm_runner);
-		break;
-	}
+		break; 
 	default:
 		break;
 	}
