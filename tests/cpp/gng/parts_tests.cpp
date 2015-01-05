@@ -209,4 +209,3 @@ TEST(DatabaseTests, BasicDatasetTest) {
 		ASSERT_LE(dataset2.getPosition(c)[0], 0.9);
 	}
 }
-
