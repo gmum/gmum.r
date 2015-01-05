@@ -63,7 +63,10 @@ void SVMConfiguration::setLibrary( std::string library ) {
 		this->library = LIBSVM;
 		this->svm_type = C_SVC;
 	}
-	// else if
+	else if (library == "svmlight" ) {
+    this->library = SVMLIGHT;
+    this->svm_type = C_SVC;
+	}
 }
 
 void SVMConfiguration::setKernel( std::string kernel ) {
@@ -119,6 +122,9 @@ void SVMConfiguration::setDefaultParams() {
 	nu = 0.5;
 	p = 0.1;
 
-
+    // User-defined classification mode labels
+    // (will be filled during data processing)
+    label_negative = 0;
+    label_positive = 0;
 }
 

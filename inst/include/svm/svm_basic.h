@@ -60,6 +60,16 @@ public:
 	double *rho; /* constants in decision functions (rho[k*(k-1)/2]) */
 	int *sv_indices; /* sv_indices[0,...,nSV-1] are values in [1,...,num_traning_data] to indicate SVs in the training set */
 
+    /* SVMLight parameters */
+    double threshold_b;
+    char *kernel_parm_custom;   // Custom kernel parameter(s)
+    arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
+    arma::mat support_vectors;
+    // User-defined classification mode labels
+    int label_negative;
+    int label_positive;
+
+
 	/* for classification only */
 
 	int *label; /* label of each class (label[k]) */

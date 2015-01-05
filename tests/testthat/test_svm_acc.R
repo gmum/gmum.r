@@ -11,7 +11,7 @@ test_that('accuracy is calculated', {
   target <- svm$getY()
   
   pred <- predict(svm, x)
-  acc <- svm.accuracy(prediction=pred, target=pred)
+  acc <- svm.accuracy(prediction=pred, target=target)
   print(acc)
   
   expect_that(acc, is_a("numeric"))
