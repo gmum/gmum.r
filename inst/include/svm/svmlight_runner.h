@@ -48,10 +48,17 @@ protected:
     void resultsToLabels(SVMConfiguration &);
 
     /** @name Library functionalities wrappers
-     *  Following methods are direct library functionalities wrappers with
-     *  file operations parametrized (`bool use_gmumr`).
+     *  Following methods and fields are direct library functionalities
+     *  wrappers with file operations parametrized (`bool use_gmumr`).
      */
     /// @{
+
+    /* These strings are not used by us (we are operating only on memory)
+     * but let's keep them before removing unnecessary code */
+    char docfile[200];           /* file with training examples */
+    char modelfile[200];         /* file for resulting classifier */
+    char restartfile[200];       /* file with initial alphas */
+    char predictionsfile[200];
 
     /**
      * SVMLight's `svm_learn` main method
@@ -105,6 +112,18 @@ protected:
         char *docfile, DOC ***docs, double **label, long int *totwords,
         long int *totdoc, bool use_gmumr, SVMConfiguration &config
     );
+
+    /**
+     * SVMLight's auxiliary method
+     * @author  Thorsten Joachims
+     */
+    void libraryWaitAnyKey();
+
+    /**
+     * SVMLight's auxiliary method
+     * @author  Thorsten Joachims
+     */
+    void libraryPrintHelp();
 
     /// @}
 

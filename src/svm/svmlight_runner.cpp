@@ -124,14 +124,6 @@ void SVMLightRunner::resultsToLabels(SVMConfiguration &config) {
 
 /* Library functionalities wrappers */
 
-void   wait_any_key();
-void   print_help();
-
-char docfile[200];           /* file with training examples */
-char modelfile[200];         /* file for resulting classifier */
-char restartfile[200];       /* file with initial alphas */
-
-
 int SVMLightRunner::librarySVMLearnMain(
     int argc, char **argv, bool use_gmumr, SVMConfiguration &config
 ) {
@@ -275,7 +267,7 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     for(i=1;(i<argc) && ((argv[i])[0] == '-');i++) {
       switch ((argv[i])[1]) 
         { 
-        case '?': print_help(); exit(0);
+        case '?': libraryPrintHelp(); exit(0);
         case 'z': i++; strcpy(type,argv[i]); break;
         case 'v': i++; (*verbosity)=atol(argv[i]); break;
         case 'b': i++; learn_parm->biased_hyperplane=atol(argv[i]); break;
@@ -304,7 +296,7 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
         case 'a': i++; strcpy(learn_parm->alphafile,argv[i]); break;
         case 'y': i++; strcpy(restartfile,argv[i]); break;
         default: printf("\nUnrecognized option %s!\n\n",argv[i]);
-	         print_help();
+	         libraryPrintHelp();
 	         exit(0);
         }
     }
@@ -312,8 +304,8 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     if(!use_gmumr) {
         if(i>=argc) {
             printf("\nNot enough input parameters!\n\n");
-            wait_any_key();
-            print_help();
+            libraryWaitAnyKey();
+            libraryPrintHelp();
             exit(0);
         }
         strcpy (docfile, argv[i]);
@@ -346,8 +338,8 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     }
     else {
       printf("\nUnknown type '%s': Valid types are 'c' (classification), 'r' regession, and 'p' preference ranking.\n",type);
-      wait_any_key();
-      print_help();
+      libraryWaitAnyKey();
+      libraryPrintHelp();
       exit(0);
     }    
     if((learn_parm->skip_final_opt_check) 
@@ -358,74 +350,73 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     if((learn_parm->skip_final_opt_check) 
        && (learn_parm->remove_inconsistent)) {
       printf("\nIt is necessary to do the final optimality check when removing inconsistent \nexamples.\n");
-      wait_any_key();
-      print_help();
+      libraryWaitAnyKey();
+      libraryPrintHelp();
       exit(0);
     }    
     if((learn_parm->svm_maxqpsize<2)) {
       printf("\nMaximum size of QP-subproblems not in valid range: %ld [2..]\n",learn_parm->svm_maxqpsize); 
-      wait_any_key();
-      print_help();
+      libraryWaitAnyKey();
+      libraryPrintHelp();
       exit(0);
     }
     if((learn_parm->svm_maxqpsize<learn_parm->svm_newvarsinqp)) {
       printf("\nMaximum size of QP-subproblems [%ld] must be larger than the number of\n",learn_parm->svm_maxqpsize); 
       printf("new variables [%ld] entering the working set in each iteration.\n",learn_parm->svm_newvarsinqp); 
-      wait_any_key();
-      print_help();
+      libraryWaitAnyKey();
+      libraryPrintHelp();
       exit(0);
     }
     if(learn_parm->svm_iter_to_shrink<1) {
       printf("\nMaximum number of iterations for shrinking not in valid range: %ld [1,..]\n",learn_parm->svm_iter_to_shrink);
-      wait_any_key();
-      print_help();
+      libraryWaitAnyKey();
+      libraryPrintHelp();
       exit(0);
     }
     if(learn_parm->svm_c<0) {
       printf("\nThe C parameter must be greater than zero!\n\n");
-      wait_any_key();
-      print_help();
+      libraryWaitAnyKey();
+      libraryPrintHelp();
       exit(0);
     }
     if(learn_parm->transduction_posratio>1) {
       printf("\nThe fraction of unlabeled examples to classify as positives must\n");
       printf("be less than 1.0 !!!\n\n");
-      wait_any_key();
-      print_help();
+      libraryWaitAnyKey();
+      libraryPrintHelp();
       exit(0);
     }
     if(learn_parm->svm_costratio<=0) {
       printf("\nThe COSTRATIO parameter must be greater than zero!\n\n");
-      wait_any_key();
-      print_help();
+      libraryWaitAnyKey();
+      libraryPrintHelp();
       exit(0);
     }
     if(learn_parm->epsilon_crit<=0) {
       printf("\nThe epsilon parameter must be greater than zero!\n\n");
-      wait_any_key();
-      print_help();
+      libraryWaitAnyKey();
+      libraryPrintHelp();
       exit(0);
     }
     if(learn_parm->rho<0) {
       printf("\nThe parameter rho for xi/alpha-estimates and leave-one-out pruning must\n");
       printf("be greater than zero (typically 1.0 or 2.0, see T. Joachims, Estimating the\n");
       printf("Generalization Performance of an SVM Efficiently, ICML, 2000.)!\n\n");
-      wait_any_key();
-      print_help();
+      libraryWaitAnyKey();
+      libraryPrintHelp();
       exit(0);
     }
     if((learn_parm->xa_depth<0) || (learn_parm->xa_depth>100)) {
       printf("\nThe parameter depth for ext. xi/alpha-estimates must be in [0..100] (zero\n");
       printf("for switching to the conventional xa/estimates described in T. Joachims,\n");
       printf("Estimating the Generalization Performance of an SVM Efficiently, ICML, 2000.)\n");
-      wait_any_key();
-      print_help();
+      libraryWaitAnyKey();
+      libraryPrintHelp();
       exit(0);
     }
 }
 
 
-char predictionsfile[200];
 
 
 int SVMLightRunner::librarySVMClassifyMain(
@@ -611,11 +602,11 @@ void SVMLightRunner::librarySVMClassifyReadInputParameters(
     );
     long i;
 
-    /* set default */
-    strcpy (modelfile, "svm_model");
-    strcpy (predictionsfile, "svm_predictions"); 
     // GMUM.R changes {
     if (!use_gmumr) {
+        /* set default */
+        strcpy (modelfile, "svm_model");
+        strcpy (predictionsfile, "svm_predictions"); 
         (*verbosity)=2;
     } else {
         (*verbosity) = config.log.verbosity;
@@ -626,11 +617,11 @@ void SVMLightRunner::librarySVMClassifyReadInputParameters(
     for(i=1;(i<argc) && ((argv[i])[0] == '-');i++) {
       switch ((argv[i])[1]) 
         { 
-        case 'h': print_help(); exit(0);
+        case 'h': libraryPrintHelp(); exit(0);
         case 'v': i++; (*verbosity)=atol(argv[i]); break;
         case 'f': i++; (*pred_format)=atol(argv[i]); break;
         default: printf("\nUnrecognized option %s!\n\n",argv[i]);
-             print_help();
+             libraryPrintHelp();
              exit(0);
         }
     }
@@ -638,7 +629,7 @@ void SVMLightRunner::librarySVMClassifyReadInputParameters(
     if(!use_gmumr) {
         if((i+1)>=argc) {
           printf("\nNot enough input parameters!\n\n");
-          print_help();
+          libraryPrintHelp();
           exit(0);
         }
         strcpy (docfile, argv[i]);
@@ -650,7 +641,7 @@ void SVMLightRunner::librarySVMClassifyReadInputParameters(
     // GMUM.R changes }
     if(((*pred_format) != 0) && ((*pred_format) != 1)) {
       printf("\nOutput format can only take the values 0 or 1!\n\n");
-      print_help();
+      libraryPrintHelp();
       exit(0);
     }
 }
@@ -1057,14 +1048,14 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     );
 }
 
-void wait_any_key()
+void SVMLightRunner::libraryWaitAnyKey()
 {
   printf("\n(more)\n");
   (void)getc(stdin);
 }
 
 
-void print_help()
+void SVMLightRunner::libraryPrintHelp()
 {
   printf("\nSVM-light %s: Support Vector Machine, learning module     %s\n",VERSION,VERSION_DATE);
   copyright_notice();
