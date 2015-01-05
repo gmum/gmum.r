@@ -10,7 +10,7 @@
 namespace gmum {
 
 enum AssignmentType {
-    kkmeanspp, krandom, kcentroids, kno_assignment,
+    kkmeanspp, krandom, kcentroids,
 };
 
 struct Params {

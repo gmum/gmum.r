@@ -142,8 +142,6 @@ void CecConfiguration::set_method_init(const std::string init) {
     else
 		Rcpp::stop(CONST::ERRORS::assignment_error);
 
-    if (m_params.assignment_type == kno_assignment)
-        Rcpp::stop(CONST::ERRORS::assignment_error);
     if (m_params.assignment_type == kcentroids
             && m_params.centroids.size() != m_params.nclusters)
         Rcpp::stop(CONST::ERRORS::centroids_error);

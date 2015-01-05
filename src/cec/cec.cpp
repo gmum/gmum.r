@@ -147,8 +147,6 @@ void CecModel::find_best_cec() {
         assignment_type = new CentroidsAssignment(*(m_config.get_params().dataset),
                                                   m_config.get_params().centroids);
         break;
-    case kno_assignment:
-        break; // TODO: handle no assignment
     }
 
     assignment->resize(m_config.get_params().dataset->n_rows);
