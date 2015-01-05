@@ -9,6 +9,12 @@
 
 namespace {
 
+int log_level = LogLevel::TRACE;
+
+double *null_double_ptr = 0;
+long *null_long_ptr = 0;
+long null_long = 0;
+
 // The fixture for testing class SVMLightRunner
 class SVMLightRunnerTest: public ::testing::Test {
 
@@ -16,8 +22,11 @@ protected:
 
     SVMLightRunnerTest() {
         svmlr = SVMLightRunner();
+        second_svmlr = SVMLightRunner();
         svm_config = SVMConfiguration();
-        svm_config.log.verbosity = LogLevel::TRACE;
+        svm_config.log.verbosity = log_level;
+        second_svm_config = SVMConfiguration();
+        second_svm_config.log.verbosity = log_level;
 
         learing_data_01
             << 0.5 << 1.0 << 0.0 << 1.0 << arma::endr
@@ -50,7 +59,9 @@ protected:
     /* Objects declared here can be used by all tests in the test case */
 
     SVMLightRunner svmlr;
+    SVMLightRunner second_svmlr;
     SVMConfiguration svm_config;
+    SVMConfiguration second_svm_config;
 
     arma::mat learing_data_01;
     arma::vec learing_target_01;
@@ -86,7 +97,8 @@ TEST_F(SVMLightRunnerTest, processRequest_learning) {
     // -r float    -> parameter c in sigmoid/poly kernel
     ASSERT_EQ(svm_config.C, 1);
     // -u string   -> parameter of user defined kernel
-    ASSERT_EQ(std::string(svm_config.kernel_parm_custom), std::string("empty"));
+    ASSERT_EQ(
+        std::string(svm_config.kernel_parm_custom), std::string("empty"));
     // highest feature index - no assignment to read-only data
     ASSERT_EQ(svm_config.data.n_cols, 4);
     // number of support vectors
@@ -110,6 +122,27 @@ TEST_F(SVMLightRunnerTest, processRequest_classification) {
     for (int i = 0; i < 4; ++i) {
         ASSERT_DOUBLE_EQ(svm_config.result[i], testing_target_01[i]);
     }
+}
+
+TEST_F(SVMLightRunnerTest, test_globals_cleaning) {
+    std::cout << "Testing whether globals are being initialized properly"
+        << std::endl << std::flush;
+    extern double *primal;
+    ASSERT_EQ(primal, null_double_ptr);
+    extern double *dual;
+    ASSERT_EQ(dual, null_double_ptr);
+    extern long precision_violations;
+    ASSERT_EQ(precision_violations, null_long);
+    extern double *buffer;
+    ASSERT_EQ(buffer, null_double_ptr);
+    extern long *nonoptimal;
+    ASSERT_EQ(nonoptimal, null_long_ptr);
+    extern long smallroundcount;
+    ASSERT_EQ(smallroundcount, null_long);
+    extern long roundnumber;
+    ASSERT_EQ(roundnumber, null_long);
+    extern long kernel_cache_statistic;
+    ASSERT_EQ(kernel_cache_statistic, null_long);
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_classification_tagged_classes) {

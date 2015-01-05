@@ -25,6 +25,7 @@ SVMLightRunner::SVMLightRunner() {
 
 
 SVMLightRunner::~SVMLightRunner() {
+    _clear();
 }
 
 
@@ -119,6 +120,26 @@ void SVMLightRunner::resultsToLabels(SVMConfiguration &config) {
         LogLevel::DEBUG,
         __debug_prefix__ + ".resultsToLabels() Done."
     );
+}
+
+
+void SVMLightRunner::_clear() {
+    extern double *primal;
+    primal = 0;
+    extern double *dual;
+    dual = 0;
+    extern long precision_violations;
+    precision_violations = 0;
+    extern double *buffer;
+    buffer = 0;
+    extern long *nonoptimal;
+    nonoptimal = 0;
+    extern long smallroundcount;
+    smallroundcount = 0;
+    extern long roundnumber;
+    roundnumber = 0;
+    extern long kernel_cache_statistic;
+    kernel_cache_statistic = 0;
 }
 
 

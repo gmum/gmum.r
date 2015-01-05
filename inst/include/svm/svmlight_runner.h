@@ -47,6 +47,11 @@ protected:
      */
     void resultsToLabels(SVMConfiguration &);
 
+    /**
+     * Clear globals that are assuming we just started command-line svmlight
+     */
+    void _clear();
+
     /** @name Library functionalities wrappers
      *  Following methods and fields are direct library functionalities
      *  wrappers with file operations parametrized (`bool use_gmumr`).
