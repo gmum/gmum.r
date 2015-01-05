@@ -154,7 +154,7 @@ evalqOnLoad({
     # check for errors
     
     if ( lib != "libsvm" && lib != "svmlight") { 
-      stop(paste(GMUM_WRONG_LIBRARY, ": bad library" )) 
+      stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" )) 
       # log error No such library, available are: libsvm, svmlight
     }
     
