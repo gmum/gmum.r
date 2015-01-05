@@ -158,7 +158,7 @@ evalqOnLoad({
   
   CEC <<- function(x = NULL,
                    k = 0,
-                   method.type = "",
+                   method.type = "standard",
                    method.init = "kmeans++",
                    params.r = 0,
                    params.cov = matrix(0),
@@ -177,6 +177,10 @@ evalqOnLoad({
     if (is.null(x))
       stop("Dataset is required!");
     
+    if(is(x, "data.frame")){
+      x = data.matrix(x);
+    }
+    
     if (k <= 0)
       stop("Number of clusters should be a positive integer!");
     
@@ -184,10 +188,14 @@ evalqOnLoad({
       stop("Number of starts should be a positive integer!");
     
     if (control.eps > 1.0 / k)
-      stop("killThreshold " + contorl.eps + " is too high");  
+      stop("killThreshold " + contorl.eps + " is too high!");  
     
     if (control.itmax <= 0)
-      stop("Max number of iterations should be a positive integer!");
+      stop("Maximum number of iterations should be a positive integer!");
+    
+    if(is(params.cov, "data.frame")){
+     params.cov = data.matrix(params.cov);
+    }
     
     config <- new(CecConfiguration)
     config$setDataSet(x)

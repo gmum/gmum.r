@@ -137,9 +137,10 @@ void CecConfiguration::set_method_init(const std::string init) {
         m_params.assignment_type = krandom;
     else if (init.compare(CONST::CLUSTERS::kmeanspp) == 0)
         m_params.assignment_type = kkmeanspp;
-    else if (init.compare(CONST::CLUSTERS::centroids) == 0) {
+    else if (init.compare(CONST::CLUSTERS::centroids) == 0)
         m_params.assignment_type = kcentroids;
-    }
+    else
+		Rcpp::stop(CONST::ERRORS::assignment_error);
 
     if (m_params.assignment_type == kno_assignment)
         Rcpp::stop(CONST::ERRORS::assignment_error);
@@ -208,11 +209,8 @@ void CecConfiguration::set_method_type(const std::string type) {
     if (m_params.clusters.size() > 0)
         m_params.cluster_type = kmix;
     else {
-        m_params.cluster_type = kstandard;
-        if (type.empty())
-            return;
-        else if (type.compare(CONST::CLUSTERS::standard) == 0) {
-            //nothing but recognises
+        if (type.compare(CONST::CLUSTERS::standard) == 0) {            
+			m_params.cluster_type = kstandard;
         } else if (type.compare(CONST::CLUSTERS::full) == 0) {
             m_params.cluster_type = kfull;
         } else if (type.compare(CONST::CLUSTERS::diagonal) == 0) {
