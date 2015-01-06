@@ -1,4 +1,8 @@
 #include "svm_client.h"
+#include "libsvm_runner.h"
+#include "svmlight_runner.h"
+#include "two_e_svm_pre.h"
+#include "two_e_svm_post.h"
 
 // Constructor
 SVMClient::SVMClient(SVMConfiguration *config) {
@@ -62,8 +66,8 @@ arma::vec SVMClient::getPrediction() {
 std::string SVMClient::getLibrary(){
 	switch(config.svm_type) {
 	case LIBSVM : return "libsvm";
-  case SVMLIGHT : return "svmlight";
-  default : return "error"; 
+    case SVMLIGHT : return "svmlight";
+    default : return "error"; 
 	}
 }
 std::string SVMClient::getKernel(){
@@ -174,10 +178,11 @@ void SVMClient::createFlow() {
 				handlers.push_back(runner);
 				break;
 			}
-	//		case SVMLIGHT : {	SVMLightRunner runner;		// Wating for svm light runner implementation
-	//			handlers.push_back( &runner );
-	//			break;
-	//		}
+			case SVMLIGHT : {	
+        SVMLightRunner *runner = new SVMLightRunner();		// Wating for svm light runner implementation
+				handlers.push_back(runner);
+				break;
+			}
 			default: {
 				LibSVMRunner *runner = new LibSVMRunner();				// dafault will be libsvm
 				handlers.push_back(runner);
