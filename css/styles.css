@@ -378,6 +378,11 @@ hr.primary {
     width: 100%;
 }
 
+#getting-started h2 {
+    margin-top: 100px;
+    color: #555;
+}
+
 #contribute {
     background-color: #e0e0e0;
     color: #686868;

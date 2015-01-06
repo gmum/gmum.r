@@ -13,10 +13,13 @@
 
     <div class="col-sm-8 col-sm-offset-2">
         <p class="lead">
-            We would like to help you get started. At first, let's include packages required for this presentation:
+            We would like to help you get started. At first, for the purpose of this presentation, we need to include
+            some required packages:
         </p>
 
         <pre><code class="r">library(gmum.r)<br>library(ggplot2)</code></pre>
+
+        <h2>Clustering data set</h2>
 
         <p class="lead">
             Now we might prepare two simple ellipsoids, which act as a data set for further computation:
@@ -25,7 +28,7 @@
         <pre><code class="r">dataset <- svm.dataset.2e()</code></pre>
 
         <p class="lead">
-            Let's make the column names be more descriptive and drop them with class labels:
+            It is good to make the column names be more descriptive and drop them with class labels:
         </p>
 
         <pre><code class="r">colnames(dataset) <- c("X", "Y", "Target")<br>dataset <- dataset[c("X", "Y")]</code></pre>
@@ -37,29 +40,32 @@
         <img src="http://gmum.net/files/gmum.r/img/page/svm-sample-plot.png">
 
         <p class="lead">
-            Such data set can be easily clustered in the next step. In this example we would like to get two
-            clusters from the data set, so we set <i>k</i> to be equal to 2:
+            Such data set can be easily clustered. We would like to create two clusters from the data set, so we set
+            <i>k</i> to be equal to 2:
         </p>
 
         <pre><code class="r">clusters <- CEC(x=dataset, k=2)</code></pre>
 
         <p class="lead">
-            Clusters appear in the plot like this:
+            The clusters appear in the plot as follows:
         </p>
 
         <img src="http://gmum.net/files/gmum.r/img/page/cec-sample-plot.png">
 
-        <p class="lead">
-            We need labels to be able to train SVM, let's add them:
-        </p>
-
-        <pre><code class="r">target <- clusters$y()<br>dataset['Target'] = target</code></pre>
+        <h2>Building classifier</h2>
 
         <p class="lead">
-            Now it's a high time we trained SVM:
+            The clusters have been created, therefore we may build a classifier. At first, we have to add labels to the
+            data set since they are required for training SVM. We need to add one label in our case:
         </p>
 
-        <pre><code class="r">formula <- Target ~ .<br>svm <- SVM(formula, data=dataset, lib='libsvm', kernel='linear', C=10)</code></pre>
+        <pre><code class="r">target <- clusters$y()<br>dataset["Target"] = target</code></pre>
+
+        <p class="lead">
+            Below is a complete set of commands which trains SVM:
+        </p>
+
+        <pre><code class="r">formula <- Target ~ .<br>svm <- SVM(formula, data=dataset, lib="libsvm", kernel="linear", C=10)</code></pre>
 
         <p class="lead">
             The decision boundary should be as follows:
@@ -68,7 +74,8 @@
         <img src="http://gmum.net/files/gmum.r/img/page/svm-decision-boundary-plot.png">
 
         <p class="lead">
-            Alright, SVM has been trained. Next we may test our SVM on some sample data. Let's pick a sample matrix:
+            The SVM has been trained. Next we may test the SVM using some sample data. For this purpose, we may pick a
+            sample matrix:
         </p>
 
         <pre><code class="r">test <- matrix(rnorm(200, mean=0, sd=2), , 2)</code></pre>
