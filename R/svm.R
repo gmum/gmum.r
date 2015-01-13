@@ -95,40 +95,6 @@ plot.svm <- NULL
 #' @docType plot
 summary.svm <- NULL
 
-#' @title dataset.X
-#' 
-#' @description Prints dataset stored in a SVM object, without the labels.
-#' 
-#' @rdname print-x-methods
-#' 
-#' @export
-#' 
-#' @usage dataset.X(svm)
-#' 
-#' @param object SVM object.
-#' 
-#' @docType methods
-#' 
-#' @aliases dataset
-dataset.X <- NULL
-
-#' @title dataset.Y
-#' 
-#' @description Prints lables stored in a SVM object.
-#' 
-#' @rdname print-y-methods
-#' 
-#' @export
-#' 
-#' @usage dataset.Y(svm)
-#' 
-#' @param object SVM object.
-#' 
-#' @docType methods
-#' 
-#' @aliases dataset
-dataset.Y <- NULL
-
 loadModule('svm_wrapper', TRUE)
 
 evalqOnLoad({
@@ -257,13 +223,7 @@ evalqOnLoad({
 
     client 
   } 
-    
-  if (!isGeneric("dataset.X")  ) {
-    setGeneric( "dataset.X", function( object, ... ) standardGeneric("dataset.X") )
-  }
-  if (!isGeneric("dataset.Y")  ) {
-    setGeneric( "dataset.Y", function( object,  ... ) standardGeneric("dataset.Y") )
-  }
+
 
   print.svm <- function(x) {
     print(sprintf("SVM object with: library: %s, kernel: %s, preprocess: %s, C: %.1f, gamma: %.3f, coef0: %.3f, degree: %d",
@@ -370,23 +330,13 @@ evalqOnLoad({
     prediction
   }
   
-  dataset.X <- function(object) {
-      object$getX()
-  }
-  
-  dataset.Y <- function(object) {
-      object$getY()
-  }
   
   setMethod("print", "Rcpp_SVMClient", print.svm)
   setMethod("predict", signature("Rcpp_SVMClient"), predict.svm)
   setMethod("plot", "Rcpp_SVMClient",  plot.svm)
   setMethod("summary", "Rcpp_SVMClient", summary.svm)
 
-  #dataset
-  setMethod("dataset.X", signature("Rcpp_SVMClient"), dataset.X)
-  setMethod("dataset.Y", signature("Rcpp_SVMClient"), dataset.Y)
-    
+
 })
 
 

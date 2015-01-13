@@ -1,37 +1,34 @@
-dataset <- as.matrix(read.table("tests/cpp/data/mouse_1_spherical/input.txt"))
+dataset <- as.matrix(read.table("inst/data_sets/cec/mouse_1_spherical/input.txt"))
 
-# that is the dataset we want to cluster
+# That is the dataset we want to cluster
 plot(dataset)
-# run cec with default parameters
+
+# Run cec with default parameters. Set the number of clusters and the dataset.
 c <- CEC(k=3, x=dataset)
 plot(c)
 
-# since initial clusterization is random
-# it may be a good idea to run cec multiple times
-# and choose the best result
+# Since initial clusterization is random. It may be a good idea to run cec multiple times and choose the best result.
 c <- CEC(k=3, x=dataset, control.nstart=10)
 plot(c)
 
-# better than before, however, we know that
-# clusters are spherical; let's inform cec about that
+# Better than before, however, we know that clusters are spherical; let's inform cec about that.
 c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere')
 plot(c)
-# ain't that great? :D
+# Ain't that great? :D
 
-# you can learn details of clustering like this
+# You can learn details of clustering like this
 centers(c)
 cov(c)
 
-# you can predict cluster which a point would belong to
+# You can predict cluster which a point would belong to
 predictCluster(c, c(1,1))
 
-# or find out what are the probabilities of belonging
-# to each cluster
+# or find out what are the probabilities of belonging to each cluster
 predictClusters(c, c(1,1))
 
-# you can visualise size and shape of clusters
+# You can visualise size and shape of clusters
 plot(c, ellipses=TRUE)
 
-# try the same with random assignment
+# Try the same with random assignment
 c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere', method.init='random')
 plot(c)

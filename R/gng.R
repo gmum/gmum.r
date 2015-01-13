@@ -1,16 +1,11 @@
 #dev note: I have no idea how to document S4 methods using roxygen, I will have to assign someone to this task
 
-library(Rcpp)
+library(igraph)
+library(methods)
 
-gng.dataset.bagging.prob <- 3
-gng.dataset.bagging <- 2
-gng.dataset.sequential <-1
 
-gng.experimental.utility.option.off <- 0
-gng.experimental.utility.option.basic <- 1
-
-gng.plot.color.extra <- 'extra'
-gng.plot.color.fast_cluster <- 'fast_cluster'
+gng.plot.color.label <- 'label'
+gng.plot.color.fast.cluster <- 'fast.cluster'
 gng.plot.color.cluster <- 'cluster'
 gng.plot.color.none <- 'none'
 
@@ -28,7 +23,38 @@ gng.plot.rgl3d <- 2
 gng.plot.2d.errors <- 3
 
 
+.gng.type.optimized = 0
+.gng.type.utility = 1
+.gng.type.default = 2
+.gng.train.online = 1
+.gng.train.offline = 0
 
+gng.type.default <- function(){
+	c(.gng.type.default)
+}
+
+gng.type.optimized <- function(minimum=0, maximum=10){
+  c(.gng.type.optimized, minimum, maximum)
+}
+
+gng.type.utility<- function(k=1.3){
+  c(.gng.type.utility, k)
+}
+
+gng.train.online <- function(dim){
+  c(.gng.train.online,  dim)
+}
+
+.gng.dataset.bagging.prob <- 3
+.gng.dataset.bagging <- 2
+.gng.dataset.sequential <-1
+
+gng.train.offline <- function(max.iter = 100, min.improvement = 1e-2){
+  c(.gng.train.offline, max.iter , min.improvement)
+}
+
+
+.GNG <- NULL
 
 
 
@@ -54,11 +80,10 @@ gng.plot.2d.errors <- 3
 #' gng.plot.layout.igraph.auto (auto layout from igraph) gng.plot.layout.igraph.fruchterman.fast (fast fruchterman reingold layout),or any function accepting igraph graph and returning layout
 #' 
 #' @param vertex.color how to color vertexes. Possible values: gng.plot.color.cluster(vertex color is set to fastgreedy.community clustering),
-#' gng.plot.color.extra(rounds to integer extra dim if present), gng.plot.color.none(every node is white),
+#' gng.plot.color.label(rounds to integer label if present), gng.plot.color.none(every node is white),
 #' 
 #' @note If you want to "power-use" plotting and plot for instance a subgraph, you might be interested in
-#' exporting igraph with convert_igraph function and plotting it using/reusing function from this package:
-#' .visualizeIGraph2d
+#' exporting igraph with convertToGraph function 
 #' 
 #' @examples
 #' 
@@ -72,32 +97,57 @@ gng.plot.2d.errors <- 3
 #' 
 plot.gng <- NULL
 
-#' Dump model to binary
+#' Save model to binary format
 #'
-#' @title dump_model
+#' @title save.gng
 #' 
-#' @description Writes graph to a disk space efficient binary format. It can be used in GNG constructor
-#' to reconstruct graph from file.
+#' @description Writes model to a disk space efficient binary format. 
 #' 
 #' @usage
-#' dump_model(gng)
+#' save.gng(gng)
 #' 
 #' @export
 #' 
 #' @param
 #' filename Dump destination
 #' 
-#' @rdname dump_model-methods
+#' @rdname save.gng-methods
 #' 
 #' @docType methods
 #'
 #' @examples
-#' dump_model(gng, 'graph.bin')
+#' save.gng(gng, 'graph.bin')
 #' 
-#' @aliases dump_model
+#' @aliases save.gng
 #'
-dump_model.gng <- NULL
+save.gng <- NULL
 
+
+
+#' Load model from binary format
+#'
+#' @title load.gng
+#' 
+#' @description Writes model to a disk space efficient binary format. 
+#' 
+#' @usage
+#' load.gng(gng)
+#' 
+#' @export
+#' 
+#' @param
+#' filename Dump location
+#' 
+#' @rdname load.gng-methods
+#' 
+#' @docType methods
+#'
+#' @examples
+#' load.gng('model.bin')
+#' 
+#' @aliases load.gng
+#'
+load.gng <- NULL
 
 #' Get centroids
 #'
@@ -210,47 +260,103 @@ pause.gng <- NULL
 #'
 terminate.gng <- NULL
 
-#' @title mean_error
+#' @title meanError
 #' 
 #' @description Gets mean error of the graph (note: blocks the execution, O(n))
 #' 
 #' @usage
-#' mean_error(gng)
+#' meanError(gng)
 #' 
 #' @export
 #' 
-#' @rdname mean_error-methods
+#' @rdname meanError-methods
 #' 
 #' @docType methods
 #'
 #' @examples
-#' mean_error(gng)
+#' meanError(gng)
 #' 
-#' @aliases mean_error
+#' @aliases meanError
 #'
-mean_error.gng <- NULL
+meanError.gng <- NULL
 
-#' @title error_statistics
+
+#' @title errorStatistics
 #' 
 #' @description Gets vector with errors for every second of execution
 #' 
 #' @usage
-#' error_statistics(gng)
+#' errorStatistics(gng)
 #' 
 #' @export
 #' 
-#' @rdname error_statistics-methods
+#' @rdname errorStatistics-methods
 #' 
 #' @docType methods
 #'
 #' @examples
-#' error_statistics(gng)
+#' errorStatistics(gng)
 #' 
-#' @aliases error_statistics
+#' @aliases errorStatistics
 #'
-error_statistics.gng <- NULL
+errorStatistics.gng <- NULL
 
-#' @title Constructor of GrowingNeuralGas object
+
+#' @title Constructor of Optimized GrowingNeuralGas object. 
+#' 
+#' @export 
+#' 
+#' @description Construct simplified and optimized GNG object. Can be used to train offline, or online. Data dimensionality shouldn't be too big, if
+#' it is consider using dimensionality reduction (for instance PCA). Cannot use utility.
+#'
+#' @param beta coefficient. Decrease the error variables of all node nodes by this fraction. Forgetting rate. Default 0.99
+#' 
+#' @param alpha Alpha coefficient. Decrease the error variables of the nodes neighboring to the newly inserted node by this fraction. Default 0.5
+#' 
+#' @param lambda Every lambda iteration is added new vertex. Default 200
+#' 
+#' @param max.nodes Maximum number of nodes (after reaching this size it will continue running, but won't add new nodes)
+#' 
+#' @param eps.n Default 0.0006. How strongly adapt neighbour node
+#' 
+#' @param eps.w Default 0.05. How strongly adapt winning node
+#' 
+#' @param training Can be either gng.train.offline(max.iter, min.improvement), or gng.train.online()
+#' 
+#' @param value.range Default [0,1]. All example features should be in this range
+#' @examples
+#' 
+#' # Train online optimizedGNG. All values in this dataset are in the range (-4.3, 4.3)
+#' data(wine, package="rattle")
+#' gng <- OptimizedGNG(training = gng.train.online(), value.range=c(min(scale(wine[-1])),max(scale(wine[-1]))), max.nodes=20)
+#' insertExamples(gng, scale(wine[-1]))
+#' run(gng)
+#' Sys.sleep(10)
+#' pause(gng)
+OptimizedGNG <- NULL
+
+
+#' @title errorStatistics
+#' 
+#' @description Gets vector with errors for every second of execution
+#' 
+#' @usage
+#' errorStatistics(gng)
+#' 
+#' @export
+#' 
+#' @rdname errorStatistics-methods
+#' 
+#' @docType methods
+#'
+#' @examples
+#' errorStatistics(gng)
+#' 
+#' @aliases errorStatistics
+#'
+errorStatistics.gng <- NULL
+
+#' @title Constructor of GrowingNeuralGas object. Can be used to train offline, or online.
 #' 
 #' @export 
 #' 
@@ -260,115 +366,97 @@ error_statistics.gng <- NULL
 #' 
 #' @param alpha Alpha coefficient. Decrease the error variables of the nodes neighboring to the newly inserted node by this fraction. Default 0.5
 #' 
-#' @param uniformgrid.optimization TRUE/FALSE. You cannot use utility option with this, so please pass FALSE here then.
-#' 
-#' @param lazyheap.optimization TRUE/FALSE. You cannot use utility option with this, so please pass FALSE here then.
-#' 
 #' @param lambda Every lambda iteration is added new vertex. Default 200
 #' 
 #' @param max.nodes Maximum number of nodes (after reaching this size it will continue running, but won't add new nodes)
 #' 
-#' @param eps_n Default 0.0006. How strongly adapt neighbour node
+#' @param eps.n Default 0.0006. How strongly adapt neighbour node
 #' 
-#' @param eps_w Default 0.05. How strongly adapt winning node
+#' @param eps.w Default 0.05. How strongly adapt winning node
 #' 
-#' @param dataset.type Dataset type. Possibilities gng.dataset.bagging, gng.dataset.bagging.prob, gng.dataset.sequential
+#' @param training Can be either gng.train.offline(max.iter, min.improvement), or gng.train.online()
 #' 
-#' @param experimental_utility_option EXPERIMENTAL Utility option gng.experimental.utility.option.off / gng.experimental.utility.option.basic
-#'
-#' @param experimental_utility_k EXPERIMENTAL Utility option constant
-#' 
-#' @param load_model_filename Set to path to file from which load serialized model
-#'
-#' @param experimental_vertex_extra_data if TRUE each example should have additional coordinate, that will be
-#' voted in graph. Each node (that you can get using node function) will have extra_data field that will be
-#' equal to mean of samples around given node. If used with probability dataset example layout is 
-#' <vertex position> <vertex_extra_data> <sampling_probability>, for example c(0.3, 0.6, 0.7, 100, 0.7)
+#' @param k Utility constant, by default turned off. Good value is 1.3. Constant controlling speed of erasing obsolete nodes, see http://sund.de/netze/applets/gng/full/tex/DemoGNG/node20.html
 #' 
 #'
 #' @examples
 #' 
-#' # Default GNG instance, without optimitzations and vertex dimensionality 3
-#' 
-#' gng <- GNG(dataset_type=gng.dataset.bagging.prob, max_nodes=max_nodes, dim=3)
-#' 
-#' # Construct GNG loaded from file with uniform grid
-#' 
-#' gng <- GNG(dataset_type=gng.dataset.bagging.prob, max_nodes=max_nodes, dim=3,
-#' uniformgrid_optimization=TRUE,  lazyheap_optimization=FALSE,
-#' uniformgrid_boundingbox_sides=c(3,3,3), uniformgrid_boundingbox_origin=c(-0.5,-0.5,-0.5), 
-#' load_model_filename="sphere_simple.bin")
+#' data(wine, package="rattle")
+#' scaled.wine <- scale(wine[-1])
+#' # Train in an offline manner
+#' gng <- GNG(scaled.wine, labels=wine$Type, max.nodes=20)
+#' # Plot
+#' plot(gng, mode=gng.plot.2d.cluster)
+#'
+#' # Train in an online manner with utility (erasing obsolete nodes)
+#' gng <- GNG(scaled.wine, labels=wine$Type, max.nodes=20, training=gng.train.online(), k=1.3)
+#' insertExamples(gng, scale(wine[-1])
+#' run(gng)
+#' Sys.sleep(10)
+#' terminate(gng)
+#' # Plot
+#' plot(gng, mode=gng.plot.2d.cluster)
+#'
 GNG <- NULL
 
 print.gng <- NULL
 
 summary.gng <- NULL
 
-#' @title convert_igraph
+#' @title convertToGraph
 #' 
 #' @description Converts to igraph (O(n) method, writing intermediately to disk)
 #' 
 #' @usage
-#' convert_igraph(gng)
+#' convertToGraph(gng)
 #' 
 #' @export
 #' 
-#' @rdname convert_igraph-methods
+#' @rdname convertToGraph-methods
 #' 
 #' @docType methods
 #'
 #' @examples
-#' convert_igraph(gng)
+#' convertToGraph(gng)
 #' 
-#' @aliases convert_igraph
+#' @aliases convertToGraph
 #'
-convert_igraph.gng <- NULL
+convertToGraph.gng <- NULL
 
 
 
-#' @title insert_examples
+
+
+
+
+generateExamples <- NULL
+
+#' @title insertExamples
 #' 
 #' @description Insert (inefficiently) examples to algorithm dataset. For
-#' efficient insertion use gng$inser_examples, and for setting memory pointer
-#' use gng$set_memory_move_examples
+#' efficient insertion use gng$inser_examples
 #' 
 #' @usage
-#' insert_examples(gng, M)
+#' insertExamples(gng, M, L=c())
 #' 
 #' @export
 #' 
-#' @param examples Matrix with examples of dimensionality N rows x C columns, where
-#' C columns = dim (passed as parameter to GNG object) + 1 or 0 (1 if vertex_extra_data is TRUE)
-#' + 1 or 0 (1 if dataset_type=gng.dataset.bagging.prob). 
+#' @param examples Matrix with examples 
 #' 
-#' @param preset Use only if you are adding exemplary dataset. Possibilities: gng.preset.sphere,
-#' gng.preset.box. You can specify preset params: N=1000, center=c(0.5,0.5,0.5), prob=-1. 
 #' 
-#' @note Complicated memory layout of the matrix is due to need for memory efficiency.
-#' In the future versions you can expect wrapper simplifying addition and also
-#' streaming from disk file
-#' 
-#' @rdname insert_examples-methods
+#' @rdname insertExamples-methods
 #' 
 #' @docType methods
 #'
 #' @examples
 #' 
-#' #Add preset examples with probability of being sampled (this assumed GNG was created with gng.dataset.bagging.prob dataset)
-#' insert_examples(gng, preset=gng.preset.sphere)
-#' 
-#' #Insert efficiently examples
-#' M <- matrix(0, ncol=3, nrow=10)
-#' M[1,] = c(4,5,6)
-#' gng$insert_examples(M)
-#' 
-#' #Set memory of the algorithm to point in memory. Note: you cannot remove this matrix while
-#' in execution or you will experience memory error
-#' gng$set_memory_move_examples(M)
-#' 
-#' @aliases insert_examples
+#' #Add preset examples
+#' M = generateExamples(preset=gng.preset.sphere)
+#' insertExamples(gng, M)
+#' @aliases insertExamples
 #'
-insert_examples.gng <- NULL
+insertExamples.gng <- NULL
+
 
 loadModule('gng_module', TRUE)
 
@@ -376,106 +464,187 @@ loadModule('gng_module', TRUE)
 evalqOnLoad({
     
     
-    GNG <<- function(dataset_type=gng.dataset.sequential, beta=0.99, 
-                        alpha=0.5, uniformgrid_optimization=FALSE, 
-                        lazyheap_optimization=FALSE, max_nodes=1000, eps_n=0.0006, 
-                        eps_w= 0.05, dim=-1, uniformgrid_boundingbox_sides=c(), uniformgrid_boundingbox_origin=c(),
-                        experimental_utility_option = gng.experimental.utility.option.off,
-                        experimental_utility_k = 1.5, max_edge_age = 200, experimental_vertex_extra_data=FALSE,
-                        lambda=200,
-                        load_model_filename = "", verbosity=0
-                        
-    ){
-      
-      gng.dist.cosine = 1
-      gng.dist.euclidean = 0
-      
-      
-      
-      if(!uniformgrid_optimization){
-        warning("Turned off optimization.")
-      }
-      
-      if(dim == -1){
-        stop("Please pass vertex dimensionality (dim argument)")
-      }
-      
-      if((length(uniformgrid_boundingbox_sides)==0 || length(uniformgrid_boundingbox_origin)==0) && uniformgrid_optimization==TRUE){
-        stop("Please define bounding box for your data if you are using uniform grid. uniformgrid.boundingbox.sides is a
-             dim sized vector defining lengths of the sides of the box, whereas uniformgrid.boundingbox.origin defines 
-             origin of the box. Note that uniform grid optimization will give significant speedup, but only for low-dim data.
-             ")  
-        
-      }
-      
-      
-      config <- new(GNGConfiguration)
+  
+  .GNG <<- function(x=NULL, labels=c(),
+                   beta=0.99, 
+                   alpha=0.5, 
+                   max.nodes=1000, 
+                   eps.n=0.0006, 
+                   eps.w= 0.05, 
+                   max.edge.age = 200, 
+                   type = gng.type.default(),
+                   training = gng.train.offline(),
+                   lambda=200,
+                   verbosity=0
+                   
+  ){
+    
+    config <- new(GNGConfiguration)
+    
+    # Fill in configuration
+    if(training[1] == .gng.train.offline){
+      config$dim = ncol(x)
+    }else{
+	  
+       config$dim = training[2]
+		print(config$dim)    
+	}
 
-      # Cosine is not supported (and probably won't be)
-      config$distance_function = gng.dist.euclidean
+    
+    if(type[1] == .gng.type.optimized){
+      config$uniformgrid_optimization = TRUE
+      config$lazyheap_optimization = TRUE  
+      config$set_bounding_box(type[2], type[3])
       
-      
-      # Fill in configuration
-      config$dataset_type=dataset_type
-      config$beta = beta
-      config$max_edge_age = max_edge_age
-      config$alpha = alpha
-      config$uniformgrid_optimization = uniformgrid_optimization
-      config$lazyheap_optimization = lazyheap_optimization
-      config$max_nodes = max_nodes
-      config$eps_n = eps_n
-      config$eps_w = eps_w
-      config$dim = dim
-      config$lambda = lambda
-      config$verbosity = verbosity
-      
-      if(experimental_vertex_extra_data == TRUE){
-        config$vertex_extra_data_dim = 1
+      if(training[1] == .gng.train.offline){
+        if(!max(df) <= type[3] && !min(df) >= type[2]){
+          gmum.error("Passed incorrect parameters. The dataset is not in the defined range")
+        }
       }
       
-      config$experimental_utility_k = experimental_utility_k
-      config$experimental_utility_option =experimental_utility_option
-      
-      config$load_graph_filename =load_model_filename
-      
-      if( (config$uniformgrid_optimization || config$lazyheap_optimization) &&
-            experimental_utility_option != gng.experimental.utility.option.off
-      ){
-        
-        stop("You have turned on experimental utility option. Unfortunately optimizations are not supported yet for this option.")
-      }  
-      
-      if(config$uniformgrid_optimization){
-        config$set_uniform_grid_axis(uniformgrid_boundingbox_sides)
-        config$set_uniform_grid_origin(uniformgrid_boundingbox_origin)
-      }
-      
-      if(config$uniformgrid_optimization &&
-           (length(uniformgrid_boundingbox_sides)!=length(uniformgrid_boundingbox_origin)
-            || length(uniformgrid_boundingbox_origin) != dim)){
-        
-        stop("Make sure that dimensions of bounding box and vertex position match")
-      }
-      
-      if(!config$check_correctness()){
-        stop("Passed incorrect parameters.")
-      }
-      
-      # Construct server
-      server = new(GNGServer, config)
-      server
+    }else{
+      config$uniformgrid_optimization = FALSE
+      config$lazyheap_optimization = FALSE
     }
     
+    if(type[1] == .gng.type.utility){
+      config$experimental_utility_k = type[2]
+      config$experimental_utility_option = 1
+    }
+    else{
+      config$experimental_utility_option = 0
+    }
+    
+    
+    config$dataset_type=.gng.dataset.bagging
+    config$beta = beta
+    config$max_edge_age = max.edge.age
+    config$alpha = alpha  
+    config$max_nodes = max.nodes
+    config$eps_n = eps.n
+    config$eps_w = eps.w
+    
+    config$lambda = lambda
+    config$verbosity = verbosity
+    
+    if(!config$check_correctness()){
+      gmum.error(ERROR_BAD_PARAMS, "Passed incorrect parameters.")
+    }
+    
+    # Construct server
+    server = new(GNGServer, config)
+    
+    # Perform training on passed dataset
+    if(training[1] == .gng.train.offline){
+      
+      print("Training offline")
+      if(is.null(x)){
+        gmum.error(ERROR, "Passed null data and requested training offline")
+      }else{
+        insertExamples(server, x, labels)
+        run(server)
+        
+        max_iter = training[2]
+        print(max_iter)
+        min_relative_dif = training[3]
+        iter = 0
+        errors_calculated = 0
+        best_so_far = 1e10
+        initial_patience = 3
+        patience = initial_patience
+        
+        while(iter < max_iter || errors_calculated == 0){
+          Sys.sleep(0.1)
+          iter = server$getCurrentIteration()
+          
+          if(iter %% (max_iter/100) == 0){    
+            print(paste("Iteration", iter))
+          }
+          
+          # Iter 5 = 5 times passed whole dataset. 
+          if(length(server$getErrorStatistics()) > 5){
+            errors = server$getErrorStatistics()
+
+            best_previously = min(errors[(length(errors)-5):length(errors)])
+            
+            #this is same as (best_so_far-best_previously)/best_so_far < min_relative_di
+            if((best_so_far - best_previously) < best_so_far*min_relative_dif){
+              patience = patience - 1
+              if(patience == 0){
+                print(sprintf("Best error in 5 previous iterations %f", best_previously))
+        				print(errors[(length(errors)-5):length(errors)])
+                print("Patience elapsed, bailing out")
+        				break
+              }
+            }else{
+              patience = initial_patience
+            }
+            
+            best_so_far = min(best_previously, best_so_far)
+          }
+        }
+        
+        terminate(server)
+        
+      }
+    }
+    
+    
+    
+    server
+  }
+	
+
+   GNG <<- function(x=NULL, labels=c(),
+                   beta=0.99, 
+                   alpha=0.5, 
+                   max.nodes=1000, 
+                   eps.n=0.0006, 
+                   eps.w= 0.05, 
+                   max.edge.age = 200,
+                   training = gng.train.offline(),
+                   lambda=200,
+                   verbosity=0,
+					k=NULL
+                  ){
+		if(is.null(k)){
+					.GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
+			eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.default(), training=training, lambda=lambda, verbosity=verbosity)
+		}else{
+				.GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
+			eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.utility(k=k), training=training, lambda=lambda, verbosity=verbosity)		
+		}
+	}
+
+   OptimizedGNG <<- function(x=NULL, labels=c(),
+                   beta=0.99, 
+                   alpha=0.5, 
+                   max.nodes=1000, 
+                   eps.n=0.0006, 
+                   eps.w= 0.05, 
+                   max.edge.age = 200,
+                   training = gng.train.offline(),
+                   lambda=200,
+                   verbosity=0,
+					value.range=c(0,1)
+                  ){
+		if(value.range[1] >= value.range[2]){
+			gmum.error(ERROR, "Incorrect range")
+			return		
+		}
+		.GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
+eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min=value.range[1]*1.1, max=value.range[2]*1.1), training=training, lambda=lambda, verbosity=verbosity)
+
+	}    
 
      setGeneric("node", 
                 function(x, gng_id, ...) standardGeneric("node"))
-     
-     setGeneric("dump_model", 
-                function(object, filename, ...) standardGeneric("dump_model"))  
-     
-     setGeneric("convert_igraph", 
-                function(object, ...) standardGeneric("convert_igraph"))
-     
+ 
+     setGeneric("convertToGraph", 
+                function(object, ...) standardGeneric("convertToGraph"))
+
+
+
      setGeneric("run", 
                 function(object, ...) standardGeneric("run"))
      
@@ -486,29 +655,30 @@ evalqOnLoad({
                 function(object, ...) standardGeneric("terminate"))
      
      
-     setGeneric("insert_examples", 
-                function(object, ...) standardGeneric("insert_examples"))
+     setGeneric("insertExamples", 
+                function(object, ...) standardGeneric("insertExamples"))
      
-     setGeneric("mean_error", 
-                function(object, ...) standardGeneric("mean_error"))
+     setGeneric("meanError", 
+                function(object, ...) standardGeneric("meanError"))
      
      setGeneric("centroids", 
                 function(object, ...) standardGeneric("centroids"))  
+
      
-     setGeneric("error_statistics", 
-                function(object, ...) standardGeneric("error_statistics"))
+     setGeneric("errorStatistics", 
+                function(object, ...) standardGeneric("errorStatistics"))
      
      
-     setGeneric("number_nodes", 
-                function(object, ...) standardGeneric("number_nodes"))
+     setGeneric("numberNodes", 
+                function(object, ...) standardGeneric("numberNodes"))
      
   
-  plot.gng <<- function(x, vertex.color=gng.plot.color.cluster, layout=gng.plot.layout.v2d, start_s=2, mode){
+  plot.gng <<- function(x, vertex.color=gng.plot.color.cluster, layout=gng.plot.layout.v2d, mode){
     
-    if(x$get_number_nodes() > 4000){
+    if(x$getNumberNodes() > 4000){
       warning("Trying to plot very large graph (>4000 nodes). It might take a while.")
     }
-    if(x$get_number_nodes() == 0){
+    if(x$getNumberNodes() == 0){
       warning("Empty graph")
       return
     }
@@ -525,29 +695,35 @@ evalqOnLoad({
       .gng.plot2d(x, vertex.color, layout)
     }
     else if(mode == gng.plot.2d.errors){
-      .gng.plot2d.errors(x, vertex.color, layout, start_s)
+      .gng.plot2d.errors(x, vertex.color, layout)
     }
   }
   
   print.gng <<- function(x){
     print(sprintf("Growing Neural Gas, nodes %d with mean error %f", 
-                  x$get_number_nodes(), x$get_mean_error()))
+                  x$getNumberNodes(), x$getMeanError()))
   }
   
   summary.gng <<- function(object){
     print(sprintf("Growing Neural Gas, nodes %d with mean error %f", 
-                  object$get_number_nodes(), object$get_mean_error()))
+                  object$getNumberNodes(), object$getMeanError()))
+    print(sprintf("Trained %d iterations", object$getCurrentIteration()))
     print("Mean errors[s]: ")
-    print(object$get_error_statistics())
+    errors = object$getErrorStatistics()
+    if(length(errors) > 10){
+      errors = errors[(length(errors)-10):length(errors)]
+    }
+    
+    print(errors)
   }
   
-  
+
   setMethod("plot",  "Rcpp_GNGServer", plot.gng)
   setMethod("print",  "Rcpp_GNGServer", print.gng)
   setMethod("summary", "Rcpp_GNGServer", summary.gng)
   
   node.gng <<- function(x, gng_id){
-    x$get_node(gng_id)
+    x$getNode(gng_id)
   }
   
   run.gng <<- function(object){
@@ -562,23 +738,25 @@ evalqOnLoad({
     object$terminate()
   }
   
-  mean_error.gng <<- function(object){
-    object$get_mean_error()
+  meanError.gng <<- function(object){
+    object$getMeanError()
   }  
   
-  error_statistics.gng <<- function(object){
-    object$get_error_statistics()
+  errorStatistics.gng <<- function(object){
+    object$getErrorStatistics()
   }  
   
-  dump_model.gng <<- function(object, filename){
-    object$dump_graph(filename)
+  save.gng <<- function(object, filename){
+    object$save(filename)
   }
   
-  setMethod("dump_model", signature("Rcpp_GNGServer","character"), dump_model.gng)
-  
+  load.gng <<- function(filename){
+    new(GNGServer, filename)
+  }
+ 
   
   centroids.gng <<- function(object){
-    ig <- convert_igraph(object)
+    ig <- convertToGraph(object)
     communities <- spinglass.community(ig)
     centroids <- c()
     for(i in 1:length(communities)){
@@ -593,37 +771,88 @@ evalqOnLoad({
   setMethod("run", "Rcpp_GNGServer", run.gng)
   setMethod("pause", "Rcpp_GNGServer", pause.gng)
   setMethod("terminate", "Rcpp_GNGServer", terminate.gng)
-  setMethod("mean_error", "Rcpp_GNGServer", mean_error.gng) 
-  setMethod("error_statistics", "Rcpp_GNGServer", error_statistics.gng) 
+  setMethod("meanError", "Rcpp_GNGServer", meanError.gng) 
+  setMethod("errorStatistics", "Rcpp_GNGServer", errorStatistics.gng) 
   
   #' Get number of nodes
-  setMethod("number_nodes" ,
+  setMethod("numberNodes" ,
             "Rcpp_GNGServer",
             function(object){
-              object$get_number_nodes()
+              object$getNumberNodes()
             })
   
   
-  
-  convert_igraph.gng <- function(object){
-    .gng.construct_igraph(object)
+    
+  convertToGraph.gng <- function(object){
+    pause(object)
+    
+    if(object$getNumberNodes() == 0){
+      return(graph.empty(n=0, directed=FALSE))
+    }
+    
+    #Prepare index map. Rarely there is a difference in indexing
+    #due to a hole in memory representation of GNG graph (i.e.
+    #indexing in gng can be non-continuous)
+    indexesGNGToIGraph <- 1:object$getLastNodeIndex()
+    indexesIGraphToGNG <- 1:object$getNumberNodes()
+    
+    if(object$getLastNodeIndex() != object$getNumberNodes()){
+      igraph_index = 1
+      for(i in (1:object$getLastNodeIndex())){
+        node <- node(object, i)
+        if(length(node) != 0){
+          indexesGNGToIGraph[i] = igraph_index
+          indexesIGraphToGNG[igraph_index] = i
+          igraph_index = igraph_index + 1
+        }
+      }
+    }
+    
+    adjlist<-list()
+    for(i in 1:object$getLastNodeIndex()){
+      node <- node(object, i)
+      if(length(node) != 0){
+        igraph_index = indexesGNGToIGraph[i]
+        adjlist[[igraph_index]] <- sapply(node$neighbours, function(x){ indexesGNGToIGraph[x] })
+      } 
+    }
+    
+    
+    g <- graph.adjlist(adjlist, mode = "all")
+    for(i in 1:object$getLastNodeIndex()){
+      node <- node(object, i)
+      if(length(node) != 0){
+        igraph_index = indexesGNGToIGraph[i]
+        #TODO: it is more efficient to assign whole vectors
+        #TODO: refactor in whole code v0 v1 v2 to pos_1 pos_2 pos_3
+        V(g)[igraph_index]$v0 <- node$pos[1]
+        V(g)[igraph_index]$v1 <- node$pos[2]
+        V(g)[igraph_index]$v2 <- node$pos[3]
+        V(g)[igraph_index]$label <- node$label
+        V(g)[igraph_index]$error <- node$error
+        if(!is.null(node$utility)){
+          V(g)[igraph_index]$utility = node$utility
+        }
+      } 
+    }
+    
+    # Add distance information
+    dists <- apply(get.edges(g, E(g)), 1, function(x){ 
+      object$nodeDistance(x[indexesIGraphToGNG[x[1]]], x[indexesIGraphToGNG[x[2]]])
+    })
+    E(g)$dists = dists
+    
+    g
   }
+
   
-  
-  #' Get node descriptor from graph
-  #'
-  #' @note This function will dump graph to .graphml file on this first and then will remove
-  #' the file. Be cautious with huge graphs!
-  #' 
-  #' @param gng_id gng id of the node NOTE: nmight differ from one in exported igraph
-  setMethod("convert_igraph" ,
+
+  setMethod("convertToGraph" ,
             "Rcpp_GNGServer",
-            convert_igraph.gng)
+            convertToGraph.gng)
   
-  
-  #' Find closest example
-  #' @param x Vector of dimensionality of vertex
-  #' @return gng_index of the closest example
+
+
   setMethod("predict" ,
             "Rcpp_GNGServer",
             function(object, x){
@@ -631,26 +860,39 @@ evalqOnLoad({
             })
   
   
-  insert_examples.gng <<- function(object, examples, preset, N, r=1.0, center=c(0.5,0.5,0.5), prob=-1){
-    warning("This function is copying examples to RAM. If your data is big,
-  you can use more efficient object$insert_examples function, or you can set pointer without
-            copying data at all using object$set_memory_move_examples. See documentation for more information
-            ")
-    if(hasArg(preset)){
-      if(object$get_configuration()$dim != 3){
-        stop("Presets work only for dimensionality 3")
-      }
-      object$insert_examples(preset(N, center=center, r=r, prob=prob))
-    }
+  insertExamples.gng <<- function(object, examples, labels=c()){   
+	  if(length(labels) == 0){
+      	object$insertExamples(examples, vector(mode="numeric", length=0))
+	  }else if(typeof(labels) == "character"){
+		if(typeof(labels) == "list"){
+			if(is.null(examples$labels)){
+				gmum.error(ERROR_BAD_PARAMS, "Empty labels column")
+			}else{
+				label.column <- examples$labels
+				examples$labels <- NULL
+				object$insertExamples(examples, label.column)
+			}
+		}else{
+	  		gmum.error(ERROR_BAD_PARAMS, "Please pass data frame")
+		}
+	  }else{
+        object$insertExamples(examples, labels)
+	  }    
+	
   }
   
+
+	generateExamples <<- function(preset, N, r=1.0, center=c(0.5,0.5,0.5)){
+		preset(N, center=center, r=r, prob=-1)
+	}
+
   #' Insert examples
   #' 
-  #' @note It copies your examples twice in RAM. You might want to use object$insert_examples, or
+  #' @note It copies your examples twice in RAM. You might want to use object$insertExamples, or
   #' not to copy at all set_memory_move_examples (when using this function, remember not to modify the matrix
   #' and after removing the object delete it aswell)
-  setMethod("insert_examples" ,
+  setMethod("insertExamples" ,
             "Rcpp_GNGServer",
-            insert_examples.gng)
+            insertExamples.gng)
   
 })

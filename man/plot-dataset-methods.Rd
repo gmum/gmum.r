@@ -4,12 +4,16 @@
 \alias{plot.svm}
 \title{plot}
 \usage{
-plot(svm, dim1, dim2)
+plot(svm, pca=TRUE, log="x")
 }
 \arguments{
-\item{dim1}{(optional) Dimension of x to plot on x axis, by default 1}
+\item{dim1}{(optional) Dimension of dataset to plot on x axis, by default 1}
 
-\item{dim2}{(optional) Dimension of x to plot on y axis, by default 2}
+\item{dim2}{(optional) Dimension of dataset to plot on y axis, by default 2}
+
+\item{log}{(optional) Use logarthic transformation for an axis, "x", "y", or "xy"}
+
+\item{pca}{Bool, use Principal Component Analysis for plot}
 }
 \description{
 Draws choosen dimenstions from a dataset on 2D plot coloring by class. NOTE: This function will be change to a package default function.

@@ -5,33 +5,33 @@
 #include <list>
 #include <vector>
 #include "boost/smart_ptr.hpp"
-#include "clusterParams.hpp"
+#include "cluster_params.hpp"
 
 namespace gmum {
 
 enum AssignmentType {
-	kkmeanspp, krandom, kcentroids, knoAssignment,
+    kkmeanspp, krandom, kcentroids, kno_assignment,
 };
 
 struct Params {
 public:
-	boost::shared_ptr<const arma::mat> dataset;
-	double killThreshold;
-	unsigned int nrOfClusters;
-	bool logNrOfClusters;
-	bool logEnergy;
-	unsigned int nstart;
-	AssignmentType assignmentType;
-	bool centroidsSet;
-	std::list<std::vector<double> > centroids;
-	ClusterType clusterType;
-	std::list<boost::shared_ptr<ClusterParams> > clusters;
-	bool covMatSet;
-	arma::mat covMat;
-	bool radiusSet;
-	double radius;
-	bool functionNameSet;
-	std::string functionName;
+    boost::shared_ptr<const arma::mat> dataset;
+    double kill_threshold;
+    unsigned int nclusters;
+    bool log_nclusters;
+    bool log_energy;
+    unsigned int nstart;
+    AssignmentType assignment_type;
+    bool centroids_set;
+    std::list<std::vector<double> > centroids;
+    ClusterType cluster_type;
+    std::list<boost::shared_ptr<ClusterParams> > clusters;
+    bool cov_mat_set;
+    arma::mat cov_mat;
+    bool radius_set;
+    double radius;
+    bool function_name_set;
+    std::string function_name;
 };
 
 }
