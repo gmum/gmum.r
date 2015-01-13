@@ -3,6 +3,7 @@
 #include "svmlight_runner.h"
 #include "two_e_svm_pre.h"
 #include "two_e_svm_post.h"
+#include "svm_utils.h"
 
 // Constructor
 SVMClient::SVMClient(SVMConfiguration *config) {
@@ -112,19 +113,39 @@ bool SVMClient::isProbability(){
 }
 
 // model getters
-double* SVMClient::getAlpha() {
-	return config.rho;
+arma::vec SVMClient::getAlpha() {
+	return arma::vec(config.rho,config.l);
+}
+
+//void SVMClient::setAlpha(double* alpha) {
+//  if (config. - length(alpha) == 1) {
+//    for (int i = 0; i != length(alpha); i++) {
+//      config.rho[i+1] = alpha[i];
+//    }
+//  } 
+//  else if (length(config.rho) != length(alpha)) {
+//    LOG(config.log, logLevel::ERR, "ERROR: " + to_string("Wrong alpha array size."));
+//    return;
+//  }
+//  else {
+//    config.rho = alpha;
+//  }
+//}
+
+void SVMClient::setBias(double bias) {
+  config.rho[0] = -bias;
 }
 
 double SVMClient::getBias() {	
 	return config.getB();		
 }
 
-arma::vec SVMClient::getW() {		// where is W in config?
+arma::vec SVMClient::getW() {		
 	if ( config.kernel_type == _LINEAR ) {
 		return config.w;
 	}
 	else {
+    LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundry is not available with non-linear kernel"));
 		return 0;
 	}
 }

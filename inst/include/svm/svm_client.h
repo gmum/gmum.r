@@ -32,6 +32,8 @@ public:
 	void setEps(double);
 	void setShrinking(int);
 	void setProbability(int);
+  void setBias(double);
+  // void setAlpha(double*);
 
 	// data getters
 	arma::mat getX();
@@ -61,7 +63,7 @@ public:
  // double** getSV(); // double**, std::vector, arma:mat ?
   int get_number_sv();
   int get_number_class();
-	double* getAlpha();
+	arma::vec getAlpha();
 	double getBias();
 	arma::vec getW();
   arma::mat getSV();

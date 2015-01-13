@@ -330,13 +330,15 @@ evalqOnLoad({
     prediction
   }
   
+  call.svm <- function(object) {
+    print("abs")
+  }
   
   setMethod("print", "Rcpp_SVMClient", print.svm)
   setMethod("predict", signature("Rcpp_SVMClient"), predict.svm)
   setMethod("plot", "Rcpp_SVMClient",  plot.svm)
   setMethod("summary", "Rcpp_SVMClient", summary.svm)
-
-
+  setMethod("show", "Rcpp_SVMClient", summary.svm)
 })
 
 
