@@ -1,4 +1,3 @@
-
 CPP_SOURCES = $(wildcard svm/*.cpp cec/*.cpp utils/*.cpp gng/*.cpp)
 SOURCES = $(CPP_SOURCES) $(wildcard svmlight/*.c)
 

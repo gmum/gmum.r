@@ -250,70 +250,70 @@ evalqOnLoad({
     if (mode != "pca" && mode != "normal" && mode != "contour" ) {
       stop("Wrong mode!") 
     }
-    df =  data.frame( x$getX() )
-    t = x$getY()
-    w = c(x$getW())
+    df <- data.frame( x$getX() )
+    t <- x$getY()
+    w <- c(x$getW())
     if (mode == "pca") {
       pca_data = prcomp(df, scale=TRUE)
       scores = data.frame(df, pca_data$x[,1:2])
- 
-      w = w %*% pca_data$rotation
-      A = w[1]
-      B = w[2]
-      C = x$getBias()
+      w <- w %*% pca_data$rotation
       
-      s = -A/B
-      int = -C/B
+      A <- w[1]
+      B <- w[2]
+      C <- x$getBias()
       
-      plot = ggplot() +
-          geom_point(data=scores, aes(PC1, PC2), colour=factor(t+2)) + geom_abline(slope=s, intercept=int)
-      plot
+      s <- -A/B
+      int <- -C/B
+      
+      pl <- ggplot() +
+        geom_point(data=scores, aes(PC1, PC2), colour=factor(t+2)) + geom_abline(slope=s, intercept=int)
+      plot(pl)
     }
     else if (mode == "normal") { 
       if (dim1 > ncol(df) || dim2 > ncol(df)) {
         stop("Too large dimensions")
       }
-      A = w[1]
-      B = w[2]
-      C = x$getBias()
+      A <- w[1]
+      B <- w[2]
+      C <- x$getBias()
       
-      s = -A/B
-      int = -C/B
-      plot = ggplot() + geom_point(data=df, aes(X1, X2), colour=factor(t+6))  +
+      s <- -A/B
+      int <- -C/B
+      
+      pl <- ggplot() + geom_point(data=df, aes(X1, X2), colour=factor(t+6))  +
         geom_abline(slope=s, intercept=int)
-      plot
+      plot(pl)
     }
     else if (mode == "contour") {    # test mode
-      temp_target = x$getY()
-      test_svm = x
-      x_col = df[colnames(df)[1]]
-      y_col = df[colnames(df)[2]]
+      warning("This is experimental mode, it will change your SVM's data!")
+      temp_target <- x$getY()
+      x_col <- df[colnames(df)[1]]
+      y_col <- df[colnames(df)[2]]
       
-      x_max = max(x_col)
-      x_min = min(x_col) 
-      y_max = max(y_col)
-      y_min = min(y_col)
+      x_max <- max(x_col)
+      x_min <- min(x_col) 
+      y_max <- max(y_col)
+      y_min <- min(y_col)
       
-      x_axis = seq(from=x_min, to=x_max, length.out=300)
-      y_axis = seq(from=y_min, to=y_max, length.out=300)
-      grid = data.frame(x_axis,y_axis)
+      x_axis <- seq(from=x_min, to=x_max, length.out=300)
+      y_axis <- seq(from=y_min, to=y_max, length.out=300)
+      grid <- data.frame(x_axis,y_axis)
       grid <- expand.grid(x=x_axis,y=y_axis)
-      target = predict(test_svm, grid)
-      A = w[1]
-      B = w[2]
-      C = test_svm$getBias()
+      target <- predict(x, grid)
+      A <- w[1]
+      B <- w[2]
+      C <- x$getBias()
       
-      s = -A/B
-      int = -C/B
-
-      grid["target"] = target
+      s <- -A/B
+      int <- -C/B
+      
+      grid["target"] <- target
       x$setY(temp_target)
-      x$setX(data.matrix(df))
-      plot <- ggplot()
-      plot + 
+      x$setX(data.matrix(df))  
+      pl <- ggplot()+ 
         geom_tile(data=grid, aes(x=x,y=y,fill=target)) + theme(legend.position="none") +
         geom_point(data=df, aes(X1, X2), colour=factor(t+6))
-      
+      plot(pl)
     }
   }
   
