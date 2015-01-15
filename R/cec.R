@@ -163,6 +163,8 @@ evalqOnLoad({
       
       # check for errors
       
+      call <- match.call(expand.dots = TRUE)
+      
       if (is.null(x))
         stop("Dataset is required!");
       
@@ -196,6 +198,8 @@ evalqOnLoad({
         config$setIters(log.iters)
       
         model <- new(CecModel, config)
+        assign("call", call, model)
+      
         model
     }
 
