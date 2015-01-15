@@ -3,7 +3,9 @@
 
 namespace gmum {
 
-Hartigan::Hartigan(bool log_nclusters, bool log_energy) : Algorithm(log_nclusters, log_energy) {}
+Hartigan::Hartigan(bool log_nclusters, bool log_energy) : Algorithm(log_nclusters, log_energy) {
+    m_logger = Logger();
+}
 
 TotalResult Hartigan::loop(const arma::mat &points, std::vector<unsigned int> &assignment,
                            double kill_threshold, std::vector<boost::shared_ptr<Cluster> > &clusters) {
@@ -62,10 +64,10 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
                     whole_entropy_change = target_entropy_change+source_entropy_change;
 
                 } catch(std::exception e) {
-                    std::cout << "removePoint" << std::endl;
-                    std::cout << dimension << std::endl;
-                    std::cout << old_source->size() << std::endl;
-                    std::cout << old_target->size() << std::endl;
+                    LOG(LogLevel::ERR, "removePoint");
+                    LOG(LogLevel::ERR, dimension);
+                    LOG(LogLevel::ERR, old_source->size());
+                    LOG(LogLevel::ERR, old_target->size());
                     throw(e);
                     //return SingleResult(switched, clusters.size(), 0);
                 }
@@ -86,8 +88,8 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
                             remove_cluster(source, points, assignment, clusters);
                         }
                     } catch(std::exception e) {
-                        //std::cout << e.what() << std::endl;
-                        std::cout << "removeCluster" << std::endl;
+                        //LOG(LogLevel::ERR, e.what());
+                        LOG(LogLevel::ERR, "removeCluster");
                         throw(e);
                     }
 

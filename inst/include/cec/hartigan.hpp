@@ -6,10 +6,15 @@
 #include <vector>
 #include "algorithm.hpp"
 #include "cluster.hpp"
+#include "../utils/log.hpp"
+
+#define LOG(level, text) m_logger.log(level, text);
 
 namespace gmum {
 
 class Hartigan: public Algorithm {
+
+	Logger m_logger;
     void remove_cluster(unsigned int source, const arma::mat &points,
                         std::vector<unsigned int> &assignment,
                         std::vector<boost::shared_ptr<Cluster> > &clusters);
