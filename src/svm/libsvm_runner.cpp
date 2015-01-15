@@ -27,68 +27,68 @@ LibSVMRunner::~LibSVMRunner() {
 	// TODO Auto-generated destructor stub
 }
 
-void LibSVMRunner::processRequest(SVMConfiguration& config) {
+void LibSVMRunner::ProcessRequest(SVMConfiguration& config) {
 
 //	Training
-	if (!config.isPrediction()) {
-		svm_parameter* param = configuration_to_problem(config);
-		prob.l = config.target.n_rows;
-		svm_node** node = armatlib(config.data);
-		prob.y = vectlib(config.target);
-		prob.x = node;
-		save_model_to_config(config, param, prob);
+	if (!config.prediction()) {
+		svm_parameter* param = ConfigurationToProblem(config);
+		prob_.l = config.target_.n_rows;
+		svm_node** node = Armatlib(config.data_);
+		prob_.y = Vectlib(config.target_);
+		prob_.x = node;
+		SaveModelToConfig(config, param, prob_);
 		//Xk is already transposed
 		//examples x dim
-		arma::vec arma_coefs = SvmUtils::arrtoarmavec(config.sv_coef, config.l);
+		arma::vec arma_coefs = SvmUtils::ArrToArmaVec(config.sv_coef_, config.l_);
 		//DIM W: (nsv x 1)^T x nsv x dim = 1 x dim
-		config.w = (arma_coefs.t() * config.arma_SV).t();
+		config.w_ = (arma_coefs.t() * config.arma_sv_).t();
 	} else {
-		arma_prediction(config);
+		ArmaPrediction(config);
 	}
 }
 
-bool LibSVMRunner::canHandle(SVMConfiguration& config) {
-	return config.library == LIBSVM;
+bool LibSVMRunner::CanHandle(SVMConfiguration& config) {
+	return config.library_ == kLibSMV;
 }
 
-bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
+bool LibSVMRunner::SaveModelToConfig(SVMConfiguration& config,
 		svm_parameter* param, svm_problem& problem) {
 
 	const char *error_msg;
 
-	error_msg = svm_check_parameter(&prob, param, config.log);
+	error_msg = svm_check_parameter(&prob_, param, config.log_);
 
 	if (error_msg) {
-		LOG(config.log, LogLevel::ERR, "ERROR: " + to_string(error_msg))
+		LOG(config.log_, LogLevel::kError, "ERROR: " + ToString(error_msg))
 		return false;
 	}
 	int* nr = Malloc(int, 1);
 	int* nclasses = Malloc(int, 1);
 
-	model = svm_train(&prob, param, config.log);
-	*nr = model->l; //support vectors
-	*nclasses = model->nr_class;
-	config.nr_class = model->nr_class;
-	config.l = model->l;
+	model_ = svm_train(&prob_, param, config.log_);
+	*nr = model_->l; //support vectors
+	*nclasses = model_->nr_class;
+	config.nr_class_ = model_->nr_class;
+	config.l_ = model_->l;
 	//TODO: don't keep support vectors as svm node, remember when Staszek wasn't happy about it?
-	config.sv_coef = (double **) malloc(model->nr_class * sizeof(double*));
-	for (int i = 0; i < config.nr_class - 1; i++) {
-		config.sv_coef[i] = (double *) malloc(model->l * sizeof(double));
-		memcpy(config.sv_coef[i * config.l], model->sv_coef[i],
-				config.l * sizeof(double*));
+	config.sv_coef_ = (double **) malloc(model_->nr_class * sizeof(double*));
+	for (int i = 0; i < config.nr_class_ - 1; i++) {
+		config.sv_coef_[i] = (double *) malloc(model_->l * sizeof(double));
+		memcpy(config.sv_coef_[i * config.l_], model_->sv_coef[i],
+				config.l_ * sizeof(double*));
 	}
 
-	config.rho = (double *) malloc(
-			config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
-	memcpy(config.rho, model->rho,
-			config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
+	config.rho_ = (double *) malloc(
+			config.nr_class_ * (config.nr_class_ - 1) / 2 * sizeof(double));
+	memcpy(config.rho_, model_->rho,
+			config.nr_class_ * (config.nr_class_ - 1) / 2 * sizeof(double));
 
-	config.sv_indices = (int*) malloc(config.l * sizeof(int));
-	svm_get_sv_indices(model, config.sv_indices, config.log);
+	config.sv_indices_ = (int*) malloc(config.l_ * sizeof(int));
+	svm_get_sv_indices(model_, config.sv_indices_, config.log_);
 
-	int dim = config.data.n_cols;
+	int dim = config.data_.n_cols;
 	ASSERT(dim > 0);
-	config.arma_SV = SvmUtils::libtoarma(model->SV, config.l, dim);
+	config.arma_sv_ = SvmUtils::libtoarma(model_->SV, config.l_, dim);
 
 	// config.SV = (svm_node **) malloc(config.l * sizeof(svm_node*));
 	// for (int i = 0; i < config.l; i++) {
@@ -97,42 +97,42 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 	// }
 
 	//	TODO: WTF!!!!!???
-	if (config.svm_type < 2) {
-		config.label = (int *) malloc(*nclasses * sizeof(int));
-		config.nSV = (int *) malloc(*nclasses * sizeof(int));
-		memcpy(config.label, model->label, *nclasses * sizeof(int));
-		memcpy(config.nSV, model->nSV, *nclasses * sizeof(int));
+	if (config.svm_type_ < 2) {
+		config.label_ = (int *) malloc(*nclasses * sizeof(int));
+		config.n_sv_ = (int *) malloc(*nclasses * sizeof(int));
+		memcpy(config.label_, model_->label, *nclasses * sizeof(int));
+		memcpy(config.n_sv_, model_->nSV, *nclasses * sizeof(int));
 	}
 
-	svm_destroy_param(param,config.log);
-	svm_free_and_destroy_model(&model,config.log);
+	svm_destroy_param(param,config.log_);
+	svm_free_and_destroy_model(&model_,config.log_);
 
 	return true;
 }
 
-svm_model* LibSVMRunner::load_model_from_config(SVMConfiguration& config,
+svm_model* LibSVMRunner::LoadModelFromConfig(SVMConfiguration& config,
 		svm_parameter* param) {
 
 	const char *error_msg;
-	error_msg = svm_check_parameter(&prob, param,config.log);
+	error_msg = svm_check_parameter(&prob_, param,config.log_);
 
 	if (error_msg) {
-		LOG(config.log, LogLevel::ERR, "ERROR: " + to_string(error_msg))
+		LOG(config.log_, LogLevel::kError, "ERROR: " + ToString(error_msg))
 		return 0;
 	}
 
-	model = Malloc(svm_model, 1);
+	model_ = Malloc(svm_model, 1);
 
-	model->l = config.l; //support vectors
-	model->nr_class = config.nr_class;
-	model->param = *param;
+	model_->l = config.l_; //support vectors
+	model_->nr_class = config.nr_class_;
+	model_->param = *param;
 
 	//TODO: don't keep support vectors as svm node, remember when Staszek wasn't happy about it?
-	model->sv_coef = (double **) malloc(model->nr_class * sizeof(double*));
-	for (int i = 0; i < config.nr_class - 1; i++) {
-		model->sv_coef[i] = (double *) malloc(model->l * sizeof(double));
-		memcpy(model->sv_coef[i * config.l], config.sv_coef[i],
-				config.l * sizeof(double*));
+	model_->sv_coef = (double **) malloc(model_->nr_class * sizeof(double*));
+	for (int i = 0; i < config.nr_class_ - 1; i++) {
+		model_->sv_coef[i] = (double *) malloc(model_->l * sizeof(double));
+		memcpy(model_->sv_coef[i * config.l_], config.sv_coef_[i],
+				config.l_ * sizeof(double*));
 	}
 
 	// model->SV = (svm_node **) malloc(config.l * sizeof(svm_node*));
@@ -141,60 +141,60 @@ svm_model* LibSVMRunner::load_model_from_config(SVMConfiguration& config,
 	// 	memcpy(model->SV, config.SV, sizeof(svm_node));
 	// }
 
-	model->SV = armatlib(config.arma_SV);
+	model_->SV = Armatlib(config.arma_sv_);
 
-	model->rho = (double *) malloc(
-			config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
+	model_->rho = (double *) malloc(
+			config.nr_class_ * (config.nr_class_ - 1) / 2 * sizeof(double));
 
-	memcpy(model->rho, config.rho,
-			config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
+	memcpy(model_->rho, config.rho_,
+			config.nr_class_ * (config.nr_class_ - 1) / 2 * sizeof(double));
 
-	model->free_sv = 1;
+	model_->free_sv = 1;
 
 //TODO: check if neccessery
 //	model->sv_indices =(int*) malloc( config.l * sizeof(int));
 //	model->sv_indicessvm_get_sv_indices(model, config.sv_indices);
 
-	if (config.svm_type < 2) {
-		model->label = (int *) malloc(config.nr_class * sizeof(int));
-		model->nSV = (int *) malloc(config.nr_class * sizeof(int));
-		memcpy(model->label, config.label, config.nr_class * sizeof(int));
-		memcpy(model->nSV, config.nSV, config.nr_class * sizeof(int));
+	if (config.svm_type_ < 2) {
+		model_->label = (int *) malloc(config.nr_class_ * sizeof(int));
+		model_->nSV = (int *) malloc(config.nr_class_ * sizeof(int));
+		memcpy(model_->label, config.label_, config.nr_class_ * sizeof(int));
+		memcpy(model_->nSV, config.n_sv_, config.nr_class_ * sizeof(int));
 	}
 
-	return model;
+	return model_;
 }
 
-svm_parameter* LibSVMRunner::configuration_to_problem(
+svm_parameter* LibSVMRunner::ConfigurationToProblem(
 		SVMConfiguration& config) {
 	svm_parameter* param;
 	param = Malloc(svm_parameter, 1);
-	param->svm_type = config.svm_type;
+	param->svm_type = config.svm_type_;
 	// param->kernel_type = config.kernel_type;
-	param->degree = config.degree;
-	param->gamma = config.gamma;	// 1/num_features
-	param->coef0 = config.coef0;
-	param->nu = config.nu;
-	param->cache_size = config.cache_size;
-	param->C = config.C;
-	param->eps = config.eps;
-	param->p = config.p;
-	param->shrinking = config.shrinking;
-	param->probability = config.probability;
-	param->nr_weight = config.nr_weight;
-	param->weight_label = config.weight_label;
-	param->weight = config.weight;
+	param->degree = config.degree_;
+	param->gamma = config.gamma_;	// 1/num_features
+	param->coef0 = config.coef0_;
+	param->nu = config.nu_;
+	param->cache_size = config.cache_size_;
+	param->C = config.c_;
+	param->eps = config.eps_;
+	param->p = config.p_;
+	param->shrinking = config.shrinking_;
+	param->probability = config.probability_;
+	param->nr_weight = config.nr_weight_;
+	param->weight_label = config.weight_label_;
+	param->weight = config.weight_;
 
-	if ( config.kernel_type == _LINEAR ) {
+	if ( config.kernel_type_ == kLinear ) {
 			param->kernel_type = LINEAR;
 		}
-		else if ( config.kernel_type == _POLY ) {
+		else if ( config.kernel_type_ == kPoly ) {
 			param->kernel_type = POLY;
 		}
-		else if ( config.kernel_type == _RBF ) {
+		else if ( config.kernel_type_ == kRBF ) {
 			param->kernel_type = RBF;
 		}
-		else if ( config.kernel_type == _SIGMOID ) {
+		else if ( config.kernel_type_ == kSigmoid ) {
 			param->kernel_type = SIGMOID;
 		}
 	return param;
@@ -218,7 +218,7 @@ int predict_probability = 0;
 /*
  * Armadillo matrix format to libsvm format
  */
-struct svm_node ** LibSVMRunner::armatlib(arma::mat x) {
+struct svm_node ** LibSVMRunner::Armatlib(arma::mat x) {
 	int r = x.n_rows;
 	int c = x.n_cols;
 	struct svm_node** sparse;
@@ -255,7 +255,7 @@ struct svm_node ** LibSVMRunner::armatlib(arma::mat x) {
 /*
  * Vector with target to lisvm format
  */
-double * LibSVMRunner::vectlib(arma::vec target) {
+double * LibSVMRunner::Vectlib(arma::vec target) {
 	double* return_target;
 	return_target = Malloc(double, target.n_rows);
 	for (unsigned int i = 0; i < target.n_rows; i++) {
@@ -267,26 +267,26 @@ double * LibSVMRunner::vectlib(arma::vec target) {
 
 
 
-void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
+void LibSVMRunner::ArmaPrediction(SVMConfiguration& config) {
 	struct svm_model* m;
 	struct svm_node ** train;
 	svm_parameter *params;
-	arma::mat training_mat = config.data;
+	arma::mat training_mat = config.data_;
 	int training_examples = training_mat.n_rows;
 
-	params = configuration_to_problem(config);
-	m = load_model_from_config(config, params);
+	params = ConfigurationToProblem(config);
+	m = LoadModelFromConfig(config, params);
 
 //	TODO: READ MODEL FROM PARAMETERS
 
-	train = armatlib(config.data);
+	train = Armatlib(config.data_);
 	double* ret = Malloc(double, training_examples);
 
 	for (int i = 0; i < training_examples; i++)
-		ret[i] = svm_predict(m, train[i],config.log);
+		ret[i] = svm_predict(m, train[i],config.log_);
 
 	arma::vec ret_vec(ret, training_examples);
-	config.result = ret_vec;
+	config.result_ = ret_vec;
 	/* TODO: CLEAN MEMORY IN BETTER WAY THINK OF OTHER PARAMETERS
 	 * Clean memory:
 	 * -array matrix
@@ -297,7 +297,7 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 	free(train);
 	//TODO: THIS SHOULD WORK WITH PREDICTIONS 2X, now it's not working
 //	svm_free_and_destroy_model(&m);
-	svm_destroy_param(params,config.log);
+	svm_destroy_param(params,config.log_);
 	free(ret);
 }
 

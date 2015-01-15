@@ -9,7 +9,7 @@
 
 namespace {
 
-int log_level = LogLevel::TRACE;
+int log_level = LogLevel::kTrace;
 
 double *null_double_ptr = 0;
 long *null_long_ptr = 0;
@@ -24,9 +24,9 @@ protected:
         svmlr = SVMLightRunner();
         second_svmlr = SVMLightRunner();
         svm_config = SVMConfiguration();
-        svm_config.log.verbosity = log_level;
+        svm_config.log_.verbosity_ = log_level;
         second_svm_config = SVMConfiguration();
-        second_svm_config.log.verbosity = log_level;
+        second_svm_config.log_.verbosity_ = log_level;
 
         learing_data_01
             << 0.5 << 1.0 << 0.0 << 1.0 << arma::endr

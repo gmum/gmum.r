@@ -8,113 +8,113 @@
 // Constructor
 SVMClient::SVMClient(SVMConfiguration *config) {
 	SVMConfiguration current_config = *config;
-	this->config = current_config;
+	this->config_ = current_config;
 }
 
 // Setters
-void SVMClient::setX( arma::mat x ){
-	config.data = x;
+void SVMClient::set_x( arma::mat x ){
+	config_.data_ = x;
 }
-void SVMClient::setY( arma::vec y ){
-	config.target = y;
-}
-
-void SVMClient::setLibrary(std::string library){
-	config.setLibrary(library);
-}
-void SVMClient::setKernel(std::string kernel){
-	config.setKernel(kernel);
-}
-void SVMClient::setPreprocess(std::string prep){
-	config.setPreprocess(prep);
+void SVMClient::set_y( arma::vec y ){
+	config_.target_ = y;
 }
 
-void SVMClient::setCacheSize(double cache) {
-	config.cache_size = cache;
+void SVMClient::set_library(std::string library){
+	config_.set_library(library);
 }
-void SVMClient::setDegree(int degree){
-	config.degree = degree;
+void SVMClient::set_kernel(std::string kernel){
+	config_.set_kernel(kernel);
 }
-void SVMClient::setGamma(double gamma){
-	config.gamma = gamma;
+void SVMClient::set_preprocess(std::string prep){
+	config_.set_preprocess(prep);
 }
-void SVMClient::setCoef0(double coef0 ){
-	config.coef0 = coef0;
+
+void SVMClient::set_cache_size(double cache) {
+	config_.cache_size_ = cache;
 }
-void SVMClient::setC(double C){
-	config.C = C;
+void SVMClient::set_degree(int degree){
+	config_.degree_ = degree;
 }
-void SVMClient::setEps(double eps){
-	config.eps = eps;
+void SVMClient::set_gamma(double gamma){
+	config_.gamma_ = gamma;
 }
-void SVMClient::setShrinking(int sh){
-	config.shrinking = sh;
+void SVMClient::set_coef0(double coef0 ){
+	config_.coef0_ = coef0;
 }
-void SVMClient::setProbability(int prob){
-	config.probability = prob;
+void SVMClient::set_c(double C){
+	config_.c_ = C;
+}
+void SVMClient::set_eps(double eps){
+	config_.eps_ = eps;
+}
+void SVMClient::set_shrinking(int sh){
+	config_.shrinking_ = sh;
+}
+void SVMClient::set_probability(int prob){
+	config_.probability_ = prob;
 }
 
 // Getters
-arma::mat SVMClient::getX(){
-	return config.data;
+arma::mat SVMClient::x(){
+	return config_.data_;
 }
-arma::vec SVMClient::getY(){
-	return config.target;
+arma::vec SVMClient::y(){
+	return config_.target_;
 }
-arma::vec SVMClient::getPrediction() {
-	return SVMClient::config.result;
+arma::vec SVMClient::prediction() {
+	return SVMClient::config_.result_;
 }
-std::string SVMClient::getLibrary(){
-	switch(config.svm_type) {
-	case LIBSVM : return "libsvm";
-    case SVMLIGHT : return "svmlight";
+std::string SVMClient::library(){
+	switch(config_.svm_type_) {
+	case kLibSMV : return "libsvm";
+    case kSVMLight : return "svmlight";
     default : return "error"; 
 	}
 }
-std::string SVMClient::getKernel(){
-	switch(config.kernel_type) {
-	case _LINEAR : return "linear";
-	case _POLY : return "poly"; 
-	case _RBF : return "rbf"; 
-	case _SIGMOID : return "sigmoid"; 
+std::string SVMClient::kernel(){
+	switch(config_.kernel_type_) {
+	case kLinear : return "linear";
+	case kPoly : return "poly"; 
+	case kRBF : return "rbf"; 
+	case kSigmoid : return "sigmoid"; 
   default : return "error"; 
 	}
 }
-std::string SVMClient::getPreprocess() {
-	switch(config.preprocess) {
-	case TWOE : return "2e";
-	case NONE : return "none";
+std::string SVMClient::preprocess() {
+	switch(config_.preprocess_) {
+	case kTwoE : return "2e";
+	case kNone : return "none";
   default : return "error";
 	}
 }
-double SVMClient::getCacheSize(){
-	return config.cache_size;
+double SVMClient::cache_size(){
+	return config_.cache_size_;
 }
-int SVMClient::getDegree(){
-	return config.degree;
+int SVMClient::degree(){
+	return config_.degree_;
 }
-double SVMClient::getGamma(){
-	return config.gamma;
+double SVMClient::gamma(){
+	return config_.gamma_;
 }
-double SVMClient::getCoef0(){
-	return config.coef0;
+double SVMClient::coef0(){
+	return config_.coef0_;
 }
-double SVMClient::getC(){
-	return config.C;
+double SVMClient::c(){
+	return config_.c_;
 }
-double SVMClient::getEps(){
-	return config.eps;
+double SVMClient::eps(){
+	return config_.eps_;
 }
-bool SVMClient::isShrinking(){
-	return (bool)config.shrinking;
+bool SVMClient::shrinking(){
+	return (bool)config_.shrinking_;
 }
-bool SVMClient::isProbability(){
-	return (bool)config.probability;
+bool SVMClient::probability(){
+	return (bool)config_.probability_;
 }
 
 // model getters
-arma::vec SVMClient::getAlpha() {
-	return arma::vec(config.rho,config.l);
+arma::vec SVMClient::alpha() {
+	return arma::vec(config_.rho_,config_.l_);
 }
 
 //void SVMClient::setAlpha(double* alpha) {
@@ -132,74 +132,74 @@ arma::vec SVMClient::getAlpha() {
 //  }
 //}
 
-void SVMClient::setBias(double bias) {
-  config.rho[0] = -bias;
+void SVMClient::set_bias(double bias) {
+  config_.rho_[0] = -bias;
 }
 
-double SVMClient::getBias() {	
-	return config.getB();		
+double SVMClient::bias() {	
+	return config_.b();		
 }
 
-arma::vec SVMClient::getW() {		
-	if ( config.kernel_type == _LINEAR ) {
-		return config.w;
+arma::vec SVMClient::w() {		
+	if ( config_.kernel_type_ == kLinear ) {
+		return config_.w_;
 	}
 	else {
-    LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundry is not available with non-linear kernel"));
+    LOG(config_.log_, LogLevel::kError, "ERROR: " + ToString("Decision boundry is not available with non-linear kernel"));
 		return 0;
 	}
 }
 
-int SVMClient::get_number_sv() {
-  return config.l;
+int SVMClient::number_sv() {
+  return config_.l_;
 }
 
-int SVMClient::get_number_class() {
-  return config.nr_class;
+int SVMClient::number_class() {
+  return config_.nr_class_;
 }
 
-arma::mat SVMClient::getSV(){
-  return config.arma_SV;
+arma::mat SVMClient::sv(){
+  return config_.arma_sv_;
 }
 
 // Runners
-void SVMClient::run() {
-	SVMClient::createFlow();
-	for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
-			iter != SVMHandlers.end(); ++iter) {
-		(*iter)->processRequest(config);
+void SVMClient::Run() {
+	SVMClient::CreateFlow();
+	for (std::vector<SVMHandler*>::iterator iter = svm_handlers_.begin();
+			iter != svm_handlers_.end(); ++iter) {
+		(*iter)->ProcessRequest(config_);
 	}
 }
 
-void SVMClient::train() {
-	config.setPrediction(false);
-	run();
+void SVMClient::Train() {
+	config_.set_prediction(false);
+	Run();
 }
 
-void SVMClient::predict( arma::mat problem ) {
-	config.setData(problem);
-	if ( SVMHandlers.size() > 0 ) {
-		config.setPrediction(true);
-		for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
-				iter != SVMHandlers.end(); ++iter) {
-			(*iter)->processRequest(config);
+void SVMClient::Predict( arma::mat problem ) {
+	config_.set_data(problem);
+	if ( svm_handlers_.size() > 0 ) {
+		config_.set_prediction(true);
+		for (std::vector<SVMHandler*>::iterator iter = svm_handlers_.begin();
+				iter != svm_handlers_.end(); ++iter) {
+			(*iter)->ProcessRequest(config_);
 		}
 	}
 }
 
-void SVMClient::createFlow() {
-	SVMType svm_type = config.library;
-	Preprocess preprocess = config.preprocess;
+void SVMClient::CreateFlow() {
+	SVMType svm_type = config_.library_;
+	Preprocess preprocess = config_.preprocess_;
 	std::vector<SVMHandler*> handlers;
 
 
 		switch (svm_type) {
-			case LIBSVM: {
+			case kLibSMV: {
 				LibSVMRunner *runner = new LibSVMRunner();
 				handlers.push_back(runner);
 				break;
 			}
-			case SVMLIGHT : {	
+			case kSVMLight : {	
         SVMLightRunner *runner = new SVMLightRunner();		// Wating for svm light runner implementation
 				handlers.push_back(runner);
 				break;
@@ -212,19 +212,19 @@ void SVMClient::createFlow() {
 		}
 
 	switch (preprocess) {
-	  case TWOE :	{	
+	  case kTwoE :	{	
           TwoeSVMPostprocessor *post_runner = new TwoeSVMPostprocessor();
 	 				TwoeSVMPreprocessor *pre_runner = new TwoeSVMPreprocessor();
 	 				handlers.insert( handlers.begin(), pre_runner );
 	 				handlers.push_back( post_runner );
 	 				break;
 	  }
-	case NONE:
+	case kNone:
 		break; 
 	default:
 		break;
 	}
 
-	this->SVMHandlers = handlers;
+	this->svm_handlers_ = handlers;
 }
 

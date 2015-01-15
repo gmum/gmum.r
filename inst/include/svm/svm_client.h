@@ -7,66 +7,66 @@
 
 class SVMClient {
 private:
-	std::vector<SVMHandler*> SVMHandlers;
-	SVMConfiguration config;
-	void createFlow();
+	std::vector<SVMHandler*> svm_handlers_;
+	SVMConfiguration config_;
+	void CreateFlow();
 
 public:
 	//constructors
 	SVMClient(SVMConfiguration*);
 
 	// data setters
-	void setX( arma::mat );
-	void setY( arma::vec );
+	void set_x( arma::mat );
+	void set_y( arma::vec );
 
 	// params setter
-	void setLibrary(std::string);
-	void setKernel(std::string);
-	void setPreprocess(std::string);
+	void set_library(std::string);
+	void set_kernel(std::string);
+	void set_preprocess(std::string);
 
-	void setCacheSize(double);
-	void setDegree(int);
-	void setGamma(double);
-	void setCoef0(double);
-	void setC(double);
-	void setEps(double);
-	void setShrinking(int);
-	void setProbability(int);
-  void setBias(double);
-  // void setAlpha(double*);
+	void set_cache_size(double);
+	void set_degree(int);
+	void set_gamma(double);
+	void set_coef0(double);
+	void set_c(double);
+	void set_eps(double);
+	void set_shrinking(int);
+	void set_probability(int);
+    void set_bias(double);
+    // void set_alpha(double*);
 
 	// data getters
-	arma::mat getX();
-	arma::vec getY();
-	arma::vec getPrediction();
+	arma::mat x();
+	arma::vec y();
+	arma::vec prediction();
 
 	// params getters
-	std::string getLibrary();
-	std::string getKernel();
-	std::string getPreprocess();
+	std::string library();
+	std::string kernel();
+	std::string preprocess();
 
-	double getCacheSize();
-	int getDegree();
-	double getGamma();
-	double getCoef0();
-	double getC();
-	double getEps();
-	bool isShrinking();
-	bool isProbability();
+	double cache_size();
+	int degree();
+	double gamma();
+	double coef0();
+	double c();
+	double eps();
+	bool shrinking();
+	bool probability();
 
 	// runners
-	void run();
-	void predict( arma::mat );
-	void train();
+	void Run();
+	void Predict( arma::mat );
+	void Train();
 
 	// model getters
- // double** getSV(); // double**, std::vector, arma:mat ?
-  int get_number_sv();
-  int get_number_class();
-	arma::vec getAlpha();
-	double getBias();
-	arma::vec getW();
-  arma::mat getSV();
+    // double** getSV(); // double**, std::vector, arma:mat ?
+    int number_sv();
+    int number_class();
+	arma::vec alpha();
+	double bias();
+	arma::vec w();
+    arma::mat sv();
 };
 
 #endif

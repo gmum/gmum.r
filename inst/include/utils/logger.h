@@ -12,7 +12,7 @@ public:
 	Logger(int verbosity): m_verbosity(verbosity){
 
 	}
-    void log(int level, std::string line){
+    void Log(int level, std::string line){
                 if(level>= m_verbosity) std::cerr<<line<<std::endl<<std::flush;
     }
 };

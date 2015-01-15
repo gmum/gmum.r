@@ -9,15 +9,15 @@
 //2eSVM Preprocessor
 class TwoeSVMPreprocessor: public SVMHandler {
 private:
-    arma::mat computeTransMat(arma::mat &covPosMat, arma::mat &covNegMat);
-    void sqrtInvMat(const arma::mat &matrix, arma::mat &finalMat);
+    arma::mat ComputeTransMat(arma::mat &cov_pos_mat, arma::mat &cov_neg_mat);
+    void SqrtInvMat(const arma::mat &matrix, arma::mat &final_mat);
 
 
 public:
-    void processRequest(SVMConfiguration&);
-    bool canHandle(SVMConfiguration&);
-    void makePreprocessor();
-    arma::mat cov0InvSqrt;
+    void ProcessRequest(SVMConfiguration&);
+    bool CanHandle(SVMConfiguration&);
+    void MakePreprocessor();
+    arma::mat cov0_inv_sqrt;
 };
 
 #endif

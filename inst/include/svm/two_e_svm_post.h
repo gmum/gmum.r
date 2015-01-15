@@ -8,9 +8,9 @@
 
 class TwoeSVMPostprocessor: public SVMHandler {
 public:
-  arma::rowvec projectingData(arma::mat &matrix, arma::rowvec &weights);
-	void processRequest(SVMConfiguration&);
-	bool canHandle(SVMConfiguration&);
+  arma::rowvec ProjectingData(arma::mat &matrix, arma::rowvec &weights);
+	void ProcessRequest(SVMConfiguration&);
+	bool CanHandle(SVMConfiguration&);
 };
 
 #endif

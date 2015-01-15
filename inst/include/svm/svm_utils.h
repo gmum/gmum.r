@@ -21,19 +21,11 @@ using namespace std;
 
 class SvmUtils {
 private:
-  SvmUtils();
+    SvmUtils();
 	virtual ~SvmUtils();
 public:
 
-	static void sqrtInvMat(const arma::mat &matrix, arma::mat &finalMat) {
-		arma::vec eigenValue;
-		arma::mat eigenVector;
-		arma::mat diagonalMat;
-		// Throws runtime decomposition error
-		arma::mat inverse = arma::inv(matrix);
-		arma::eig_sym(eigenValue, eigenVector,inverse);
-		finalMat = eigenVector * arma::sqrt(arma::diagmat(eigenValue))	* eigenVector.t();
-	}
+	static void SqrtInvMat(const arma::mat& matrix, arma::mat& final_mat);
 
 	//convert sparse matrix to armadillo matrix
 	static arma::mat libtoarma(svm_node** svm_nodes, int nr_sv, int dim) {
@@ -51,7 +43,7 @@ public:
 	}
 
 	//TODO: resize ret matrix
-	static void libToArma(svm_node** svm_nodes, int nr_sv, int dim, arma::mat ret) {
+	static void LibToArma(svm_node** svm_nodes, int nr_sv, int dim, arma::mat ret) {
 		//TODO: resize ret matrix
 		// arma::mat ret(nr_sv, dim);
 
@@ -66,7 +58,7 @@ public:
 		}
 	}
 
-	static arma::vec arrtoarmavec(double* arr, int size) {
+	static arma::vec ArrToArmaVec(double* arr, int size) {
 		arma::vec ret(size);
 		for (int i = 0; i < size; i++) {
 			ret(i) = arr[i];
@@ -74,12 +66,12 @@ public:
 		return ret;
 	}
 
-//	TODO: MAKE IT WORKING FOR MULTICLASS
-	static arma::vec arrtoarmavec(double** arr, int size) {
-		return arrtoarmavec(arr[0], size);
+	// TODO: MAKE IT WORKING FOR MULTICLASS
+	static arma::vec ArrToArmaVec(double** arr, int size) {
+		return ArrToArmaVec(arr[0], size);
 	}
 
-	static arma::mat matrixByValue(arma::mat &data, arma::vec &targets,
+	static arma::mat MatrixByValue(arma::mat &data, arma::vec &targets,
 			double value) {
 		return data.rows(find(targets == value));
 	}
@@ -87,10 +79,21 @@ public:
 };
 
 template <typename T>
-static std::string to_string(T const& value) {
+static std::string ToString(T const& value) {
     std::stringstream sstr;
     sstr << value;
     return sstr.str();
+}
+
+inline void SvmUtils::SqrtInvMat(const arma::mat& matrix, arma::mat& final_mat) {
+	arma::vec eigenValue;
+	arma::mat eigenVector;
+	arma::mat diagonalMat;
+	// Throws runtime decomposition error
+	arma::mat inverse = arma::inv(matrix);
+	arma::eig_sym(eigenValue, eigenVector, inverse);
+	final_mat = eigenVector * arma::sqrt(arma::diagmat(eigenValue))
+			* eigenVector.t();
 }
 
 #endif /* SVC_UTILS_H_ */

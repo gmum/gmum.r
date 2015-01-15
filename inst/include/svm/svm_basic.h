@@ -7,16 +7,16 @@
 #include "log.h"
 
 enum KernelType {
-	_LINEAR, _POLY, _RBF, _SIGMOID // _PRECOMPUTED
+	kLinear, kPoly, kRBF, kSigmoid // kPrecomputed
 };
 
 
 enum SVMType {
-	LIBSVM, SVMLIGHT
+	kLibSMV, kSVMLight
 };
 
 enum Preprocess {
-	TWOE, NONE
+	kTwoE, kNone
 };
 // NORM is solely for test purposes
 
@@ -25,110 +25,110 @@ class SVMConfiguration {
 
 public:
 
-	std::string filename; //filename with data
-	std::string model_filename;
-	std::string output_filename;
-	bool prediction;
+	std::string filename_; //filename with data
+	std::string model_filename_;
+	std::string output_filename_;
+	bool prediction_;
 
-	std::string error_msg; //if something went wrong, there is msg with error
+	std::string error_msg_; //if something went wrong, there is msg with error
 
-	SVMType library;
-	int svm_type;
-	KernelType kernel_type;
-	Preprocess preprocess;
+	SVMType library_;
+	int svm_type_;
+	KernelType kernel_type_;
+	Preprocess preprocess_;
 
-	int degree;		// for poly
-	double gamma;	// for poly/rbf/sigmoid
-	double coef0;	// for poly/sigmoid
+	int degree_;		// for poly
+	double gamma_;	// for poly/rbf/sigmoid
+	double coef0_;	// for poly/sigmoid
 
 	//these are for training only
-	double cache_size; 	// in MB
-	double eps;			// stopping criteria
-	double C;			// for C_SVC, EPSILON_SVR and NU_SVR
-	int nr_weight;		// for C_SVC
-	int *weight_label;	// for C_SVC
-	double* weight;		// for C_SVC
-	int shrinking;		// use the shrinking heuristics
-	int probability; 	// do probability estimates
+	double cache_size_; 	// in MB
+	double eps_;			// stopping criteria
+	double c_;			// for C_SVC, EPSILON_SVR and NU_SVR
+	int nr_weight_;		// for C_SVC
+	int *weight_label_;	// for C_SVC
+	double* weight_;		// for C_SVC
+	int shrinking_;		// use the shrinking heuristics
+	int probability_; 	// do probability estimates
 	
 	//	libsvm Model parameters
-	int l;
-	int nr_class; /* number of classes, = 2 in regression/one class svm */
+	int l_;
+	int nr_class_; /* number of classes, = 2 in regression/one class svm */
 	//TODO: don't keep support vectors as svm node, remember when Staszek wasn't happy about it?
-	struct svm_node **SV; /* SVs (SV[l]) */
-	double **sv_coef; /* coefficients for SVs in decision functions (sv_coef[k-1][l]) */
-	double *rho; /* constants in decision functions (rho[k*(k-1)/2]) */
-	int *sv_indices; /* sv_indices[0,...,nSV-1] are values in [1,...,num_traning_data] to indicate SVs in the training set */
+	struct svm_node **sv_; /* SVs (SV[l]) */
+	double **sv_coef_; /* coefficients for SVs in decision functions (sv_coef[k-1][l]) */
+	double *rho_; /* constants in decision functions (rho[k*(k-1)/2]) */
+	int *sv_indices_; /* sv_indices[0,...,nSV-1] are values in [1,...,num_traning_data] to indicate SVs in the training set */
 
     /* SVMLight parameters */
-    double threshold_b;
-    char *kernel_parm_custom;   // Custom kernel parameter(s)
-    arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
-    arma::mat support_vectors;
+    double threshold_b_;
+    char *kernel_parm_custom_;   // Custom kernel parameter(s)
+    arma::vec alpha_y_;          // SVMLight's alpha*y values for SV's
+    arma::mat support_vectors_;
     // User-defined classification mode labels
-    int label_negative;
-    int label_positive;
+    int label_negative_;
+    int label_positive_;
 
 
 	/* for classification only */
 
-	int *label; /* label of each class (label[k]) */
-	int *nSV; /* number of SVs for each class (nSV[k]) */
+	int *label_; /* label of each class (label[k]) */
+	int *n_sv_; /* number of SVs for each class (nSV[k]) */
 	/* nSV[0] + nSV[1] + ... + nSV[k-1] = l */
 
 
 	/*TODO: neccessery? check what are they doing */
-	double nu; /* for NU_SVC, ONE_CLASS, and NU_SVR */
-	double p; /* for EPSILON_SVR */
+	double nu_; /* for NU_SVC, ONE_CLASS, and NU_SVR */
+	double p_; /* for EPSILON_SVR */
 
-	arma::mat data;		// armadillo matrix and vector (double)
-	arma::vec target;
-	arma::vec result;
+	arma::mat data_;		// armadillo matrix and vector (double)
+	arma::vec target_;
+	arma::vec result_;
 
 
-	arma::mat tmp_data;
-	arma::mat tmp_target;
+	arma::mat tmp_data_;
+	arma::mat tmp_target_;
 	
-	Logger log;
+	Logger log_;
 
 	//universal parameters
-	arma::vec w; //d
-	double pos_target;
-	double neg_target;
-	arma::mat arma_SV;
+	arma::vec w_; //d
+	double pos_target_;
+	double neg_target_;
+	arma::mat arma_sv_;
 
 	//2eParameters
-	double cov_eps_smoothing;
-	arma::mat inv_of_sqrt_of_cov;
+	double cov_eps_smoothing_;
+	arma::mat inv_of_sqrt_of_cov_;
 
 	// constructors
 	SVMConfiguration();
 	SVMConfiguration(bool);
 
 	// methods
-	arma::mat getData();
-	void setData(arma::mat);
-	void setDefaultParams();
+	arma::mat data();
+	void set_data(arma::mat);
+	void set_default_params();
 
-	void setFilename(std::string);
-	std::string getFilename();
+	void set_filename(std::string);
+	std::string filename();
 
-	void setModelFilename(std::string);
-	std::string getModelFilename();
+	void set_model_filename(std::string);
+	std::string model_filename();
 
-	void setOutputFilename(std::string);
-	std::string getOutputFilename();
+	void set_output_filename(std::string);
+	std::string output_filename();
 
-	void setPrediction(bool);
-	bool isPrediction();
+	void set_prediction(bool);
+	bool prediction();
 
-	void setWeights( Rcpp::NumericVector );
-	void setLibrary( std::string );
-	void setKernel( std::string );
-	void setPreprocess( std::string );
-  double getB();
-  // logger
-  void set_verbosity( int );
+	void set_weights( Rcpp::NumericVector );
+	void set_library( std::string );
+	void set_kernel( std::string );
+	void set_preprocess( std::string );
+    double b();
+    // logger
+    void set_verbosity( int );
 };
 
 #endif

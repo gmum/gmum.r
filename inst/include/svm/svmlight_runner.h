@@ -30,27 +30,27 @@ public:
     ~SVMLightRunner();
 
     // Documented in the parent class
-    bool canHandle(SVMConfiguration &);
+    bool CanHandle(SVMConfiguration &);
 
     // Documented in the parent class
-    void processRequest(SVMConfiguration &);
+    void ProcessRequest(SVMConfiguration &);
 
 protected:
     
     /**
      * GMUM.R's implementation of prediction
      */
-    void predict(SVMConfiguration &);
+    void Predict(SVMConfiguration &);
 
     /**
      * Store numeric results as user-defined labels
      */
-    void resultsToLabels(SVMConfiguration &);
+    void ResultsToLabels(SVMConfiguration &);
 
     /**
      * Clear globals that are assuming we just started command-line svmlight
      */
-    void _clear();
+    void Clear();
 
     /** @name Library functionalities wrappers
      *  Following methods and fields are direct library functionalities
@@ -69,7 +69,7 @@ protected:
      * SVMLight's `svm_learn` main method
      * @author  Thorsten Joachims
      */
-    int librarySVMLearnMain(int argc, char **argv, bool use_gmumr,
+    int LibrarySVMLearnMain(int argc, char **argv, bool use_gmumr,
         SVMConfiguration &config
     );
 
@@ -77,7 +77,7 @@ protected:
      * SVMLight's `svm_learn` auxiliary method
      * @author  Thorsten Joachims
      */
-    void librarySVMLearnReadInputParameters(
+    void LibrarySVMLearnReadInputParameters(
         int argc, char *argv[], char *docfile, char *modelfile,
         char *restartfile, long *verbosity, LEARN_PARM *learn_parm,
         KERNEL_PARM *kernel_parm, bool use_gmumr, SVMConfiguration &config
@@ -87,7 +87,7 @@ protected:
      * SVMLight's `svm_classify` main method
      * @author  Thorsten Joachims
      */
-    int librarySVMClassifyMain(int argc, char **argv, bool use_gmumr,
+    int LibrarySVMClassifyMain(int argc, char **argv, bool use_gmumr,
         SVMConfiguration &config
     );
 
@@ -95,7 +95,7 @@ protected:
      * SVMLight's `svm_classify` auxiliary method
      * @author  Thorsten Joachims
      */
-    void librarySVMClassifyReadInputParameters(
+    void LibrarySVMClassifyReadInputParameters(
         int argc, char **argv, char *docfile, char *modelfile,
         char *predictionsfile, long int *verbosity, long int *pred_format,
         bool use_gmumr, SVMConfiguration &config
@@ -105,7 +105,7 @@ protected:
      * SVMLight's auxiliary method
      * @author  Thorsten Joachims
      */
-    MODEL * libraryReadModel(
+    MODEL * LibraryReadModel(
         char *modelfile, bool use_gmumr, SVMConfiguration &config
     );
 
@@ -113,7 +113,7 @@ protected:
      * SVMLight's auxiliary method
      * @author  Thorsten Joachims
      */
-    void libraryReadDocuments(
+    void LibraryReadDocuments(
         char *docfile, DOC ***docs, double **label, long int *totwords,
         long int *totdoc, bool use_gmumr, SVMConfiguration &config
     );
@@ -122,13 +122,13 @@ protected:
      * SVMLight's auxiliary method
      * @author  Thorsten Joachims
      */
-    void libraryWaitAnyKey();
+    void LibraryWaitAnyKey();
 
     /**
      * SVMLight's auxiliary method
      * @author  Thorsten Joachims
      */
-    void libraryPrintHelp();
+    void LibraryPrintHelp();
 
     /// @}
 
@@ -163,4 +163,3 @@ protected:
 
 /* SVMLIGHT_RUNNER_H */
 #endif
-
