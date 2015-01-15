@@ -206,14 +206,11 @@ hr.primary {
     width: 80%;
     margin: 0 auto;
     padding: 30px 0;
+    position: relative;
 }
 
 .member p {
     margin-bottom: 1px;
-}
-
-.member .detail {
-    visibility: hidden;
 }
 
 .member img {
@@ -226,6 +223,18 @@ hr.primary {
     color: #999;
 }
 
+.member .detail {
+    visibility: hidden;
+}
+
+.member.inactive img {
+    -webkit-filter: grayscale(100%);
+    -moz-filter: grayscale(100%);
+    -o-filter: grayscale(100%);
+    -ms-filter: grayscale(100%);
+    filter: grayscale(100%);
+}
+
 .member .member-name {
     margin-top: 10px;
     line-height: 120%;
@@ -233,6 +242,10 @@ hr.primary {
 
 .member .member-name {
     color: #d95c5c;
+}
+
+.member.inactive .member-name {
+    color: #999;
 }
 
 .member .member-position {
@@ -246,6 +259,16 @@ hr.primary {
 
 .member:hover .detail {
     visibility: visible !important;
+}
+
+.member .label-inactive {
+    width: 100%;
+    position: absolute;
+    top: 7px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #999;
+    text-align: center;
 }
 
 .quote .author {
