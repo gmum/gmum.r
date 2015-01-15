@@ -40,6 +40,11 @@ typeof(energy);
 typeof(input);
 typeof(cluster);
 
+typeof(aproximation);
+typeof(dimension);
+typeof(iteration);
+typeof(type);
+
 save.image("~/Documents/gmum.r/data/cec.mouse_1_classic.RData");
 
 env <- c(ls())
@@ -59,6 +64,11 @@ typeof(energy);
 typeof(input);
 typeof(cluster);
 
+typeof(aproximation);
+typeof(dimension);
+typeof(iteration);
+typeof(type);
+
 save.image("~/Documents/gmum.r/data/cec.mouse_1_spherical.RData");
 
 env <- c(ls())
@@ -77,6 +87,11 @@ type <- read.table(system.file("data_sets", "cec", "mouse_2_spherical","type.txt
 typeof(energy);
 typeof(input);
 typeof(cluster);
+
+typeof(aproximation);
+typeof(dimension);
+typeof(iteration);
+typeof(type);
 
 save.image("~/Documents/gmum.r/data/cec.mouse_2_spherical.RData");
 
