@@ -6,7 +6,7 @@
 #include <vector>
 #include "algorithm.hpp"
 #include "cluster.hpp"
-#include "log.hpp"
+#include "../utils/log.hpp"
 
 #define LOG(level, text) m_logger.log(level, text);
 

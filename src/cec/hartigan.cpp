@@ -4,7 +4,7 @@
 namespace gmum {
 
 Hartigan::Hartigan(bool log_nclusters, bool log_energy) : Algorithm(log_nclusters, log_energy) {
-    this->m_logger = Logger();
+    m_logger = Logger();
 }
 
 TotalResult Hartigan::loop(const arma::mat &points, std::vector<unsigned int> &assignment,

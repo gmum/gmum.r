@@ -35,8 +35,16 @@ public:
 
     void log(int level, int number) {
         if (level <= verbosity) {
-        	std::stringstream ss;
-        	ss << number;
+            std::stringstream ss;
+            ss << number;
+            std::cout << ss.str() << std::endl << std::flush;
+        }
+    }
+
+    void log(int level, double number) {
+        if (level <= verbosity) {
+            std::stringstream ss;
+            ss << number;
             std::cout << ss.str() << std::endl << std::flush;
         }
     }
