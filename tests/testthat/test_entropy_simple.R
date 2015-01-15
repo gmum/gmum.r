@@ -1,15 +1,11 @@
 library(testthat)
 library('gmum.r')
 
-tmpEnv <- new.env()
-load(system.file("data_sets", "cec", "simple_1", "energy.RData", package="gmum.r"), envir=tmpEnv)
-expected_energy <- tmpEnv$energy
+data(cec.simple_1)
 
-load(system.file("data_sets", "cec", "simple_1", "cluster.RData", package="gmum.r"), envir=tmpEnv)
-dataset_clusters <- tmpEnv$cluster[,1]
-
-load(system.file("data_sets", "cec", "simple_1", "input.RData", package="gmum.r"), envir=tmpEnv)
-dataset_points <- tmpEnv$input
+expected_energy = energy
+dataset_clusters = cluster[,1]
+dataset_points <- input
 
 test_that("Entropy is correct", {
   c <- CEC(k=1, x=dataset_points)

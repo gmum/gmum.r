@@ -1,6 +1,5 @@
-tmpEnv <- new.env()
-load("inst/data_sets/cec/mouse_1_spherical/input.RData", envir=tmpEnv)
-dataset <- tmpEnv$input
+data(cec.mouse_1_spherical)
+dataset = input
 
 # That is the dataset we want to cluster
 plot(dataset)

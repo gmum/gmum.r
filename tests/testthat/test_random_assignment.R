@@ -23,12 +23,10 @@ correctness <- function(correct_assignment, my_assignment, npoints, nclusters)
 }
 
 test_that("correctness works", {
-  tmpEnv <- new.env()
-  load(system.file("data_sets", "cec", "EllipseGauss", "cluster.RData", package="gmum.r"), envir=tmpEnv)
-  dataset_clusters <- tmpEnv$cluster[,1]
+  data(cec.ellipse_gauss)
   
-  load(system.file("data_sets", "cec", "EllipseGauss", "input.RData", package="gmum.r"), envir=tmpEnv)
-  dataset_points <- tmpEnv$input
+  dataset_clusters = cluster[,1]
+  dataset_points <- input
   
   nclusters <- 4
   npoints = dim(dataset_points)[1]
@@ -39,15 +37,11 @@ test_that("correctness works", {
 })
 
 test_that("EllipseGauss random assignment is correct", {
-  tmpEnv <- new.env()
-  load(system.file("data_sets", "cec", "EllipseGauss", "cluster.RData", package="gmum.r"), envir=tmpEnv)
-  dataset_clusters <- tmpEnv$cluster[,1]
+  data(cec.ellipse_gauss)
   
-  load(system.file("data_sets", "cec", "EllipseGauss", "input.RData", package="gmum.r"), envir=tmpEnv)
-  dataset_points <- tmpEnv$input
-  
-  load(system.file("data_sets", "cec", "EllipseGauss", "energy.RData", package="gmum.r"), envir=tmpEnv)
-  expected_energy <- tmpEnv$energy
+  expected_energy = energy
+  dataset_clusters = cluster[,1]
+  dataset_points <- input
   
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
   
@@ -68,15 +62,11 @@ test_that("EllipseGauss random assignment is correct", {
 })
 
 test_that("mouse_1 random assignment is correct", {
-  tmpEnv <- new.env()
-  load(system.file("data_sets", "cec", "mouse_1", "cluster.RData", package="gmum.r"), envir=tmpEnv)
-  dataset_clusters <- tmpEnv$cluster[,1]
+  data(cec.mouse_1)
   
-  load(system.file("data_sets", "cec", "mouse_1", "input.RData", package="gmum.r"), envir=tmpEnv)
-  dataset_points <- tmpEnv$input
-  
-  load(system.file("data_sets", "cec", "mouse_1", "energy.RData", package="gmum.r"), envir=tmpEnv)
-  expected_energy <- tmpEnv$energy
+  expected_energy = energy
+  dataset_clusters = cluster[,1]
+  dataset_points <- input
   
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
   
@@ -99,15 +89,11 @@ test_that("mouse_1 random assignment is correct", {
 })
 
 test_that("mouse_1_spherical random assignment is correct", {
-  tmpEnv <- new.env()
-  load(system.file("data_sets", "cec", "mouse_1_spherical", "cluster.RData", package="gmum.r"), envir=tmpEnv)
-  dataset_clusters <- tmpEnv$cluster[,1]
+  data(cec.mouse_1_spherical)
   
-  load(system.file("data_sets", "cec", "mouse_1_spherical", "input.RData", package="gmum.r"), envir=tmpEnv)
-  dataset_points <- tmpEnv$input
-  
-  load(system.file("data_sets", "cec", "mouse_1_spherical", "energy.RData", package="gmum.r"), envir=tmpEnv)
-  expected_energy <- tmpEnv$energy  
+  expected_energy = energy
+  dataset_clusters = cluster[,1]
+  dataset_points <- input 
   
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
   
