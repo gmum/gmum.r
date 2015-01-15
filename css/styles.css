@@ -227,14 +227,6 @@ hr.primary {
     visibility: hidden;
 }
 
-.member.inactive img {
-    -webkit-filter: grayscale(100%);
-    -moz-filter: grayscale(100%);
-    -o-filter: grayscale(100%);
-    -ms-filter: grayscale(100%);
-    filter: grayscale(100%);
-}
-
 .member .member-name {
     margin-top: 10px;
     line-height: 120%;
@@ -244,13 +236,21 @@ hr.primary {
     color: #d95c5c;
 }
 
-.member.inactive .member-name {
-    color: #999;
-}
-
 .member .member-position {
     font-weight: bold;
     color: #777;
+}
+
+.member.inactive img,
+.member.inactive .member-name,
+.member.inactive .member-position {
+    opacity: 0.4;
+}
+
+.member.inactive:hover img,
+.member.inactive:hover .member-name,
+.member.inactive:hover .member-position {
+    opacity: 1;
 }
 
 .member:hover {
