@@ -114,7 +114,7 @@ bool SVMClient::isProbability(){
 
 // model getters
 arma::vec SVMClient::getAlpha() {
-	return arma::vec(config.rho,config.l);
+	return config.alpha_y;
 }
 
 //void SVMClient::setAlpha(double* alpha) {
@@ -133,7 +133,7 @@ arma::vec SVMClient::getAlpha() {
 //}
 
 void SVMClient::setBias(double bias) {
-  config.rho[0] = -bias;
+	config.setB(bias);
 }
 
 double SVMClient::getBias() {	
@@ -151,7 +151,7 @@ arma::vec SVMClient::getW() {
 }
 
 int SVMClient::get_number_sv() {
-  return config.l;
+  return config.support_vectors.n_rows;
 }
 
 int SVMClient::get_number_class() {
@@ -159,7 +159,7 @@ int SVMClient::get_number_class() {
 }
 
 arma::mat SVMClient::getSV(){
-  return config.arma_SV;
+  return config.support_vectors;
 }
 
 // Runners

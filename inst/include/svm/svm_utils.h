@@ -84,6 +84,8 @@ public:
 		return data.rows(find(targets == value));
 	}
 
+	//static void ArmaVec2
+
 };
 
 template <typename T>
