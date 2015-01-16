@@ -155,6 +155,7 @@ nstart.cec <- NULL
 loadModule('cec', TRUE)
 
 evalqOnLoad({
+<<<<<<< HEAD
   
   CEC <<- function(x = NULL,
                    k = 0,
@@ -173,6 +174,7 @@ evalqOnLoad({
                    log.iters = FALSE){
     
     # check for errors
+    call <- match.call(expand.dots = TRUE)
     
     if (is.null(x))
       stop("Dataset is required!");
@@ -215,6 +217,8 @@ evalqOnLoad({
     config$setIters(log.iters)
     
     model <- new(CecModel, config)
+
+    assign("call", call, model)
     model
   }
   

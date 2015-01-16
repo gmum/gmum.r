@@ -116,6 +116,7 @@ evalqOnLoad({
                     cache_size = 100,
                     tol = 1e-3,
                     verbosity=4) {
+    call <- match.call(expand.dots = TRUE)
     
     # check for errors
     
@@ -221,6 +222,7 @@ evalqOnLoad({
     client <- new(SVMClient, config)
     client$train()
 
+    assign("call", call, client)
     client 
   } 
 
