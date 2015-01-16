@@ -24,16 +24,16 @@ body {
 
 section {
     padding-top: 70px;
-    padding-bottom: 50px;
+    padding-bottom: 10px;
     min-height: calc(100% - 1px);
 }
 
 h1 {
-    font-size: 80px;
+    font-size: 7em;
 }
 
 h2 {
-    font-size: 40px;
+    font-size: 4em;
 }
 
 pre {
@@ -42,7 +42,7 @@ pre {
 
 code {
     font-family: monospace, 'Courier New', sans-serif;
-    font-size: 16px;
+    font-size: 1.7em;
 }
 
 .icon-bar {
@@ -85,7 +85,7 @@ code {
 
 hr.primary {
     border: 3px solid;
-    max-width: 500px;
+    max-width: 40vw;
     margin: 30px auto;
 }
 
@@ -126,7 +126,7 @@ hr.primary {
 .project-feature .description {
     border-top: 3px dashed #444;
     padding-top: 20px;
-    font-size: 17px;
+    font-size: 1.7em;
 }
 
 .project-module {
@@ -138,13 +138,13 @@ hr.primary {
 
 .project-module h2 {
     margin: 10px auto;
-    font-size: 55px;
+    font-size: 4em;
     font-weight: 300;
 }
 
 .project-module .description {
     margin: 30px 0;
-    font-size: 17px;
+    font-size: 1.2em;
     font-weight: 300;
     line-height: 1.8;
 }
@@ -154,12 +154,12 @@ hr.primary {
 }
 
 .project-module .feature i {
-    font-size: 22px;
+    font-size: 2em;
 }
 
 .project-module .feature span {
     margin-left: 10px;
-    font-size: 22px;
+    font-size: 1.6em;
     line-height: 1.4;
 }
 
@@ -176,11 +176,11 @@ hr.primary {
 
 .footer .inline-graphical-link a {
     margin: 5px !important;
-    font-size: 30px;
+    font-size: 2.2em;
 }
 
 .footer .inline-graphical-link i {
-    font-size: 30px;
+    font-size: 2.2em;
 }
 
 .publication {
@@ -265,7 +265,7 @@ hr.primary {
     width: 100%;
     position: absolute;
     top: 7px;
-    font-size: 10px;
+    font-size: 0.7em;
     font-weight: bold;
     color: #999;
     text-align: center;
@@ -273,12 +273,12 @@ hr.primary {
 
 .quote .author {
     margin: 0;
-    font-size: 20px;
+    font-size: 1.6em;
     font-weight: bold;
 }
 
 .lead {
-    font-size: 26px;
+    font-size: 1.8em;
     line-height: 170%;
 }
 
@@ -326,12 +326,12 @@ hr.primary {
 }
 
 .post-content h2 {
-    font-size: 44px;
+    font-size: 3.6em;
 }
 
 .post-content p {
     margin-bottom: 12px;
-    font-size: 18px;
+    font-size: 1.3em;
     font-weight: 200;
     line-height: 1.4;
 }
@@ -394,7 +394,7 @@ hr.primary {
 }
 
 #getting-started code {
-    font-size: 18px;
+    font-size: 1.3em;
 }
 
 #getting-started img {
@@ -470,5 +470,5 @@ footer {
 footer p {
     margin: 0 !important;
     padding: 0 !important;
-    font-size: 13px !important;
+    font-size: 0.9em !important;
 }
