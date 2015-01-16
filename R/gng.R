@@ -3,6 +3,7 @@
 library(igraph)
 library(methods)
 
+DollarNames.Rcpp <- NULL
 
 gng.plot.color.label <- 'label'
 gng.plot.color.fast.cluster <- 'fast.cluster'
@@ -751,13 +752,13 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     
 
   # Autocompletion fix
-  setMethod( ".DollarNames", "C++Object", 
-             function( x, pattern ){
-                envir = asNamespace("Rcpp")
-                DollarNames.Rcpp = envir$`.DollarNames.C++Object`
-                DollarNames.Rcpp(x, pattern)[! (substr(.DollarNames.Rcpp(x, pattern),1,1)==".")]
-             } , where=.GlobalEnv)
-
+    
+    envir = asNamespace("Rcpp")
+    DollarNames.Rcpp <<- envir$`.DollarNames.C++Object`
+    ".DollarNames.C++Object" <- function( x, pattern ){
+      DollarNames.Rcpp(x, pattern)[! (substr(DollarNames.Rcpp(x, pattern),1,1)==".")]
+    }
+    setMethod( ".DollarNames", "C++Object", `.DollarNames.C++Object` )
 
 
   setMethod("plot",  "Rcpp_GNGServer", plot.gng)
