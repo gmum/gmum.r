@@ -109,5 +109,3 @@ void GNGServer::init(GNGConfiguration configuration, std::istream * input_graph)
 	DBG(m_logger,10, "GNGServer()::constructed algorithm object");
 
 }
-
-

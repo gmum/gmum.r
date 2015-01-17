@@ -119,9 +119,10 @@ evalqOnLoad({
     
     # check for errors
     
-    if (lib != "libsvm") { # || lib != "svmlight"
-      stop(paste(GMUM_WRONG_LIBRARY, ": bad library" )) 
-      # log error No such library, available are: libsvm
+
+    if ( lib != "libsvm" && lib != "svmlight") { 
+      stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" )) 
+      # log error No such library, available are: libsvm, svmlight
     }
     
     if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") {
@@ -223,7 +224,12 @@ evalqOnLoad({
 
     client 
   } 
+<<<<<<< HEAD
     
+=======
+
+
+>>>>>>> svm-wrapper
   print.svm <- function(x) {
     print(sprintf("SVM object with: library: %s, kernel: %s, preprocess: %s, C: %.1f, gamma: %.3f, coef0: %.3f, degree: %d",
                   x$getLibrary(),
@@ -256,7 +262,6 @@ evalqOnLoad({
       pca_data = prcomp(df, scale=TRUE)
       scores = data.frame(df, pca_data$x[,1:2])
       w <- w %*% pca_data$rotation
-      
       A <- w[1]
       B <- w[2]
       C <- x$getBias()
@@ -265,7 +270,7 @@ evalqOnLoad({
       int <- -C/B
       
       pl <- ggplot() +
-          geom_point(data=scores, aes(PC1, PC2), colour=factor(t+2)) + geom_abline(slope=s, intercept=int)
+        geom_point(data=scores, aes(PC1, PC2), colour=factor(t+2)) + geom_abline(slope=s, intercept=int)
       plot(pl)
     }
     else if (mode == "normal") { 
@@ -274,11 +279,10 @@ evalqOnLoad({
       }
       A <- w[1]
       B <- w[2]
-      C <- x$getBias()
-      
+      C <- x$getBias()      
       s <- -A/B
       int <- -C/B
-      
+    
       pl <- ggplot() + geom_point(data=df, aes(X1, X2), colour=factor(t+6))  +
         geom_abline(slope=s, intercept=int)
       plot(pl)
@@ -305,7 +309,7 @@ evalqOnLoad({
       
       s <- -A/B
       int <- -C/B
-
+      
       grid["target"] <- target
       x$setY(temp_target)
       x$setX(data.matrix(df))  
@@ -328,12 +332,13 @@ evalqOnLoad({
     prediction <- object$getPrediction()
     prediction
   }
-    
+
   setMethod("print", "Rcpp_SVMClient", print.svm)
   setMethod("predict", signature("Rcpp_SVMClient"), predict.svm)
   setMethod("plot", "Rcpp_SVMClient",  plot.svm)
   setMethod("summary", "Rcpp_SVMClient", summary.svm)
-    
+  setMethod("show", "Rcpp_SVMClient", summary.svm)
+
 })
 
 

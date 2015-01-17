@@ -2,9 +2,6 @@
 #define SVM_CLIENT_H
 
 #include "svm_handler.h"
-#include "libsvm_runner.h"
-#include "two_e_svm_pre.h"
-#include "two_e_svm_post.h"
 #include "svm_basic.h"
 #include <vector>
 
@@ -35,6 +32,8 @@ public:
 	void setEps(double);
 	void setShrinking(int);
 	void setProbability(int);
+  void setBias(double);
+  // void setAlpha(double*);
 
 	// data getters
 	arma::mat getX();
@@ -64,7 +63,7 @@ public:
  // double** getSV(); // double**, std::vector, arma:mat ?
   int get_number_sv();
   int get_number_class();
-	double* getAlpha();
+	arma::vec getAlpha();
 	double getBias();
 	arma::vec getW();
   arma::mat getSV();

@@ -424,6 +424,11 @@ summary.gng <- NULL
 convertToGraph.gng <- NULL
 
 
+
+
+
+
+
 generateExamples <- NULL
 
 #' @title insertExamples
@@ -510,6 +515,7 @@ evalqOnLoad({
       config$experimental_utility_option = 0
     }
     
+    
     config$dataset_type=.gng.dataset.bagging
     config$beta = beta
     config$max_edge_age = max.edge.age
@@ -530,6 +536,7 @@ evalqOnLoad({
     
     # Perform training on passed dataset
     if(training[1] == .gng.train.offline){
+      
       print("Training offline")
       if(is.null(x)){
         gmum.error(ERROR, "Passed null data and requested training offline")
@@ -542,6 +549,10 @@ evalqOnLoad({
         min_relative_dif = training[3]
         iter = 0
         errors_calculated = 0
+        best_so_far = 1e10
+        initial_patience = 3
+        patience = initial_patience
+        
         while(iter < max_iter || errors_calculated == 0){
           Sys.sleep(0.1)
           iter = server$getCurrentIteration()
@@ -551,20 +562,25 @@ evalqOnLoad({
           }
           
           # Iter 5 = 5 times passed whole dataset. 
-          if(iter > 5){
-            errors_calculated = 1
+          if(length(server$getErrorStatistics()) > 5){
             errors = server$getErrorStatistics()
-            best_previously = min(errors[(length(errors)-5):length(errors)-1])
-            current = errors[length(errors)]
-            if(best_previously != 0){
-              change = 1.0 - current/best_previously
-              if(change < min_relative_dif){
-				print(best_previously)
-				print(errors[(length(errors)-5):length(errors)-1])
-                print("Patience bailed out")
-				break
+
+            best_previously = min(errors[(length(errors)-5):length(errors)])
+            
+            #this is same as (best_so_far-best_previously)/best_so_far < min_relative_di
+            if((best_so_far - best_previously) < best_so_far*min_relative_dif){
+              patience = patience - 1
+              if(patience == 0){
+                print(sprintf("Best error in 5 previous iterations %f", best_previously))
+        				print(errors[(length(errors)-5):length(errors)])
+                print("Patience elapsed, bailing out")
+        				break
               }
+            }else{
+              patience = initial_patience
             }
+            
+            best_so_far = min(best_previously, best_so_far)
           }
         }
         
@@ -626,7 +642,9 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
  
      setGeneric("convertToGraph", 
                 function(object, ...) standardGeneric("convertToGraph"))
-     
+
+
+
      setGeneric("run", 
                 function(object, ...) standardGeneric("run"))
      
@@ -689,8 +707,14 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   summary.gng <<- function(object){
     print(sprintf("Growing Neural Gas, nodes %d with mean error %f", 
                   object$getNumberNodes(), object$getMeanError()))
+    print(sprintf("Trained %d iterations", object$getCurrentIteration()))
     print("Mean errors[s]: ")
-    print(object$getErrorStatistics())
+    errors = object$getErrorStatistics()
+    if(length(errors) > 10){
+      errors = errors[(length(errors)-10):length(errors)]
+    }
+    
+    print(errors)
   }
   
 
@@ -758,26 +782,77 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
             })
   
   
-  
+    
   convertToGraph.gng <- function(object){
-    .gng.construct_igraph(object)
+    pause(object)
+    
+    if(object$getNumberNodes() == 0){
+      return(graph.empty(n=0, directed=FALSE))
+    }
+    
+    #Prepare index map. Rarely there is a difference in indexing
+    #due to a hole in memory representation of GNG graph (i.e.
+    #indexing in gng can be non-continuous)
+    indexesGNGToIGraph <- 1:object$getLastNodeIndex()
+    indexesIGraphToGNG <- 1:object$getNumberNodes()
+    
+    if(object$getLastNodeIndex() != object$getNumberNodes()){
+      igraph_index = 1
+      for(i in (1:object$getLastNodeIndex())){
+        node <- node(object, i)
+        if(length(node) != 0){
+          indexesGNGToIGraph[i] = igraph_index
+          indexesIGraphToGNG[igraph_index] = i
+          igraph_index = igraph_index + 1
+        }
+      }
+    }
+    
+    adjlist<-list()
+    for(i in 1:object$getLastNodeIndex()){
+      node <- node(object, i)
+      if(length(node) != 0){
+        igraph_index = indexesGNGToIGraph[i]
+        adjlist[[igraph_index]] <- sapply(node$neighbours, function(x){ indexesGNGToIGraph[x] })
+      } 
+    }
+    
+    
+    g <- graph.adjlist(adjlist, mode = "all")
+    for(i in 1:object$getLastNodeIndex()){
+      node <- node(object, i)
+      if(length(node) != 0){
+        igraph_index = indexesGNGToIGraph[i]
+        #TODO: it is more efficient to assign whole vectors
+        #TODO: refactor in whole code v0 v1 v2 to pos_1 pos_2 pos_3
+        V(g)[igraph_index]$v0 <- node$pos[1]
+        V(g)[igraph_index]$v1 <- node$pos[2]
+        V(g)[igraph_index]$v2 <- node$pos[3]
+        V(g)[igraph_index]$label <- node$label
+        V(g)[igraph_index]$error <- node$error
+        if(!is.null(node$utility)){
+          V(g)[igraph_index]$utility = node$utility
+        }
+      } 
+    }
+    
+    # Add distance information
+    dists <- apply(get.edges(g, E(g)), 1, function(x){ 
+      object$nodeDistance(x[indexesIGraphToGNG[x[1]]], x[indexesIGraphToGNG[x[2]]])
+    })
+    E(g)$dists = dists
+    
+    g
   }
+
   
-  
-  #' Get node descriptor from graph
-  #'
-  #' @note This function will dump graph to .graphml file on this first and then will remove
-  #' the file. Be cautious with huge graphs!
-  #' 
-  #' @param gng_id gng id of the node NOTE: nmight differ from one in exported igraph
+
   setMethod("convertToGraph" ,
             "Rcpp_GNGServer",
             convertToGraph.gng)
   
-  
-  #' Find closest example
-  #' @param x Vector of dimensionality of vertex
-  #' @return gng_index of the closest example
+
+
   setMethod("predict" ,
             "Rcpp_GNGServer",
             function(object, x){
