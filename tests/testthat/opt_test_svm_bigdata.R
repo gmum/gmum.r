@@ -1,7 +1,7 @@
 test_that("2e works with really big dataset", {
   
-  ds = svm.dataset.farm_ads()
-  ds2 = svm.dataset.farm_ads()
+  ds = svm.dataset.duke()
+  ds2 = svm.dataset.duke()
   formula = X1 ~ .
   
   svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "none", C=10);

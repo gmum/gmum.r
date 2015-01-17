@@ -52,19 +52,19 @@ svm.dataset.circles <- function() {
   return(te)
 }
 
-svm.dataset.urls_data <- function()  {
-  bc = read.libsvm( urls_data.path, 3231961 )
-  bc$X2 = NULL
-  return(bc)
-}
+# svm.dataset.urls_data <- function()  {
+#   bc = read.libsvm( urls_data.path, 3231961 )
+#   bc$X2 = NULL
+#   return(bc)
+# }
 
-svm.dataset.farm_ads <- function()  {
-  bc = read.libsvm( farm_ads.path, 54877 )
-  bc$X2 = NULL
-  return(bc)
-}
+# svm.dataset.farm_ads <- function()  {
+#   bc = read.libsvm( farm_ads.path, 54877 )
+#   bc$X2 = NULL
+#   return(bc)
+# }
 
-svm.dataset.farm_ads <- function()  {
+svm.dataset.duke <- function()  {
   bc = read.libsvm( duke.path,  7129 )
   bc$X2 = NULL
   return(bc)
