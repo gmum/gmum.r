@@ -1,2 +1,3 @@
+import(igraph)
 useDynLib(gmum.r)
-export(hello_gmum)
+exportPattern("^[[:alpha:]]+")

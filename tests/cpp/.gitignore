@@ -1,0 +1,9 @@
+# Make results
+run_tests
+run_primary_tests.sh
+run_secondary_tests.sh
+
+# Test temporary files
+*.graphml
+*.bin
+
