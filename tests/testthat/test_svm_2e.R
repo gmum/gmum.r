@@ -33,13 +33,13 @@ test_that("2e svm works with breast cancer dataset", {
 print("test::2eSVM works with breast cancer dataset")
 
 test_that("2e svm works better then normal SVM with breast cancer dataset", {
-  
+  print("####### Start 2e vs normal svm #########")
   ds = svm.dataset.breast_cancer()
   ds2 = svm.dataset.breast_cancer()
   formula = X1 ~ .
   
-  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "none", C=10);
-  twoe_svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "2e", C=10);
+  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "none", C=1.5);
+  twoe_svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "2e", C=1.5);
   
   x <- svm$getX()
   target <- svm$getY()
@@ -52,5 +52,5 @@ test_that("2e svm works better then normal SVM with breast cancer dataset", {
   
   print(sprintf("SVM acc: %f", acc))
   print(sprintf("2eSVM acc: %f", twoe_acc))
-  
+  print("####### End 2e vs normal svm #########")
 })

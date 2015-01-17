@@ -1,6 +1,8 @@
 breast_cancer.path <- system.file("data_sets","svm","breast_cancer.data", package="gmum.r")
 twoe_data.path <- system.file("data_sets","svm","2e.data", package="gmum.r")
 circles_data.path <- system.file("data_sets","svm","circles.data", package="gmum.r")
+urls_data.path <- system.file("data_sets","svm", "Day0.svm", package="gmum.r")
+duke.path <- system.file("data_sets","svm", "duke", package="gmum.r")
 
 read.libsvm <- function(filename, dimensionality) {
   
@@ -49,6 +51,28 @@ svm.dataset.circles <- function() {
   te = read.table(circles_data.path, quote="\"")
   return(te)
 }
+
+svm.dataset.urls_data <- function()  {
+  bc = read.libsvm( urls_data.path, 3231961 )
+  bc$X2 = NULL
+  return(bc)
+}
+
+svm.dataset.farm_ads <- function()  {
+  bc = read.libsvm( farm_ads.path, 54877 )
+  bc$X2 = NULL
+  return(bc)
+}
+
+svm.dataset.farm_ads <- function()  {
+  bc = read.libsvm( duke.path,  7129 )
+  bc$X2 = NULL
+  return(bc)
+}
+
+
+
+
 
 svm.dataset.xor <- function() {
   matrix( 
