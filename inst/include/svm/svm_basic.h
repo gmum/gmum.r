@@ -66,8 +66,8 @@ public:
     arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
     arma::mat support_vectors;
     // User-defined classification mode labels
-    int label_negative;
-    int label_positive;
+    double label_negative;
+    double label_positive;
 
 
 	/* for classification only */
