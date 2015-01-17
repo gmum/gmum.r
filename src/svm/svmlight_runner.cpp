@@ -285,6 +285,17 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     strcpy(kernel_parm->custom,"empty");
     strcpy(type,"c");
 
+    // GMUM.R changes {
+    if (config.degree)
+        kernel_parm->poly_degree = config.degree;
+    if (config.gamma)
+        kernel_parm->rbf_gamma = config.gamma;
+    if (config.coef0)
+        kernel_parm->coef_lin = config.coef0;
+    if (config.C)
+        kernel_parm->coef_const = config.C;
+    // GMUM.R changes }
+
     for(i=1;(i<argc) && ((argv[i])[0] == '-');i++) {
       switch ((argv[i])[1]) 
         { 
@@ -1035,7 +1046,7 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     config.degree = model->kernel_parm.poly_degree;
     // -g float    -> parameter gamma in rbf kernel
     config.gamma = model->kernel_parm.rbf_gamma;
-    // -s float    -> parameter s in sigmoid/poly kerne
+    // -s float    -> parameter s in sigmoid/poly kernel
     config.coef0 = model->kernel_parm.coef_lin;
     // -r float    -> parameter c in sigmoid/poly kernel
     config.C = model->kernel_parm.coef_const;

@@ -198,3 +198,25 @@ TEST_F(SVMLightRunnerTest, processRequest_with_rbf_kernel) {
     }
 }
 
+TEST_F(SVMLightRunnerTest, processRequest_with_sigmoid_kernel) {
+    std::cout << "Testing learing..." << std::endl << std::flush;
+    svm_config.setKernel(std::string("sigmoid"));
+    svm_config.data = learing_data_01;
+    svm_config.target = learing_target_02;
+    double coef_lin = 1.0/4.0;
+    svm_config.coef0 = coef_lin;
+    double coef_const = -1.0;
+    svm_config.C = coef_const;
+    svm_config.setPrediction(false);
+    svmlr.processRequest(svm_config);
+
+    std::cout << "Testing prediction..." << std::endl << std::flush;
+    svm_config.data = testing_data_01;
+    svm_config.setPrediction(true);
+    svmlr.processRequest(svm_config);
+
+    for (int i = 0; i < 4; ++i) {
+        ASSERT_DOUBLE_EQ(svm_config.result[i], testing_target_02[i]);
+    }
+}
+
