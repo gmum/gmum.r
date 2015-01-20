@@ -18,7 +18,6 @@ TotalResult Hartigan::loop(const arma::mat &points, std::vector<unsigned int> &a
         min_energy = std::min(min_energy, sr.energy);
         result.append(sr, m_log_nclusters, m_log_energy);
     } while(sr.switched > 0);
-    LOG(m_logger, LogLevel::INFO, "looping finished");
     result.min_energy = min_energy;
     return result;
 }
@@ -43,25 +42,15 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
 
 //    LOG(m_logger, LogLevel::INFO, to_string(clusters.size()));
 
-
-
     for(unsigned int i = 0; i < npoints; i++) {
         unsigned int source = assignment[i];
         arma::rowvec point = points.row(i);
-
-//        LOG(m_logger, LogLevel::INFO, to_string(clusters_raw.size()));
-
-
         for(unsigned int k = 0; k < clusters_raw.size(); k++)
             if(k != source) {
-
-//            	LOG(m_logger, LogLevel::INFO, "Checking" + to_string(i));
-
                 Cluster * old_source, * old_target, * new_source, * new_target;
                 double whole_entropy_change;
 
                 try {
-
                     old_source = clusters_raw[source];
                     old_target = clusters_raw[k];
                     new_source = clusters_raw[source]->remove_point(point);
@@ -86,9 +75,8 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
                 if(whole_entropy_change < 0) {  //newEntropy < oldEntropy
                 	clusters_raw[source] = new_source;
                 	clusters_raw[k] = new_target;
+                	delete old_source; delete old_target;
                     switched++;
-
-
 
                     //point moved from cluster source to k - update assignment
                     assignment[i] = k;
@@ -107,6 +95,8 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
                     }
 
                     break; //point was switched so we'll stop the clusters loop and we'll check the next point
+                }else{
+                	delete new_source; delete new_target;
                 }
             }  //for iterates clusters
     }  //for iterates points
@@ -118,7 +108,6 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
     }
 
     //LOG(m_logger, LogLevel::INFO, energy);
-
 
     return SingleResult(switched, clusters_raw.size(), energy);
 }

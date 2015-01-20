@@ -77,13 +77,13 @@ public:
 class ClusterStandard: public ClusterUseCovMat {
 private:
     void calculate_entropy();
-    ClusterStandard * create_instance(int count,const arma::rowvec &mean, const arma::mat &cov_mat);
+    ClusterUseCovMat * create_instance(int count,const arma::rowvec &mean, const arma::mat &cov_mat);
 public:
     ClusterStandard(int count, const arma::rowvec &mean, const arma::mat &cov_mat);
     ClusterStandard(unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);
 
-     double entropy_after_point_add(const arma::rowvec &point) const;
-     double entropy_after_point_remove(const arma::rowvec &) const;
+//     double entropy_after_point_add(const arma::rowvec &point) const;
+//     double entropy_after_point_remove(const arma::rowvec &) const;
 };
 
 class ClusterCovMat: public ClusterUseCovMat {
@@ -102,7 +102,7 @@ class ClusterConstRadius: public ClusterOnlyTrace {
 private:
     void calculate_entropy();
     double m_r;
-    ClusterConstRadius * create_instance(int count, const arma::rowvec & mean, double cov_mat_trace);
+    ClusterOnlyTrace * create_instance(int count, const arma::rowvec & mean, double cov_mat_trace);
 public:
     ClusterConstRadius(double r, int count,const arma::rowvec & mean, double cov_mat_trace);
     ClusterConstRadius(double r, unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);
@@ -111,7 +111,7 @@ public:
 class ClusterSpherical: public ClusterOnlyTrace {
 private:
     void calculate_entropy();
-    ClusterSpherical * create_instance(int count,
+    ClusterOnlyTrace * create_instance(int count,
                                                         const arma::rowvec &mean, double cov_mat_trace);
 public:
     ClusterSpherical(int count, const arma::rowvec & mean,
