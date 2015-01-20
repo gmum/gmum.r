@@ -17,7 +17,7 @@ class Hartigan: public Algorithm {
 	Logger m_logger;
     void remove_cluster(unsigned int source, const arma::mat &points,
                         std::vector<unsigned int> &assignment,
-                        std::vector<boost::shared_ptr<Cluster> > &clusters);
+                        std::vector<Cluster* > &clusters);
     double calc_energy(double cross_entropy, int points_in_cluster,
                        int npoints);
     double calc_energy_change(const Cluster& a, const Cluster &b,

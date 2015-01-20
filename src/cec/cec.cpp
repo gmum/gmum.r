@@ -252,8 +252,9 @@ unsigned int CecModel::predict(std::vector<double> vec) const {
 
     for (unsigned int i = 0; i < m_clusters.size(); ++i) {
 
-        boost::shared_ptr<Cluster> old_cluster = m_clusters[i];
-        boost::shared_ptr<Cluster> new_cluster = m_clusters[i]->add_point(x);
+    	//TODO: rewrite, omg
+        Cluster * old_cluster = m_clusters[i].get();
+        Cluster * new_cluster = m_clusters[i]->add_point(x);
         double entropy_change = new_cluster->entropy() - old_cluster->entropy();
 
         if (entropy_change < min_entropy_change) {

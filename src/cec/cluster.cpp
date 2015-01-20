@@ -70,7 +70,7 @@ ClusterUseCovMat::ClusterUseCovMat(unsigned int id,
     initialize_cov_mat(id, assignment, points);
 }
 
-boost::shared_ptr<Cluster> ClusterUseCovMat::add_point(
+Cluster *ClusterUseCovMat::add_point(
         const arma::rowvec &point) {
     int ncount = m_count + 1;
     arma::rowvec nmean = (m_count * m_mean + point) / (ncount);
@@ -80,7 +80,7 @@ boost::shared_ptr<Cluster> ClusterUseCovMat::add_point(
     return create_instance(ncount, nmean, ncov_mat);
 }
 
-boost::shared_ptr<Cluster> ClusterUseCovMat::remove_point(
+Cluster *ClusterUseCovMat::remove_point(
         const arma::rowvec &point) {
     int ncount = m_count - 1;
     arma::rowvec nmean = (m_count * m_mean - point) / ncount;
@@ -119,7 +119,7 @@ void ClusterOnlyTrace::compute_cov_mat_trace(unsigned int id,
     m_cov_mat_trace /= m_count;
 }
 
-boost::shared_ptr<Cluster> ClusterOnlyTrace::add_point(
+Cluster *ClusterOnlyTrace::add_point(
         const arma::rowvec & point) {
     int ncount = m_count + 1;
     arma::rowvec nmean = (m_count * m_mean + point) / (ncount);
@@ -131,7 +131,7 @@ boost::shared_ptr<Cluster> ClusterOnlyTrace::add_point(
     return create_instance(ncount, nmean, ntrace);
 }
 
-boost::shared_ptr<Cluster> ClusterOnlyTrace::remove_point(
+Cluster * ClusterOnlyTrace::remove_point(
         const arma::rowvec &point) {
     int ncount = m_count - 1;
     arma::rowvec nmean = (m_count * m_mean - point) / (ncount);
@@ -164,10 +164,28 @@ void ClusterStandard::calculate_entropy() {
     m_entropy = m_n * log(2 * M_PI * M_E) / 2 + log(arma::det(m_cov_mat)) / 2;
 }
 
-boost::shared_ptr<ClusterUseCovMat> ClusterStandard::create_instance(int count,
+double ClusterStandard::entropy_after_point_add(const arma::rowvec &point) const{
+    int ncount = m_count + 1;
+    arma::rowvec r = (m_count * m_mean + point) / (ncount) - point;
+    arma::mat ncov_mat = (1.0 * m_count / ncount)
+            * (m_cov_mat + (r.t() * r) / ncount);
+
+    return m_n * log(2 * M_PI * M_E) / 2 + log(arma::det(ncov_mat)) / 2;
+}
+
+double ClusterStandard::entropy_after_point_remove(const arma::rowvec &point) const{
+	int ncount = m_count - 1;
+	arma::rowvec r = (m_count * m_mean - point) / ncount - point;
+	arma::mat ncov_mat = (1.0 * m_count / ncount)
+	        * (m_cov_mat - (r.t() * r) / ncount);
+    return m_n * log(2 * M_PI * M_E) / 2 + log(arma::det(ncov_mat)) / 2;
+}
+
+
+
+ClusterStandard * ClusterStandard::create_instance(int count,
                                                                      const arma::rowvec &mean, const arma::mat &cov_mat) {
-    return boost::shared_ptr < ClusterUseCovMat
-            > (new ClusterStandard(count, mean, cov_mat));
+    return new ClusterStandard(count, mean, cov_mat);
 }
 
 ClusterStandard::ClusterStandard(int count, const arma::rowvec &_mean,
@@ -199,10 +217,9 @@ void ClusterCovMat::calculate_entropy() {
     m_entropy = m_n * log(2 * M_PI) / 2 + arma::trace(m_inv_sigma * m_cov_mat) / 2
             + m_n * log(m_sigma_det) / 2;
 }
-boost::shared_ptr<ClusterUseCovMat> ClusterCovMat::create_instance(int count,
-                                                                   const arma::rowvec & mean, const arma::mat & cov_mat) {
-    return boost::shared_ptr < ClusterUseCovMat
-            > (new ClusterCovMat(m_inv_sigma, m_sigma_det, count, mean, cov_mat));
+
+ClusterUseCovMat * ClusterCovMat::create_instance(int count, const arma::rowvec & mean, const arma::mat & cov_mat) {
+    return (ClusterUseCovMat*)(new ClusterCovMat(m_inv_sigma, m_sigma_det, count, mean, cov_mat));
 }
 
 ClusterConstRadius::ClusterConstRadius(double r, unsigned int id,
@@ -221,9 +238,8 @@ void ClusterConstRadius::calculate_entropy() {
     m_entropy = m_n * log(2 * M_PI) / 2 + m_cov_mat_trace / (2 * m_r) + m_n * log(m_r) / 2;
 }
 
-boost::shared_ptr<ClusterOnlyTrace> ClusterConstRadius::create_instance(int count, const arma::rowvec & mean, double cov_mat_trace) {
-    return boost::shared_ptr < ClusterOnlyTrace
-            > (new ClusterConstRadius(m_r, count, mean, cov_mat_trace));
+ClusterConstRadius * ClusterConstRadius::create_instance(int count, const arma::rowvec & mean, double cov_mat_trace) {
+    return new ClusterConstRadius(m_r, count, mean, cov_mat_trace);
 }
 
 ClusterSpherical::ClusterSpherical(unsigned int id,
@@ -242,10 +258,9 @@ void ClusterSpherical::calculate_entropy() {
     m_entropy = m_n * log(2 * M_PI * M_E / m_n) / 2 + m_n * log(m_cov_mat_trace) / 2;
 }
 
-boost::shared_ptr<ClusterOnlyTrace> ClusterSpherical::create_instance(int count,
+ClusterSpherical* ClusterSpherical::create_instance(int count,
                                                                       const arma::rowvec & mean, double cov_mat_trace) {
-    return boost::shared_ptr < ClusterOnlyTrace
-            > (new ClusterSpherical(count, mean, cov_mat_trace));
+    return new ClusterSpherical(count, mean, cov_mat_trace);
 }
 
 ClusterDiagonal::ClusterDiagonal(unsigned int id,
@@ -265,9 +280,8 @@ void ClusterDiagonal::calculate_entropy() {
             + log(arma::det(arma::diagmat(m_cov_mat))) / 2;
 }
 
-boost::shared_ptr<ClusterUseCovMat> ClusterDiagonal::create_instance(int count,
-                                                                     const arma::rowvec & mean, const arma::mat & cov_mat) {
-    return boost::shared_ptr < ClusterUseCovMat
-            > (new ClusterDiagonal(count, mean, cov_mat));
+ClusterUseCovMat * ClusterDiagonal::create_instance(int count, const arma::rowvec & mean, const arma::mat & cov_mat) {
+    return (ClusterUseCovMat*)(new ClusterDiagonal(count, mean, cov_mat));
 }
+
 }

@@ -27,9 +27,10 @@ void ClusterCustomFunction::calculate_entropy() {
     exit(1);
 #endif
 }
-boost::shared_ptr<ClusterUseCovMat> ClusterCustomFunction::create_instance(int count, const arma::rowvec& mean, const arma::mat& mat) {
-    return boost::shared_ptr<ClusterUseCovMat>(
-                new ClusterCustomFunction(count, mean, mat, m_function_name));
+ClusterUseCovMat * ClusterCustomFunction::create_instance(int count, const arma::rowvec& mean, const arma::mat& mat) {
+    return new ClusterCustomFunction(count, mean, mat, m_function_name);
+
 }
 }
+
 

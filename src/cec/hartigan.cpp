@@ -39,22 +39,27 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
     int switched = 0;  //number of point which has been moved to another cluster
     int dimension = points.n_cols;
     unsigned int npoints = points.n_rows;
+
+    std::vector<Cluster*> clusters_raw;
+    for(int i=0;i<clusters.size();++i)
+    	clusters_raw.push_back(clusters[i].get());
+
     for(unsigned int i = 0; i < npoints; i++) {
         unsigned int source = assignment[i];
         arma::rowvec point = points.row(i);
 
-        for(unsigned int k = 0; k < clusters.size(); k++)
+        for(unsigned int k = 0; k < clusters_raw.size(); k++)
             if(k != source) {
 
-                boost::shared_ptr<Cluster> old_source, old_target, new_source, new_target;
+                Cluster * old_source, * old_target, * new_source, * new_target;
                 double whole_entropy_change;
 
                 try {
 
-                    old_source = clusters[source];
-                    old_target = clusters[k];
-                    new_source = clusters[source]->remove_point(point);
-                    new_target = clusters[k]->add_point(point);
+                    old_source = clusters_raw[source];
+                    old_target = clusters_raw[k];
+                    new_source = clusters_raw[source]->remove_point(point);
+                    new_target = clusters_raw[k]->add_point(point);
 
                     double source_entropy_change =
                             calc_energy_change(*new_source, *old_source, npoints);
@@ -73,8 +78,8 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
                 }
 
                 if(whole_entropy_change < 0) {  //newEntropy < oldEntropy
-                    clusters[source] = new_source;
-                    clusters[k] = new_target;
+                	clusters_raw[source] = new_source;
+                	clusters_raw[k] = new_target;
                     switched++;
 
                     //point moved from cluster source to k - update assignment
@@ -85,7 +90,7 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
                         //threshold is fraction of all points
                         if(clusters[source]->size() < std::max(int(kill_threshold*npoints),dimension+1)) {
 
-                            remove_cluster(source, points, assignment, clusters);
+                            remove_cluster(source, points, assignment, clusters_raw);
                         }
                     } catch(std::exception e) {
                         //LOG(LogLevel::ERR, e.what());
@@ -104,13 +109,18 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
         energy += calc_energy(clusters[i]->entropy(), clusters[i]->size(), npoints);
     }
 
-    return SingleResult(switched, clusters.size(), energy);
+
+    clusters.clear();
+    for(int i=0;i<clusters.size();++i)
+    	clusters.push_back(boost::shared_ptr<Cluster>(clusters_raw[i]));
+
+    return SingleResult(switched, clusters_raw.size(), energy);
 }
 
 
 void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
                               std::vector<unsigned int> &assignment,
-                              std::vector<boost::shared_ptr<Cluster> > &clusters) {
+                              std::vector<Cluster *> &clusters) {
     //delete cluster
     clusters.erase(clusters.begin() + source);
 
@@ -123,13 +133,13 @@ void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
 
             arma::rowvec point_to_assign = points.row(j);
             int min_energy_change_element_index = -1;
-            boost::shared_ptr<Cluster> min_energy_change_cluster;
+            Cluster * min_energy_change_cluster;
             double min_energy_change = std::numeric_limits<double>::max();
 
             //find the best cluster to assign the point to it
             for(unsigned int k = 0; k < clusters.size(); k++){
-                boost::shared_ptr<Cluster> old_target = clusters[k];
-                boost::shared_ptr<Cluster> new_target = clusters[k]->add_point(point_to_assign);
+                Cluster * old_target = clusters[k];
+                Cluster * new_target = clusters[k]->add_point(point_to_assign);
 
                 double energy_change =
                         calc_energy_change(*new_target, *old_target, npoints);

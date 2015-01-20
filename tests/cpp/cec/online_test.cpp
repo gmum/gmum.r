@@ -29,7 +29,7 @@ TEST(OnlineFormulas,AddPoint) {
         }
     }
 
-    boost::shared_ptr<Cluster> m(new ClusterStandard(id,fits,init_matrix));
+    Cluster * m(new ClusterStandard(id,fits,init_matrix));
     // Dodajemy element o indeksie i
     for (int i = beg; i < n-1; ++i) {
 
@@ -86,7 +86,7 @@ TEST(OnlineFormulas,removePoint) {
         }
     }
 
-    boost::shared_ptr<Cluster> m(new ClusterStandard(id,fits,init_matrix));
+    Cluster * m(new ClusterStandard(id,fits,init_matrix));
     // Dodajemy element o indeksie i
     for (int i = n-1; i > end; --i) {
 
