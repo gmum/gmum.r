@@ -1,9 +1,9 @@
 library(testthat)
 library('gmum.r')
 
-data(cec.simple_1)
+data(cec_simple_1)
 
-expected_energy = energy
+expected_energy = energy_value
 dataset_clusters = cluster[,1]
 dataset_points <- input
 

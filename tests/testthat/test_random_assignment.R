@@ -23,7 +23,7 @@ correctness <- function(correct_assignment, my_assignment, npoints, nclusters)
 }
 
 test_that("correctness works", {
-  data(cec.ellipse_gauss)
+  data(cec_ellipse_gauss)
   
   dataset_clusters = cluster[,1]
   dataset_points <- input
@@ -37,9 +37,9 @@ test_that("correctness works", {
 })
 
 test_that("EllipseGauss random assignment is correct", {
-  data(cec.ellipse_gauss)
+  data(cec_ellipse_gauss)
   
-  expected_energy = energy
+  expected_energy = energy_value
   dataset_clusters = cluster[,1]
   dataset_points <- input
   
@@ -62,9 +62,9 @@ test_that("EllipseGauss random assignment is correct", {
 })
 
 test_that("mouse_1 random assignment is correct", {
-  data(cec.mouse_1)
+  data(cec_mouse_1)
   
-  expected_energy = energy
+  expected_energy = energy_value
   dataset_clusters = cluster[,1]
   dataset_points <- input
   
@@ -89,9 +89,9 @@ test_that("mouse_1 random assignment is correct", {
 })
 
 test_that("mouse_1_spherical random assignment is correct", {
-  data(cec.mouse_1_spherical)
+  data(cec_mouse_1_spherical)
   
-  expected_energy = energy
+  expected_energy = energy_value
   dataset_clusters = cluster[,1]
   dataset_points <- input 
   
