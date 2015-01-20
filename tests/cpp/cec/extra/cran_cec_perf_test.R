@@ -1,6 +1,7 @@
 source("common.R")
 library(devtools)
-load_all(cran_cec_path)
+#load_all(cran_cec_path)
+library(CEC)
 
 log_file = cran_cec_log_path
 result = matrix(ncol=2, nrow=((max_npoints - min_npoints) / npoints_step) + 1)

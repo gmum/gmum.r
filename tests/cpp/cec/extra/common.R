@@ -11,7 +11,7 @@ is_valid_path <- function(path, create_path=FALSE) {
     return(TRUE)
 }
 
-cran_cec_path = '../../../../../cran-cec'
+#cran_cec_path = '../../../../../cran-cec'
 gmum_cec_path = '../../../../'
 data_path = './data/'
 cran_cec_log_path = './cran_cec.log'
@@ -22,7 +22,7 @@ npoints_step = 50
 cran_max_iters = 200
 
 valid_paths = 
-    (is_valid_path(cran_cec_path) == TRUE) &&
+    #(is_valid_path(cran_cec_path) == TRUE) &&
     (is_valid_path(gmum_cec_path) == TRUE) && 
     (is_valid_path(data_path, TRUE) == TRUE);
 

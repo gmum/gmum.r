@@ -18,7 +18,7 @@
  */
 class CecModel {
 private:
-    std::vector<boost::shared_ptr<gmum::Cluster> > m_clusters;
+    std::vector<gmum::Cluster* > m_clusters;
     gmum::TotalResult m_result;
     boost::shared_ptr<std::vector<unsigned int> > m_assignment;
     boost::shared_ptr<const arma::mat> m_points;
@@ -28,7 +28,7 @@ private:
     std::vector<arma::mat> m_inv;
     CecConfiguration m_config;
 
-    boost::shared_ptr<gmum::Cluster> create_cluster(const gmum::ClusterParams &params,
+    gmum::Cluster * create_cluster(const gmum::ClusterParams &params,
                                                     int i);
     void find_best_cec();
     void init(boost::shared_ptr<gmum::Algorithm> algorithm,
@@ -52,7 +52,7 @@ public:
     unsigned int predict(std::vector<double> vec) const;
     std::list<double> predict(std::vector<double> vec, bool general);
     const gmum::TotalResult& get_result() const;
-    const std::vector<boost::shared_ptr<gmum::Cluster> >& get_clusters() const;
+    const std::vector<gmum::Cluster* >& get_clusters() const;
 };
 
 #endif

@@ -35,7 +35,7 @@ typedef long long LL;
 
 #include <utils/logger.h>
 
-#ifdef DEBUG_GMUM_2
+#ifdef DEBUG
 	#define DBG_2(logger, level, text) logger->log(level, text);
 	#define REPORT_2(x) cerr<<#x<<"="<<(x)<<endl<<std::flush;
 #else
@@ -43,7 +43,7 @@ typedef long long LL;
 	#define REPORT_2(x)
 #endif
 
-#ifdef DEBUG_GMUM
+#ifdef DEBUG
 	#define DBG(logger, level, text) logger->log(level, text);
 	#define REPORT(x) cout<<#x<<"="<<(x)<<endl<<std::flush;
 #else

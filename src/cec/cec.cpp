@@ -7,45 +7,39 @@
 
 using namespace gmum;
 
-boost::shared_ptr<Cluster> CecModel::create_cluster(const ClusterParams &params,
+Cluster* CecModel::create_cluster(const ClusterParams &params,
                                                     int i) {
-    boost::shared_ptr<Cluster> cluster;
+    Cluster * cluster;
     switch (params.type) {
     case kno_type: // TODO: handle knoType parameter
     case kmix: // TODO: handle kmix parameter
         break;
     case kstandard:
-        cluster = boost::shared_ptr < Cluster
-                > (new ClusterStandard(i, *m_assignment, *m_points));
+        cluster =  new ClusterStandard(i, *m_assignment, *m_points);
         break;
     case kfull: {
         const ClusterFullParams &ptr =
                 static_cast<const ClusterFullParams&>(params);
-        cluster = boost::shared_ptr < Cluster
-                > (new ClusterCovMat(ptr.cov_mat, i, *m_assignment, *m_points));
+        cluster = new ClusterCovMat(ptr.cov_mat, i, *m_assignment, *m_points);
         break;
     }
     case kdiagonal:
-        cluster = boost::shared_ptr < Cluster
-                > (new ClusterDiagonal(i, *m_assignment, *m_points));
+        cluster = new ClusterDiagonal(i, *m_assignment, *m_points);
         break;
     case ksphere:
-        cluster = boost::shared_ptr < Cluster
-                > (new ClusterSpherical(i, *m_assignment, *m_points));
+        cluster = new ClusterSpherical(i, *m_assignment, *m_points);
         break;
     case kfsphere: {
         const ClusterFsphereParams &ptr =
                 static_cast<const ClusterFsphereParams&>(params);
-        cluster = boost::shared_ptr < Cluster
-                > (new ClusterConstRadius(ptr.radius, i, *m_assignment, *m_points));
+        cluster = new ClusterConstRadius(ptr.radius, i, *m_assignment, *m_points);
         break;
     }
     case kcustom: {
         const ClusterCustomParams &ptr =
                 static_cast<const ClusterCustomParams&>(params);
-        cluster = boost::shared_ptr < Cluster
-                > (new ClusterCustomFunction(i, *m_assignment, *m_points,
-                                             ptr.function_name));
+        cluster = new ClusterCustomFunction(i, *m_assignment, *m_points,
+                                             ptr.function_name);
         break;
     }
     }
@@ -91,6 +85,7 @@ void CecModel::init(boost::shared_ptr<Algorithm> algorithm,
             m_clusters.push_back(create_cluster(*cluster, i));
         }
     } else {
+    	//TODO: why pointer?
         ClusterParams *cluster;
         switch (params.cluster_type) {
         case kfsphere: {
@@ -122,7 +117,8 @@ void CecModel::init(boost::shared_ptr<Algorithm> algorithm,
         cluster->type = params.cluster_type;
         for (unsigned int i = 0; i < params.nclusters; ++i)
             m_clusters.push_back(create_cluster(*cluster, i));
-        delete cluster;
+        //TODO: redelete
+//        delete cluster;
     }
 }
 
@@ -166,6 +162,8 @@ void CecModel::find_best_cec() {
             if (m_result.min_energy < best_cec.get_result().min_energy) {
                 best_cec = *this;
             }
+
+
         }
         *this = best_cec;
     } catch (std::exception &e) {
@@ -176,7 +174,6 @@ void CecModel::find_best_cec() {
         exit(1);
 #endif
     }
-    delete assignment_type;
 }
 
 void CecModel::loop() {
@@ -193,7 +190,7 @@ void CecModel::single_loop() {
 double CecModel::entropy() {
     double s = 0.0;
 
-    BOOST_FOREACH(boost::shared_ptr < Cluster > cluster, m_clusters)
+    BOOST_FOREACH(Cluster * cluster, m_clusters)
     {
         s += cluster->entropy();
     }
@@ -253,7 +250,7 @@ unsigned int CecModel::predict(std::vector<double> vec) const {
     for (unsigned int i = 0; i < m_clusters.size(); ++i) {
 
     	//TODO: rewrite, omg
-        Cluster * old_cluster = m_clusters[i].get();
+        Cluster * old_cluster = m_clusters[i];
         Cluster * new_cluster = m_clusters[i]->add_point(x);
         double entropy_change = new_cluster->entropy() - old_cluster->entropy();
 
@@ -299,6 +296,6 @@ const gmum::TotalResult& CecModel::get_result() const {
 	return m_result;
 }
 
-const std::vector<boost::shared_ptr<gmum::Cluster> >& CecModel::get_clusters() const {
+const std::vector<gmum::Cluster* >& CecModel::get_clusters() const {
 	return m_clusters;
 }

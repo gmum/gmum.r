@@ -7,10 +7,19 @@
 #include "algorithm.hpp"
 #include "cluster.hpp"
 #include "../utils/log.hpp"
-
-#define LOG(level, text) m_logger.log(level, text);
+#include <sstream>
 
 namespace gmum {
+
+
+//TODO: clean 3 loggers (:P) and include utils/utils.h with this function
+template<class T>
+static std::string to_string(const T& x) {
+	std::stringstream ss;
+	ss << x;
+	return ss.str();
+}
+
 
 class Hartigan: public Algorithm {
 
@@ -26,10 +35,10 @@ public:
     Hartigan(bool m_log_nclusters, bool m_log_energy);
     TotalResult loop(const arma::mat &points,
                      std::vector<unsigned int> &assignment, double kill_threshold,
-                     std::vector<boost::shared_ptr<Cluster> > &clusters);
+                     std::vector<Cluster* > &clusters);
     SingleResult single_loop(const arma::mat &points,
                              std::vector<unsigned int> &assignment, double kill_threshold,
-                             std::vector<boost::shared_ptr<Cluster> > &clusters);
+                             std::vector<Cluster* > &clusters);
     double entropy(boost::shared_ptr<Cluster> ptr_to_cluster, int npoints);
 };
 

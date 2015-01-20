@@ -3,12 +3,12 @@
 
 namespace gmum {
 
-Hartigan::Hartigan(bool log_nclusters, bool log_energy) : Algorithm(log_nclusters, log_energy) {
-    m_logger = Logger();
+Hartigan::Hartigan(bool log_nclusters, bool log_energy) : Algorithm(log_nclusters, log_energy),
+		m_logger(Logger()){
 }
 
 TotalResult Hartigan::loop(const arma::mat &points, std::vector<unsigned int> &assignment,
-                           double kill_threshold, std::vector<boost::shared_ptr<Cluster> > &clusters) {
+                           double kill_threshold, std::vector<Cluster* > &clusters) {
     TotalResult result;
     SingleResult sr;
     double min_energy = std::numeric_limits<double>::max();
@@ -18,6 +18,7 @@ TotalResult Hartigan::loop(const arma::mat &points, std::vector<unsigned int> &a
         min_energy = std::min(min_energy, sr.energy);
         result.append(sr, m_log_nclusters, m_log_energy);
     } while(sr.switched > 0);
+    LOG(m_logger, LogLevel::INFO, "looping finished");
     result.min_energy = min_energy;
     return result;
 }
@@ -28,28 +29,33 @@ double Hartigan::calc_energy(double cross_entropy, int points_in_cluster, int np
 }
 
 double Hartigan::calc_energy_change(const Cluster& a, const Cluster &b, int npoints) {
-    double entropy_a = calc_energy(a.entropy(), a.size(), npoints);
-    double entropy_b = calc_energy(b.entropy(), b.size(), npoints);
-    return entropy_a - entropy_b;
+    double energy_a = calc_energy(a.entropy(), a.size(), npoints);
+    double energy_b = calc_energy(b.entropy(), b.size(), npoints);
+    return energy_a - energy_b;
 }
 
 SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned int> &assignment,
-                                   double kill_threshold, std::vector<boost::shared_ptr<Cluster> > &clusters) {
+                                   double kill_threshold, std::vector<Cluster* > &clusters_raw) {
 
     int switched = 0;  //number of point which has been moved to another cluster
     int dimension = points.n_cols;
     unsigned int npoints = points.n_rows;
 
-    std::vector<Cluster*> clusters_raw;
-    for(int i=0;i<clusters.size();++i)
-    	clusters_raw.push_back(clusters[i].get());
+//    LOG(m_logger, LogLevel::INFO, to_string(clusters.size()));
+
+
 
     for(unsigned int i = 0; i < npoints; i++) {
         unsigned int source = assignment[i];
         arma::rowvec point = points.row(i);
 
+//        LOG(m_logger, LogLevel::INFO, to_string(clusters_raw.size()));
+
+
         for(unsigned int k = 0; k < clusters_raw.size(); k++)
             if(k != source) {
+
+//            	LOG(m_logger, LogLevel::INFO, "Checking" + to_string(i));
 
                 Cluster * old_source, * old_target, * new_source, * new_target;
                 double whole_entropy_change;
@@ -69,10 +75,10 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
                     whole_entropy_change = target_entropy_change+source_entropy_change;
 
                 } catch(std::exception e) {
-                    LOG(LogLevel::ERR, "removePoint");
-                    LOG(LogLevel::ERR, dimension);
-                    LOG(LogLevel::ERR, old_source->size());
-                    LOG(LogLevel::ERR, old_target->size());
+                    LOG(m_logger, LogLevel::ERR, "removePoint");
+                    LOG(m_logger, LogLevel::ERR, dimension);
+                    LOG(m_logger, LogLevel::ERR, old_source->size());
+                    LOG(m_logger, LogLevel::ERR, old_target->size());
                     throw(e);
                     //return SingleResult(switched, clusters.size(), 0);
                 }
@@ -82,19 +88,21 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
                 	clusters_raw[k] = new_target;
                     switched++;
 
+
+
                     //point moved from cluster source to k - update assignment
                     assignment[i] = k;
 
                     try {
                         //if cluster has number of members lower than threshold, remove the cluster
                         //threshold is fraction of all points
-                        if(clusters[source]->size() < std::max(int(kill_threshold*npoints),dimension+1)) {
+                        if(clusters_raw[source]->size() < std::max(int(kill_threshold*npoints),dimension+1)) {
 
                             remove_cluster(source, points, assignment, clusters_raw);
                         }
                     } catch(std::exception e) {
                         //LOG(LogLevel::ERR, e.what());
-                        LOG(LogLevel::ERR, "removeCluster");
+                        LOG(m_logger, LogLevel::ERR, "removeCluster");
                         throw(e);
                     }
 
@@ -104,15 +112,13 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
     }  //for iterates points
 
     double energy = 0;
-    for(unsigned int i=0; i<clusters.size(); ++i)
+    for(unsigned int i=0; i<clusters_raw.size(); ++i)
     {
-        energy += calc_energy(clusters[i]->entropy(), clusters[i]->size(), npoints);
+        energy += calc_energy(clusters_raw[i]->entropy(), clusters_raw[i]->size(), npoints);
     }
 
+    //LOG(m_logger, LogLevel::INFO, energy);
 
-    clusters.clear();
-    for(int i=0;i<clusters.size();++i)
-    	clusters.push_back(boost::shared_ptr<Cluster>(clusters_raw[i]));
 
     return SingleResult(switched, clusters_raw.size(), energy);
 }

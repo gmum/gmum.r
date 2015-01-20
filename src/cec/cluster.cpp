@@ -74,7 +74,7 @@ Cluster *ClusterUseCovMat::add_point(
         const arma::rowvec &point) {
     int ncount = m_count + 1;
     arma::rowvec nmean = (m_count * m_mean + point) / (ncount);
-    arma::rowvec r = m_mean - point;
+    arma::rowvec r = nmean - point;
     arma::mat ncov_mat = (1.0 * m_count / ncount)
             * (m_cov_mat + (r.t() * r) / ncount);
     return create_instance(ncount, nmean, ncov_mat);
@@ -124,7 +124,7 @@ Cluster *ClusterOnlyTrace::add_point(
     int ncount = m_count + 1;
     arma::rowvec nmean = (m_count * m_mean + point) / (ncount);
     arma::rowvec r = nmean - point;
-    arma::rowvec mean_diff = m_mean - nmean;
+    arma::rowvec mean_diff = nmean - nmean;
     double ntrace =
             ((m_cov_mat_trace + dot(mean_diff, mean_diff)) * m_count + dot(r, r))
             / ncount;
@@ -135,7 +135,7 @@ Cluster * ClusterOnlyTrace::remove_point(
         const arma::rowvec &point) {
     int ncount = m_count - 1;
     arma::rowvec nmean = (m_count * m_mean - point) / (ncount);
-    arma::rowvec mean_diff = m_mean - nmean;
+    arma::rowvec mean_diff = nmean - nmean;
     arma::rowvec r = nmean - point;
     double ntrace =
             ((m_cov_mat_trace + dot(mean_diff, mean_diff)) * m_count - dot(r, r))
