@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "cluster.hpp"
-#include <RcppArmadillo.h>
+#include <armadillo>
 #include <boost/shared_ptr.hpp>
 #include <stdio.h>
 #include <stdlib.h>

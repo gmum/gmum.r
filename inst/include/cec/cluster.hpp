@@ -1,7 +1,7 @@
 #ifndef CLUSTER_HPP
 #define CLUSTER_HPP
 
-#include <RcppArmadillo.h>
+#include <armadillo>
 #include <cmath>
 #include <vector>
 #include "boost/smart_ptr.hpp"

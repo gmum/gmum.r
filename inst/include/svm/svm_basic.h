@@ -2,7 +2,7 @@
 #define SVM_BASIC_H
 
 #include <string>
-#include <RcppArmadillo.h>
+#include <armadillo>
 #include <R.h>
 #include "log.h"
 
@@ -112,7 +112,9 @@ public:
 	void setPrediction(bool);
 	bool isPrediction();
 
+#ifdef RCPP_INTERFACE
 	void setWeights( Rcpp::NumericVector );
+#endif
 	void setLibrary( std::string );
 	void setKernel( std::string );
 	void setPreprocess( std::string );

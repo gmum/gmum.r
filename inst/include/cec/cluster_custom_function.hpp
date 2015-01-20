@@ -1,9 +1,8 @@
 #ifndef CLUSTERCUSTOMFUNCTION_HPP
 #define CLUSTERCUSTOMFUNCTION_HPP
 
-#include <RcppArmadillo.h>
+#include <armadillo>
 #include <cmath>
-#include <Rcpp.h>
 #include <string>
 #include <vector>
 #include "boost/smart_ptr.hpp"

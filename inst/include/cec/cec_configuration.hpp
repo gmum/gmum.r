@@ -2,7 +2,16 @@
 #define CECCONFIGURATION_HPP
 
 #include "params.hpp"
+
+#ifdef RCPP_CONFIGURATION
 #include <Rcpp.h>
+#endif
+
+#ifdef RCPP_INTERFACE
+#define ERROR(x) ERROR(x);
+#else
+#define ERROR(x) std::cerr<<(x)<<std::endl; exit(1);
+#endif
 
 class CecConfiguration {
 private:
@@ -11,17 +20,24 @@ public:
     CecConfiguration();
     gmum::Params get_params();
     void set_params(gmum::Params params);
-    void set_data_set(const Rcpp::NumericMatrix proxy_dataset);
+
     void set_eps(const double kill_threshold);
-    void set_mix(const Rcpp::List clusters);
+
     void set_nclusters(const unsigned int nclusters);
     void set_log_energy(bool log_energy);
     void set_log_cluster(bool log_nclusters);
     void set_nstart(const unsigned int nstart);
+
+#ifdef RCPP_INTERFACE
+    void set_mix(const Rcpp::List clusters);
     void set_centroids(const Rcpp::List centroids);
+    void set_data_set(const Rcpp::NumericMatrix proxy_dataset);
+    void set_cov(const Rcpp::NumericMatrix cov_mat_proxy);
+#endif
+
     void set_method_init(const std::string init);
     void set_method_type(const std::string type);
-    void set_cov(const Rcpp::NumericMatrix cov_mat_proxy);
+
     void set_r(const double radius);
     void set_function(const std::string function_name);
     void set_it_max(const unsigned int it_max);

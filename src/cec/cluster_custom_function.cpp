@@ -16,11 +16,16 @@ ClusterCustomFunction::ClusterCustomFunction(unsigned int id,
 }
 
 void ClusterCustomFunction::calculate_entropy() {
+#ifdef RCPP_INTERFACE
     Rcpp::Environment my_env = Rcpp::Environment::global_env();
     Rcpp::Function my_function = my_env[m_function_name];
     m_entropy = Rcpp::as<double>(
                 my_function(Rcpp::Named("m", Rcpp::wrap(m_mean)),
                             Rcpp::Named("sigma", Rcpp::wrap(m_cov_mat))));
+#else
+    std::cerr<<"Rcpp support not compiled\n";
+    exit(1);
+#endif
 }
 boost::shared_ptr<ClusterUseCovMat> ClusterCustomFunction::create_instance(int count, const arma::rowvec& mean, const arma::mat& mat) {
     return boost::shared_ptr<ClusterUseCovMat>(

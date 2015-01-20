@@ -4,7 +4,7 @@
 
 #include "svm_handler.h"
 #include "svm_basic.h"
-#include <RcppArmadillo.h>
+#include <armadillo>
 
 class TwoeSVMPostprocessor: public SVMHandler {
 public:

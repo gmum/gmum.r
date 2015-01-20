@@ -1,7 +1,7 @@
 #ifndef CLUSTERPARAMS_HPP
 #define CLUSTERPARAMS_HPP
 
-#include <RcppArmadillo.h>
+#include <armadillo>
 #include <string>
 namespace gmum {
 

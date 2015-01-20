@@ -169,7 +169,12 @@ void CecModel::find_best_cec() {
         }
         *this = best_cec;
     } catch (std::exception &e) {
+#ifdef RCPP_INTERFACE
         Rcpp::stop(std::string("exception ") + e.what() + " caught in CEC_new");
+#else
+        std::cerr<<std::string("exception ") + e.what() + " caught in CEC_new"<<std::endl;
+        exit(1);
+#endif
     }
     delete assignment_type;
 }
