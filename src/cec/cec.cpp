@@ -118,7 +118,7 @@ void CecModel::init(boost::shared_ptr<Algorithm> algorithm,
         for (unsigned int i = 0; i < params.nclusters; ++i)
             m_clusters.push_back(create_cluster(*cluster, i));
         //TODO: redelete
-//        delete cluster;
+        delete cluster;
     }
 }
 
