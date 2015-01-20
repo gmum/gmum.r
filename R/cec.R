@@ -155,8 +155,6 @@ nstart.cec <- NULL
 loadModule('cec', TRUE)
 
 evalqOnLoad({
-<<<<<<< HEAD
-  
   CEC <<- function(x = NULL,
                    k = 0,
                    method.type = "standard",
