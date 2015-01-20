@@ -3,7 +3,12 @@
 
 #include <string>
 #include <armadillo>
+
+#ifdef RCPP_INTERFACE
 #include <R.h>
+#include <RcppArmadillo.h>
+#endif
+
 #include "log.h"
 
 enum KernelType {

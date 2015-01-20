@@ -19,7 +19,7 @@ void RandomAssignment::operator()(std::vector<unsigned int> &assignment) {
     boost::random::uniform_int_distribution<> dist(0, npoints - 1);
 
     if (m_nclusters > npoints) {
-        ERROR("Number of clusters cannot be greater than number of points");
+        GMUM_ERROR("Number of clusters cannot be greater than number of points");
     }
 
     for (unsigned int i = 0; i < m_nclusters; i++) {

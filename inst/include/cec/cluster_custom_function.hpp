@@ -9,6 +9,10 @@
 #include "cluster.hpp"
 #include "exceptions.hpp"
 
+#ifdef RCPP_INTERFACE
+#include <RcppArmadillo.h>
+#endif
+
 namespace gmum {
 
 class ClusterCustomFunction: public ClusterUseCovMat {

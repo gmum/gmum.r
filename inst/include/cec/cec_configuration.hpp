@@ -3,14 +3,14 @@
 
 #include "params.hpp"
 
-#ifdef RCPP_CONFIGURATION
-#include <Rcpp.h>
+#ifdef RCPP_INTERFACE
+#include <RcppArmadillo.h>
 #endif
 
 #ifdef RCPP_INTERFACE
-#define ERROR(x) ERROR(x);
+#define GMUM_ERROR(x) Rcpp::stop(x);
 #else
-#define ERROR(x) std::cerr<<(x)<<std::endl; exit(1);
+#define GMUM_ERROR(x) std::cerr<<(x)<<std::endl; exit(1);
 #endif
 
 class CecConfiguration {
