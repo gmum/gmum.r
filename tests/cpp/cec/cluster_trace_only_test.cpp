@@ -43,7 +43,7 @@ TEST(TraceOnly,AddPoint) {
         arma::mat real_m = mean(tmp_matrix);
 
         arma::rowvec point(data.row(i));
-        m = m->add_point(point);
+        m->add_point(point);
         ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m);
         ClusterStandard tmp(id,fits,tmp_matrix);
         arma::rowvec mean_online_difference = upref->get_mean() - real_m;
@@ -94,7 +94,7 @@ TEST(TraceOnly,removePoint) {
 
 
         arma::rowvec point(data.row(i));
-        m = m->remove_point(point);
+        m->remove_point(point);
         ClusterStandard tmp(id,fits,tmp_matrix);
 
         ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m);

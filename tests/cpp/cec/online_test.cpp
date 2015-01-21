@@ -41,7 +41,7 @@ TEST(OnlineFormulas,AddPoint) {
         arma::mat real_m = mean(tmp_matrix);
 
         arma::rowvec point(data.row(i));
-        m = m->add_point(point);
+        m->add_point(point);
         ClusterStandard tmp(id,fits,tmp_matrix);
         arma::rowvec mean_online_difference = m->get_mean() - real_m;
         arma::mat mean_init_difference = real_m - tmp.get_mean();
@@ -98,7 +98,7 @@ TEST(OnlineFormulas,removePoint) {
         arma::mat real_m = mean(tmp_matrix);
 
         arma::rowvec point(data.row(i));
-        m = m->remove_point(point);
+        m->remove_point(point);
         ClusterStandard tmp(id,fits,tmp_matrix);
         arma::rowvec mean_online_difference = m->get_mean() - real_m;
         arma::mat mean_init_difference = real_m - tmp.get_mean();

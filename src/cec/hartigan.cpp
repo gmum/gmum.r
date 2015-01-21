@@ -47,35 +47,37 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
         arma::rowvec point = points.row(i);
         for(unsigned int k = 0; k < clusters_raw.size(); k++)
             if(k != source) {
-                Cluster * old_source, * old_target, * new_source, * new_target;
-                double whole_entropy_change;
+                double whole_entropy_change = 0;
 
                 try {
-                    old_source = clusters_raw[source];
-                    old_target = clusters_raw[k];
-                    new_source = clusters_raw[source]->remove_point(point);
-                    new_target = clusters_raw[k]->add_point(point);
+                	double before_source_energy =
+                			calc_energy(clusters_raw[source]->entropy(), clusters_raw[source]->size(), npoints);
+
+                	double before_target_energy =
+                	        calc_energy(clusters_raw[k]->entropy(), clusters_raw[k]->size(), npoints);
+
+                    clusters_raw[source]->remove_point(point);
+                    clusters_raw[k]->add_point(point);
+
 
                     double source_entropy_change =
-                            calc_energy_change(*new_source, *old_source, npoints);
+                    		calc_energy(clusters_raw[source]->entropy(), clusters_raw[source]->size(), npoints)-
+							before_source_energy;
+
                     double target_entropy_change =
-                            calc_energy_change(*new_target, *old_target, npoints);
+                    		calc_energy(clusters_raw[k]->entropy(), clusters_raw[k]->size(), npoints)-
+							before_target_energy;
 
                     whole_entropy_change = target_entropy_change+source_entropy_change;
 
                 } catch(std::exception e) {
                     LOG(m_logger, LogLevel::ERR, "removePoint");
                     LOG(m_logger, LogLevel::ERR, dimension);
-                    LOG(m_logger, LogLevel::ERR, old_source->size());
-                    LOG(m_logger, LogLevel::ERR, old_target->size());
                     throw(e);
                     //return SingleResult(switched, clusters.size(), 0);
                 }
 
                 if(whole_entropy_change < 0) {  //newEntropy < oldEntropy
-                	clusters_raw[source] = new_source;
-                	clusters_raw[k] = new_target;
-                	delete old_source; delete old_target;
                     switched++;
 
                     //point moved from cluster source to k - update assignment
@@ -96,7 +98,10 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
 
                     break; //point was switched so we'll stop the clusters loop and we'll check the next point
                 }else{
-                	delete new_source; delete new_target;
+                	//Reverse changes
+                    clusters_raw[k]->remove_point(point);
+                    clusters_raw[source]->add_point(point);
+
                 }
             }  //for iterates clusters
     }  //for iterates points
@@ -128,26 +133,35 @@ void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
 
             arma::rowvec point_to_assign = points.row(j);
             int min_energy_change_element_index = -1;
-            Cluster * min_energy_change_cluster;
             double min_energy_change = std::numeric_limits<double>::max();
 
             //find the best cluster to assign the point to it
             for(unsigned int k = 0; k < clusters.size(); k++){
-                Cluster * old_target = clusters[k];
-                Cluster * new_target = clusters[k]->add_point(point_to_assign);
+
+            	double before_energy =
+            	  calc_energy(clusters[k]->entropy(),
+            			  clusters[k]->size(), npoints);
+
+            	clusters[k]->add_point(point_to_assign);
 
                 double energy_change =
-                        calc_energy_change(*new_target, *old_target, npoints);
+                		calc_energy(clusters[k]->entropy(),
+                		            			  clusters[k]->size(), npoints)
+						- before_energy;
+
+                clusters[k]->remove_point(point_to_assign);
 
                 if(energy_change < min_energy_change){
                     min_energy_change = energy_change;
                     min_energy_change_element_index = k;
-                    min_energy_change_cluster = new_target;
                 }
-            }
 
-            //assert(minEntropyChangeElementIndex > -1);
-            clusters[min_energy_change_element_index] = min_energy_change_cluster;
+            }
+#ifdef DEBUG
+            assert(minEntropyChangeElementIndex > -1);
+#endif
+            //we are here adding and then removing
+            clusters[min_energy_change_element_index]->add_point(point_to_assign);
             assignment[j] = min_energy_change_element_index;
 
         } else if(assignment[j] > source) assignment[j]--;

@@ -249,15 +249,16 @@ unsigned int CecModel::predict(std::vector<double> vec) const {
 
     for (unsigned int i = 0; i < m_clusters.size(); ++i) {
 
-    	//TODO: rewrite, omg
-        Cluster * old_cluster = m_clusters[i];
-        Cluster * new_cluster = m_clusters[i]->add_point(x);
-        double entropy_change = new_cluster->entropy() - old_cluster->entropy();
+        double entropy_before = m_clusters[i]->entropy();
+        m_clusters[i]->add_point(x);
+        double entropy_change = m_clusters[i]->entropy() - entropy_before;
 
         if (entropy_change < min_entropy_change) {
             min_entropy_change = entropy_change;
             assign = i;
         }
+
+        m_clusters[i]->remove_point(x);
     }
 
     return assign;
