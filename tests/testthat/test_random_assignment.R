@@ -25,11 +25,11 @@ correctness <- function(correct_assignment, my_assignment, npoints, nclusters)
 test_that("correctness works", {
   data(cec_ellipse_gauss)
   
-  dataset_clusters = cluster[,1]
+  dataset_clusters <- cluster[,1]
   dataset_points <- input
   
   nclusters <- 4
-  npoints = dim(dataset_points)[1]
+  npoints <- dim(dataset_points)[1]
   
   correct_percentage <- correctness(dataset_clusters, dataset_clusters, npoints, nclusters)
   expect_that(correct_percentage, equals(1))
@@ -39,8 +39,8 @@ test_that("correctness works", {
 test_that("EllipseGauss random assignment is correct", {
   data(cec_ellipse_gauss)
   
-  expected_energy = energy_value
-  dataset_clusters = cluster[,1]
+  expected_energy <- energy_value
+  dataset_clusters <- cluster[,1]
   dataset_points <- input
   
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
@@ -64,8 +64,8 @@ test_that("EllipseGauss random assignment is correct", {
 test_that("mouse_1 random assignment is correct", {
   data(cec_mouse_1)
   
-  expected_energy = energy_value
-  dataset_clusters = cluster[,1]
+  expected_energy <- energy_value
+  dataset_clusters <- cluster[,1]
   dataset_points <- input
   
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
@@ -73,7 +73,7 @@ test_that("mouse_1 random assignment is correct", {
   t <- 20
   accepted <- 0
   nclusters <- 3
-  npoints = dim(dataset_points)[1]
+  npoints <- dim(dataset_points)[1]
   for(i in 1:t)
   {
     #CEC(k=nclusters, x=dataset_points, method.init='random')
@@ -91,8 +91,8 @@ test_that("mouse_1 random assignment is correct", {
 test_that("mouse_1_spherical random assignment is correct", {
   data(cec_mouse_1_spherical)
   
-  expected_energy = energy_value
-  dataset_clusters = cluster[,1]
+  expected_energy <- energy_value
+  dataset_clusters <- cluster[,1]
   dataset_points <- input 
   
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
@@ -100,7 +100,7 @@ test_that("mouse_1_spherical random assignment is correct", {
   t <- 20
   accepted <- 0
   nclusters <- 3
-  npoints = dim(dataset_points)[1]
+  npoints <- dim(dataset_points)[1]
   for(i in 1:t)
   {
     c <- CEC(k=nclusters, x=dataset_points, method.type='sphere', method.init='random')

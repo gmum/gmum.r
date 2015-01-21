@@ -3,8 +3,8 @@ library('gmum.r')
 
 data(cec_simple_1)
 
-expected_energy = energy_value
-dataset_clusters = cluster[,1]
+expected_energy <- energy_value
+dataset_clusters <- cluster[,1]
 dataset_points <- input
 
 test_that("Entropy is correct", {
