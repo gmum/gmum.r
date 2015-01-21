@@ -65,7 +65,7 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
 							before_target_energy;
 
                     whole_entropy_change = target_entropy_change+source_entropy_change;
-                } catch(std::exception e) {
+                } catch(std::exception &e) {
                     LOG(m_logger, LogLevel::ERR, "removePoint");
                     LOG(m_logger, LogLevel::ERR, dimension);
                     throw(e);
@@ -91,7 +91,7 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
 
                             remove_cluster(source, points, assignment, clusters_raw);
                         }
-                    } catch(std::exception e) {
+                    } catch(std::exception &e) {
                         //LOG(LogLevel::ERR, e.what());
                         LOG(m_logger, LogLevel::ERR, "removeCluster");
                         throw(e);
@@ -143,7 +143,7 @@ void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
 
             	clusters[k]->add_point(point_to_assign);
 
-            	std::cerr<<clusters[k]->entropy()<<std::endl;
+            	//std::cerr<<clusters[k]->entropy()<<std::endl;
 
                 double energy_change =
                 		calc_energy(clusters[k]->entropy(),
