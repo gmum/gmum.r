@@ -2,15 +2,17 @@ library(gmum.r)
 library(caret)
 
 # Load a dataset, here we have provided an example 
-ds <- svm.dataset.breast_cancer()
+data(svm_breast_cancer_dataset)
+ds <- svm.breastcancer.dataset
 
 # Create CV folds
 K <- 5
-folds <- createFolds(ds$X1, k=K)
+
+folds <- createFolds(ds$V1, k=K)
 mean_acc <- 0
 
 # SVM model needs to know how the labels depend on data
-formula <- X1~. 
+formula <- V1~. 
 
 # Iterate through folds
 for ( i in seq(1,K,1) ) {
@@ -26,12 +28,12 @@ for ( i in seq(1,K,1) ) {
   if (i == 1) plot(svm, mode="pca")
   
   # Seperate lables in test data
-  test_x <- subset(test, select = -c(X1))
-  target <- test[,"X1"]
+  test_x <- subset(test, select = -c(V1))
+  target <- test[,"V1"]
   
   # predict on test data
   pred <- predict(svm, test_x)
- 
+  
   # calculate classification accuracy
   acc <- svm.accuracy(prediction=pred, target=target)
   mean_acc <- mean_acc + acc  
@@ -42,6 +44,3 @@ print(sprintf("mean SVM accuracy after %i folds: %f ", K, mean_acc/K))
 
 # Print short summray of the last trained svm
 summary(svm)
-
-
-
