@@ -23,8 +23,9 @@ public:
     ClusterCustomFunction(int count, const arma::rowvec& mean, const arma::mat& cov_mat, const std::string& function_name);
     ClusterCustomFunction(unsigned int id,const std::vector<unsigned int> &assignment, const arma::mat &points, const std::string &function_name);
 
-    virtual void calculate_entropy(const arma::mat & cov_mat, int n){
+    virtual double calculate_entropy(const arma::mat & cov_mat, int n){
     	throw "Not implemented";
+    	return 0.;
     }
 };
 

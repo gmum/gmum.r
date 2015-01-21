@@ -10,6 +10,7 @@
 
 #include <exception>
 #include <vector>
+#include "boost/foreach.hpp"
 using namespace std;
 typedef vector<int> VI;
 typedef long long LL;
@@ -19,7 +20,7 @@ typedef long long LL;
 #define VAR(v,n) typeof(n) v=(n)
 #define ALL(c) c.begin(),c.end()
 #define SIZE(x) (int)(x).size()
-#define FOREACH(i,c) for(VAR(i,(c).begin());i!=(c).end();++i)
+#define FOREACH(i,c) BOOST_FOREACH(i, c) //for(VAR(i,(c).begin());i!=(c).end();++i)
 #define IWAS(x) cout<<x<<endl<<flush;
 #define PB push_back
 #define ST first

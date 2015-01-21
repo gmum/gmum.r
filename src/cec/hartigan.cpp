@@ -56,20 +56,15 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
                 	double before_target_energy =
                 	        calc_energy(clusters_raw[k]->entropy(), clusters_raw[k]->size(), npoints);
 
-                    clusters_raw[source]->remove_point(point);
-                    clusters_raw[k]->add_point(point);
-
-
                     double source_entropy_change =
-                    		calc_energy(clusters_raw[source]->entropy(), clusters_raw[source]->size(), npoints)-
+                    		calc_energy(clusters_raw[source]->entropy_after_remove_point(point), clusters_raw[source]->size() - 1, npoints)-
 							before_source_energy;
 
                     double target_entropy_change =
-                    		calc_energy(clusters_raw[k]->entropy(), clusters_raw[k]->size(), npoints)-
+                    		calc_energy(clusters_raw[k]->entropy_after_add_point(point), clusters_raw[k]->size() + 1, npoints)-
 							before_target_energy;
 
                     whole_entropy_change = target_entropy_change+source_entropy_change;
-
                 } catch(std::exception e) {
                     LOG(m_logger, LogLevel::ERR, "removePoint");
                     LOG(m_logger, LogLevel::ERR, dimension);
@@ -79,6 +74,12 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
 
                 if(whole_entropy_change < 0) {  //newEntropy < oldEntropy
                     switched++;
+
+
+                    clusters_raw[source]->remove_point(point);
+                    clusters_raw[k]->add_point(point);
+
+
 
                     //point moved from cluster source to k - update assignment
                     assignment[i] = k;
@@ -99,8 +100,6 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
                     break; //point was switched so we'll stop the clusters loop and we'll check the next point
                 }else{
                 	//Reverse changes
-                    clusters_raw[k]->remove_point(point);
-                    clusters_raw[source]->add_point(point);
 
                 }
             }  //for iterates clusters
@@ -143,6 +142,8 @@ void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
             			  clusters[k]->size(), npoints);
 
             	clusters[k]->add_point(point_to_assign);
+
+            	std::cerr<<clusters[k]->entropy()<<std::endl;
 
                 double energy_change =
                 		calc_energy(clusters[k]->entropy(),

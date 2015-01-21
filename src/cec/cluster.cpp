@@ -70,30 +70,45 @@ ClusterUseCovMat::ClusterUseCovMat(unsigned int id,
     initialize_cov_mat(id, assignment, points);
 }
 
+double ClusterUseCovMat::entropy_after_add_point(
+        const arma::rowvec &point) {
+    arma::rowvec r = m_mean - point;
+    arma::rowvec nmean = ((m_count) * m_mean + point) / (m_count + 1);
+    auto w = ((1.0 * (m_count) / (1+m_count))
+            * (m_cov_mat + (r.t() * r) / (m_count+1)));
+    return calculate_entropy(arma::Mat<double>((1.0 * (m_count) / (1+m_count))
+            * (m_cov_mat + (r.t() * r) / (m_count+1))), m_n);
+}
+
+double ClusterUseCovMat::entropy_after_remove_point(
+        const arma::rowvec &point) {
+    arma::rowvec r = m_mean - point;
+    arma::rowvec nmean = ((m_count) * m_mean - point) / (m_count - 1);
+    return calculate_entropy(arma::Mat<double>((1.0 * (m_count) / (m_count-1))
+            * (m_cov_mat - (r.t() * r) / (m_count-1))), m_n);
+}
+
+
 void ClusterUseCovMat::add_point(
         const arma::rowvec &point) {
-    int ncount = m_count + 1;
-    arma::rowvec nmean = (m_count * m_mean + point) / (ncount);
+    m_count = m_count + 1;
     arma::rowvec r = m_mean - point;
-    arma::mat ncov_mat = (1.0 * m_count / ncount)
-            * (m_cov_mat + (r.t() * r) / ncount);
-    m_cov_mat  = ncov_mat;
-    m_count = ncount;
-    m_mean = nmean;
-    calculate_entropy(m_cov_mat, m_n);
+    m_mean = ((m_count - 1) * m_mean + point) / (m_count);
+    m_cov_mat = (1.0 * (m_count - 1) / m_count)
+            * (m_cov_mat + (r.t() * r) / m_count);
+
+    m_entropy = calculate_entropy(m_cov_mat, m_n);
 }
 
 void ClusterUseCovMat::remove_point(
         const arma::rowvec &point) {
-    int ncount = m_count - 1;
-    arma::rowvec nmean = (m_count * m_mean - point) / ncount;
+	m_count = m_count - 1;
+
     arma::rowvec r = m_mean - point;
-    arma::mat ncov_mat = (1.0 * m_count / ncount)
-            * (m_cov_mat - (r.t() * r) / ncount);
-    m_cov_mat  = ncov_mat;
-    m_count = ncount;
-    m_mean = nmean;
-    calculate_entropy(m_cov_mat, m_n);
+    m_mean = ((m_count + 1)* m_mean - point) / m_count;
+    m_cov_mat = (1.0 * (m_count + 1) / m_count)
+            * (m_cov_mat - (r.t() * r) / m_count);
+    m_entropy = calculate_entropy(m_cov_mat, m_n);
 }
 
 arma::mat ClusterUseCovMat::get_cov_mat(unsigned int id,
@@ -125,6 +140,7 @@ void ClusterOnlyTrace::compute_cov_mat_trace(unsigned int id,
     m_cov_mat_trace /= m_count;
 }
 
+
 void ClusterOnlyTrace::add_point(
         const arma::rowvec & point) {
     int ncount = m_count + 1;
@@ -137,7 +153,31 @@ void ClusterOnlyTrace::add_point(
     m_cov_mat_trace = ntrace;
     m_count = ncount;
     m_mean = nmean;
-    calculate_entropy(m_cov_mat_trace, m_n);
+    m_entropy = calculate_entropy(m_cov_mat_trace, m_n);
+}
+
+double ClusterOnlyTrace::entropy_after_remove_point(
+        const arma::rowvec &point) {
+    int ncount = m_count - 1;
+    arma::rowvec nmean = (m_count * m_mean - point) / (ncount);
+    arma::rowvec mean_diff = m_mean - nmean;
+    arma::rowvec r = nmean - point;
+    double ntrace =
+            ((m_cov_mat_trace + dot(mean_diff, mean_diff)) * m_count - dot(r, r))
+            / ncount;
+    return calculate_entropy(ntrace, m_n);
+}
+
+double ClusterOnlyTrace::entropy_after_add_point(
+        const arma::rowvec & point) {
+    int ncount = m_count + 1;
+    arma::rowvec nmean = (m_count * m_mean + point) / (ncount);
+    arma::rowvec r = nmean - point;
+    arma::rowvec mean_diff = m_mean - nmean;
+    double ntrace =
+            ((m_cov_mat_trace + dot(mean_diff, mean_diff)) * m_count + dot(r, r))
+            / ncount;
+    return calculate_entropy(ntrace, m_n);
 }
 
 void ClusterOnlyTrace::remove_point(
@@ -152,7 +192,7 @@ void ClusterOnlyTrace::remove_point(
     m_cov_mat_trace = ntrace;
     m_count = ncount;
     m_mean = nmean;
-    calculate_entropy(m_cov_mat_trace, m_n);
+    m_entropy = calculate_entropy(m_cov_mat_trace, m_n);
 }
 
 double ClusterOnlyTrace::get_cov_mat_trace() {
@@ -172,22 +212,22 @@ arma::mat ClusterOnlyTrace::get_cov_mat(unsigned int id,
     return out;
 }
 
-void ClusterStandard::calculate_entropy(const arma::mat & cov_mat, int n)
+double ClusterStandard::calculate_entropy(const arma::mat & cov_mat, int n)
  {
-    m_entropy = n * log(2 * M_PI * 	M_E) / 2 + log(arma::det(cov_mat)) / 2;
+    return n * log(2 * M_PI * 	M_E) / 2 + log(arma::det(cov_mat)) / 2;
 }
 
 
 ClusterStandard::ClusterStandard(int count, const arma::rowvec &_mean,
                                  const arma::mat &cov_mat) :
     ClusterUseCovMat(count, _mean, cov_mat) {
-    calculate_entropy(m_cov_mat, m_n);
+    m_entropy = calculate_entropy(m_cov_mat, m_n);
 }
 
 ClusterStandard::ClusterStandard(unsigned int id,
                                  const std::vector<unsigned int> &assignment, const arma::mat &points) :
     ClusterUseCovMat(id, assignment, points) {
-    calculate_entropy(m_cov_mat, m_n);
+    m_entropy = calculate_entropy(m_cov_mat, m_n);
 }
 
 ClusterCovMat::ClusterCovMat(const arma::mat & sigma, unsigned int id,
@@ -195,16 +235,16 @@ ClusterCovMat::ClusterCovMat(const arma::mat & sigma, unsigned int id,
     ClusterUseCovMat(id, assignment, points) {
     m_sigma_det = arma::det(sigma);
     m_inv_sigma = arma::inv(sigma);
-    calculate_entropy(m_cov_mat, m_n);
+    m_entropy = calculate_entropy(m_cov_mat, m_n);
 }
 
 ClusterCovMat::ClusterCovMat(const arma::mat& inv_sigma, double sigma_det, int count, const arma::rowvec & mean, const arma::mat & cov_mat)
     : ClusterUseCovMat(count, mean, cov_mat), m_inv_sigma(inv_sigma), m_sigma_det(sigma_det) {
-    calculate_entropy(m_cov_mat, m_n);
+    m_entropy = calculate_entropy(m_cov_mat, m_n);
 }
 
-void ClusterCovMat::calculate_entropy(const arma::mat & cov_mat, int n){
-    m_entropy = n * log(2 * M_PI) / 2 + arma::trace(m_inv_sigma * cov_mat) / 2
+double ClusterCovMat::calculate_entropy(const arma::mat & cov_mat, int n){
+    return n * log(2 * M_PI) / 2 + arma::trace(m_inv_sigma * cov_mat) / 2
             + n * log(m_sigma_det) / 2;
 }
 
@@ -212,51 +252,51 @@ void ClusterCovMat::calculate_entropy(const arma::mat & cov_mat, int n){
 ClusterConstRadius::ClusterConstRadius(double r, unsigned int id,
                                        const std::vector<unsigned int> &assignment, const arma::mat &points) :
     ClusterOnlyTrace(id, assignment, points), m_r(r) {
-    calculate_entropy(m_cov_mat_trace, m_n);
+    m_entropy = calculate_entropy(m_cov_mat_trace, m_n);
 }
 
 ClusterConstRadius::ClusterConstRadius(double r, int count,
                                        const arma::rowvec & mean, double cov_mat_trace) :
     ClusterOnlyTrace(count, mean, cov_mat_trace), m_r(r) {
-    calculate_entropy(m_cov_mat_trace, m_n);
+    m_entropy = calculate_entropy(m_cov_mat_trace, m_n);
 }
 
-void ClusterConstRadius::calculate_entropy(double cov_mat_trace, int n) {
-    m_entropy = n * log(2 * M_PI) / 2 + cov_mat_trace / (2 * m_r) + n * log(m_r) / 2;
+double ClusterConstRadius::calculate_entropy(double cov_mat_trace, int n) {
+    return n * log(2 * M_PI) / 2 + cov_mat_trace / (2 * m_r) + n * log(m_r) / 2;
 }
 
 
 ClusterSpherical::ClusterSpherical(unsigned int id,
                                    const std::vector<unsigned int> &assignment, const arma::mat &points) :
     ClusterOnlyTrace(id, assignment, points) {
-    calculate_entropy(m_cov_mat_trace, m_n);
+    m_entropy = calculate_entropy(m_cov_mat_trace, m_n);
 }
 
 ClusterSpherical::ClusterSpherical(int count, const arma::rowvec &mean,
                                    double cov_mat_trace) :
     ClusterOnlyTrace(count, mean, cov_mat_trace) {
-    calculate_entropy(m_cov_mat_trace, m_n);
+    m_entropy = calculate_entropy(m_cov_mat_trace, m_n);
 }
 
-void ClusterSpherical::calculate_entropy(double cov_mat_trace, int n) {
-    m_entropy = n * log(2 * M_PI * M_E / n) / 2 + n * log(cov_mat_trace) / 2;
+double ClusterSpherical::calculate_entropy(double cov_mat_trace, int n) {
+    return n * log(2 * M_PI * M_E / n) / 2 + n * log(cov_mat_trace) / 2;
 }
 
 
 ClusterDiagonal::ClusterDiagonal(unsigned int id,
                                  const std::vector<unsigned int> &assignment, const arma::mat &points) :
     ClusterUseCovMat(id, assignment, points) {
-    calculate_entropy(m_cov_mat, m_n);
+    m_entropy = calculate_entropy(m_cov_mat, m_n);
 }
 
 ClusterDiagonal::ClusterDiagonal(int count, const arma::rowvec & mean,
                                  const arma::mat & cov_mat) :
     ClusterUseCovMat(count, mean, cov_mat) {
-    calculate_entropy(m_cov_mat, m_n);
+    m_entropy = calculate_entropy(m_cov_mat, m_n);
 }
 
-void ClusterDiagonal::calculate_entropy(const arma::mat & cov_mat, int n) {
-    m_entropy = n * log(2 * M_PI * M_E) / 2
+double ClusterDiagonal::calculate_entropy(const arma::mat & cov_mat, int n) {
+    return  n * log(2 * M_PI * M_E) / 2
             + log(arma::det(arma::diagmat(cov_mat))) / 2;
 }
 
