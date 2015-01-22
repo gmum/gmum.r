@@ -4,7 +4,7 @@
 
 <section class="container-fluid post" id="{{ page.title }}">
     <div class="row">
-        <div class="col-sm-4 post-info">
+        <div class="col-sm-4 visible-lg visible-md post-info">
             <div class="col-sm-4 text-center fixed">
                 <h1>{{ page.title }}</h1>
                 <p class="lead italic">
@@ -17,7 +17,10 @@
         </div>
 
         <div class="col-sm-8 post-content">
-            <p class="lead italic">
+            <p class="lead hidden-lg hidden-md">
+                {{ page.description }}
+            </p>
+            <p class="lead">
                 {{ content }}
             </p>
         </div>

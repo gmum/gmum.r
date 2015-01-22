@@ -28,12 +28,24 @@ section {
     min-height: calc(100% - 1px);
 }
 
-h1 {
-    font-size: 7em;
+@media (min-width: 0) {
+    h1 {
+        font-size: 4em;
+    }
+
+    h2 {
+        font-size: 3em;
+    }
 }
 
-h2 {
-    font-size: 4em;
+@media (min-width: 992px) {
+    h1 {
+        font-size: 6em;
+    }
+
+    h2 {
+        font-size: 4em;
+    }
 }
 
 pre {
@@ -119,7 +131,6 @@ hr.primary {
 
 .project-feature h2 {
     margin-bottom: 20px !important;
-    font-size: 55px;
     font-weight: 300;
 }
 
@@ -138,7 +149,6 @@ hr.primary {
 
 .project-module h2 {
     margin: 10px auto;
-    font-size: 4em;
     font-weight: 300;
 }
 
@@ -159,8 +169,20 @@ hr.primary {
 
 .project-module .feature span {
     margin-left: 10px;
-    font-size: 1.6em;
-    line-height: 1.4;
+}
+
+@media (min-width: 0) {
+    .project-module .feature span {
+        font-size: 1.2em;
+        line-height: 1;
+    }
+}
+
+@media (min-width: 992px) {
+    .project-module .feature span {
+        font-size: 1.6em;
+        line-height: 1.4;
+    }
 }
 
 .footer {
@@ -176,11 +198,27 @@ hr.primary {
 
 .footer .inline-graphical-link a {
     margin: 5px !important;
-    font-size: 2.2em;
 }
 
-.footer .inline-graphical-link i {
-    font-size: 2.2em;
+@media (min-width: 0) {
+    .footer .inline-graphical-link a {
+        font-size: 1.7em;
+    }
+
+    .footer .inline-graphical-link i {
+        font-size: 1.7em;
+    }
+}
+
+@media (min-width: 992px) {
+    .footer .inline-graphical-link a {
+        margin: 5px !important;
+        font-size: 2.2em;
+    }
+
+    .footer .inline-graphical-link i {
+        font-size: 2.2em;
+    }
 }
 
 .publication {
