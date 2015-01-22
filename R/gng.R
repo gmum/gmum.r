@@ -1,5 +1,3 @@
-#dev note: I have no idea how to document S4 methods using roxygen, I will have to assign someone to this task
-
 library(igraph)
 library(methods)
 
@@ -336,6 +334,26 @@ errorStatistics.gng <- NULL
 OptimizedGNG <- NULL
 
 
+#' @title clustering
+#' 
+#' @description Gets vector with node indexes assigned to examples in the dataset
+#' 
+#' @usage
+#' clustering(gng)
+#' 
+#' @export
+#' 
+#' @rdname clustering-methods
+#' 
+#' @docType methods
+#'
+#' @examples
+#' clustering(gng)
+#' 
+#' @aliases clustering
+#'
+clustering.gng <- NULL
+
 #' @title errorStatistics
 #' 
 #' @description Gets vector with errors for every second of execution
@@ -479,6 +497,8 @@ evalqOnLoad({
                    
   ){
     
+
+    
     config <- new(GNGConfiguration)
     
     # Fill in configuration
@@ -492,9 +512,9 @@ evalqOnLoad({
 
     
     if(type[1] == .gng.type.optimized){
-      config$uniformgrid_optimization = TRUE
-      config$lazyheap_optimization = TRUE  
-      config$set_bounding_box(type[2], type[3])
+      config$.uniformgrid_optimization = TRUE
+      config$.lazyheap_optimization = TRUE  
+      config$.set_bounding_box(type[2], type[3])
       
       if(training[1] == .gng.train.offline){
         if(!max(df) <= type[3] && !min(df) >= type[2]){
@@ -503,20 +523,20 @@ evalqOnLoad({
       }
       
     }else{
-      config$uniformgrid_optimization = FALSE
-      config$lazyheap_optimization = FALSE
+      config$.uniformgrid_optimization = FALSE
+      config$.lazyheap_optimization = FALSE
     }
     
     if(type[1] == .gng.type.utility){
-      config$experimental_utility_k = type[2]
-      config$experimental_utility_option = 1
+      config$.experimental_utility_k = type[2]
+      config$.experimental_utility_option = 1
     }
     else{
-      config$experimental_utility_option = 0
+      config$.experimental_utility_option = 0
     }
     
     
-    config$dataset_type=.gng.dataset.bagging
+    config$.dataset_type=.gng.dataset.bagging
     config$beta = beta
     config$max_edge_age = max.edge.age
     config$alpha = alpha  
@@ -527,7 +547,7 @@ evalqOnLoad({
     config$lambda = lambda
     config$verbosity = verbosity
     
-    if(!config$check_correctness()){
+    if(!config$.check_correctness()){
       gmum.error(ERROR_BAD_PARAMS, "Passed incorrect parameters.")
     }
     
@@ -607,13 +627,17 @@ evalqOnLoad({
                    verbosity=0,
 					k=NULL
                   ){
+    gng <- NULL
+    call <- match.call(expand.dots = TRUE)
 		if(is.null(k)){
-					.GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
+					gng <- .GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
 			eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.default(), training=training, lambda=lambda, verbosity=verbosity)
 		}else{
-				.GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
+				gng <- .GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
 			eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.utility(k=k), training=training, lambda=lambda, verbosity=verbosity)		
 		}
+		assign("call", call, gng)
+		gng
 	}
 
    OptimizedGNG <<- function(x=NULL, labels=c(),
@@ -632,14 +656,20 @@ evalqOnLoad({
 			gmum.error(ERROR, "Incorrect range")
 			return		
 		}
-		.GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
+		call <- match.call(expand.dots = TRUE)
+		gng <- .GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
 eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min=value.range[1]*1.1, max=value.range[2]*1.1), training=training, lambda=lambda, verbosity=verbosity)
-
+    assign("call", call, gng)
+    gng
 	}    
 
      setGeneric("node", 
                 function(x, gng_id, ...) standardGeneric("node"))
- 
+
+    setGeneric("clustering", 
+           function(object) standardGeneric("clustering"))
+
+
      setGeneric("convertToGraph", 
                 function(object, ...) standardGeneric("convertToGraph"))
 
@@ -716,11 +746,25 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     
     print(errors)
   }
+
+
+  # Autocompletion fix
+
+  .GlobalEnv$`.DollarNames.C++Object` <- function( x, pattern ){
+    grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE)[! (substr(grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE),1,1)==".")]
+  }
   
+  #.GlobalEnv$DollarNamesGmumr <- function( x, pattern ){
+  #  asNamespace("Rcpp")$`.DollarNames.C++Object`(x, pattern)[! (substr(asNamespace("Rcpp")$`.DollarNames.C++Object`(x, pattern),1,1)==".")]
+  #}
+  #environment(.GlobalEnv$DollarNamesGmumr) <- .GlobalEnv
+  #setMethod( ".DollarNames", "C++Object", .GlobalEnv$DollarNamesGmumr )
+
 
   setMethod("plot",  "Rcpp_GNGServer", plot.gng)
   setMethod("print",  "Rcpp_GNGServer", print.gng)
   setMethod("summary", "Rcpp_GNGServer", summary.gng)
+  setMethod("show", "Rcpp_GNGServer", summary.gng)
   
   node.gng <<- function(x, gng_id){
     x$getNode(gng_id)
@@ -745,7 +789,11 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   errorStatistics.gng <<- function(object){
     object$getErrorStatistics()
   }  
-  
+ 
+  clustering.gng <<- function(object){
+    object$clustering()
+  }  
+
   save.gng <<- function(object, filename){
     object$save(filename)
   }
@@ -774,7 +822,7 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   setMethod("meanError", "Rcpp_GNGServer", meanError.gng) 
   setMethod("errorStatistics", "Rcpp_GNGServer", errorStatistics.gng) 
   
-  #' Get number of nodes
+  #'Get number of nodes
   setMethod("numberNodes" ,
             "Rcpp_GNGServer",
             function(object){
@@ -793,12 +841,12 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     #Prepare index map. Rarely there is a difference in indexing
     #due to a hole in memory representation of GNG graph (i.e.
     #indexing in gng can be non-continuous)
-    indexesGNGToIGraph <- 1:object$getLastNodeIndex()
+    indexesGNGToIGraph <- 1:object$.getLastNodeIndex()
     indexesIGraphToGNG <- 1:object$getNumberNodes()
     
-    if(object$getLastNodeIndex() != object$getNumberNodes()){
+    if(object$.getLastNodeIndex() != object$getNumberNodes()){
       igraph_index = 1
-      for(i in (1:object$getLastNodeIndex())){
+      for(i in (1:object$.getLastNodeIndex())){
         node <- node(object, i)
         if(length(node) != 0){
           indexesGNGToIGraph[i] = igraph_index
@@ -809,7 +857,7 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     }
     
     adjlist<-list()
-    for(i in 1:object$getLastNodeIndex()){
+    for(i in 1:object$.getLastNodeIndex()){
       node <- node(object, i)
       if(length(node) != 0){
         igraph_index = indexesGNGToIGraph[i]
@@ -819,7 +867,7 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     
     
     g <- graph.adjlist(adjlist, mode = "all")
-    for(i in 1:object$getLastNodeIndex()){
+    for(i in 1:object$.getLastNodeIndex()){
       node <- node(object, i)
       if(length(node) != 0){
         igraph_index = indexesGNGToIGraph[i]
@@ -851,7 +899,9 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
             "Rcpp_GNGServer",
             convertToGraph.gng)
   
-
+  setMethod("clustering" ,
+            "Rcpp_GNGServer",
+            clustering.gng)
 
   setMethod("predict" ,
             "Rcpp_GNGServer",
@@ -895,4 +945,18 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
             "Rcpp_GNGServer",
             insertExamples.gng)
   
+
+  methods = list()
+  for(name in names(GNGConfiguration@methods)){
+    methods[[name]] = eval(substitute(
+      function(...) .CppObject$WHAT(...), list(WHAT = as.name(name)))) 
+  }
+  
+  methods[["initialize"]] <- function(...){
+    
+  }
+  
+
+
 })
+

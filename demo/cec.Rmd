@@ -13,8 +13,10 @@ CEC demo
 
 ```{r fig.width=7, fig.height=6}
 library(devtools)
-load_all('../')
-dataset <- as.matrix(read.table("../inst/data_sets/cec/mouse_1_spherical/input.txt"))
+library('gmum.r')
+
+data(cec.mouse_1_spherical)
+dataset = input
 ```
 That is the dataset we want to cluster
 ```{r fig.width=7, fig.height=6}

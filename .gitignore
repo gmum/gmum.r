@@ -121,7 +121,6 @@ sympy-plots-for-*.tex/
 .Rbuildignore
 .Rhistory
 .Rproj.user
-.RData
 ..Rcheck
 *.Rproj
 
@@ -149,6 +148,7 @@ build/
 *.so
 *.o
 *.d
+*.bin
 *~
 data/
 /TestParts/

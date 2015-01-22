@@ -113,13 +113,12 @@ evalqOnLoad({
                    probability = FALSE,
                    cweights    = NULL,
                    sweights    = NULL,
-                   cache_size  = 100,
+                   cache_size  = 200,
                    tol         = 1e-3,
                    verbosity   = 4) {
-    
-    # check for errors
-    
+    call <- match.call(expand.dots = TRUE)
 
+    # check for errors
     if ( lib != "libsvm" && lib != "svmlight") { 
       stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" )) 
       # log error No such library, available are: libsvm, svmlight
@@ -222,14 +221,10 @@ evalqOnLoad({
     client <- new(SVMClient, config)
     client$train()
 
+    assign("call", call, client)
     client 
   } 
-<<<<<<< HEAD
-    
-=======
 
-
->>>>>>> svm-wrapper
   print.svm <- function(x) {
     print(sprintf("SVM object with: library: %s, kernel: %s, preprocess: %s, C: %.1f, gamma: %.3f, coef0: %.3f, degree: %d",
                   x$getLibrary(),
