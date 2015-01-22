@@ -286,6 +286,15 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     strcpy(type,"c");
 
     // GMUM.R changes {
+    if (static_cast<long int>(config.kernel_type) == 3) {
+        // sigmoid tanh(s a*b + c)
+        // s = 1.0/highest_feature_index
+        kernel_parm->coef_lin = 1.0/config.data.n_cols;
+        // c
+        kernel_parm->coef_const = -1.0;
+    }
+
+    /* set userdefined */
     if (config.degree)
         kernel_parm->poly_degree = config.degree;
     if (config.gamma)

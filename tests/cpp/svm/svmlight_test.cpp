@@ -203,10 +203,6 @@ TEST_F(SVMLightRunnerTest, processRequest_with_sigmoid_kernel) {
     svm_config.setKernel(std::string("sigmoid"));
     svm_config.data = learing_data_01;
     svm_config.target = learing_target_02;
-    double coef_lin = 1.0/4.0;
-    svm_config.coef0 = coef_lin;
-    double coef_const = -1.0;
-    svm_config.C = coef_const;
     svm_config.setPrediction(false);
     svmlr.processRequest(svm_config);
 
