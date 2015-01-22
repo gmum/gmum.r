@@ -39,9 +39,10 @@ struct TotalResult {
 class Algorithm {
 protected:
     bool m_log_nclusters, m_log_energy;
+    int m_max_iters;
 public:
-    Algorithm(bool log_nclusters, bool log_energy) :
-        m_log_nclusters(log_nclusters), m_log_energy(log_energy) {
+    Algorithm(bool log_nclusters, bool log_energy, int max_iters) :
+        m_log_nclusters(log_nclusters), m_log_energy(log_energy), m_max_iters(max_iters) {
     }
     virtual TotalResult loop(const arma::mat &points,
                              std::vector<unsigned int> &assignment, double kill_threshold,

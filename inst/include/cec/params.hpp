@@ -32,6 +32,7 @@ public:
     double radius;
     bool function_name_set;
     std::string function_name;
+    unsigned int it_max;
 };
 
 }

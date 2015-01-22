@@ -252,6 +252,8 @@ void CecConfiguration::set_function(const std::string function_name) {
 }
 
 void CecConfiguration::set_it_max(const unsigned int it_max) {
+    assert(it_max > 0);
+    m_params.it_max = it_max;
 }
 
 void CecConfiguration::set_iters(bool iters) {

@@ -131,7 +131,8 @@ void CecModel::find_best_cec() {
             > assignment(new std::vector<unsigned int>());
     boost::shared_ptr<Hartigan> hartigan(
                 new Hartigan(this->m_config.get_params().log_nclusters,
-                             this->m_config.get_params().log_energy));
+                             this->m_config.get_params().log_energy,
+                             this->m_config.get_params().it_max));
 
     Assignment *assignment_type = NULL;
     switch (this->m_config.get_params().assignment_type) {

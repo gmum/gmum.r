@@ -23,7 +23,7 @@ class Hartigan: public Algorithm {
     double calc_energy_change(const Cluster& a, const Cluster &b,
                               int npoints);
 public:
-    Hartigan(bool m_log_nclusters, bool m_log_energy);
+    Hartigan(bool m_log_nclusters, bool m_log_energy, int max_iters);
     TotalResult loop(const arma::mat &points,
                      std::vector<unsigned int> &assignment, double kill_threshold,
                      std::vector<boost::shared_ptr<Cluster> > &clusters);
