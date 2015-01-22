@@ -6,9 +6,8 @@ data(svm_breast_cancer_dataset)
 
 test_that("2e svm works with 2e dataset", {
   
-  
   ds <- svm.twoellipsoids.dataset
-  formula = V3 ~ .
+  formula <- V3 ~ .
   svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "2e", C=10);
   
   x <- svm$getX()
@@ -42,8 +41,8 @@ test_that("2e svm works better then normal SVM with breast cancer dataset", {
   ds2 <- svm.breastcancer.dataset
   formula <- V1 ~ .
   
-  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "none", C=10);
-  twoe_svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "2e", C=10);
+  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep="none", C=10);
+  twoe_svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep="2e", C=10);
   
   x <- svm$getX()
   target <- svm$getY()
