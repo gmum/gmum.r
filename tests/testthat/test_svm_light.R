@@ -3,6 +3,7 @@ library(testthat)
 
 test_that("svmlight works" , {
   
+  data(svm_two_ellipsoids_dataset)
   ds <- svm.twoellipsoids.dataset
   formula <- V3 ~ .
   svm <- SVM(formula, ds, lib="svmlight", kernel="linear", C=10, verbosity = 3);
@@ -22,6 +23,7 @@ print("test::svmlight works with simple 2e dataset")
 
 test_that('accuracy is calculated', {
   
+  data(svm_breast_cancer_dataset)
   ds <- svm.breastcancer.dataset
   formula <- V1 ~ .
   svm <- SVM(formula, ds, lib="svmlight", kernel="linear", C=100);
