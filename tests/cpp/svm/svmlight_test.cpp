@@ -9,7 +9,7 @@
 
 namespace {
 
-int log_level = LogLevel::TRACE;
+int log_level = LogLevel::DEBUG;
 
 double *null_double_ptr = 0;
 long *null_long_ptr = 0;
