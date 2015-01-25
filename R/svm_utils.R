@@ -1,8 +1,11 @@
-breast_cancer.path <- system.file("data_sets","svm","breast_cancer.data", package="gmum.r")
-twoe_data.path <- system.file("data_sets","svm","2e.data", package="gmum.r")
-circles_data.path <- system.file("data_sets","svm","circles.data", package="gmum.r")
+# farm_ads.path <- system.file("data_sets","svm", "", package="gmum.r")
+# http://archive.ics.uci.edu/ml/machine-learning-databases/00218/farm-data.zip
+
 urls_data.path <- system.file("data_sets","svm", "Day0.svm", package="gmum.r")
+# http://archive.ics.uci.edu/ml/machine-learning-databases/url/url_svmlight.tar.gz
+
 duke.path <- system.file("data_sets","svm", "duke", package="gmum.r")
+# http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/duke.bz
 
 read.libsvm <- function(filename, dimensionality) {
   
@@ -25,7 +28,7 @@ read.libsvm <- function(filename, dimensionality) {
       # split by colon
       index_value = strsplit( line[j], ':' )[[1]]
       
-      index = as.numeric( index_value[1] ) + 1		# +1 because label goes first
+      index = as.numeric( index_value[1] ) + 1  	# +1 because label goes first
       value = as.numeric( index_value[2] )
       
       yx[i, index] = value
@@ -35,44 +38,20 @@ read.libsvm <- function(filename, dimensionality) {
   return( data.frame(yx) )
 }
 
-
-svm.dataset.breast_cancer <- function() {
-  bc = read.libsvm( breast_cancer.path, 10 )
-  bc$X2 = NULL
-  return(bc)
-}
-
-svm.dataset.2e <- function() {
-  te = read.table(twoe_data.path, quote="\"")
-  return(te)
-}
-
-svm.dataset.circles <- function() {
-  te = read.table(circles_data.path, quote="\"")
-  return(te)
-}
-
 # svm.dataset.urls_data <- function()  {
-#   bc = read.libsvm( urls_data.path, 3231961 )
-#   bc$X2 = NULL
+#   bc <- read.libsvm( urls_data.path, 3231961 )
 #   return(bc)
 # }
 
 # svm.dataset.farm_ads <- function()  {
-#   bc = read.libsvm( farm_ads.path, 54877 )
-#   bc$X2 = NULL
+#   bc <- read.libsvm( farm_ads.path, 54877 )
 #   return(bc)
 # }
 
 svm.dataset.duke <- function()  {
-  bc = read.libsvm( duke.path,  7129 )
-  bc$X2 = NULL
+  bc <- read.libsvm( duke.path,  7129 )
   return(bc)
 }
-
-
-
-
 
 svm.dataset.xor <- function() {
   matrix( 
@@ -83,17 +62,12 @@ svm.dataset.xor <- function() {
 }
 
 svm.accuracy <- function(prediction, target) {
-    if ( length(target) != length(prediction)) {
-      stop("Prediction's and target's length don't match!")
-    }
-    len <- length(target)
-    
-    diff = target-prediction
-    acc <- sum(diff == 0) / len
-    return(acc) 
+  if ( length(target) != length(prediction)) {
+    stop("Prediction's and target's length don't match!")
+  }
+  len <- length(target)
+  
+  diff <- target-prediction
+  acc <- sum(diff == 0) / len
+  return(acc) 
 }
-
-
-
-
-

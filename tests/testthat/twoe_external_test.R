@@ -3,9 +3,11 @@ library(gmum.r)
 
 K = 10
 
-ds = svm.dataset.breast_cancer()
-folds = createFolds(ds$X1, k=K)
-formula = X1 ~ .
+data(svm_breast_cancer_dataset)
+
+ds = svm.breastcancer.dataset
+folds = createFolds(ds$V1, k=K)
+formula = V1 ~ .
 
 for (c in seq(-6,5,1) ){
   
@@ -22,8 +24,8 @@ for (c in seq(-6,5,1) ){
     
     print("----------")
     
-    test_x = subset(test, select = -c(X1))
-    target = test[,"X1"]
+    test_x = subset(test, select = -c(V1))
+    target = test[,"V1"]
     
     pred <- predict(svm, test_x)
     twoe_pred <- predict(twoe_svm, test_x)

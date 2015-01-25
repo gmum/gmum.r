@@ -99,47 +99,47 @@ loadModule('svm_wrapper', TRUE)
 
 evalqOnLoad({
 
-  SVM <<- function( formula, 
-                    data, 
-                    lib = "libsvm",             
-                    kernel = "linear",
-                    prep = "none",
-                    mclass = "none",
-                    C = 1,
-                    gamma = 0.01,
-                    coef0 = 0,
-                    degree = 1,
-                    shrinking = TRUE,
-                    probability = FALSE,
-                    cweights = NULL,
-                    sweights = NULL,
-                    cache_size = 100,
-                    tol = 1e-3,
-                    verbosity=4) {
-    
+  SVM <<- function(formula, 
+                   data, 
+                   lib         = "libsvm",             
+                   kernel      = "linear",
+                   prep        = "none",
+                   mclass      = "none",
+                   C           = 1,
+                   gamma       = 0.01,
+                   coef0       = 0,
+                   degree      = 1,
+                   shrinking   = TRUE,
+                   probability = FALSE,
+                   cweights    = NULL,
+                   sweights    = NULL,
+                   cache_size  = 200,
+                   tol         = 1e-3,
+                   verbosity   = 4) {
+    call <- match.call(expand.dots = TRUE)
+
     # check for errors
-    
     if ( lib != "libsvm" && lib != "svmlight") { 
       stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" )) 
       # log error No such library, available are: libsvm, svmlight
     }
     
-    if ( kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid" ) {
+    if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") {
       stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
       # log error: No such kernel type. available are: linear, poly, rbf, sigmoid
     }
     
-    if ( prep != "2e" && prep != "none" ) {
+    if (prep != "2e" && prep != "none") {
       stop(paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
       # log erro No such preprocess type, available are: 2e, none
     }
     
-    if ( mclass != "none" ) {
+    if (mclass != "none") {
       stop(paste(GMUM_NOT_SUPPORTED, ": multiclass" ))
       # log error: Sorry, multiclass is not yet supported
     }
     
-    if (C < 0 || gamma < 0 || degree < 1 ) {
+    if (C < 0 || gamma < 0 || degree < 1) {
       stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
       # log error: bad paramters
     }
@@ -154,32 +154,32 @@ evalqOnLoad({
       stop("Wrong verbosity level, should be from 0 to 6")
     }
     
-    labels = all.vars(update(formula,.~0))
+    labels = all.vars(update(formula, .~0))
     x <- NULL
     y <- NULL
     
     if (is(data, "data.frame")) {
-      y = data.matrix( data[,labels] )
+      y = data.matrix( data[, labels] )
       
       # I'm pretty sure this should bo done differently, and equally so I can't find how
-      if (formula[3] == ".()"  ) {
+      if (formula[3] == ".()") {
         x = data.matrix( data[,names(data) != labels]  )
       }
       else {
-        columns = all.vars(update(formula,0~.))
-        x = data.matrix( data[,columns] )
+        columns = all.vars(update(formula, 0~.))
+        x = data.matrix( data[, columns] )
       } 
     }
     else if (is(data, "matrix")) {
-      y = data[,labels]
+      y = data[, labels]
       
       # I'm pretty sure this should bo done differently, and equally so I can't find how
-      if (formula[3] == ".()"  ) {
-        x = data[,names(data) != labels]
+      if (formula[3] == ".()") {
+        x = data[, names(data) != labels]
       }
       else {
-        columns = all.vars(update(formula,0~.))
-        x = data[,columns]
+        columns = all.vars(update(formula, 0~.))
+        x = data[, columns]
       } 
     }
     else {
@@ -187,43 +187,43 @@ evalqOnLoad({
     }
 
     config <- new(SVMConfiguration)
-    config$x = x
-    config$y = y
+    config$x <- x
+    config$y <- y
     
     config$setLibrary(lib)
     config$setKernel(kernel)
     config$setPreprocess(prep)
     config$set_verbosity(verbosity)
     
-    config$C = C
-    config$gamma = gamma
-    config$coef0 = coef0
-    config$degree = degree
-    config$eps = tol
-    config$cache_size = cache_size
+    config$C <- C
+    config$gamma <- gamma
+    config$coef0 <- coef0
+    config$degree <- degree
+    config$eps <- tol
+    config$cache_size <- cache_size
     
-    if ( !is.null(cweights) ) {
+    if (!is.null(cweights)) {
       config$setWeights(cweights)
     }
     
-    if ( shrinking ) {
-      config$shrinking = 1
+    if (shrinking) {
+      config$shrinking <- 1
     } else {
-      config$shrinking = 0
+      config$shrinking <- 0
     }
     
-    if ( probability ) {
-      config$probability = 1
+    if (probability) {
+      config$probability <- 1
     } else {
-      config$probability = 0
+      config$probability <- 0
     }
     
     client <- new(SVMClient, config)
     client$train()
 
+    assign("call", call, client)
     client 
   } 
-
 
   print.svm <- function(x) {
     print(sprintf("SVM object with: library: %s, kernel: %s, preprocess: %s, C: %.1f, gamma: %.3f, coef0: %.3f, degree: %d",
@@ -243,7 +243,7 @@ evalqOnLoad({
                   object$getPreprocess()))
     print(sprintf("%d classes with %d support vectors", 
                   object$get_number_class(), 
-                  object$get_number_sv() ))
+                  object$get_number_sv()))
   }
   
   plot.svm <<- function(x, mode="normal", dim1 = 1, dim2 = 2, log="") {
@@ -257,7 +257,6 @@ evalqOnLoad({
       pca_data = prcomp(df, scale=TRUE)
       scores = data.frame(df, pca_data$x[,1:2])
       w <- w %*% pca_data$rotation
-      
       A <- w[1]
       B <- w[2]
       C <- x$getBias()
@@ -275,11 +274,10 @@ evalqOnLoad({
       }
       A <- w[1]
       B <- w[2]
-      C <- x$getBias()
-      
+      C <- x$getBias()      
       s <- -A/B
       int <- -C/B
-      
+    
       pl <- ggplot() + geom_point(data=df, aes(X1, X2), colour=factor(t+6))  +
         geom_abline(slope=s, intercept=int)
       plot(pl)
@@ -323,22 +321,19 @@ evalqOnLoad({
     }
     
     if (!is(x, "matrix")) {
-      x = data.matrix(x)
+      x <- data.matrix(x)
     }
     object$predict(x)
-    prediction = object$getPrediction()
+    prediction <- object$getPrediction()
     prediction
   }
-  
-  call.svm <- function(object) {
-    print("abs")
-  }
-  
+
   setMethod("print", "Rcpp_SVMClient", print.svm)
   setMethod("predict", signature("Rcpp_SVMClient"), predict.svm)
   setMethod("plot", "Rcpp_SVMClient",  plot.svm)
   setMethod("summary", "Rcpp_SVMClient", summary.svm)
   setMethod("show", "Rcpp_SVMClient", summary.svm)
+
 })
 
 
