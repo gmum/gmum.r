@@ -16,9 +16,9 @@ gmum_cec_path = '../../../../'
 data_path = './data/'
 cran_cec_log_path = './cran_cec.log'
 gmum_cec_log_path = './gmum_cec.log'
-min_npoints = 100
-max_npoints = 5000
-npoints_step = 50
+min_npoints = 10000
+max_npoints = 20000
+npoints_step = 100
 cran_max_iters = 200
 
 valid_paths = 

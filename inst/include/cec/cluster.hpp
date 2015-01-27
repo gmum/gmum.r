@@ -48,7 +48,7 @@ protected:
     ClusterUseCovMat(int count, const arma::rowvec &mean,const arma::mat& cov_mat);
     ClusterUseCovMat(unsigned int id,const std::vector<unsigned int> &assignment, const arma::mat &points);
 
-    virtual double calculate_entropy(int n) = 0;
+    virtual double calculate_entropy(int n, const arma::mat &cov_mat) = 0;
 public:
     void add_point(const arma::rowvec &point);
     void remove_point(const arma::rowvec &point);
@@ -84,7 +84,7 @@ public:
 
 class ClusterStandard: public ClusterUseCovMat {
 private:
-    double calculate_entropy(int n);
+    double calculate_entropy(int n, const arma::mat &cov_mat);
 
 public:
     ClusterStandard(int count, const arma::rowvec &mean, const arma::mat &cov_mat);
@@ -96,7 +96,7 @@ private:
     arma::mat m_inv_sigma;
     double m_sigma_det;
 
-    double calculate_entropy(int n);
+    double calculate_entropy(int n, const arma::mat &cov_mat);
 public:
     ClusterCovMat(const arma::mat& inv_sigma, double sigma_det, int count, const arma::rowvec & mean, const arma::mat & cov_mat);
     ClusterCovMat(const arma::mat & sigma, unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);
@@ -126,7 +126,7 @@ public:
 
 class ClusterDiagonal: public ClusterUseCovMat {
 private:
-    double calculate_entropy(int n);
+    double calculate_entropy(int n, const arma::mat &cov_mat);
 public:
     ClusterDiagonal(int count, const arma::rowvec & mean,
                     const arma::mat & cov_mat);
