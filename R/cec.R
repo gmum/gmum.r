@@ -29,7 +29,7 @@
 #' 
 CEC <- NULL
 
-#' @title loop
+#' @title run
 #' 
 #' @description Start loop of the algorithm where learning is done
 #'
@@ -37,7 +37,7 @@ CEC <- NULL
 #'
 #' @param c CEC model object.
 #' 
-loop.cec <- NULL
+run.cec <- NULL
 
 #' @title entropy
 #' 
@@ -69,7 +69,7 @@ y.cec <- NULL
 #' 
 centers.cec <- NULL
 
-#' @title cov
+#' @title covMatrix
 #' 
 #' @description Print covariances of clusters
 #'
@@ -77,7 +77,7 @@ centers.cec <- NULL
 #'
 #' @param c CEC model object.
 #' 
-cov.cec <- NULL
+covMatrix.cec <- NULL
 
 #' @title predictCluster
 #' 
@@ -220,8 +220,8 @@ evalqOnLoad({
     model
   }
   
-  loop.cec <<- function(c) {
-    c$loop()
+  run.cec <<- function(c) {
+    c$run()
   }
   
   entropy.cec <<- function(c) {
@@ -240,8 +240,8 @@ evalqOnLoad({
     c$centers()
   }
   
-  cov.cec <<- function(c) {
-    c$cov()
+  covMatrix.cec <<- function(c) {
+    c$covMatrix()
   }
   
   predictCluster.cec <<- function(c, x) {
@@ -282,12 +282,12 @@ evalqOnLoad({
       c$nstart()
     }
     
-    setGeneric("loop", function(c) standardGeneric("loop"))
+    setGeneric("run", function(c) standardGeneric("run"))
     setGeneric("entropy", function(c) standardGeneric("entropy"))
     setGeneric("energy", function(c) standardGeneric("energy"))
     setGeneric("y", function(c) standardGeneric("y"))
     setGeneric("centers", function(c) standardGeneric("centers"))
-    setGeneric("cov", function(c) standardGeneric("cov"))
+    setGeneric("covMatrix", function(c) standardGeneric("covMatrix"))
     setGeneric("predictCluster", function(c, ...) standardGeneric("predictCluster"))
     setGeneric("predictClusters", function(c, ...) standardGeneric("predictClusters"))
     setGeneric("log.ncluster", function(c) standardGeneric("log.ncluster"))
@@ -295,12 +295,12 @@ evalqOnLoad({
     setGeneric("log.iters", function(c) standardGeneric("log.iters"))
     setGeneric("nstart", function(c) standardGeneric("nstart"))
     
-    setMethod("loop", "Rcpp_CecModel", loop.cec)
+    setMethod("run", "Rcpp_CecModel", run.cec)
     setMethod("entropy", "Rcpp_CecModel", entropy.cec)
     setMethod("energy", "Rcpp_CecModel", energy.cec)
     setMethod("y", "Rcpp_CecModel", y.cec)
     setMethod("centers", "Rcpp_CecModel", centers.cec)
-    setMethod("cov", "Rcpp_CecModel", cov.cec)
+    setMethod("covMatrix", "Rcpp_CecModel", covMatrix.cec)
     setMethod("predictCluster", "Rcpp_CecModel", predictCluster.cec)
     setMethod("predictClusters", "Rcpp_CecModel", predictClusters.cec)
     setMethod("log.ncluster", "Rcpp_CecModel", log.ncluster.cec)
