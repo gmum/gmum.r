@@ -18,7 +18,7 @@ plot(c)
 
 # You can learn details of clustering like this
 centers(c)
-cov(c)
+covMatrix(c)
 
 # You can predict cluster which a point would belong to
 predictCluster(c, c(1,1))
