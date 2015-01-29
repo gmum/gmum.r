@@ -7,6 +7,7 @@ SVMConfiguration::SVMConfiguration() {
 	this->prediction = false;
 	SVMConfiguration::setDefaultParams();
 }
+
 SVMConfiguration::SVMConfiguration(bool prediction) {
 	this->prediction = prediction;
 }
@@ -48,18 +49,6 @@ void SVMConfiguration::setPrediction(bool prediction) {
 	this->prediction = prediction;
 }
 
-void SVMConfiguration::createParams(std::string kernel_type,
-		std::string svm_type, std::string preprocess, int degree, double gamma,
-		double coef0) {
-	if (preprocess == "norm") {
-		Preprocess prep = NORM;
-		this->preprocess = prep;
-	} else {
-		Preprocess prep = NONE;
-		this->preprocess = prep;
-	}
-}
-
 void SVMConfiguration::setWeights( Rcpp::NumericVector weights ) {
 	this->nr_weight = weights.size();
 	this->weight = new double[nr_weight];
@@ -74,7 +63,10 @@ void SVMConfiguration::setLibrary( std::string library ) {
 		this->library = LIBSVM;
 		this->svm_type = C_SVC;
 	}
-	// else if
+	else if (library == "svmlight" ) {
+    this->library = SVMLIGHT;
+    this->svm_type = C_SVC;
+	}
 }
 
 void SVMConfiguration::setKernel( std::string kernel ) {
@@ -101,10 +93,23 @@ void SVMConfiguration::setPreprocess( std::string preprocess ) {
 	}
 }
 
+void SVMConfiguration::set_verbosity(int verbosity){
+  this->log.verbosity = verbosity;
+}
+
+double SVMConfiguration::getB() {
+  return threshold_b;
+}
+
+void SVMConfiguration::setB(double b) {
+  threshold_b = b;
+}
+
 void SVMConfiguration::setDefaultParams() {
 	library = LIBSVM;
 	svm_type = C_SVC;
 	kernel_type = _LINEAR;
+  preprocess = NONE;
 	degree = 3;
 	gamma = 0;	// 1/num_features
 	coef0 = 0;
@@ -116,11 +121,14 @@ void SVMConfiguration::setDefaultParams() {
 	nr_weight = 0;
 	weight_label = NULL;
 	weight = NULL;
-
+	cov_eps_smoothing = 1.0e-10;
 //	Probably not necessery
 	nu = 0.5;
 	p = 0.1;
 
-
+    // User-defined classification mode labels
+    // (will be filled during data processing)
+    label_negative = 0;
+    label_positive = 0;
 }
 

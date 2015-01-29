@@ -7,47 +7,50 @@
 namespace gmum {
 
 struct SingleResult {
-	int switched;
-	int nrOfClusters;
-	double energy;
-	SingleResult() {
-	}
-	SingleResult(int switched, int nrOfClusters, double energy) :
-			switched(switched), nrOfClusters(nrOfClusters), energy(energy) {
-	}
+    int switched;
+    int nclusters;
+    double energy;
+    SingleResult() {
+    }
+    SingleResult(int switched, int nclusters, double energy) :
+        switched(switched), nclusters(nclusters), energy(energy) {
+    }
 };
 
 struct TotalResult {
-	int iterations;
-	std::list<unsigned int> nrOfClusters;
-	std::list<double> energy;
-	TotalResult() :
-			iterations(0) {
-	}
-	void append(SingleResult result, bool logNrOfClusters, bool logEnergy) {
-		iterations++;
-		if (logNrOfClusters)
-			nrOfClusters.push_back(result.nrOfClusters);
-		if (logEnergy)
-			energy.push_back(result.energy);
-	}
+    int iterations;
+    std::list<unsigned int> nclusters;
+    // energy from all iterations of algorithm
+    std::list<double> energy;
+    double min_energy;
+
+    TotalResult() :
+        iterations(0) {
+    }
+    void append(SingleResult result, bool log_nlusters, bool log_energy) {
+        iterations++;
+        if (log_nlusters)
+            nclusters.push_back(result.nclusters);
+        if (log_energy)
+            energy.push_back(result.energy);
+    }
 };
 
 class Algorithm {
 protected:
-	bool logNrOfClusters, logEnergy;
+    bool m_log_nclusters, m_log_energy;
 public:
-	Algorithm(bool logNrOfClusters, bool logEnergy) :
-			logNrOfClusters(logNrOfClusters), logEnergy(logEnergy) {
-	}
-	virtual TotalResult loop(const arma::mat &points,
-			std::vector<unsigned int> &assignment, double killThreshold,
-			std::vector<boost::shared_ptr<Cluster> > &clusters)=0;
-	virtual SingleResult singleLoop(const arma::mat &points,
-			std::vector<unsigned int> &assignment, double killThreshold,
-			std::vector<boost::shared_ptr<Cluster> > &clusters)=0;
-	virtual ~Algorithm() {
-	}
+    Algorithm(bool log_nclusters, bool log_energy) :
+        m_log_nclusters(log_nclusters), m_log_energy(log_energy) {
+    }
+    virtual TotalResult loop(const arma::mat &points,
+                             std::vector<unsigned int> &assignment, double kill_threshold,
+                             std::vector<boost::shared_ptr<Cluster> > &clusters)=0;
+    virtual SingleResult single_loop(const arma::mat &points,
+                                     std::vector<unsigned int> &assignment, double kill_threshold,
+                                     std::vector<boost::shared_ptr<Cluster> > &clusters)=0;
+    virtual ~Algorithm() {
+    }
 
 };
 

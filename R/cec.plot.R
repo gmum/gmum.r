@@ -6,7 +6,8 @@ loadModule("cec", TRUE)
 #' 
 #' @description Plot clustering found
 #' 
-#' @usage plot(cec)
+#' @usage 
+#' plot(cec)
 #'
 #' @docType methods
 #'
@@ -15,7 +16,9 @@ loadModule("cec", TRUE)
 #' @param ellipses outline clusters
 #' @param centers mark center of every cluster
 #' 
-#' @example plot(cec, ellipses=TRUE, centers=FALSE)
+#' @examples
+#'  plot(cec, ellipses=TRUE, centers=FALSE)
+#'  
 plot.cec <- NULL
 
 evalqOnLoad({
@@ -72,5 +75,5 @@ evalqOnLoad({
         }
     }
     
-    setMethod("plot", signature(x="Rcpp_cecModel"), plot.cec)
+    setMethod("plot", signature(x="Rcpp_CecModel"), plot.cec)
 })

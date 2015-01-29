@@ -22,20 +22,27 @@ correctness <- function(correct_assignment, my_assignment, npoints, nclusters)
   return(best_percentage)
 }
 
-test_that("corectness works", {
-  dataset_clusters <- as.vector(read.table("tests/cpp/data/EllipseGauss/cluster.txt")[,1])
-  dataset_points <- as.matrix(read.table("tests/cpp/data/EllipseGauss/input.txt"))
+test_that("correctness works", {
+  data(cec_ellipse_gauss)
+  
+  dataset_clusters = cluster[,1]
+  dataset_points <- input
+  
   nclusters <- 4
   npoints = dim(dataset_points)[1]
-    
+  
   correct_percentage <- correctness(dataset_clusters, dataset_clusters, npoints, nclusters)
   expect_that(correct_percentage, equals(1))
+  print("test_random_assignment: correctness works")
 })
 
 test_that("EllipseGauss random assignment is correct", {
-  dataset_clusters <- as.vector(read.table("tests/cpp/data/EllipseGauss/cluster.txt")[,1])
-  dataset_points <- as.matrix(read.table("tests/cpp/data/EllipseGauss/input.txt"))
-  expected_energy <- as.numeric(read.table("tests/cpp/data/EllipseGauss/energy.txt"))
+  data(cec_ellipse_gauss)
+  
+  expected_energy = energy_value
+  dataset_clusters = cluster[,1]
+  dataset_points <- input
+  
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
   
   t <- 20
@@ -51,35 +58,43 @@ test_that("EllipseGauss random assignment is correct", {
     }
   }
   expect_that(accepted > t/2.0, is_true())
+  print("test_random_assignment: EllipseGauss random assignment is correct")
 })
 
 test_that("mouse_1 random assignment is correct", {
-  dataset_clusters <- as.vector(read.table("tests/cpp/data/mouse_1/cluster.txt")[,1])
-  dataset_points <- as.matrix(read.table("tests/cpp/data/mouse_1/input.txt"))
-  expected_energy <- as.numeric(read.table("tests/cpp/data/mouse_1/energy.txt"))
+  data(cec_mouse_1)
+  
+  expected_energy = energy_value
+  dataset_clusters = cluster[,1]
+  dataset_points <- input
+  
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
-
+  
   t <- 20
   accepted <- 0
   nclusters <- 3
   npoints = dim(dataset_points)[1]
   for(i in 1:t)
   {
-    #args = list(k=nclusters, x=dataset_points, method.init='random')
+    #CEC(k=nclusters, x=dataset_points, method.init='random')
     c <- CEC(k=nclusters, x=dataset_points, method.init='random', method.type='sphere')
-
+    
     correct_percentage <- correctness(dataset_clusters, c$y(), npoints, nclusters)
     if(c$entropy() < (1.5 * expected_energy) | (correct_percentage >= 0.9) ) {
       accepted <- accepted + 1
     }
   }
-  expect_that(accepted>t/2.0, is_true())
+  expect_that(accepted > t/2.0, is_true())
+  print("test_random_assignment: mouse_1 random assignment is correct")
 })
 
 test_that("mouse_1_spherical random assignment is correct", {
-  dataset_clusters <- as.vector(read.table("tests/cpp/data/mouse_1_spherical/cluster.txt")[,1])
-  dataset_points <- as.matrix(read.table("tests/cpp/data/mouse_1_spherical/input.txt"))
-  expected_energy <- as.numeric(read.table("tests/cpp/data/mouse_1_spherical/energy.txt"))
+  data(cec_mouse_1_spherical)
+  
+  expected_energy = energy_value
+  dataset_clusters = cluster[,1]
+  dataset_points <- input 
+  
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
   
   t <- 20
@@ -94,6 +109,6 @@ test_that("mouse_1_spherical random assignment is correct", {
       accepted <- accepted + 1
     }
   }
-  expect_that(accepted>t/2.0, is_true())
+  expect_that(accepted > t/2.0, is_true())
+  print("test_random_assignment: mouse_1_spherical random assignment is correct")
 })
-

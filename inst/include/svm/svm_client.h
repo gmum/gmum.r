@@ -2,9 +2,7 @@
 #define SVM_CLIENT_H
 
 #include "svm_handler.h"
-#include "libsvm_runner.h"
 #include "svm_basic.h"
-#include "norm.h"
 #include <vector>
 
 class SVMClient {
@@ -16,7 +14,6 @@ private:
 public:
 	//constructors
 	SVMClient(SVMConfiguration*);
-	bool trained;
 
 	// data setters
 	void setX( arma::mat );
@@ -35,6 +32,8 @@ public:
 	void setEps(double);
 	void setShrinking(int);
 	void setProbability(int);
+  void setBias(double);
+  // void setAlpha(double*);
 
 	// data getters
 	arma::mat getX();
@@ -64,9 +63,12 @@ public:
 
 	// model getters
  // double** getSV(); // double**, std::vector, arma:mat ?
-	double* getAlpha();
+  int get_number_sv();
+  int get_number_class();
+	arma::vec getAlpha();
 	double getBias();
-	double* getW();
+	arma::vec getW();
+  arma::mat getSV();
 };
 
 #endif

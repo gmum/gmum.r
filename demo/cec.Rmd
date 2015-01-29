@@ -13,43 +13,45 @@ CEC demo
 
 ```{r fig.width=7, fig.height=6}
 library(devtools)
-load_all('../')
-dataset <- as.matrix(read.table("../tests/cpp/data/mouse_1_spherical/input.txt"))
+library('gmum.r')
+
+data(cec.mouse_1_spherical)
+dataset = input
 ```
-that is the dataset we want to cluster
+That is the dataset we want to cluster
 ```{r fig.width=7, fig.height=6}
 plot(dataset)
 ```
 
-run cec with default parameters
+Run cec with default parameters. Set number of clusters and dataset.
 
 ```{r fig.width=7, fig.height=6}
 c <- CEC(k=3, x=dataset)
 plot(c)
 ```
 
-since initial clusterization is random it may be a good idea to run cec multiple times and choose the best result
+Since initial clusterization is random. It may be a good idea to run cec multiple times and choose the best result.
 
 ```{r fig.width=7, fig.height=6}
 c <- CEC(k=3, x=dataset, control.nstart=10)
 plot(c)
 ```
 
-better than before, however, we know that clusters are spherical; let's inform cec about that
+Better than before, however, we know that clusters are spherical; let's inform cec about that.
 
 ```{r fig.width=7, fig.height=6}
 c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere')
 plot(c)
 ```
 
-you can learn details of clustering like this
+You can learn details of clustering like this
 
 ```{r fig.width=7, fig.height=6}
 centers(c)
 cov(c)
 ```
 
-you can predict cluster which a point would belong to
+You can predict cluster which a point would belong to
 
 ```{r fig.width=7, fig.height=6}
 predictCluster(c, c(1,1))
@@ -61,13 +63,13 @@ or find out what are the probabilities of belonging to each cluster
 predictClusters(c, c(1,1))
 ```
 
-you can visualise size and shape of clusters
+You can visualise size and shape of clusters
 
 ```{r fig.width=7, fig.height=6}
 plot(c, ellipses=TRUE)
 ```
 
-try the same with random assignment
+Try the same with random assignment
 
 ```{r fig.width=7, fig.height=6}
 c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere', method.init='random')

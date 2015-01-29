@@ -1,17 +1,19 @@
 library(testthat)
 library('gmum.r')
 
+data(svm_breast_cancer_dataset)
+
 test_that('accuracy is calculated', {
   
-  ds = svm.dataset.breast_cancer()
-  formula = X1 ~ .
-  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", C=100);
-  
+  ds <- svm.breastcancer.dataset
+  formula <- V1 ~ .
+  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", C=10);
+
   x <- svm$getX()
   target <- svm$getY()
   
   pred <- predict(svm, x)
-  acc <- svm.accuracy(prediction=pred, target=pred)
+  acc <- svm.accuracy(prediction=pred, target=target)
   print(acc)
   
   expect_that(acc, is_a("numeric"))
@@ -23,17 +25,17 @@ print("test::accuracy")
 
 test_that('accuracy checks input size', {
           
-  ds = svm.dataset.xor()
-  formula = t ~ .
+  ds <- svm.dataset.xor()
+  formula <- t ~ .
   svm <- SVM(formula, ds, lib="libsvm", kernel="linear", C=100);
   
   x <- svm$getX()
   pred <- predict(svm, x)
-  target <- c(1,1)
+  target <- c(1, 1)
   
-  expect_error(svm.accuracy(target,pred), "Prediction's and target's length don't match!")          
+  expect_error(svm.accuracy(target, pred), "Prediction's and target's length don't match!")          
 })
-print("test::accuracy error")
+print("test::accuracy chcecks inputs size")
 
 
 

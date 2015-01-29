@@ -6,7 +6,7 @@
 SVM(formula, data, lib = "libsvm", kernel = "linear", prep = "none",
   mclass = "none", C = 1, gamma = 0.01, coef0 = 0, degree = 1,
   shrinking = TRUE, probability = FALSE, cweights = NULL,
-  sweights = NULL, cache_size = 100, tol = 0.001)
+  sweights = NULL, cache_size = 100, tol = 0.001, verbosity = 4)
 }
 \arguments{
 \item{lib}{Desired SVM Library, avialable are: libsvm}

@@ -17,10 +17,11 @@
 #include <cassert>
 #include <boost/shared_ptr.hpp>
 
-#include "Utils.h"
+#include "utils/threading.h"
+#include "utils/utils.h"
+
 #include "GNGNode.h"
 #include "GNGGlobals.h"
-#include "Threading.h"
 
 using namespace std;
 
@@ -54,29 +55,27 @@ public:
 	/** This is specific for GNG Graph - e
 	 * each node is assigned index. It fetches maximum node index
 	 */
-	virtual unsigned int getMaximumIndex() const = 0;
+	virtual unsigned int get_maximum_index() const = 0;
 
 	/*
 	 * @return True if exists node in the graph
 	 */
 	virtual bool existsNode(unsigned int) const = 0;
 
-	virtual int getDim() const = 0;
+	virtual int get_dim() const = 0;
 
 	virtual GNGNode & operator[](int i) = 0;
 
-	virtual unsigned int getNumberNodes() const = 0;
+	virtual unsigned int get_number_nodes() const = 0;
 
 	//TODO: move it to GNGNode
-	virtual double getDist(int a, int b) = 0;
+	virtual double get_dist(int a, int b) = 0;
 
 	//TODO: move it to GNGNode
-	virtual double getEuclideanDist(const double * pos_1,
-			const double * pos_2) const= 0;
+	virtual double get_euclidean_dist(const double * pos_1, const double * pos_2) const= 0;
 
 	//TODO: move it to GNGNode
-	virtual double getDist(const double *pos_a, const double *pos_b) const =
-	0;
+	virtual double get_dist(const double *pos_a, const double *pos_b) const = 0;
 
 	/* Initialize node with position attribute */
 	virtual int newNode(const double *position) = 0;
@@ -96,8 +95,9 @@ public:
 		return "";
 	}
 
-	virtual void load(std::string filename) = 0;
-	virtual void serialize(std::string filename) = 0;
+	virtual void load(std::istream & in) = 0;
+	virtual void serialize(std::ostream & out) = 0;
+
 
 };
 
@@ -115,7 +115,7 @@ public:
  * TODO: change GNGEdge* to GNGEdge (problems with rev)
  * TODO: edges ~ gng_dim - maybe use this for better efficiency?
  */
-template<class Node, class Edge, class Mutex = gmum::gmum_recursive_mutex> class RAMGNGGraph: public GNGGraph {
+template<class Node, class Edge, class Mutex = gmum::recursive_mutex> class RAMGNGGraph: public GNGGraph {
 	/** Mutex provided externally for synchronization*/
 	Mutex * mutex;
 
@@ -135,18 +135,18 @@ template<class Node, class Edge, class Mutex = gmum::gmum_recursive_mutex> class
 public:
 	/** Indicates next free vertex */
 	std::vector<int> next_free; //TODO: has to be public : /
-	int firstFree;
+	int first_free;
 
 	GNGDistanceFunction dist_fnc;
 
 	typedef typename Node::EdgeIterator EdgeIterator;
 
-	RAMGNGGraph(Mutex * mutex, unsigned int dim, int initial_pool_size,
-			GNGDistanceFunction dist_fnc = Euclidean,
+	RAMGNGGraph(Mutex * mutex, unsigned int dim, int initial_pool_size, GNGDistanceFunction dist_fnc = Euclidean,
 			boost::shared_ptr<Logger> logger = boost::shared_ptr<Logger>()) :
-			maximum_index(-1), mutex(mutex), gng_dim(dim), firstFree(-1), nodes(
-					0), dist_fnc(dist_fnc), m_logger(logger) {
+			maximum_index(-1), mutex(mutex), gng_dim(dim), first_free(-1), nodes(0), dist_fnc(dist_fnc), m_logger(logger) {
+
 		positions.resize(initial_pool_size * gng_dim);
+
 		//Initialize graph data structures
 		g.resize(initial_pool_size);
 
@@ -158,18 +158,22 @@ public:
 		for (int i = 0; i < initial_pool_size; ++i)
 			occupied[i] = false;
 		next_free.resize(initial_pool_size);
+
 		for (int i = 0; i < initial_pool_size - 1; ++i)
 			next_free[i] = i + 1;
 		next_free[initial_pool_size - 1] = -1;
-		firstFree = 0;
+		first_free = 0;
+
 	}
 
 	/** This is specific for GNG Graph - e
 	 * each node is assigned index. It fetches maximum node index
 	 */
-	virtual unsigned int getMaximumIndex() const {
+
+	virtual unsigned int get_maximum_index() const {
 		return this->maximum_index;
 	}
+
 	/* @note NOT THREAD SAFE - USE ONLY FROM ALGORITHM THREAD OR LOCK
 	 * @return True if exists node in the graph
 	 */
@@ -192,7 +196,8 @@ public:
 	const double *getPosition(int nr) const {
 		return g[nr].position;
 	}
-	unsigned int getNumberNodes() const {
+
+	unsigned int get_number_nodes() const {
 		return this->nodes;
 	}
 
@@ -203,11 +208,11 @@ public:
 	}
 
 	///NOT THREAD SAFE - USE ONLY FROM ALGORITHM THREAD OR LOCK
-	double getDist(int a, int b) {
-		return getDist(g[a].position, g[b].position);
+	double get_dist(int a, int b) {
+		return get_dist(g[a].position, g[b].position);
 	}
 
-	double getEuclideanDist(const double *pos_a, const double *pos_b) const {
+	double get_euclidean_dist(const double *pos_a, const double *pos_b) const {
 		double distance = 0;
 		for (int i = 0; i < this->gng_dim; ++i)
 			distance += (pos_a[i] - pos_b[i]) * (pos_a[i] - pos_b[i]);
@@ -216,7 +221,7 @@ public:
 	}
 
 	///NOT THREAD SAFE - USE ONLY FROM ALGORITHM THREAD OR LOCK
-	double getDist(const double *pos_a, const double *pos_b) const {
+	double get_dist(const double *pos_a, const double *pos_b) const {
 		if (dist_fnc == Euclidean) {
 			double distance = 0;
 			for (int i = 0; i < this->gng_dim; ++i)
@@ -240,16 +245,15 @@ public:
 
 	///NOT THREAD SAFE - USE ONLY FROM ALGORITHM THREAD OR LOCK
 	int newNode(const double *position) {
-		if (firstFree == -1) {
+		if (first_free == -1) {
 			DBG(m_logger,10, "RAMGNGGraph::newNode() growing pool");
 			this->resizeGraph();
 
 		}
 
-		int createdNode = firstFree; //taki sam jak w g_node_pool
+		int createdNode = first_free; //taki sam jak w g_node_pool
 
-		maximum_index =
-				createdNode > maximum_index ? createdNode : maximum_index;
+		maximum_index = createdNode > maximum_index ? createdNode : maximum_index;
 
 		//Assuming it is clear here
 #ifdef GMUM_DEBUG
@@ -266,7 +270,7 @@ public:
 		g[createdNode].dim = gng_dim;
 		g[createdNode].extra_data = 0.0;
 
-		firstFree = next_free[createdNode];
+		first_free = next_free[createdNode];
 
 		//zwiekszam licznik wierzcholkow //na koncu zeby sie nie wywalil przypadkowo
 		++this->nodes;
@@ -278,10 +282,12 @@ public:
 		g[createdNode].error_cycle = 0;
 
 		return createdNode;
+
 	}
 
 	///NOT THREAD SAFE - USE ONLY FROM ALGORITHM THREAD OR LOCK
 	bool deleteNode(int x) {
+
 		this->lock();
 		if (existsNode(x)) {
 			//TODO: add automatic erasing edges
@@ -292,18 +298,23 @@ public:
 				maximum_index = maximum_index - 1;
 
 			occupied[x] = false;
-			next_free[x] = firstFree;
-			firstFree = x;
+			next_free[x] = first_free;
+			first_free = x;
 			this->unlock();
 			return true;
+
 		}
+
 		this->unlock();
 		return false;
+
 	}
 
 	///NOT THREAD SAFE - USE ONLY FROM ALGORITHM THREAD OR LOCK
 	EdgeIterator removeUDEdge(int a, int b) {
+
 		this->lock();
+
 		FOREACH(edg, g[a])
 		{
 			if ((*edg)->nr == b) {
@@ -322,14 +333,18 @@ public:
 				return edg;
 			}
 		}
+
 		this->unlock();
-		DBG(m_logger,10, "ExtGraphNodeManager()::removeEdge Nots found edge!");
+		DBG(m_logger,10, "ExtGraphNodeManager()::removeEdge Not found edge!");
 		return g[a].end();
+
 	}
 
 	///NOT THREAD SAFE - USE ONLY FROM ALGORITHM THREAD OR LOCK
 	void addUDEdge(int a, int b) {
+
 		this->lock();
+
 		if (a == b)
 			throw "Added loop to the graph";
 
@@ -342,9 +357,11 @@ public:
 		g[a].edgesCount++;
 		g[b].edgesCount++;
 		this->unlock();
+
 	}
 
 	///NOT THREAD SAFE - USE ONLY FROM ALGORITHM THREAD OR LOCK
+
 	void addDEdge(int a, int b) {
 		throw BasicException("Not implemented");
 	}
@@ -378,7 +395,7 @@ public:
 
 	}
 
-	virtual int getDim() const {
+	virtual int get_dim() const {
 		return gng_dim;
 	}
 
@@ -390,14 +407,14 @@ public:
 		mutex->unlock();
 	}
 
+
 	/*
 	 * format is [N] [gng_dim] N* [0/1 + vertex] N*[ [l] l*[gng_idx]]
 	 */
-	void serialize(std::string filename) {
+	void serialize(std::ostream &  output) {
 		this->lock();
 
-		std::ofstream output;
-		output.open(filename.c_str(), ios::out | ios::binary);
+
 		vector<double> S;
 		S.reserve(10000);
 
@@ -405,7 +422,7 @@ public:
 		S.push_back((double) (g.size()));
 		S.push_back((double) (maximum_index + 1));
 		S.push_back((double) gng_dim);
-		S.push_back((double) firstFree);
+		S.push_back((double) first_free);
 		S.push_back((double) nodes);
 
 		DBG(m_logger,7, "GNGGraph::Serializing nodes");
@@ -438,17 +455,13 @@ public:
 
 		_write_bin_vect(output, S);
 
-		output.close();
 
 		this->unlock();
 	}
-	void load(std::string filename) {
+	void load(std::istream &  input) {
 		this->lock();
 
-		std::ifstream input;
-		input.open(filename.c_str(), ios::in | ios::binary);
-
-		DBG(m_logger,7, "GNGGraph:: loading "+filename);
+		DBG(m_logger,7, "GNGGraph:: loading ");
 
 		vector<double> S = _load_bin_vector(input);
 		vector<double>::iterator itr = S.begin();
@@ -456,12 +469,12 @@ public:
 		unsigned int bufor_size = (int) *itr;
 		maximum_index = (int) *(++itr) - 1;
 		gng_dim = (int) *(++itr);
-		firstFree = (int) *(++itr);
+		first_free = (int) *(++itr);
 		nodes = (int) *(++itr);
 
 		DBG(m_logger,5, "Read in "+to_str(bufor_size) +" sized graph with "+
 				" max_index="+to_str(maximum_index)+" gng_dim="+to_str(gng_dim)+" "+
-				"firstFree="+to_str(firstFree)+" nodes="+to_str(nodes)
+				"first_free="+to_str(first_free)+" nodes="+to_str(nodes)
 		);
 
 		positions.clear();
@@ -504,7 +517,6 @@ public:
 			next_free[i] = (int) *(++itr);
 		}
 
-		input.close();
 
 		this->unlock();
 	}
@@ -543,33 +555,13 @@ private:
 			next_free[i] = i + 1;
 		}
 		next_free[g.size() - 1] = -1;
-		firstFree = previous_size;
+		first_free = previous_size;
 
-		DBG_2(m_logger,5, "GNGGraph::resizing done"); DBG(m_logger,5, to_str(firstFree)); DBG(m_logger,5, to_str(next_free[previous_size]));
+		DBG_2(m_logger,5, "GNGGraph::resizing done"); DBG(m_logger,5, to_str(first_free)); DBG(m_logger,5, to_str(next_free[previous_size]));
 		//DBG(m_logger,5, "GNGGraph::resizing graph from "+to_string(g.size())+" done");
 	}
 };
 
-//	using namespace boost;
-//	using namespace std;
-//
-//	struct boost_vertex_desc
-//	{
-//		int index;
-//		double error;
-//
-//		double extra_data;
-//
-//		/* GraphML doesn't allow for array types*/
-//		double v0, v1, v2;
-//
-//		double utility;
-////		std::string position_dump;
-//	};
-//
-//	struct boost_edge_desc{
-//		double dist;
-//	};
 
 std::string writeToGraphML(GNGGraph &g, string filename = "");
 
