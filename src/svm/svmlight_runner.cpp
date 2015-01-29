@@ -250,13 +250,15 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
 
     long i;
     char type[100];
-  
+
+    // GMUM.R changes {
     /* set default */
     strcpy (modelfile, "svm_model");
     strcpy (learn_parm->predfile, "trans_predictions");
     strcpy (learn_parm->alphafile, "");
     strcpy (restartfile, "");
-    (*verbosity)=config.log.verbosity;//1;
+    // SVMLight verbosity = 1 corresponds to GMUM.R verbosity = 5 (DEBUG)
+    (*verbosity)=config.log.verbosity - 4;
     learn_parm->biased_hyperplane=1;
     learn_parm->sharedslack=0;
     learn_parm->remove_inconsistent=0;
@@ -341,7 +343,7 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
 	         exit(0);
         }
     }
-    // GMUM.R changes {
+
     if(!use_gmumr) {
         if(i>=argc) {
             printf("\nNot enough input parameters!\n\n");
@@ -650,7 +652,8 @@ void SVMLightRunner::librarySVMClassifyReadInputParameters(
         strcpy (predictionsfile, "svm_predictions"); 
         (*verbosity)=2;
     } else {
-        (*verbosity) = config.log.verbosity;
+        // SVMLight verbosity = 1 corresponds to GMUM.R verbosity = 5 (DEBUG)
+        (*verbosity) = config.log.verbosity - 4;
     }
     // GMUM.R changes }
     (*pred_format)=1;

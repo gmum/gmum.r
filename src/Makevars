@@ -7,6 +7,7 @@ OBJECTS = $(CPP_SOURCES:.cpp=.o) $(COMPILED_LIBRARIES_OBJECTS)
 
 
 DEBUG := -DNDEBUG_GMUM -DNDEBUG_GMUM_2
+OPTIMIZATION_FLAGS := -O3
 
 R_HOME :=     $(shell R RHOME)
 RCPPFLAGS :=           $(shell $(R_HOME)/bin/R CMD config --cppflags)
@@ -15,11 +16,13 @@ RCPPINCL :=            $(shell echo 'Rcpp:::CxxFlags()' | $(R_HOME)/bin/R --vani
 RCPPLIBS :=            $(shell echo 'Rcpp:::LdFlags()'  | $(R_HOME)/bin/R --vanilla --slave)
 RCPPARMAINCL :=                $(shell echo 'RcppArmadillo:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)
 
+
+
 LAPACK_LIBS := $(shell ${R_HOME}/bin/R CMD config LAPACK_LIBS)
 BLAS_LIBS := $(shell ${R_HOME}/bin/R CMD config BLAS_LIBS)
 
-PKG_CPPFLAGS := -O4 $(DEBUG) -DRCPP_INTERFACE -I ../inst/include/utils -I ../inst/include  -I ../inst/include/cec -I ../inst/include/gng -I ../inst/include/svm -I ../inst/include/svmlight -Wall $(shell $(R_HOME)/bin/R CMD config CPPFLAGS)
+PKG_CPPFLAGS := $(OPTIMIZATION_FLAGS) $(DEBUG) -DRCPP_INTERFACE -I ../inst/include/utils -I ../inst/include  -I ../inst/include/cec -I ../inst/include/gng -I ../inst/include/svm -I ../inst/include/svmlight -Wall $(shell $(R_HOME)/bin/R CMD config CPPFLAGS)
 
-PKG_CXXFLAGS := -O4 $(RCPPFLAGS) $(RCPPINCL) $(RCPPARMAINCL) $(RINSIDEINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -g -pthread -fpic
-PKG_LIBS := -O4 $(shell $(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()" ) $(LAPACK_LIBS) $(BLAS_LIBS) $(RLAPACK) $(RLDFLAGS) $(RRPATH) $(RBLAS) $(RCPPLIBS) $(RINSIDELIBS)
+PKG_CXXFLAGS := $(OPTIMIZATION_FLAGS) $(RCPPFLAGS) $(RCPPINCL) $(RCPPARMAINCL) $(RINSIDEINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -g -pthread -fpic
+PKG_LIBS := $(OPTIMIZATION_FLAGS) $(shell $(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()" ) $(LAPACK_LIBS) $(BLAS_LIBS) $(RLAPACK) $(RLDFLAGS) $(RRPATH) $(RBLAS) $(RCPPLIBS) $(RINSIDELIBS)
 
