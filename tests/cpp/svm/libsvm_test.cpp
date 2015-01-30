@@ -2,10 +2,11 @@
 #include <armadillo>
 #include "libsvm_runner.h"
 #include "svm_basic.h"
+#include "svm_client.h"
 
 using namespace arma;
 
-//TEST(LibsvmTest, TrainingFilePredictionFile) {
+//TEST(LibSVMRunnerTest, TrainingFilePredictionFile) {
 //	SVMConfiguration svm_config;
 //	mat A;
 //	A << 0 << 0 << endr << 1 << 1 << endr;
@@ -23,7 +24,7 @@ using namespace arma;
 //	lib_svm_runner.processRequest(svm_config);
 //}
 //
-//TEST(LibsvmTest, ArmaTrainingPredictionFile) {
+//TEST(LibSVMRunnerTest, ArmaTrainingPredictionFile) {
 //	using namespace arma;
 //	SVMConfiguration svm_config;
 //	mat A;
@@ -42,7 +43,7 @@ using namespace arma;
 //	lib_svm_runner.processRequest(svm_config);
 //}
 //
-//TEST(LibsvmTest, ArmaTrainingArmaPrediction) {
+//TEST(LibSVMRunnerTest, ArmaTrainingArmaPrediction) {
 //
 //	SVMConfiguration svm_config;
 //	mat A;
@@ -63,7 +64,7 @@ using namespace arma;
 //	ASSERT_EQ(1.0, svm_config.result[1]);
 //}
 
-TEST(LibsvmTest, ArmaTrainingConfigModel) {
+TEST(LibSVMRunnerTest, ArmaTrainingConfigModel) {
 
 	SVMConfiguration svm_config;
 	mat A;
@@ -83,7 +84,7 @@ TEST(LibsvmTest, ArmaTrainingConfigModel) {
 //	ASSERT_EQ(1.0, svm_config.result[1]);
 }
 
-TEST(LibsvmTest, ArmaTrainingArmaPredictionConfigModel2x2) {
+TEST(LibSVMRunnerTest, ArmaTrainingArmaPredictionConfigModel2x2) {
 	SVMConfiguration svm_config;
 	mat A;
 	A << 0 << 0 << endr << 1 << 1 << endr;
@@ -102,7 +103,7 @@ TEST(LibsvmTest, ArmaTrainingArmaPredictionConfigModel2x2) {
 	ASSERT_EQ(1.0, svm_config.result[1]);
 }
 
-TEST(LibsvmTest, DoubleArmaTrainingDoubleArmaPredictionConfigModel4x2) {
+TEST(LibSVMRunnerTest, DoubleArmaTrainingDoubleArmaPredictionConfigModel4x2) {
 
 	SVMConfiguration svm_config;
 	mat A;
@@ -129,7 +130,7 @@ TEST(LibsvmTest, DoubleArmaTrainingDoubleArmaPredictionConfigModel4x2) {
 	ASSERT_EQ(1.0, svm_config.result[3]);
 }
 
-TEST(LibsvmTest, ArmaTrainingArmaPredictionConfigModel4x2) {
+TEST(LibSVMRunnerTest, ArmaTrainingArmaPredictionConfigModel4x2) {
 
 	SVMConfiguration svm_config;
 	mat A;
@@ -154,7 +155,7 @@ TEST(LibsvmTest, ArmaTrainingArmaPredictionConfigModel4x2) {
 	ASSERT_EQ(1.0, svm_config.result[3]);
 }
 
-TEST(LibsvmTest, ArmaTrainingArmaPredictionConfigModel4x2OtherPoints) {
+TEST(LibSVMRunnerTest, ArmaTrainingArmaPredictionConfigModel4x2OtherPoints) {
 
 	SVMConfiguration svm_config;
 	mat A;
@@ -191,4 +192,27 @@ TEST(LibsvmTest, ArmaTrainingArmaPredictionConfigModel4x2OtherPoints) {
 	ASSERT_EQ(-1.0, svm_config.result[3]);
 }
 
+TEST(LibSVMRunnerTest, integration_svmclient_predict) {
+	SVMConfiguration svm_config;
+	mat A;
+	A << 0 << 0 << endr << 1 << 1 << endr;
+	vec b;
+	b << -1 << 1;
+	svm_config.setPrediction(false); // training model
+	svm_config.data = A;
+	svm_config.target = b;
+	LibSVMRunner lib_svm_runner;
+	lib_svm_runner.processRequest(svm_config);
+
+    std::cout << "Testing SVMClient prediction..." << std::endl << std::flush;
+    // FIXME: Add testing data other than learning: svm_config.data =
+	svm_config.data = A;
+    svm_config.setPrediction(true);
+    SVMClient *svm_client = new SVMClient(&svm_config);
+    svm_client->predict(A);
+    SVMConfiguration client_config = svm_client->getConfiguration();
+
+	ASSERT_DOUBLE_EQ(-1.0, client_config.result[0]);
+	ASSERT_DOUBLE_EQ(1.0, client_config.result[1]);
+}
 

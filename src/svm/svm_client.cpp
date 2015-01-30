@@ -225,7 +225,7 @@ void SVMClient::predict( arma::mat problem ) {
             sum_j *= config.alpha_y(j);
             doc_result += sum_j;
         }
-        doc_result -= config.threshold_b;
+        doc_result += config.threshold_b;
         config.result[i] = doc_result;
     }
 
