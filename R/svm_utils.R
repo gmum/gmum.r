@@ -1,16 +1,56 @@
-svm.dataset.breast_cancer <- function() {
-  data(svm_breast_cancer_dataset)
-  return (svm.breastcancer.dataset)
+# farm_ads.path <- system.file("data_sets","svm", "", package="gmum.r")
+# http://archive.ics.uci.edu/ml/machine-learning-databases/00218/farm-data.zip
+
+urls_data.path <- system.file("data_sets","svm", "Day0.svm", package="gmum.r")
+# http://archive.ics.uci.edu/ml/machine-learning-databases/url/url_svmlight.tar.gz
+
+duke.path <- system.file("data_sets","svm", "duke", package="gmum.r")
+# http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/duke.bz
+
+read.libsvm <- function(filename, dimensionality) {
+  
+  content = readLines( filename )
+  num_lines = length( content )
+  yx = matrix( 0, num_lines, dimensionality + 1 )
+  
+  # loop over lines
+  for ( i in 1:num_lines ) {
+    
+    # split by spaces
+    line = as.vector( strsplit( content[i], ' ' )[[1]])
+    
+    # save label
+    yx[i,1] = as.numeric( line[[1]] )
+    
+    # loop over values
+    for ( j in 2:length( line )) {
+      
+      # split by colon
+      index_value = strsplit( line[j], ':' )[[1]]
+      
+      index = as.numeric( index_value[1] ) + 1  	# +1 because label goes first
+      value = as.numeric( index_value[2] )
+      
+      yx[i, index] = value
+    }
+  }
+  
+  return( data.frame(yx) )
 }
 
-svm.dataset.2e <- function() {
-  data(svm_two_ellipsoids_dataset)
-  return(svm.twoellipsoids.dataset)
-}
+# svm.dataset.urls_data <- function()  {
+#   bc <- read.libsvm( urls_data.path, 3231961 )
+#   return(bc)
+# }
 
-svm.dataset.circles <- function() {
-  data(svm_two_circles_dataset)
-  return(svm.twocircles.dataset)
+# svm.dataset.farm_ads <- function()  {
+#   bc <- read.libsvm( farm_ads.path, 54877 )
+#   return(bc)
+# }
+
+svm.dataset.duke <- function()  {
+  bc <- read.libsvm( duke.path,  7129 )
+  return(bc)
 }
 
 svm.dataset.xor <- function() {
@@ -27,7 +67,7 @@ svm.accuracy <- function(prediction, target) {
   }
   len <- length(target)
   
-  diff = target-prediction
+  diff <- target-prediction
   acc <- sum(diff == 0) / len
   return(acc) 
 }
