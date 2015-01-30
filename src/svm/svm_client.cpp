@@ -5,6 +5,11 @@
 #include "two_e_svm_post.h"
 #include "svm_utils.h"
 
+const std::string __file__ = "svm_client.cpp";
+const std::string __client_class__ = "SVMClient";
+const std::string __debug_prefix__ = __file__ + "." + __client_class__;
+
+
 // Constructor
 SVMClient::SVMClient(SVMConfiguration *config) {
 	SVMConfiguration current_config = *config;
@@ -52,6 +57,11 @@ void SVMClient::setShrinking(int sh){
 }
 void SVMClient::setProbability(int prob){
 	config.probability = prob;
+}
+
+void SVMClient::setConfiguration(SVMConfiguration *config) {
+	SVMConfiguration current_config = *config;
+	this->config = current_config;
 }
 
 // Getters
@@ -145,7 +155,7 @@ arma::vec SVMClient::getW() {
 		return config.w;
 	}
 	else {
-    LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundry is not available with non-linear kernel"));
+    LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundary is not available with non-linear kernel"));
 		return 0;
 	}
 }
@@ -160,6 +170,10 @@ int SVMClient::get_number_class() {
 
 arma::mat SVMClient::getSV(){
   return config.support_vectors;
+}
+
+SVMConfiguration SVMClient::getConfiguration() {
+    return this->config;
 }
 
 // Runners
@@ -177,19 +191,38 @@ void SVMClient::train() {
 }
 
 void SVMClient::predict( arma::mat problem ) {
+    LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".predict() Started.");
+
+    if (config.kernel_type != _LINEAR) {
+        // Request prediction from handlers when not gmum.r-supported
+        // NOTE: Currently LINEAR only
+        requestPredict(problem);
+        return;
+    }
+
+	config.setData(problem);
     // Number of docs is a number of rows in data matrix
-    size_t n_docs = problem.n_rows;
+    std::cout << "DEBUG 1" << std::endl << std::flush;
+    size_t n_docs = config.data.n_rows;
+
+    std::cout << "DEBUG 2" << std::endl << std::flush;
     config.result = arma::randu<arma::vec>(n_docs);
-    
-    // For every doc
+    std::cout << "DEBUG 3" << std::endl << std::flush;
+    std::cout << "labels: " << config.label[0] << config.label[1] << std::endl;
+
+    // Linear kernel
     for (int i=0; i < n_docs; ++i) {
         double doc_result = 0;
         // For every support vector
-        for (int j=0; j < config.l; ++j) {
+        for (int j=0; j < config.support_vectors.n_rows; ++j) {
+            std::cout << "DEBUG 4" << std::endl << std::flush;
             double sum_j = arma::dot(
-                problem.row(i),
+                config.data.row(i),
                 config.support_vectors.row(j)
             );
+            std::cout << "SV: " << config.support_vectors << std::flush;
+            std::cout << "config.l " << config.l << std::flush;
+            std::cout << "DEBUG 5" << std::endl << std::flush;
             sum_j *= config.alpha_y(j);
             doc_result += sum_j;
         }
@@ -197,6 +230,27 @@ void SVMClient::predict( arma::mat problem ) {
         config.result[i] = doc_result;
     }
 
+    // Convert results to userdefined labels
+    n_docs = config.result.n_rows;
+    double doc_result = 0;
+    for (int i=0; i < n_docs; ++i) {
+        doc_result = config.result[i];
+
+        // Store user-defined label
+        if (doc_result < 0) {
+            config.result[i] = config.label_negative;
+        } else if (doc_result > 0) {
+            config.result[i] = config.label_positive;
+        } else {
+            config.result[i] = 0;
+        }
+    }
+
+    LOG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".predict() Done."
+    );
 }
 
 void SVMClient::requestPredict( arma::mat problem ) {

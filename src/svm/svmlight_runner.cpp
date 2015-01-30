@@ -43,47 +43,11 @@ void SVMLightRunner::processRequest(SVMConfiguration &config) {
         librarySVMLearnMain(0, argv, true, config);
 
     } else {
-        // Prediction
-        if (config.kernel_type == _LINEAR) {
-            // Our implementation
-            predict(config);
-        } else {
-            // SVMLight
-            librarySVMClassifyMain(0, argv, true, config);
-        }
+        // Predict
+        librarySVMClassifyMain(0, argv, true, config);
         // Convert sign to label
         resultsToLabels(config);
     }
-}
-
-
-void SVMLightRunner::predict(SVMConfiguration &config) {
-    LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".predict() Started.");
-    // Number of docs is a number of rows in data matrix
-    size_t n_docs = config.data.n_rows;
-    config.result = arma::randu<arma::vec>(n_docs);
-
-    // For every doc
-    for (int i=0; i < n_docs; ++i) {
-        double doc_result = 0;
-        // For every support vector
-        for (int j=0; j < config.l; ++j) {
-            double sum_j = arma::dot(
-                config.data.row(i),
-                config.support_vectors.row(j)
-            );
-            sum_j *= config.alpha_y(j);
-            doc_result += sum_j;
-        }
-        doc_result -= config.threshold_b;
-        config.result[i] = doc_result;
-    }
-
-    LOG(
-        config.log,
-        LogLevel::DEBUG,
-        __debug_prefix__ + ".predict() Done."
-    );
 }
 
 

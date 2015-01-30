@@ -3,9 +3,11 @@
 #include <string>
 #include "gtest/gtest.h"
 
+#include "libsvm_runner.h"
 #include "svm/log.h"
 #include "svmlight_runner.h"
 #include "svm_basic.h"
+#include "svm_client.h"
 
 namespace {
 
@@ -62,6 +64,7 @@ protected:
     SVMLightRunner second_svmlr;
     SVMConfiguration svm_config;
     SVMConfiguration second_svm_config;
+    SVMClient *svm_client;
 
     arma::mat learing_data_01;
     arma::vec learing_target_01;
@@ -213,6 +216,26 @@ TEST_F(SVMLightRunnerTest, processRequest_with_sigmoid_kernel) {
 
     for (int i = 0; i < 4; ++i) {
         ASSERT_DOUBLE_EQ(svm_config.result[i], testing_target_02[i]);
+    }
+}
+
+TEST_F(SVMLightRunnerTest, integration_svmclient_predict) {
+    std::cout << "Testing learing..." << std::endl << std::flush;
+    svm_config.data = learing_data_01;
+    svm_config.target = learing_target_01;
+    svm_config.setPrediction(false);
+    svmlr.processRequest(svm_config);
+
+    std::cout << "Testing SVMClient prediction..." << std::endl << std::flush;
+    svm_config.data = testing_data_01;
+    svm_config.setPrediction(true);
+    svm_client = new SVMClient(&svm_config);
+    svm_client->predict(testing_data_01);
+    SVMConfiguration client_config = svm_client->getConfiguration();
+    
+    for (int i = 0; i < 4; ++i) {
+        ASSERT_DOUBLE_EQ(
+            client_config.result[i], testing_target_01[i]);
     }
 }
 

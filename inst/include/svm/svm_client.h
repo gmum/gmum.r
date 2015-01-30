@@ -35,6 +35,9 @@ public:
   void setBias(double);
   // void setAlpha(double*);
 
+    // additional setters
+    void setConfiguration(SVMConfiguration *);
+
 	// data getters
 	arma::mat getX();
 	arma::vec getY();
@@ -54,13 +57,6 @@ public:
 	bool isShrinking();
 	bool isProbability();
 
-	// runners
-	void run();
-    void predict( arma::mat );
-    /// Process a request of prediction with a SVMHandlers implementations
-	void requestPredict( arma::mat );
-	void train();
-
 	// model getters
  // double** getSV(); // double**, std::vector, arma:mat ?
   int get_number_sv();
@@ -69,6 +65,18 @@ public:
 	double getBias();
 	arma::vec getW();
   arma::mat getSV();
+
+    // additional getters
+    SVMConfiguration getConfiguration();
+
+	// runners
+	void run();
+    // Prediction independent of SVMHandlers
+    void predict( arma::mat );
+    /// Process a request of prediction with a SVMHandlers implementations
+	void requestPredict( arma::mat );
+	void train();
+
 };
 
 #endif
