@@ -197,7 +197,9 @@ void SVMClient::predict( arma::mat problem ) {
         return;
     }
 
+    // Just like in requestPredict()
 	config.setData(problem);
+
     // Number of docs is a number of rows in data matrix
     std::cout << "DEBUG 1" << std::endl << std::flush;
     size_t n_docs = config.data.n_rows;
@@ -205,7 +207,7 @@ void SVMClient::predict( arma::mat problem ) {
     std::cout << "DEBUG 2" << std::endl << std::flush;
     config.result = arma::randu<arma::vec>(n_docs);
     std::cout << "DEBUG 3" << std::endl << std::flush;
-    std::cout << "labels: " << config.label[0] << config.label[1] << std::endl;
+    //std::cout << "labels: " << config.label[0] << config.label[1] << std::endl;
 
     // Linear kernel
     for (int i=0; i < n_docs; ++i) {
@@ -235,9 +237,9 @@ void SVMClient::predict( arma::mat problem ) {
 
         // Store user-defined label
         if (doc_result < 0) {
-            config.result[i] = config.label_negative;
+            config.result[i] = config.neg_target;
         } else if (doc_result > 0) {
-            config.result[i] = config.label_positive;
+            config.result[i] = config.pos_target;
         } else {
             config.result[i] = 0;
         }

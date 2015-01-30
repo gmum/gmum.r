@@ -23,11 +23,17 @@ class SVMLightRunnerTest: public ::testing::Test {
 protected:
 
     SVMLightRunnerTest() {
+        std::cout << "Creating SVMLightRunner..." << std::endl << std::flush;
         svmlr = SVMLightRunner();
+        std::cout << "Creating second SVMLightRunner..." << std::endl << std::flush;
         second_svmlr = SVMLightRunner();
+        std::cout << "Creating SVMConfiguration..." << std::endl << std::flush;
         svm_config = SVMConfiguration();
+        std::cout << "Setting logger..." << std::endl << std::flush;
         svm_config.log.verbosity = log_level;
+        std::cout << "Creating second SVMConfiguration..." << std::endl << std::flush;
         second_svm_config = SVMConfiguration();
+        std::cout << "Setting logger..." << std::endl << std::flush;
         second_svm_config.log.verbosity = log_level;
 
         learing_data_01
@@ -48,6 +54,8 @@ protected:
         testing_target_01 << -1 << -1 << 1 << 1;
 
         testing_target_02 << 2 << 2 << 4 << 4;
+
+        std::cout << "Starting test..." << std::endl << std::flush;
     }
 
     virtual ~SVMLightRunnerTest() {}
@@ -64,7 +72,6 @@ protected:
     SVMLightRunner second_svmlr;
     SVMConfiguration svm_config;
     SVMConfiguration second_svm_config;
-    SVMClient *svm_client;
 
     arma::mat learing_data_01;
     arma::vec learing_target_01;
@@ -229,7 +236,7 @@ TEST_F(SVMLightRunnerTest, integration_svmclient_predict) {
     std::cout << "Testing SVMClient prediction..." << std::endl << std::flush;
     svm_config.data = testing_data_01;
     svm_config.setPrediction(true);
-    svm_client = new SVMClient(&svm_config);
+    SVMClient *svm_client = new SVMClient(&svm_config);
     svm_client->predict(testing_data_01);
     SVMConfiguration client_config = svm_client->getConfiguration();
     

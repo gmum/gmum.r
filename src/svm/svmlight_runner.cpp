@@ -71,9 +71,9 @@ void SVMLightRunner::resultsToLabels(SVMConfiguration &config) {
 
         // Store user-defined label
         if (doc_result < 0) {
-            config.result[i] = config.label_negative;
+            config.result[i] = config.neg_target;
         } else if (doc_result > 0) {
-            config.result[i] = config.label_positive;
+            config.result[i] = config.pos_target;
         } else {
             config.result[i] = 0;
         }
@@ -937,21 +937,21 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     std::string line_string = "";
 
     std::ostringstream ss;
-    int target_value = config.target[line_num];
+    double target_value = config.target[line_num];
     // Handle user-defined labels
-    if (target_value == config.label_negative) {
+    if (target_value == config.neg_target) {
         ss << -1;
-    } else if (target_value == config.label_positive) {
+    } else if (target_value == config.pos_target) {
         ss << 1;
     } else if (!target_value) {
         ss << 0;
     } else {
         // Init user-defined labels
-        if (!config.label_negative) {
-            config.label_negative = target_value;
+        if (!config.neg_target) {
+            config.neg_target = target_value;
             ss << -1;
-        } else if (!config.label_positive) {
-            config.label_positive = target_value;
+        } else if (!config.pos_target) {
+            config.pos_target = target_value;
             ss << 1;
         }
     }
