@@ -56,7 +56,9 @@ public:
 
 	// runners
 	void run();
-	void predict( arma::mat );
+    void predict( arma::mat );
+    /// Process a request of prediction with a SVMHandlers implementations
+	void requestPredict( arma::mat );
 	void train();
 
 	// model getters
