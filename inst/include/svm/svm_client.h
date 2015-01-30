@@ -8,7 +8,7 @@
 class SVMClient {
 private:
 	std::vector<SVMHandler*> SVMHandlers;
-	SVMConfiguration config;
+	SVMConfiguration &config;
 	void createFlow();
 
 public:
