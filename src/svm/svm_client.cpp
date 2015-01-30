@@ -6,10 +6,7 @@
 #include "svm_utils.h"
 
 // Constructor
-SVMClient::SVMClient(SVMConfiguration *config) {
-	SVMConfiguration current_config = *config;
-	this->config = current_config;
-}
+SVMClient::SVMClient(SVMConfiguration *config): config(*config) {}
 
 // Setters
 void SVMClient::setX( arma::mat x ){
