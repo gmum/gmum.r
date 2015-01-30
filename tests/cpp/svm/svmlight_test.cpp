@@ -36,9 +36,9 @@ protected:
         std::cout << "Setting logger..." << std::endl << std::flush;
         second_svm_config.log.verbosity = log_level;
 
-        learing_data_01 = helper_learing_data_01();
-        learing_target_01 = helper_learing_target_01();
-        learing_target_02 = helper_learing_target_02();
+        learning_data_01 = helper_learning_data_01();
+        learning_target_01 = helper_learning_target_01();
+        learning_target_02 = helper_learning_target_02();
 
         testing_data_01 = helper_testing_data_01();
         testing_target_01 = helper_testing_target_01();
@@ -62,9 +62,9 @@ protected:
     SVMConfiguration svm_config;
     SVMConfiguration second_svm_config;
 
-    arma::mat learing_data_01;
-    arma::vec learing_target_01;
-    arma::vec learing_target_02;
+    arma::mat learning_data_01;
+    arma::vec learning_target_01;
+    arma::vec learning_target_02;
     arma::mat testing_data_01;
     arma::vec testing_target_01;
     arma::vec testing_target_02;
@@ -77,9 +77,9 @@ protected:
 
 TEST_F(SVMLightRunnerTest, processRequest_learning) {
     std::cout << "SVMConfiguration data..." << std::endl;
-    svm_config.data = learing_data_01;
+    svm_config.data = learning_data_01;
     std::cout << "SVMConfiguration target..." << std::endl;
-    svm_config.target = learing_target_01;
+    svm_config.target = learning_target_01;
     std::cout << "SVMConfiguration setPrediction..." << std::endl;
     svm_config.setPrediction(false);
     std::cout << "Processing request." << std::endl;
@@ -107,9 +107,9 @@ TEST_F(SVMLightRunnerTest, processRequest_learning) {
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_classification) {
-    std::cout << "Testing learing..." << std::endl << std::flush;
-    svm_config.data = learing_data_01;
-    svm_config.target = learing_target_01;
+    std::cout << "Testing learning..." << std::endl << std::flush;
+    svm_config.data = learning_data_01;
+    svm_config.target = learning_target_01;
     svm_config.setPrediction(false);
     svmlr.processRequest(svm_config);
 
@@ -145,9 +145,9 @@ TEST_F(SVMLightRunnerTest, test_globals_cleaning) {
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_classification_tagged_classes) {
-    std::cout << "Testing learing..." << std::endl << std::flush;
-    svm_config.data = learing_data_01;
-    svm_config.target = learing_target_02;
+    std::cout << "Testing learning..." << std::endl << std::flush;
+    svm_config.data = learning_data_01;
+    svm_config.target = learning_target_02;
     svm_config.setPrediction(false);
     svmlr.processRequest(svm_config);
 
@@ -162,10 +162,10 @@ TEST_F(SVMLightRunnerTest, processRequest_classification_tagged_classes) {
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_with_poly_kernel) {
-    std::cout << "Testing learing..." << std::endl << std::flush;
+    std::cout << "Testing learning..." << std::endl << std::flush;
     svm_config.setKernel(std::string("poly"));
-    svm_config.data = learing_data_01;
-    svm_config.target = learing_target_02;
+    svm_config.data = learning_data_01;
+    svm_config.target = learning_target_02;
     svm_config.setPrediction(false);
     svmlr.processRequest(svm_config);
 
@@ -180,10 +180,10 @@ TEST_F(SVMLightRunnerTest, processRequest_with_poly_kernel) {
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_with_rbf_kernel) {
-    std::cout << "Testing learing..." << std::endl << std::flush;
+    std::cout << "Testing learning..." << std::endl << std::flush;
     svm_config.setKernel(std::string("rbf"));
-    svm_config.data = learing_data_01;
-    svm_config.target = learing_target_02;
+    svm_config.data = learning_data_01;
+    svm_config.target = learning_target_02;
     svm_config.setPrediction(false);
     svmlr.processRequest(svm_config);
 
@@ -198,10 +198,10 @@ TEST_F(SVMLightRunnerTest, processRequest_with_rbf_kernel) {
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_with_sigmoid_kernel) {
-    std::cout << "Testing learing..." << std::endl << std::flush;
+    std::cout << "Testing learning..." << std::endl << std::flush;
     svm_config.setKernel(std::string("sigmoid"));
-    svm_config.data = learing_data_01;
-    svm_config.target = learing_target_02;
+    svm_config.data = learning_data_01;
+    svm_config.target = learning_target_02;
     svm_config.setPrediction(false);
     svmlr.processRequest(svm_config);
 
@@ -216,9 +216,9 @@ TEST_F(SVMLightRunnerTest, processRequest_with_sigmoid_kernel) {
 }
 
 TEST_F(SVMLightRunnerTest, integration_svmclient_predict) {
-    std::cout << "Testing learing..." << std::endl << std::flush;
-    svm_config.data = learing_data_01;
-    svm_config.target = learing_target_01;
+    std::cout << "Testing learning..." << std::endl << std::flush;
+    svm_config.data = learning_data_01;
+    svm_config.target = learning_target_01;
     svm_config.setPrediction(false);
     svmlr.processRequest(svm_config);
 

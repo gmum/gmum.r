@@ -4,7 +4,7 @@
 
 // Useful helpers for multiple test cases
 
-arma::mat helper_learing_data_01() {
+arma::mat helper_learning_data_01() {
     arma::mat matrix;
     matrix
         << 0.5 << 1.0 << 0.0 << 1.0 << arma::endr
@@ -15,14 +15,14 @@ arma::mat helper_learing_data_01() {
     return matrix;
 }
 
-arma::vec helper_learing_target_01() {
+arma::vec helper_learning_target_01() {
     arma::vec vector;
     vector
         << -1 << -1 << 1 << 1 << 1;
     return vector;
 }
 
-arma::vec helper_learing_target_02() {
+arma::vec helper_learning_target_02() {
     arma::vec vector;
     vector
         << 2 << 2 << 4 << 4 << 4;
