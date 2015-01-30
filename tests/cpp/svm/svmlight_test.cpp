@@ -3,7 +3,7 @@
 #include <string>
 #include "gtest/gtest.h"
 
-#include "libsvm_runner.h"
+#include "svm_helpers.h"
 #include "svm/log.h"
 #include "svmlight_runner.h"
 #include "svm_basic.h"
@@ -36,24 +36,13 @@ protected:
         std::cout << "Setting logger..." << std::endl << std::flush;
         second_svm_config.log.verbosity = log_level;
 
-        learing_data_01
-            << 0.5 << 1.0 << 0.0 << 1.0 << arma::endr
-            << 0.4 << 1.1 << 0.0 << 1.0 << arma::endr
-            << 0.5 << 0.9 << 1.0 << 0.0 << arma::endr
-            << 0.5 << 1.0 << 1.0 << 0.0 << arma::endr
-            << 0.4 << 1.1 << 1.0 << 0.0 << arma::endr;
-        learing_target_01 << -1 << -1 << 1 << 1 << 1;
+        learing_data_01 = helper_learing_data_01();
+        learing_target_01 = helper_learing_target_01();
+        learing_target_02 = helper_learing_target_02();
 
-        learing_target_02 << 2 << 2 << 4 << 4 << 4;
-
-        testing_data_01
-            << 0.4 << 0.9 << 0.0 << 1.0 << arma::endr
-            << 0.5 << 0.9 << 0.0 << 1.0 << arma::endr
-            << 0.4 << 1.0 << 1.0 << 0.0 << arma::endr
-            << 0.5 << 1.0 << 1.0 << 0.0 << arma::endr;
-        testing_target_01 << -1 << -1 << 1 << 1;
-
-        testing_target_02 << 2 << 2 << 4 << 4;
+        testing_data_01 = helper_testing_data_01();
+        testing_target_01 = helper_testing_target_01();
+        testing_target_02 = helper_testing_target_02();
 
         std::cout << "Starting test..." << std::endl << std::flush;
     }
