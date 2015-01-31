@@ -201,27 +201,19 @@ void SVMClient::predict( arma::mat problem ) {
 	config.setData(problem);
 
     // Number of docs is a number of rows in data matrix
-    std::cout << "DEBUG 1" << std::endl << std::flush;
     size_t n_docs = config.data.n_rows;
 
-    std::cout << "DEBUG 2" << std::endl << std::flush;
     config.result = arma::randu<arma::vec>(n_docs);
-    std::cout << "DEBUG 3" << std::endl << std::flush;
-    //std::cout << "labels: " << config.label[0] << config.label[1] << std::endl;
 
     // Linear kernel
     for (int i=0; i < n_docs; ++i) {
         double doc_result = 0;
         // For every support vector
         for (int j=0; j < config.support_vectors.n_rows; ++j) {
-            std::cout << "DEBUG 4" << std::endl << std::flush;
             double sum_j = arma::dot(
                 config.data.row(i),
                 config.support_vectors.row(j)
             );
-            std::cout << "SV: " << config.support_vectors << std::flush;
-            std::cout << "config.l " << config.l << std::flush;
-            std::cout << "DEBUG 5" << std::endl << std::flush;
             sum_j *= config.alpha_y(j);
             doc_result += sum_j;
         }
