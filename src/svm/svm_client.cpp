@@ -190,7 +190,8 @@ void SVMClient::train() {
 void SVMClient::predict( arma::mat problem ) {
     LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".predict() Started.");
 
-    if (config.kernel_type != _LINEAR) {
+    // FIXME: Calculate TwoE prediction in this method
+    if (config.kernel_type != _LINEAR || config.preprocess == TWOE) {
         // Request prediction from handlers when not gmum.r-supported
         // NOTE: Currently LINEAR only
         requestPredict(problem);

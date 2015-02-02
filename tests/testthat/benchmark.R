@@ -31,5 +31,7 @@ print(sprintf("gmum svmlight acc: %f", acc))
 acc <- svm.accuracy(glib_epred, y)
 print(sprintf("gmum libsvm 2e acc: %f", acc))
 
+# NOTE: Accuracy 0.650073 is a bug of all negative answers (label = 2)
+
 # acc <- svm.accuracy(glight_epred, y)
 # print(sprintf("gmum svmlight 2e acc: %f", acc))

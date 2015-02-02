@@ -103,7 +103,7 @@ TEST_F(SVMLightRunnerTest, processRequest_learning) {
     // number of support vectors
     ASSERT_EQ(svm_config.l, 5);
     // threshold b
-    ASSERT_DOUBLE_EQ(svm_config.threshold_b, -0.11450359507913976);
+    ASSERT_DOUBLE_EQ(svm_config.threshold_b, 0.11450359507913976);
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_classification) {

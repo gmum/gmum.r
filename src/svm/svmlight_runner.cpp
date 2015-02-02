@@ -735,8 +735,11 @@ MODEL * SVMLightRunner::libraryReadModel(
         model->totdoc = config.target.n_rows;
         // number of support vectors plus 1 (!)
         model->sv_num = config.l + 1;
-        // threshold b
-        model->b = config.threshold_b;
+        /* Threshold b (has opposite sign than SVMClient::predict())
+         * In svm_common.c:57 in double classify_example_linear():
+         *     return(sum-model->b);
+         */
+        model->b = - config.threshold_b;
 
         LOG(
             config.log,
@@ -938,6 +941,8 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
 
     std::ostringstream ss;
     double target_value = config.target[line_num];
+
+
     // Handle user-defined labels
     if (target_value == config.neg_target) {
         ss << -1;
@@ -955,6 +960,7 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
             ss << 1;
         }
     }
+
     for (long int j = 1; j <= config.data.n_cols; ++j) {
         ss << ' ' << j << ':' << std::setprecision(8) << config.data(line_num, j-1);
     }
@@ -1034,8 +1040,9 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     //config->target.n_rows = model->totdoc;
     // number of support vectors plus 1 (!)
     config.l = model->sv_num - 1;
-    // threshold b
-    config.threshold_b = model->b;
+    // Threshold b (has opposite sign than SVMClient::predict()
+    // NOTE: see libraryReadModel()
+    config.threshold_b = - model->b;
 
     config.alpha_y = arma::randu<arma::vec>(config.l);
     config.support_vectors = arma::randu<arma::mat>(config.l, model->totwords);
