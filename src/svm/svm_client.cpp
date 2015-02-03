@@ -5,6 +5,11 @@
 #include "two_e_svm_post.h"
 #include "svm_utils.h"
 
+const std::string __file__ = "svm_client.cpp";
+const std::string __client_class__ = "SVMClient";
+const std::string __debug_prefix__ = __file__ + "." + __client_class__;
+
+
 // Constructor
 SVMClient::SVMClient(SVMConfiguration *config): config(*config) {}
 
@@ -49,6 +54,11 @@ void SVMClient::setShrinking(int sh){
 }
 void SVMClient::setProbability(int prob){
 	config.probability = prob;
+}
+
+void SVMClient::setConfiguration(SVMConfiguration *config) {
+	SVMConfiguration current_config = *config;
+	this->config = current_config;
 }
 
 // Getters
@@ -142,7 +152,7 @@ arma::vec SVMClient::getW() {
 		return config.w;
 	}
 	else {
-    LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundry is not available with non-linear kernel"));
+    LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundary is not available with non-linear kernel"));
 		return 0;
 	}
 }
@@ -157,6 +167,10 @@ int SVMClient::get_number_class() {
 
 arma::mat SVMClient::getSV(){
   return config.support_vectors;
+}
+
+SVMConfiguration SVMClient::getConfiguration() {
+    return this->config;
 }
 
 // Runners
@@ -174,6 +188,64 @@ void SVMClient::train() {
 }
 
 void SVMClient::predict( arma::mat problem ) {
+    LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".predict() Started.");
+
+    // FIXME: Calculate TwoE prediction in this method
+    if (config.kernel_type != _LINEAR || config.preprocess == TWOE) {
+        // Request prediction from handlers when not gmum.r-supported
+        // NOTE: Currently LINEAR only
+        requestPredict(problem);
+        return;
+    }
+
+    // Just like in requestPredict()
+	config.setData(problem);
+
+    // Number of docs is a number of rows in data matrix
+    size_t n_docs = config.data.n_rows;
+
+    config.result = arma::randu<arma::vec>(n_docs);
+
+    // Linear kernel
+    for (int i=0; i < n_docs; ++i) {
+        double doc_result = 0;
+        // For every support vector
+        for (int j=0; j < config.support_vectors.n_rows; ++j) {
+            double sum_j = arma::dot(
+                config.data.row(i),
+                config.support_vectors.row(j)
+            );
+            sum_j *= config.alpha_y(j);
+            doc_result += sum_j;
+        }
+        doc_result += config.threshold_b;
+        config.result[i] = doc_result;
+    }
+
+    // Convert results to userdefined labels
+    n_docs = config.result.n_rows;
+    double doc_result = 0;
+    for (int i=0; i < n_docs; ++i) {
+        doc_result = config.result[i];
+
+        // Store user-defined label
+        if (doc_result < 0) {
+            config.result[i] = config.neg_target;
+        } else if (doc_result > 0) {
+            config.result[i] = config.pos_target;
+        } else {
+            config.result[i] = 0;
+        }
+    }
+
+    LOG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".predict() Done."
+    );
+}
+
+void SVMClient::requestPredict( arma::mat problem ) {
 	config.setData(problem);
 	if ( SVMHandlers.size() > 0 ) {
 		config.setPrediction(true);

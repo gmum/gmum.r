@@ -43,47 +43,11 @@ void SVMLightRunner::processRequest(SVMConfiguration &config) {
         librarySVMLearnMain(0, argv, true, config);
 
     } else {
-        // Prediction
-        if (config.kernel_type == _LINEAR) {
-            // Our implementation
-            predict(config);
-        } else {
-            // SVMLight
-            librarySVMClassifyMain(0, argv, true, config);
-        }
+        // Predict
+        librarySVMClassifyMain(0, argv, true, config);
         // Convert sign to label
         resultsToLabels(config);
     }
-}
-
-
-void SVMLightRunner::predict(SVMConfiguration &config) {
-    LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".predict() Started.");
-    // Number of docs is a number of rows in data matrix
-    size_t n_docs = config.data.n_rows;
-    config.result = arma::randu<arma::vec>(n_docs);
-
-    // For every doc
-    for (int i=0; i < n_docs; ++i) {
-        double doc_result = 0;
-        // For every support vector
-        for (int j=0; j < config.l; ++j) {
-            double sum_j = arma::dot(
-                config.data.row(i),
-                config.support_vectors.row(j)
-            );
-            sum_j *= config.alpha_y(j);
-            doc_result += sum_j;
-        }
-        doc_result -= config.threshold_b;
-        config.result[i] = doc_result;
-    }
-
-    LOG(
-        config.log,
-        LogLevel::DEBUG,
-        __debug_prefix__ + ".predict() Done."
-    );
 }
 
 
@@ -107,9 +71,9 @@ void SVMLightRunner::resultsToLabels(SVMConfiguration &config) {
 
         // Store user-defined label
         if (doc_result < 0) {
-            config.result[i] = config.label_negative;
+            config.result[i] = config.neg_target;
         } else if (doc_result > 0) {
-            config.result[i] = config.label_positive;
+            config.result[i] = config.pos_target;
         } else {
             config.result[i] = 0;
         }
@@ -771,8 +735,11 @@ MODEL * SVMLightRunner::libraryReadModel(
         model->totdoc = config.target.n_rows;
         // number of support vectors plus 1 (!)
         model->sv_num = config.l + 1;
-        // threshold b
-        model->b = config.threshold_b;
+        /* Threshold b (has opposite sign than SVMClient::predict())
+         * In svm_common.c:57 in double classify_example_linear():
+         *     return(sum-model->b);
+         */
+        model->b = - config.threshold_b;
 
         LOG(
             config.log,
@@ -973,24 +940,27 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     std::string line_string = "";
 
     std::ostringstream ss;
-    int target_value = config.target[line_num];
+    double target_value = config.target[line_num];
+
+
     // Handle user-defined labels
-    if (target_value == config.label_negative) {
+    if (target_value == config.neg_target) {
         ss << -1;
-    } else if (target_value == config.label_positive) {
+    } else if (target_value == config.pos_target) {
         ss << 1;
     } else if (!target_value) {
         ss << 0;
     } else {
         // Init user-defined labels
-        if (!config.label_negative) {
-            config.label_negative = target_value;
+        if (!config.neg_target) {
+            config.neg_target = target_value;
             ss << -1;
-        } else if (!config.label_positive) {
-            config.label_positive = target_value;
+        } else if (!config.pos_target) {
+            config.pos_target = target_value;
             ss << 1;
         }
     }
+
     for (long int j = 1; j <= config.data.n_cols; ++j) {
         ss << ' ' << j << ':' << std::setprecision(8) << config.data(line_num, j-1);
     }
@@ -1070,8 +1040,9 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     //config->target.n_rows = model->totdoc;
     // number of support vectors plus 1 (!)
     config.l = model->sv_num - 1;
-    // threshold b
-    config.threshold_b = model->b;
+    // Threshold b (has opposite sign than SVMClient::predict()
+    // NOTE: see libraryReadModel()
+    config.threshold_b = - model->b;
 
     config.alpha_y = arma::randu<arma::vec>(config.l);
     config.support_vectors = arma::randu<arma::mat>(config.l, model->totwords);

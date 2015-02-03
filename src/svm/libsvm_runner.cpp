@@ -112,6 +112,8 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 		memcpy(config.label, model->label, *nclasses * sizeof(int));
 		memcpy(config.nSV, model->nSV, *nclasses * sizeof(int));
 	}
+    config.neg_target = model->label[1];
+    config.pos_target = model->label[0];
 
 	svm_destroy_param(param,config.log);
 	svm_free_and_destroy_model(&model,config.log);
