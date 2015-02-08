@@ -27,17 +27,20 @@ private:
     double m_kill_threshold;
     std::vector<bool> m_inv_set;
     std::vector<arma::mat> m_inv;
-    CecConfiguration m_config;
+    CecConfiguration* m_config;
 
     gmum::Cluster * create_cluster(const gmum::ClusterParams &params,
                                                     int i);
     void find_best_cec();
     void init(boost::shared_ptr<gmum::Algorithm> algorithm, std::vector<unsigned int>& assignment);
+    void clear_clusters();
+    
 public:
+    ~CecModel();
     CecModel(CecConfiguration* cfg);
-    CecModel(const CecModel& other);
-    CecModel& operator=(const CecModel& other);
-
+    CecModel(CecModel& other);
+    CecModel& operator=(CecModel& other);
+    
     void loop();
     void single_loop();
     double entropy();

@@ -27,6 +27,8 @@ public:
     	throw "Not implemented";
     	return 0.;
     }
+    
+    virtual ClusterCustomFunction* clone(); 
 };
 
 }

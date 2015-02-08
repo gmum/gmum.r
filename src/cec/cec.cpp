@@ -7,9 +7,22 @@
 
 using namespace gmum;
 
+void CecModel::clear_clusters()
+{
+    if(m_clusters.empty())
+    {
+        return;
+    }
+    for(std::vector<Cluster*>::iterator it = m_clusters.begin(); it != m_clusters.end(); ++it)
+    {
+        delete *it;
+    }
+    m_clusters.clear();
+}
+
 Cluster* CecModel::create_cluster(const ClusterParams &params,
                                                     int i) {
-    Cluster * cluster;
+    Cluster * cluster = 0;
     switch (params.type) {
     case kno_type: // TODO: handle knoType parameter
     case kmix: // TODO: handle kmix parameter
@@ -45,15 +58,21 @@ Cluster* CecModel::create_cluster(const ClusterParams &params,
     }
     return cluster;
 }
+
+CecModel::~CecModel()
+{
+    clear_clusters();
+}
+
 CecModel::CecModel(CecConfiguration *cfg) :
-    m_config(*cfg) {
+    m_config(cfg) {
     find_best_cec();
 }
-CecModel::CecModel(const CecModel &other) {
+CecModel::CecModel(CecModel &other) : m_config(0) {
     *this = other;
 }
 
-CecModel& CecModel::operator=(const CecModel& other) {
+CecModel& CecModel::operator=(CecModel& other) {
     if(this != &other)
     {
             m_result = other.m_result;
@@ -64,18 +83,22 @@ CecModel& CecModel::operator=(const CecModel& other) {
             m_inv_set = other.m_inv_set;
             m_inv = other.m_inv;
             m_config = other.m_config;
-            m_clusters = other.m_clusters;
+            clear_clusters();
+            for(std::vector<Cluster*>::iterator it = other.m_clusters.begin(); it != other.m_clusters.end(); ++it)
+            {
+                m_clusters.push_back((*it)->clone());
+            }
     }
     return *this;
 }
 
 void CecModel::init(boost::shared_ptr<Algorithm> algorithm, std::vector<unsigned int>& assignment) {
-    Params params = m_config.get_params();
+    Params params = m_config->get_params();
     m_assignment = assignment;
-    m_points = *params.dataset;
+    m_points = *(params.dataset);
     m_algorithm = algorithm;
     m_kill_threshold = params.kill_threshold;
-    m_clusters.clear();
+    clear_clusters();
     m_clusters.reserve(params.nclusters);
 
     int i = 0;
@@ -87,7 +110,7 @@ void CecModel::init(boost::shared_ptr<Algorithm> algorithm, std::vector<unsigned
         }
     } else {
     	//TODO: why pointer?
-        ClusterParams *cluster;
+        ClusterParams *cluster = 0;
         switch (params.cluster_type) {
         case kfsphere: {
             ClusterFsphereParams *proxy = new ClusterFsphereParams();
@@ -126,26 +149,26 @@ void CecModel::init(boost::shared_ptr<Algorithm> algorithm, std::vector<unsigned
 void CecModel::find_best_cec() {
     std::vector<unsigned int> assignment;
     boost::shared_ptr<Hartigan> hartigan(
-                new Hartigan(this->m_config.get_params().log_nclusters,
-                             this->m_config.get_params().log_energy));
+                new Hartigan(this->m_config->get_params().log_nclusters,
+                             this->m_config->get_params().log_energy));
 
     Assignment *assignment_type = NULL;
-    switch (this->m_config.get_params().assignment_type) {
+    switch (this->m_config->get_params().assignment_type) {
     case krandom:
-        assignment_type = new RandomAssignment(*(m_config.get_params().dataset),
-                                               m_config.get_params().nclusters);
+        assignment_type = new RandomAssignment(*(m_config->get_params().dataset),
+                                               m_config->get_params().nclusters);
         break;
     case kkmeanspp:
-        assignment_type = new KmeansppAssignment(*(m_config.get_params().dataset),
-                                                 m_config.get_params().nclusters);
+        assignment_type = new KmeansppAssignment(*(m_config->get_params().dataset),
+                                                 m_config->get_params().nclusters);
         break;
     case kcentroids:
-        assignment_type = new CentroidsAssignment(*(m_config.get_params().dataset),
-                                                  m_config.get_params().centroids);
+        assignment_type = new CentroidsAssignment(*(m_config->get_params().dataset),
+                                                  m_config->get_params().centroids);
         break;
     }
 
-    assignment.resize(m_config.get_params().dataset->n_rows);
+    assignment.resize(m_config->get_params().dataset->n_rows);
     (*assignment_type)(assignment);
 
     init(hartigan, assignment);
@@ -153,7 +176,7 @@ void CecModel::find_best_cec() {
     try {
         loop();
         CecModel best_cec = *this;
-        gmum::Params params = m_config.get_params();
+        gmum::Params params = m_config->get_params();
         for (unsigned int i = 1; i < params.nstart; ++i) {
             (*assignment_type)(assignment);
             init(hartigan, assignment);
@@ -162,11 +185,10 @@ void CecModel::find_best_cec() {
             if (m_result.min_energy < best_cec.get_result().min_energy) {
                 best_cec = *this;
             }
-
-
         }
         *this = best_cec;
     } catch (std::exception &e) {
+        delete assignment_type;
 #ifdef RCPP_INTERFACE
         Rcpp::stop(std::string("exception ") + e.what() + " caught in CEC_new");
 #else
@@ -174,6 +196,7 @@ void CecModel::find_best_cec() {
         exit(1);
 #endif
     }
+    delete assignment_type;
 }
 
 void CecModel::loop() {

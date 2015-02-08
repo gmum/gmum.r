@@ -28,6 +28,11 @@ void ClusterCustomFunction::calculate_entropy() {
 #endif
 }
 
+ClusterCustomFunction* ClusterCustomFunction::clone()
+{
+    return new ClusterCustomFunction(m_count, m_mean, m_cov_mat, m_function_name);
+}
+
 }
 
 
