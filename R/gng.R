@@ -872,10 +872,11 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
       if(length(node) != 0){
         
         igraph_index = indexesGNGToIGraph[i]
-        #print(paste(igraph_index, node$neighbours))
+        print(paste(object$.getLastNodeIndex(), length(indexesGNGToIGraph), object$isRunning()))
+        print(paste(igraph_index, node$neighbours))
         adjlist[[igraph_index]] <- sapply(node$neighbours, function(x){ indexesGNGToIGraph[x] })
       } else{
-        #print("Empty node")
+        print("Empty node")
       }
     }
     
@@ -901,7 +902,7 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     
     # Add distance information
     dists <- apply(get.edges(g, E(g)), 1, function(x){ 
-      object$nodeDistance(x[indexesIGraphToGNG[x[1]]], x[indexesIGraphToGNG[x[2]]])
+      object$nodeDistance(indexesIGraphToGNG[x[1]], indexesIGraphToGNG[x[2]])
     })
     E(g)$dists = dists
     

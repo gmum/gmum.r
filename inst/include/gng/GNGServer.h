@@ -96,12 +96,16 @@ public:
 		return gngAlgorithm->isRunning();
 	}
 
-	double nodeDistance(unsigned int id1, unsigned int id2) const{
+	double nodeDistance(int id1, int id2) const{
 		if(gngAlgorithm->isRunning()){
-			cerr<<"Please pause algorithm before calling nodeDistance function\n";
+			cerr<<"nodeDistance: Please pause algorithm before calling nodeDistance function\n";
 			return -1.0;
 		}
-		return gngGraph->get_dist(id1, id2);
+		if(id1<=0 || id2<=0){
+			cerr<<"nodeDistance: Indexing starts from 1\n";
+			return -1.0;
+		}
+		return gngGraph->get_dist(id1-1, id2-1);
 	}
 
 	static GNGServer * constructTestServer(GNGConfiguration config) {
