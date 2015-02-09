@@ -469,9 +469,7 @@ double GNGAlgorithm::calculateAccumulatedError() {
 }
 
 void GNGAlgorithm::testAgeCorrectness() {
-
 	int maximum_index = m_g.get_maximum_index();
-
 	REP(i, maximum_index + 1)
 		if (m_g.existsNode(i) && m_g[i].edgesCount)
 			FOREACH(edg, m_g[i])
@@ -479,7 +477,6 @@ void GNGAlgorithm::testAgeCorrectness() {
 					//cout << "XXXXXXXXXXXXXXXXX\n";
 					//cout << (m_g[i]) << endl;
 				}
-
 }
 
 void GNGAlgorithm::resizeUniformGrid() {
@@ -503,7 +500,6 @@ void GNGAlgorithm::resizeUniformGrid() {
 }
 
 GNGNode ** GNGAlgorithm::LargestErrorNodes() {
-
 	DBG(m_logger, 2, "LargestErrorNodes::started procedure");
 
 	GNGNode ** largest = new GNGNode*[2];
@@ -551,7 +547,6 @@ GNGNode ** GNGAlgorithm::LargestErrorNodes() {
 	}
 
 	return largest;
-
 }
 
 void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that computes)
@@ -592,7 +587,7 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 	int accumulated_error_count = 0, accumulated_error_count_last = 0;
 
 	DBG(m_logger, 3, "GNGAlgorithm::init successful, starting the loop"); DBG_2(m_logger, 1, "GNGAlgorithm::gng_status="+to_string(this->m_gng_status));
-	while (this->m_gng_status != GNG_TERMINATED) {
+	while (true) {
 
 		while (this->m_gng_status != GNG_RUNNING) {
 			DBG(m_logger, 1,
@@ -602,6 +597,8 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 				break;
 			this->status_change_condition.wait(this->status_change_mutex);
 		}
+		if (this->m_gng_status == GNG_TERMINATED)
+			break;
 
 		for (s = 0; s < m_lambda; ++s) { //global counter!!
 

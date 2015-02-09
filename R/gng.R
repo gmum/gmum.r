@@ -776,6 +776,16 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   
   pause.gng <<- function(object){
     object$pause()
+    n = 0.0
+    sleep = 0.1
+    while(object$isRunning()){
+        Sys.sleep(sleep)  
+        n = n + 1
+        if(n > 2/sleep){
+            print("Warning: GNG has not paused! Check status with gng$isRunning(). Something is wrong.")
+            return()
+        }
+    }
   }
   
   terminate.gng <<- function(object){
@@ -841,7 +851,9 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     #Prepare index map. Rarely there is a difference in indexing
     #due to a hole in memory representation of GNG graph (i.e.
     #indexing in gng can be non-continuous)
-    indexesGNGToIGraph <- 1:object$.getLastNodeIndex()
+    
+    # Warning: This is a hack. If there is a bug look for it here
+    indexesGNGToIGraph <- 1:(object$.getLastNodeIndex()+10) 
     indexesIGraphToGNG <- 1:object$getNumberNodes()
     
     if(object$.getLastNodeIndex() != object$getNumberNodes()){
@@ -860,11 +872,17 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     for(i in 1:object$.getLastNodeIndex()){
       node <- node(object, i)
       if(length(node) != 0){
+        
         igraph_index = indexesGNGToIGraph[i]
+        #print(paste(object$.getLastNodeIndex(), length(indexesGNGToIGraph), object$isRunning()))
+        #print(paste(igraph_index, node$neighbours))
         adjlist[[igraph_index]] <- sapply(node$neighbours, function(x){ indexesGNGToIGraph[x] })
-      } 
+      } else{
+        #print("Empty node")
+      }
     }
     
+    print("Creating the graph")
     
     g <- graph.adjlist(adjlist, mode = "all")
     for(i in 1:object$.getLastNodeIndex()){
@@ -886,7 +904,7 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     
     # Add distance information
     dists <- apply(get.edges(g, E(g)), 1, function(x){ 
-      object$nodeDistance(x[indexesIGraphToGNG[x[1]]], x[indexesIGraphToGNG[x[2]]])
+      object$nodeDistance(indexesIGraphToGNG[x[1]], indexesIGraphToGNG[x[2]])
     })
     E(g)$dists = dists
     
@@ -906,7 +924,25 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   setMethod("predict" ,
             "Rcpp_GNGServer",
             function(object, x){
-              object$predict(x)
+                if( is.vector(x)){
+                    object$predict(x)
+                }else{
+                  if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
+                    gmum.error(ERROR_BAD_PARAMS, "Wrong target class, please provide data.frame, matrix or numeric vector")
+                  }
+                  
+                  if (!is(x, "matrix")) {
+                    x <- data.matrix(x)
+                  }
+                  
+                  y <- rep(NA, nrow(x))
+                  
+                  for(i in 1:nrow(x)){
+                    y[i] <- object$predict(x[i,])
+                  }
+                  
+                  y
+                }
             })
   
   
