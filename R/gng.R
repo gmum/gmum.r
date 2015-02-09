@@ -906,7 +906,25 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   setMethod("predict" ,
             "Rcpp_GNGServer",
             function(object, x){
-              object$predict(x)
+                if( is.vector(x)){
+                    object$predict(x)
+                }else{
+                  if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
+                    gmum.error(ERROR_BAD_PARAMS, "Wrong target class, please provide data.frame, matrix or numeric vector")
+                  }
+                  
+                  if (!is(x, "matrix")) {
+                    x <- data.matrix(x)
+                  }
+                  
+                  y <- rep(NA, nrow(x))
+                  
+                  for(i in 1:nrow(x)){
+                    y[i] <- object$predict(x[i,])
+                  }
+                  
+                  y
+                }
             })
   
   
