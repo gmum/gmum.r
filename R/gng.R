@@ -882,7 +882,7 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
       }
     }
     
-    print("Creating the graph")
+    #print("Creating the graph")
     
     g <- graph.adjlist(adjlist, mode = "all")
     for(i in 1:object$.getLastNodeIndex()){
