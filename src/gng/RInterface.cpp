@@ -56,6 +56,7 @@ RCPP_MODULE(gng_module){
 			 .constructor<GNGConfiguration*>()
 			 .constructor<std::string>()
 			.method("save", &GNGServer::save)
+			.method("isRunning", &GNGServer::isRunning)
 			.method("run", &GNGServer::run)
 			.method("getCurrentIteration", &GNGServer::getCurrentIteration)
 			.method("pause", &GNGServer::pause)
