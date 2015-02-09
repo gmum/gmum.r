@@ -860,11 +860,16 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     for(i in 1:object$.getLastNodeIndex()){
       node <- node(object, i)
       if(length(node) != 0){
+        
         igraph_index = indexesGNGToIGraph[i]
+        print(paste(igraph_index, node$neighbours))
         adjlist[[igraph_index]] <- sapply(node$neighbours, function(x){ indexesGNGToIGraph[x] })
-      } 
+      } else{
+        print("Empty node")
+      }
     }
     
+    print("Creating the graph")
     
     g <- graph.adjlist(adjlist, mode = "all")
     for(i in 1:object$.getLastNodeIndex()){
