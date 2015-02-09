@@ -776,6 +776,16 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   
   pause.gng <<- function(object){
     object$pause()
+    n = 0.0
+    sleep = 0.1
+    while(object$isRunning()){
+        Sys.sleep(sleep)  
+        n = n + 1
+        if(n > 2/sleep){
+            print("Warning: GNG has not paused! Check status with gng$isRunning(). Something is wrong.")
+            return()
+        }
+    }
   }
   
   terminate.gng <<- function(object){
@@ -862,10 +872,10 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
       if(length(node) != 0){
         
         igraph_index = indexesGNGToIGraph[i]
-        print(paste(igraph_index, node$neighbours))
+        #print(paste(igraph_index, node$neighbours))
         adjlist[[igraph_index]] <- sapply(node$neighbours, function(x){ indexesGNGToIGraph[x] })
       } else{
-        print("Empty node")
+        #print("Empty node")
       }
     }
     

@@ -89,6 +89,13 @@ public:
 		return current_configuration;
 	}
 
+	bool isRunning() const{
+		if(!gngAlgorithm.get()){
+			return false;
+		}
+		return gngAlgorithm->isRunning();
+	}
+
 	double nodeDistance(unsigned int id1, unsigned int id2) const{
 		if(gngAlgorithm->isRunning()){
 			cerr<<"Please pause algorithm before calling nodeDistance function\n";
