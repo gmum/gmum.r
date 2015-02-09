@@ -159,27 +159,27 @@ evalqOnLoad({
     y <- NULL
     
     if (is(data, "data.frame")) {
-      y = data.matrix( data[, labels] )
+      y <- data.matrix( data[, labels] )
       
       # I'm pretty sure this should bo done differently, and equally so I can't find how
       if (formula[3] == ".()") {
-        x = data.matrix( data[,names(data) != labels]  )
+        x <- data.matrix( data[,names(data) != labels]  )
       }
       else {
         columns = all.vars(update(formula, 0~.))
-        x = data.matrix( data[, columns] )
+        x <- data.matrix( data[, columns] )
       } 
     }
     else if (is(data, "matrix")) {
-      y = data[, labels]
+      y <- data[, labels]
       
       # I'm pretty sure this should bo done differently, and equally so I can't find how
       if (formula[3] == ".()") {
-        x = data[, names(data) != labels]
+        x <- data[, names(data) != labels]
       }
       else {
         columns = all.vars(update(formula, 0~.))
-        x = data[, columns]
+        x <- data[, columns]
       } 
     }
     else {
