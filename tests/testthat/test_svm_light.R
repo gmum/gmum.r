@@ -25,7 +25,7 @@ test_that('accuracy is calculated', {
   
   data(svm_breast_cancer_dataset)
   ds <- svm.breastcancer.dataset
-  formula <- V1 ~ .
+  formula <- X1 ~ .
   svm <- SVM(formula, ds, lib="svmlight", kernel="linear", C=100);
   
   x <- svm$getX()

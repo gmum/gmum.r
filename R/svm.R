@@ -43,7 +43,7 @@ SVM <- NULL
 #' @docType methods
 #' 
 #' @aliases test
-predict.svm <- NULL
+predict.svm.gmum <- NULL
 
 #' @title print
 #' 
@@ -159,27 +159,27 @@ evalqOnLoad({
     y <- NULL
     
     if (is(data, "data.frame")) {
-      y = data.matrix( data[, labels] )
+      y <- data.matrix( data[, labels] )
       
       # I'm pretty sure this should bo done differently, and equally so I can't find how
       if (formula[3] == ".()") {
-        x = data.matrix( data[,names(data) != labels]  )
+        x <- data.matrix( data[,names(data) != labels]  )
       }
       else {
         columns = all.vars(update(formula, 0~.))
-        x = data.matrix( data[, columns] )
+        x <- data.matrix( data[, columns] )
       } 
     }
     else if (is(data, "matrix")) {
-      y = data[, labels]
+      y <- data[, labels]
       
       # I'm pretty sure this should bo done differently, and equally so I can't find how
       if (formula[3] == ".()") {
-        x = data[, names(data) != labels]
+        x <- data[, names(data) != labels]
       }
       else {
         columns = all.vars(update(formula, 0~.))
-        x = data[, columns]
+        x <- data[, columns]
       } 
     }
     else {
@@ -315,7 +315,7 @@ evalqOnLoad({
     }
   }
   
-  predict.svm <<- function(object, x) {
+  predict.svm.gmum <<- function(object, x) {
     if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
       stop("Wrong target class, please provide data.frame, matrix or numeric vector")
     }
@@ -329,7 +329,7 @@ evalqOnLoad({
   }
 
   setMethod("print", "Rcpp_SVMClient", print.svm)
-  setMethod("predict", signature("Rcpp_SVMClient"), predict.svm)
+  setMethod("predict", signature("Rcpp_SVMClient"), predict.svm.gmum)
   setMethod("plot", "Rcpp_SVMClient",  plot.svm)
   setMethod("summary", "Rcpp_SVMClient", summary.svm)
   setMethod("show", "Rcpp_SVMClient", summary.svm)
