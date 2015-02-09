@@ -851,7 +851,9 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     #Prepare index map. Rarely there is a difference in indexing
     #due to a hole in memory representation of GNG graph (i.e.
     #indexing in gng can be non-continuous)
-    indexesGNGToIGraph <- 1:object$.getLastNodeIndex()
+    
+    # Warning: This is a hack. If there is a bug look for it here
+    indexesGNGToIGraph <- 1:(object$.getLastNodeIndex()+10) 
     indexesIGraphToGNG <- 1:object$getNumberNodes()
     
     if(object$.getLastNodeIndex() != object$getNumberNodes()){
@@ -872,11 +874,11 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
       if(length(node) != 0){
         
         igraph_index = indexesGNGToIGraph[i]
-        print(paste(object$.getLastNodeIndex(), length(indexesGNGToIGraph), object$isRunning()))
-        print(paste(igraph_index, node$neighbours))
+        #print(paste(object$.getLastNodeIndex(), length(indexesGNGToIGraph), object$isRunning()))
+        #print(paste(igraph_index, node$neighbours))
         adjlist[[igraph_index]] <- sapply(node$neighbours, function(x){ indexesGNGToIGraph[x] })
       } else{
-        print("Empty node")
+        #print("Empty node")
       }
     }
     
