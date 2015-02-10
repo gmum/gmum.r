@@ -20,6 +20,7 @@ min_npoints = 100
 max_npoints = 5000
 npoints_step = 50
 cran_max_iters = 200
+averaging = 5
 
 gmum_cran_method_type_map = matrix(ncol=2, byrow=TRUE, 
                                    data=c('standard', 'all',

@@ -15,11 +15,13 @@ for(i in seq(min_npoints * 2, max_npoints * 2, by=npoints_step * 2))
     for(j in 1:method_type_num)
     {
         method_type = gmum_cran_method_type_map[j,][1]
-        t = as.numeric(system.time(c <- CEC(k=3, control.nstart=1, x=points, method.init='random', method.type=method_type, log.energy=1))[3])
-        t = t + as.numeric(system.time(c <- CEC(k=3, control.nstart=1, x=points, method.init='random', method.type=method_type, log.energy=1))[3])
-        t = t + as.numeric(system.time(c <- CEC(k=3, control.nstart=1, x=points, method.init='random', method.type=method_type, log.energy=1))[3])
+        t = 0
+        for(i in 1:averaging)
+        {
+            t = t + as.numeric(system.time(c <- CEC(k=3, control.nstart=1, x=points, method.init='random', method.type=method_type, log.energy=1))[3])
+        }
         l = length(c$energy())
-        results[[j]][result_iter, ] = c(t*0.333, l)
+        results[[j]][result_iter, ] = c(t / averaging, l)
     } 
     result_iter = result_iter + 1
 }
