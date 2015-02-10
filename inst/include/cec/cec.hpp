@@ -27,6 +27,8 @@ private:
     double m_kill_threshold;
     std::vector<bool> m_inv_set;
     std::vector<arma::mat> m_inv;
+
+    // pointer to the object created by R, it shouldn't be freed by the user because R built in GC will do it.
     CecConfiguration* m_config;
 
     gmum::Cluster * create_cluster(const gmum::ClusterParams &params,
