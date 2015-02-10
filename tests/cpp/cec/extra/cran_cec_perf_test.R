@@ -23,7 +23,7 @@ for(i in seq(min_npoints * 2, max_npoints * 2, by=npoints_step * 2))
         {
             t = t + as.numeric(system.time(c <- cec(centers=3, nstart=1, x=points, centers.init='random',iter.max=cran_max_iters, type=method_type))[3])
             l = l + c$iterations
-            e = e + c$cost[1]
+            e = e + tail(c$cost, n=1)
         }
         results[[j]][result_iter, ] = c(t / averaging, l / averaging, e / averaging )
     }
