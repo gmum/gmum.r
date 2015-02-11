@@ -38,6 +38,10 @@ bool SVMLightRunner::canHandle(SVMConfiguration &config) {
 void SVMLightRunner::processRequest(SVMConfiguration &config) {
     char **argv;
 
+    arma::mat unique_labels = arma::unique(config.target);
+    config.neg_target = unique_labels[0];
+    config.pos_target = unique_labels[1];
+
     if (!config.isPrediction()) {
         // Learning
         librarySVMLearnMain(0, argv, true, config);
@@ -265,10 +269,10 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
         kernel_parm->poly_degree = config.degree;
     if (config.gamma)
         kernel_parm->rbf_gamma = config.gamma;
+    if (config.gamma)
+        kernel_parm->coef_lin = config.gamma;
     if (config.coef0)
-        kernel_parm->coef_lin = config.coef0;
-    if (config.C)
-        kernel_parm->coef_const = config.C;
+        kernel_parm->coef_const = config.coef0;
     // GMUM.R changes }
 
     for(i=1;(i<argc) && ((argv[i])[0] == '-');i++) {
@@ -722,9 +726,9 @@ MODEL * SVMLightRunner::libraryReadModel(
         // -g float    -> parameter gamma in rbf kernel
         model->kernel_parm.rbf_gamma = config.gamma;
         // -s float    -> parameter s in sigmoid/poly kernel
-        model->kernel_parm.coef_lin = config.coef0;
+        model->kernel_parm.coef_lin = config.gamma;
         // -r float    -> parameter c in sigmoid/poly kernel
-        model->kernel_parm.coef_const = config.C;
+        model->kernel_parm.coef_const = config.coef0;
         // -u string   -> parameter of user defined kernel
         char kernel_parm_custom[50] = "empty";
         char * model_kernel_parm_custom = model->kernel_parm.custom;
@@ -950,15 +954,6 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
         ss << 1;
     } else if (!target_value) {
         ss << 0;
-    } else {
-        // Init user-defined labels
-        if (!config.neg_target) {
-            config.neg_target = target_value;
-            ss << -1;
-        } else if (!config.pos_target) {
-            config.pos_target = target_value;
-            ss << 1;
-        }
     }
 
     for (long int j = 1; j <= config.data.n_cols; ++j) {
@@ -987,7 +982,7 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
     for (long int i = 1; i <= config.support_vectors.n_cols; ++i) {
         ss << ' ' << i << ':' << std::setprecision(8) << config.support_vectors(line_num, i-1);
     }
-    ss << std::endl;
+    ss << " #" << std::endl;
     line_string = ss.str();
 
     LOG(
@@ -1029,9 +1024,9 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     // -g float    -> parameter gamma in rbf kernel
     config.gamma = model->kernel_parm.rbf_gamma;
     // -s float    -> parameter s in sigmoid/poly kernel
-    config.coef0 = model->kernel_parm.coef_lin;
+    config.gamma = model->kernel_parm.coef_lin;
     // -r float    -> parameter c in sigmoid/poly kernel
-    config.C = model->kernel_parm.coef_const;
+    config.coef0 = model->kernel_parm.coef_const;
     // -u string   -> parameter of user defined kernel
     config.kernel_parm_custom = model->kernel_parm.custom;
     // highest feature index - no assignment to read-only data

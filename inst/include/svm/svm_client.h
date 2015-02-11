@@ -32,8 +32,8 @@ public:
 	void setEps(double);
 	void setShrinking(int);
 	void setProbability(int);
-  void setBias(double);
-  // void setAlpha(double*);
+    void setBias(double);
+    // void setAlpha(double*);
 
     // additional setters
     void setConfiguration(SVMConfiguration *);
@@ -58,13 +58,13 @@ public:
 	bool isProbability();
 
 	// model getters
- // double** getSV(); // double**, std::vector, arma:mat ?
-  int get_number_sv();
-  int get_number_class();
-	arma::vec getAlpha();
-	double getBias();
-	arma::vec getW();
-  arma::mat getSV();
+    // double** getSV(); // double**, std::vector, arma:mat ?
+    int get_number_sv();
+    int get_number_class();
+    arma::vec getAlpha();
+    double getBias();
+    arma::vec getW();
+    arma::mat getSV();
 
     // additional getters
     SVMConfiguration getConfiguration();

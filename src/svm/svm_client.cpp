@@ -188,11 +188,11 @@ void SVMClient::train() {
 }
 
 void SVMClient::predict( arma::mat problem ) {
-    LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".predict() Started.");
+    DBG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".predict() Started.");
 
     // FIXME: Calculate TwoE prediction in this method
-    if (config.kernel_type != _LINEAR || config.preprocess == TWOE) {
-        // Request prediction from handlers when not gmum.r-supported
+    if (config.preprocess == TWOE) {
+        // Request prediction from handlers when not globally supported
         // NOTE: Currently LINEAR only
         requestPredict(problem);
         return;
@@ -203,20 +203,81 @@ void SVMClient::predict( arma::mat problem ) {
 
     // Number of docs is a number of rows in data matrix
     size_t n_docs = config.data.n_rows;
-
     config.result = arma::randu<arma::vec>(n_docs);
 
-    // Linear kernel
+    // Prediction itself
+    // math:
+    // f(x) = sum{alpha_j * y_j * kernel(x_j, x)} + b, where j means j-th SV}
     for (int i=0; i < n_docs; ++i) {
         double doc_result = 0;
-        // For every support vector
         for (int j=0; j < config.support_vectors.n_rows; ++j) {
-            double sum_j = arma::dot(
-                config.data.row(i),
-                config.support_vectors.row(j)
-            );
-            sum_j *= config.alpha_y(j);
-            doc_result += sum_j;
+            double kernel_j;
+            switch (config.kernel_type) {
+                case _LINEAR: {
+                    // math:     kernel(x, x') = x^T * x'
+                    // libsvm:   kernel(v, u') = u'*v
+                    // svmlight: kernel(b, a) = a*b
+                    kernel_j = arma::dot(
+                        config.data.row(i),
+                        config.support_vectors.row(j)
+                    );
+                    break;
+                }
+                case _POLY: {
+                    // libsvm:   kernel(v, u') = (gamma*u'*v + coef0)^degree
+                    // svmlight: kernel(b, a) = (s a*b+c)^d
+                    kernel_j = arma::dot(
+                        config.data.row(i),
+                        config.support_vectors.row(j)
+                    );
+                    kernel_j *= config.gamma;
+                    kernel_j += config.coef0;
+                    kernel_j = arma::pow(
+                        arma::mat(&kernel_j, 1, 1),
+                        config.degree
+                    )[0];
+                    break;
+                }
+                case _RBF: {
+                    // libsvm:   kernel(v, u') = exp(-gamma*|u-v|^2)
+                    // svmlight: kernel(b, a) = exp(-gamma ||a-b||^2)
+                    double neg_gamma = -config.gamma;
+                    double norm = arma::norm(
+                        config.data.row(i)
+                        - config.support_vectors.row(j),
+                        2
+                    );
+                    kernel_j = arma::exp(
+                        arma::mat(&neg_gamma, 1, 1) *
+                        arma::pow(
+                            arma::mat(&norm, 1, 1), 2
+                        )
+                    )[0];
+                    break;
+                }
+                case _SIGMOID: {
+                    // libsvm:   kernel(v, u') = tanh(gamma*u'*v + coef0)
+                    // svmlight: kernel(b, a) = tanh(s a*b + c)
+                    double tanh_arg = arma::dot(
+                        config.data.row(i),
+                        config.support_vectors.row(j)
+                    );
+                    tanh_arg *= config.gamma;
+                    tanh_arg += config.coef0;
+                    kernel_j = arma::tanh(arma::mat(&tanh_arg, 1, 1))[0];
+                    break;
+                }
+                default: {
+                    LOG(
+                        config.log,
+                        LogLevel::FATAL,
+                        __debug_prefix__ + ".predict() invalid kernel type!"
+                    );
+                    break;
+                }
+            }
+            kernel_j *= config.alpha_y(j);
+            doc_result += kernel_j;
         }
         doc_result += config.threshold_b;
         config.result[i] = doc_result;
@@ -238,7 +299,7 @@ void SVMClient::predict( arma::mat problem ) {
         }
     }
 
-    LOG(
+    DBG(
         config.log,
         LogLevel::DEBUG,
         __debug_prefix__ + ".predict() Done."
