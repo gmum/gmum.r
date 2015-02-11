@@ -3,7 +3,7 @@
 
 #include "svm_handler.h"
 #include "svm_basic.h"
-#include <RcppArmadillo.h>
+#include <armadillo>
 
 
 //2eSVM Preprocessor

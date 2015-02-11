@@ -13,6 +13,7 @@ ClusterReader::ClusterReader(const char * name) {
 }
 
 std::string ClusterReader::prefix() {
+	//TODO: fix path to ../../inst
     return std::string("../../inst/data_sets/cec/") + m_folder_name + "/";
 }
 

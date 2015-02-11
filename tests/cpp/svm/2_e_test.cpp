@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include <RcppArmadillo.h>
+#include <armadillo>
 #include "libsvm_runner.h"
 #include "svm_basic.h"
 #include "two_e_svm_post.h"

@@ -47,14 +47,14 @@ void writeToGraphML(GNGGraph &g, std::ostream & out) {
 
 	for (unsigned int i = 0; i <= g.get_maximum_index(); ++i)
 		if (g.existsNode(i)) {
-			FOREACH(edg, g[i])
+			FOREACH(GNGEdge * edg, g[i])
 			{
-				if (g[i].nr > (*edg)->nr) { //directed!
+				if (g[i].nr > (edg)->nr) { //directed!
 					out << "<edge id=\"e" << l++ << "\" source=\"n"
-							<< gng_index_to_graph_index[(*edg)->nr]
+							<< gng_index_to_graph_index[(edg)->nr]
 							<< "\" target=\"n"
 							<< gng_index_to_graph_index[g[i].nr] << "\">\n";
-					out << "<data key=\"key0\">" << g.get_dist(i, (*edg)->nr) << "</data>";
+					out << "<data key=\"key0\">" << g.get_dist(i, (edg)->nr) << "</data>";
 					out << "</edge>\n";
 				}
 			}

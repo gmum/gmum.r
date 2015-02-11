@@ -59,6 +59,7 @@ public:
 
 	int gng_dim;
 
+	//TODO: erase GNG_MAX_DIM
 	double m_axis[GNG_MAX_DIM];
 
 	int m_nodes;
@@ -71,6 +72,7 @@ public:
 
 	vector<int> m_neigh;
 
+	//TODO: erase GNG_MAX_DIM
 	double m_origin[GNG_MAX_DIM];
 
 	int getIndex(int *p) {

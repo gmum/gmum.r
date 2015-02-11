@@ -139,6 +139,9 @@ src/main.cpp
 test/cpp/svm/svm_test_model.txt
 test/cpp/svm/libsvm_test
 
+#log file
+tests/cpp/cec/extra/valgrind/*.txt
+
 =======
 .depend/
 build/
@@ -150,3 +153,4 @@ build/
 data/
 /TestParts/
 /TestIntegrationFix/
+.idea/

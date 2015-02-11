@@ -35,6 +35,7 @@ namespace gmum {
  */
 class GNGAlgorithm {
 public:
+	//TODO: don't use list in UniformGrid
 	typedef std::list<int> Node;
 
 	circular_buffer<double> m_mean_error; //error of the network

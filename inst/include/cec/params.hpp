@@ -10,12 +10,12 @@
 namespace gmum {
 
 enum AssignmentType {
-    kkmeanspp, krandom, kcentroids, kno_assignment,
+    kkmeanspp, krandom, kcentroids,
 };
 
 struct Params {
 public:
-    boost::shared_ptr<const arma::mat> dataset;
+    boost::shared_ptr< arma::mat > dataset;
     double kill_threshold;
     unsigned int nclusters;
     bool log_nclusters;
