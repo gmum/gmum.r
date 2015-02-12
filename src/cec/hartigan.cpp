@@ -1,6 +1,8 @@
 #include <climits>
 #include "hartigan.hpp"
 
+#define isnan(x) (x != x)
+
 namespace gmum {
 
 Hartigan::Hartigan(bool log_nclusters, bool log_energy) : Algorithm(log_nclusters, log_energy),
@@ -45,20 +47,22 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
     for(unsigned int i = 0; i < npoints; i++) {
         unsigned int source = assignment[i];
         arma::rowvec point = points.row(i);
-        for(unsigned int k = 0; k < clusters_raw.size(); k++)
-            if(k != source) {
-                double whole_entropy_change = 0;
+        double before_source_energy =
+             calc_energy(clusters_raw[source]->entropy(), clusters_raw[source]->size(), npoints);
 
-                try {
-                	double before_source_energy =
-                			calc_energy(clusters_raw[source]->entropy(), clusters_raw[source]->size(), npoints);
-
-                	double before_target_energy =
-                	        calc_energy(clusters_raw[k]->entropy(), clusters_raw[k]->size(), npoints);
-
-                    double source_entropy_change =
+        double source_entropy_change =
                     		calc_energy(clusters_raw[source]->entropy_after_remove_point(point), clusters_raw[source]->size() - 1, npoints)-
 							before_source_energy;
+
+        double best_entropy_change = 0;
+        int best_cluster = -1;
+
+        for(unsigned int k = 0; k < clusters_raw.size(); k++){
+            if(k != source) {
+                double whole_entropy_change;
+                try {
+               	    double before_target_energy =
+                	        calc_energy(clusters_raw[k]->entropy(), clusters_raw[k]->size(), npoints);
 
                     double target_entropy_change =
                     		calc_energy(clusters_raw[k]->entropy_after_add_point(point), clusters_raw[k]->size() + 1, npoints)-
@@ -66,43 +70,49 @@ SingleResult Hartigan::single_loop(const arma::mat &points, std::vector<unsigned
 
                     whole_entropy_change = target_entropy_change+source_entropy_change;
                 } catch(std::exception &e) {
-                    LOG(m_logger, LogLevel::ERR, "removePoint");
+                    LOG(m_logger, LogLevel::ERR, "entropy change calculation");
                     LOG(m_logger, LogLevel::ERR, dimension);
                     throw(e);
                     //return SingleResult(switched, clusters.size(), 0);
                 }
+                
+				if(isnan(best_entropy_change)){
+					LOG(m_logger, LogLevel::ERR, "entropy change is NAN");	
+					
+				}
 
-                if(whole_entropy_change < 0) {  //newEntropy < oldEntropy
-                    switched++;
-
-
-                    clusters_raw[source]->remove_point(point);
-                    clusters_raw[k]->add_point(point);
-
-
-
-                    //point moved from cluster source to k - update assignment
-                    assignment[i] = k;
-
-                    try {
-                        //if cluster has number of members lower than threshold, remove the cluster
-                        //threshold is fraction of all points
-                        if(clusters_raw[source]->size() < std::max(int(kill_threshold*npoints),dimension+1)) {
-
-                            remove_cluster(source, points, assignment, clusters_raw);
-                        }
-                    } catch(std::exception &e) {
-                        //LOG(LogLevel::ERR, e.what());
-                        LOG(m_logger, LogLevel::ERR, "removeCluster");
-                        throw(e);
-                    }
-
-                    break; //point was switched so we'll stop the clusters loop and we'll check the next point
-                }else{
-                	//Reverse changes
-
+                if(whole_entropy_change < best_entropy_change) {  //newEntropy < oldEntropy
+                    best_cluster = k; best_entropy_change = whole_entropy_change;
                 }
             }  //for iterates clusters
+        }// for clusters
+        if(best_cluster != -1){
+            switched++;
+
+
+            clusters_raw[source]->remove_point(point);
+            clusters_raw[best_cluster]->add_point(point);
+
+
+
+            //point moved from cluster source to k - update assignment
+            assignment[i] = best_cluster;
+
+            try {
+                //if cluster has number of members lower than threshold, remove the cluster
+                //threshold is fraction of all points
+                if(clusters_raw[source]->size() < std::max(int(kill_threshold*npoints),dimension+1)) {
+
+                    remove_cluster(source, points, assignment, clusters_raw);
+                }
+            } catch(std::exception &e) {
+                //LOG(LogLevel::ERR, e.what());
+				//TODO: why not terminating here?                
+				LOG(m_logger, LogLevel::ERR, "removeCluster");
+				throw(e);
+			}
+                		
+		}
     }  //for iterates points
 
     double energy = 0;

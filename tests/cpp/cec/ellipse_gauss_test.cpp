@@ -72,7 +72,8 @@ TEST(EllipseGauss,real_test) {
         // cec.loop();
         SingleResult sr;
         cec.loop();
-        double percentage = comparator.evaluate_clustering(params.nclusters, *points, cec.get_assignment(), clustering);
+        std::vector<unsigned int> a = cec.get_assignment();
+        double percentage = comparator.evaluate_clustering(params.nclusters, *points, a, clustering);
         // std::cout << "Percentage " << percentage << std::endl;
         // EXPECT_GT(percentage, 0.9);
         number_of_times_acceptable += (percentage >= 0.9) || (cec.entropy() < cluster_reader.get_energy()*1.5);

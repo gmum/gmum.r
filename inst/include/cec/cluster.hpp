@@ -31,7 +31,8 @@ public:
 
     virtual double entropy_after_add_point(const arma::rowvec &point) = 0;
     virtual double entropy_after_remove_point(const arma::rowvec &point) = 0;
-
+    virtual Cluster* clone() = 0;
+    
     double entropy() const;
     int size() const;
     arma::rowvec get_mean();
@@ -88,7 +89,9 @@ private:
 
 public:
     ClusterStandard(int count, const arma::rowvec &mean, const arma::mat &cov_mat);
-    ClusterStandard(unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);
+    ClusterStandard(unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);    
+    virtual ClusterStandard* clone();
+    
 };
 
 class ClusterCovMat: public ClusterUseCovMat {
@@ -99,7 +102,8 @@ private:
     double calculate_entropy(int n, const arma::mat &cov_mat);
 public:
     ClusterCovMat(const arma::mat& inv_sigma, double sigma_det, int count, const arma::rowvec & mean, const arma::mat & cov_mat);
-    ClusterCovMat(const arma::mat & sigma, unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);
+    ClusterCovMat(const arma::mat & sigma, unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);    
+    virtual ClusterCovMat* clone();
 };
 
 class ClusterConstRadius: public ClusterOnlyTrace {
@@ -109,8 +113,7 @@ private:
 public:
     ClusterConstRadius(double r, int count,const arma::rowvec & mean, double cov_mat_trace);
     ClusterConstRadius(double r, unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);
-
-
+    virtual ClusterConstRadius* clone();
 };
 
 class ClusterSpherical: public ClusterOnlyTrace {
@@ -121,7 +124,8 @@ public:
                      double cov_mat_trace);
     ClusterSpherical(unsigned int id,
                      const std::vector<unsigned int> &assignment,
-                     const arma::mat &points);
+                     const arma::mat &points);    
+    virtual ClusterSpherical* clone();
 };
 
 class ClusterDiagonal: public ClusterUseCovMat {
@@ -133,6 +137,7 @@ public:
     ClusterDiagonal(unsigned int id,
                     const std::vector<unsigned int> &assignment,
                     const arma::mat &points);
+    virtual ClusterDiagonal* clone();
 };
 
 }

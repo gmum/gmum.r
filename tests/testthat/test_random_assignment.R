@@ -47,7 +47,7 @@ test_that("EllipseGauss random assignment is correct", {
   {
     c <- CEC(k=nclusters, x=dataset_points, method.init='random')
     correct_percentage <- correctness(dataset_clusters, c$y(), npoints, nclusters)
-    if(c$entropy() < (1.5 * expected_energy) | (correct_percentage >= 0.9) ) {
+    if(c$.entropy() < (1.5 * expected_energy) | (correct_percentage >= 0.9) ) {
       accepted <- accepted + 1
     }
   }
@@ -71,7 +71,7 @@ test_that("mouse_1 random assignment is correct", {
     c <- CEC(k=nclusters, x=dataset_points, method.init='random', method.type='sphere')
 
     correct_percentage <- correctness(dataset_clusters, c$y(), npoints, nclusters)
-    if(c$entropy() < (1.5 * expected_energy) | (correct_percentage >= 0.9) ) {
+    if(c$.entropy() < (1.5 * expected_energy) | (correct_percentage >= 0.9) ) {
       accepted <- accepted + 1
     }
   }
@@ -93,7 +93,7 @@ test_that("mouse_1_spherical random assignment is correct", {
   {
     c <- CEC(k=nclusters, x=dataset_points, method.type='sphere', method.init='random')
     correct_percentage <- correctness(dataset_clusters, c$y(), npoints, nclusters)
-    if(c$entropy() < (1.5 * expected_energy) | (correct_percentage >= 0.9) ) {
+    if(c$.entropy() < (1.5 * expected_energy) | (correct_percentage >= 0.9) ) {
       accepted <- accepted + 1
     }
   }

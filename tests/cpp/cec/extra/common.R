@@ -14,12 +14,19 @@ is_valid_path <- function(path, create_path=FALSE) {
 #cran_cec_path = '../../../../../cran-cec'
 gmum_cec_path = '../../../../'
 data_path = './data/'
-cran_cec_log_path = './cran_cec.log'
-gmum_cec_log_path = './gmum_cec.log'
-min_npoints = 10000
-max_npoints = 20000
-npoints_step = 100
+cran_cec_log_path = '.'
+gmum_cec_log_path = '.'
+min_npoints = 100
+max_npoints = 5000
+npoints_step = 50
 cran_max_iters = 200
+averaging = 5
+
+gmum_cran_method_type_map = matrix(ncol=2, byrow=TRUE, 
+                                   data=c('standard', 'all',
+                                          'sphere', 'spherical',
+                                          'diagonal', 'diagonal'))
+method_type_num = dim(gmum_cran_method_type_map)[1]
 
 valid_paths = 
     #(is_valid_path(cran_cec_path) == TRUE) &&
@@ -28,4 +35,18 @@ valid_paths =
 
 if(valid_paths == FALSE) {
     return;
+}
+
+get_gmum_result_file_path <- function(type_index)
+{
+    method_type = gmum_cran_method_type_map[type_index,][1]
+    file_name = paste(c('gmum_', method_type, '.log'), collapse='')
+    return(file.path(gmum_cec_log_path, file_name))
+}
+
+get_cran_result_file_path <- function(type_index)
+{
+    method_type = gmum_cran_method_type_map[type_index,][2]
+    file_name = paste(c('cran_', method_type, '.log'), collapse='')
+    return(file.path(cran_cec_log_path, file_name))
 }

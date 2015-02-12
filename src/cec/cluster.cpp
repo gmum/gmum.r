@@ -1,7 +1,7 @@
 #include "cluster.hpp"
 
 namespace gmum {
-
+    
 Cluster::Cluster(int count, const arma::rowvec &mean) :
 		m_count(count), m_mean(mean) {
 	m_n = m_mean.n_elem;
@@ -283,7 +283,35 @@ double ClusterDiagonal::calculate_entropy(int n, const arma::mat &cov_mat) {
 			+ log(arma::det(arma::diagmat(cov_mat))) / 2;
 }
 
+ClusterCovMat* ClusterCovMat::clone()
+{
+    return new ClusterCovMat(m_inv_sigma, m_sigma_det, m_count, m_mean, m_cov_mat);
 }
+
+ClusterConstRadius* ClusterConstRadius::clone()
+{
+    return new ClusterConstRadius(m_r, m_count, m_mean, m_cov_mat_trace);
+}
+
+ClusterSpherical* ClusterSpherical::clone()
+{
+    return new ClusterSpherical(m_count, m_mean, m_cov_mat_trace);
+}
+
+ClusterStandard* ClusterStandard::clone()
+{
+    return new ClusterStandard(m_count, m_mean, m_cov_mat);
+}
+
+ClusterDiagonal* ClusterDiagonal::clone()
+{
+    return new ClusterDiagonal(m_count, m_mean, m_cov_mat);
+}
+
+}
+
+
+
 
 //#include "cluster.hpp"
 //

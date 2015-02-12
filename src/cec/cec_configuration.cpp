@@ -21,11 +21,8 @@ void CecConfiguration::set_params(Params params) {
 
 #ifdef RCPP_INTERFACE
 void CecConfiguration::set_data_set(const Rcpp::NumericMatrix proxy_dataset) {
-    //reuses memory and avoids extra copy
-    boost::shared_ptr<const arma::mat> points(
-                new arma::mat(proxy_dataset.begin(), proxy_dataset.nrow(),
+    m_params.dataset = boost::shared_ptr<arma::mat>(new arma::mat(proxy_dataset.begin(), proxy_dataset.nrow(),
                               proxy_dataset.ncol(), false));
-    m_params.dataset = points;
 }
 void CecConfiguration::set_cov(const Rcpp::NumericMatrix cov_mat_proxy) {
     //TODO better check is empty matrix

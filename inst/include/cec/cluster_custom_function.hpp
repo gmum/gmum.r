@@ -26,10 +26,13 @@ public:
 			const std::vector<unsigned int> &assignment,
 			const arma::mat &points, const std::string &function_name);
 
-//    virtual double calculate_entropy(int n){
-//    	throw "Not implemented";
-//    	return 0.;
-//    }
+    virtual double calculate_entropy(int n){
+    	throw "Not implemented";
+    	return 0.;
+    }
+    
+    virtual ClusterCustomFunction* clone(); 
+
 };
 
 }
