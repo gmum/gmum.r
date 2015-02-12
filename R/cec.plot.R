@@ -43,7 +43,7 @@ evalqOnLoad({
       n = length(cen)
       if (ellipses && length(slice) <= 2){
         #library("car")
-        cov = x$cov()
+        cov = x$covMatrix()
         
         for (i in 1:n) {
           data = unlist(cov[i])

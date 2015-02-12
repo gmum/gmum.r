@@ -207,7 +207,8 @@ void CecModel::loop() {
 }
 
 void CecModel::single_loop() {
-    m_algorithm->single_loop(m_points, m_assignment, m_kill_threshold, m_clusters);
+    SingleResult sr = m_algorithm->single_loop(m_points, m_assignment, m_kill_threshold, m_clusters);
+    m_result.append(sr, m_config->get_params().log_nclusters, m_config->get_params().log_energy);
 }
 
 double CecModel::entropy() {
