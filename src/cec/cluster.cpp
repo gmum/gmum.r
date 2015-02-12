@@ -231,7 +231,7 @@ ClusterCovMat::ClusterCovMat(const arma::mat& inv_sigma, double sigma_det,
 
 double ClusterCovMat::calculate_entropy(int n, const arma::mat &cov_mat) {
 	return n * log(2 * M_PI) / 2 + arma::trace(m_inv_sigma * cov_mat) / 2
-			+ n * log(m_sigma_det) / 2;
+			+ log(m_sigma_det) / 2;
 }
 
 ClusterConstRadius::ClusterConstRadius(double r, unsigned int id,
