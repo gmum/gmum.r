@@ -2,8 +2,13 @@
 #define SVM_BASIC_H
 
 #include <string>
-#include <RcppArmadillo.h>
+#include <armadillo>
+
+#ifdef RCPP_INTERFACE
 #include <R.h>
+#include <RcppArmadillo.h>
+#endif
+
 #include "log.h"
 
 enum KernelType {
@@ -112,7 +117,9 @@ public:
 	void setPrediction(bool);
 	bool isPrediction();
 
+#ifdef RCPP_INTERFACE
 	void setWeights( Rcpp::NumericVector );
+#endif
 	void setLibrary( std::string );
 	void setKernel( std::string );
 	void setPreprocess( std::string );

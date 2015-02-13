@@ -5,6 +5,14 @@
 #include <string>
 #include <sstream>
 
+#ifdef DEBUG
+#define LOG(logger, level, text) logger.log(level, text);
+#define DBG(logger, level, text) logger.log(level, text);
+#else
+#define LOG(logger, level, text) logger.log(level, text);
+#define DBG(logger, level, text)
+#endif
+
 class LogLevel {
 public:
 

@@ -5,6 +5,7 @@
 #include <vector>
 #include "boost/foreach.hpp"
 #include "boost/smart_ptr.hpp"
+#include "boost/interprocess/smart_ptr/unique_ptr.hpp"
 #include "algorithm.hpp"
 #include "cluster.hpp"
 #include "cluster_custom_function.hpp"
@@ -18,31 +19,35 @@
  */
 class CecModel {
 private:
-    std::vector<boost::shared_ptr<gmum::Cluster> > m_clusters;
+    std::vector< gmum::Cluster* > m_clusters;
     gmum::TotalResult m_result;
-    boost::shared_ptr<std::vector<unsigned int> > m_assignment;
-    boost::shared_ptr<const arma::mat> m_points;
+    std::vector<unsigned int> m_assignment;
+    arma::mat m_points;
     boost::shared_ptr<gmum::Algorithm> m_algorithm;
     double m_kill_threshold;
     std::vector<bool> m_inv_set;
     std::vector<arma::mat> m_inv;
-    CecConfiguration m_config;
 
-    boost::shared_ptr<gmum::Cluster> create_cluster(const gmum::ClusterParams &params,
+    // pointer to the object created by R, it shouldn't be freed by the user because R built in GC will do it.
+    CecConfiguration* m_config;
+
+    gmum::Cluster * create_cluster(const gmum::ClusterParams &params,
                                                     int i);
     void find_best_cec();
-    void init(boost::shared_ptr<gmum::Algorithm> algorithm,
-              boost::shared_ptr<std::vector<unsigned int> > assignment);
+    void init(boost::shared_ptr<gmum::Algorithm> algorithm, std::vector<unsigned int>& assignment);
+    void clear_clusters();
+    
 public:
+    ~CecModel();
     CecModel(CecConfiguration* cfg);
-    CecModel(const CecModel& other);
-    CecModel& operator=(const CecModel& other);
-
+    CecModel(CecModel& other);
+    CecModel& operator=(CecModel& other);
+    
     void loop();
     void single_loop();
     double entropy();
-    std::vector<unsigned int> &get_assignment() const;
-    void set_assignment(std::vector<unsigned int> m_assignment);
+    std::vector<unsigned int> get_assignment() const;
+    void set_assignment(std::vector<unsigned int>& m_assignment);
     arma::mat get_points();
     std::vector<arma::rowvec> centers() const;
     std::vector<arma::mat> cov() const;
@@ -52,7 +57,6 @@ public:
     unsigned int predict(std::vector<double> vec) const;
     std::list<double> predict(std::vector<double> vec, bool general);
     const gmum::TotalResult& get_result() const;
-    const std::vector<boost::shared_ptr<gmum::Cluster> >& get_clusters() const;
 };
 
 #endif

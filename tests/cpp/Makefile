@@ -4,7 +4,7 @@ include ../../src/Makevars
 CXX := $(CXX)
 CPPFLAGS := $(PKG_CPPFLAGS)
 CXXFLAGS := $(PKG_CXXFLAGS) -O2 -g -s
-LDLIBS := $(PKG_LIBS) -lpthread -lgtest -lgtest_main
+LDLIBS := $(PKG_LIBS) -lpthread -lgtest -lgtest_main -larmadillo
 
 ###
 # Compilation parameters

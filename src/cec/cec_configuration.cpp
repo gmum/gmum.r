@@ -5,6 +5,7 @@
 #include <string.h>
 #include <iostream>
 
+
 using namespace gmum;
 
 CecConfiguration::CecConfiguration() {
@@ -18,16 +19,19 @@ void CecConfiguration::set_params(Params params) {
     this->m_params = params;
 }
 
+#ifdef RCPP_INTERFACE
 void CecConfiguration::set_data_set(const Rcpp::NumericMatrix proxy_dataset) {
-    //reuses memory and avoids extra copy
-    boost::shared_ptr<const arma::mat> points(
-                new arma::mat(proxy_dataset.begin(), proxy_dataset.nrow(),
+    m_params.dataset = boost::shared_ptr<arma::mat>(new arma::mat(proxy_dataset.begin(), proxy_dataset.nrow(),
                               proxy_dataset.ncol(), false));
-    m_params.dataset = points;
 }
-
-void CecConfiguration::set_eps(const double kill_threshold) {
-    m_params.kill_threshold = kill_threshold;
+void CecConfiguration::set_cov(const Rcpp::NumericMatrix cov_mat_proxy) {
+    //TODO better check is empty matrix
+    if (!Rf_isNull(cov_mat_proxy) && m_params.clusters.empty()) {
+        m_params.cov_mat_set = true;
+        m_params.cov_mat = arma::mat(cov_mat_proxy.begin(), cov_mat_proxy.nrow(),
+                                     cov_mat_proxy.ncol());
+    } else
+        m_params.cov_mat_set = false;
 }
 
 void CecConfiguration::set_mix(const Rcpp::List clusters) {
@@ -96,6 +100,20 @@ void CecConfiguration::set_mix(const Rcpp::List clusters) {
         }
     }
 }
+void CecConfiguration::set_centroids(const Rcpp::List centroids) {
+    if (!Rf_isNull(centroids)) {
+        Rcpp::List desc = Rcpp::as < Rcpp::List > (centroids);
+        for (Rcpp::List::iterator it = desc.begin(); it != desc.end(); ++it)
+            m_params.centroids.push_back(Rcpp::as < std::vector<double> > (*it));
+        m_params.centroids_set = true;
+    } else
+        m_params.centroids_set = false;
+}
+#endif
+
+void CecConfiguration::set_eps(const double kill_threshold) {
+    m_params.kill_threshold = kill_threshold;
+}
 
 void CecConfiguration::set_nclusters(const unsigned int nclusters) {
     if (nclusters != 0)
@@ -106,7 +124,7 @@ void CecConfiguration::set_nclusters(const unsigned int nclusters) {
         m_params.nclusters = CONST::nclusters_init;
 
     if (m_params.dataset->n_rows < m_params.nclusters)
-        Rcpp::stop(CONST::ERRORS::dataset_size);
+        GMUM_ERROR(CONST::ERRORS::dataset_size);
 }
 
 void CecConfiguration::set_log_energy(bool log_energy) {
@@ -121,15 +139,7 @@ void CecConfiguration::set_nstart(const unsigned int nstart) {
     m_params.nstart = nstart;
 }
 
-void CecConfiguration::set_centroids(const Rcpp::List centroids) {
-    if (!Rf_isNull(centroids)) {
-        Rcpp::List desc = Rcpp::as < Rcpp::List > (centroids);
-        for (Rcpp::List::iterator it = desc.begin(); it != desc.end(); ++it)
-            m_params.centroids.push_back(Rcpp::as < std::vector<double> > (*it));
-        m_params.centroids_set = true;
-    } else
-        m_params.centroids_set = false;
-}
+
 
 void CecConfiguration::set_method_init(const std::string init) {
     m_params.assignment_type = CONST::default_assignment;
@@ -140,11 +150,11 @@ void CecConfiguration::set_method_init(const std::string init) {
     else if (init.compare(CONST::CLUSTERS::centroids) == 0)
         m_params.assignment_type = kcentroids;
     else
-		Rcpp::stop(CONST::ERRORS::assignment_error);
+		GMUM_ERROR(CONST::ERRORS::assignment_error);
 
     if (m_params.assignment_type == kcentroids
             && m_params.centroids.size() != m_params.nclusters)
-        Rcpp::stop(CONST::ERRORS::centroids_error);
+        GMUM_ERROR(CONST::ERRORS::centroids_error);
     switch (m_params.cluster_type) {
     case kstandard: // TODO: handle kstandard parameter
     case kdiagonal: // TODO: handle kdiagonal parameter
@@ -152,18 +162,18 @@ void CecConfiguration::set_method_init(const std::string init) {
         break;
     case kfull:
         if (!m_params.cov_mat_set)
-            Rcpp::stop(CONST::ERRORS::cov_mat_req);
+            GMUM_ERROR(CONST::ERRORS::cov_mat_req);
         break;
     case kfsphere:
         if (!m_params.radius_set)
-            Rcpp::stop(CONST::ERRORS::radius_req);
+            GMUM_ERROR(CONST::ERRORS::radius_req);
         break;
     case kno_type:
-        Rcpp::stop(CONST::ERRORS::cluster_rec_error);
+        GMUM_ERROR(CONST::ERRORS::cluster_rec_error);
         break;
     case kcustom:
         if (!m_params.function_name_set)
-            Rcpp::stop(CONST::ERRORS::function_name_req);
+            GMUM_ERROR(CONST::ERRORS::function_name_req);
         break;
     case kmix:
         BOOST_FOREACH(boost::shared_ptr < ClusterParams > cluster,
@@ -179,24 +189,24 @@ void CecConfiguration::set_method_init(const std::string init) {
                 ClusterFullParams &ptr =
                         static_cast<ClusterFullParams&>(*cluster);
                 if (!ptr.cov_mat_set)
-                    Rcpp::stop(CONST::ERRORS::cov_mat_req);
+                    GMUM_ERROR(CONST::ERRORS::cov_mat_req);
                 break;
             }
             case kfsphere: {
                 ClusterFsphereParams &ptr =
                         static_cast<ClusterFsphereParams&>(*cluster);
                 if (!ptr.radius_set)
-                    Rcpp::stop(CONST::ERRORS::radius_req);
+                    GMUM_ERROR(CONST::ERRORS::radius_req);
                 break;
             }
             case kno_type:
-                Rcpp::stop(CONST::ERRORS::cluster_rec_error);
+                GMUM_ERROR(CONST::ERRORS::cluster_rec_error);
                 break;
             case kcustom:
                 ClusterCustomParams &ptr =
                         static_cast<ClusterCustomParams&>(*cluster);
                 if (!ptr.function_name_set)
-                    Rcpp::stop(CONST::ERRORS::function_name_req);
+                    GMUM_ERROR(CONST::ERRORS::function_name_req);
                 break;
             }
         }
@@ -220,19 +230,11 @@ void CecConfiguration::set_method_type(const std::string type) {
         } else if (type.compare(CONST::CLUSTERS::custom) == 0) {
             m_params.cluster_type = kcustom;
         } else{
-            Rcpp::stop(CONST::ERRORS::cluster_rec_error);
+        	GMUM_ERROR(CONST::ERRORS::cluster_rec_error);
         }
     }
 }
-void CecConfiguration::set_cov(const Rcpp::NumericMatrix cov_mat_proxy) {
-    //TODO better check is empty matrix
-    if (!Rf_isNull(cov_mat_proxy) && m_params.clusters.empty()) {
-        m_params.cov_mat_set = true;
-        m_params.cov_mat = arma::mat(cov_mat_proxy.begin(), cov_mat_proxy.nrow(),
-                                     cov_mat_proxy.ncol());
-    } else
-        m_params.cov_mat_set = false;
-}
+
 
 void CecConfiguration::set_r(const double radius) {
     if (radius != 0 && m_params.clusters.empty()) {

@@ -18,9 +18,9 @@ GNGNode ** GNGAlgorithm::LargestErrorNodesLazy() {
 	GNGNode ** largest = new GNGNode*[2];
 	GNGNode * gng_node;
 
-	FOREACH(it, errorHeap.getLazyList())
+	FOREACH(int it, errorHeap.getLazyList())
 	{
-		gng_node = &m_g[*it];
+		gng_node = &m_g[it];
 		errorHeap.insert(gng_node->nr, gng_node->error);
 	}
 
@@ -43,23 +43,23 @@ GNGNode ** GNGAlgorithm::LargestErrorNodesLazy() {
 			double error = 0.0;
 			DBG_2(m_logger, 4, "GNGAlgorithm::LargestErrorLazy::found max " + to_string(max.i));
 
-			FOREACH(edg, *largest[0])
+			BOOST_FOREACH(GNGEdge * edg, *largest[0])
 			{
 				++j;
-				fixErrorNew(&m_g[(*edg)->nr]);
+				fixErrorNew(&m_g[(edg)->nr]);
 
 				if (j == 1) {
-					largest[1] = &m_g[(*edg)->nr];
+					largest[1] = &m_g[(edg)->nr];
 					error = largest[1]->error;
 					;
 					continue;
 				}
 
-				double new_error = m_g[(*edg)->nr].error;
+				double new_error = m_g[(edg)->nr].error;
 
 				if (error < new_error) {
 					error = new_error;
-					largest[1] = &m_g[(*edg)->nr];
+					largest[1] = &m_g[(edg)->nr];
 				}
 			}
 			break;
@@ -328,24 +328,24 @@ std::pair<double, int> GNGAlgorithm::adapt(const double * ex,
 		ug->insert(nearest_0->position, nearest_0->nr);
 
 	if (nearest_0->edgesCount) {
-		FOREACH(edg, *nearest_0)
+		FOREACH(GNGEdge * edg, *nearest_0)
 		{
 			if (m_toggle_uniformgrid)
-				ug->remove(m_g[(*edg)->nr].position);
+				ug->remove(m_g[(edg)->nr].position);
 
 			for (int i = 0; i < this->dim; ++i) { //param accounting
-				m_g[(*edg)->nr].position[i] += m_eps_n
-						* (ex[i] - m_g[(*edg)->nr].position[i]);
+				m_g[(edg)->nr].position[i] += m_eps_n
+						* (ex[i] - m_g[(edg)->nr].position[i]);
 			}
 
 			//Adapt to extra dimensionality if present (TODO: refactor)
 			if (extra) {
-				m_g[(*edg)->nr].extra_data = (0.9 * m_g[(*edg)->nr].extra_data
+				m_g[(edg)->nr].extra_data = (0.9 * m_g[(edg)->nr].extra_data
 						+ extra[0] * 0.1);
 			}
 
 			if (m_toggle_uniformgrid)
-				ug->insert(m_g[(*edg)->nr].position, (*edg)->nr);
+				ug->insert(m_g[(edg)->nr].position, (edg)->nr);
 		}
 	}
 
@@ -367,7 +367,7 @@ std::pair<double, int> GNGAlgorithm::adapt(const double * ex,
 	//TODO: assuming here GNGNode not any arbitrary node :/
 	GNGNode::EdgeIterator edg = nearest_0->begin();
 	while (edg != nearest_0->end()) {
-		DBG(m_logger, 2, "Currently on edge to" + to_string((*edg)->nr));
+		DBG(m_logger, 2, "Currently on edge to" + to_string((edg)->nr));
 
 		(*edg)->age++;
 		(((*edg)->rev))->age++;
@@ -382,7 +382,7 @@ std::pair<double, int> GNGAlgorithm::adapt(const double * ex,
 			DBG(m_logger, 3,
 					"GNGAlgorith::Adapt::Removing aged edge "
 							+ to_string(nearest_0->nr) + " - "
-							+ to_string((*edg)->nr));
+							+ to_string((edg)->nr));
 
 			int nr = (*edg)->nr;
 
@@ -394,9 +394,9 @@ std::pair<double, int> GNGAlgorithm::adapt(const double * ex,
 				DBG(m_logger, 8, "GNGAlgorith:: remove node because no edges");
 
 #ifdef DEBUG_GMUM_2
-				FOREACH(edg, m_g[nr])
+				FOREACH(GNGEdge* edg2, m_g[nr])
 				{
-					cerr<<"WARNING: GNGAlgorithm:: edges count of neighbours of erased node, shouldn't happen! " + to_string(m_g[(*edg)->nr].edgesCount)<<endl;
+					cerr<<"WARNING: GNGAlgorithm:: edges count of neighbours of erased node, shouldn't happen! " + to_string(m_g[(edg2)->nr].edgesCount)<<endl;
 				}
 #endif
 
@@ -474,8 +474,8 @@ void GNGAlgorithm::testAgeCorrectness() {
 
 	REP(i, maximum_index + 1)
 		if (m_g.existsNode(i) && m_g[i].edgesCount)
-			FOREACH(edg, m_g[i])
-				if ((*edg)->age > m_max_age) {
+			BOOST_FOREACH(GNGEdge* edg, m_g[i])
+				if ((edg)->age > m_max_age) {
 					//cout << "XXXXXXXXXXXXXXXXX\n";
 					//cout << (m_g[i]) << endl;
 				}
@@ -532,21 +532,21 @@ GNGNode ** GNGAlgorithm::LargestErrorNodes() {
 
 	int j = 0;
 
-	FOREACH(edg, *largest[0])
+	FOREACH(GNGEdge* edg, *largest[0])
 	{
 		++j;
 
 		if (j == 1) {
-			largest[1] = &m_g[(*edg)->nr];
+			largest[1] = &m_g[(edg)->nr];
 			error = largest[1]->error;
 			continue;
 		}
 
-		double new_error = m_g[(*edg)->nr].error;
+		double new_error = m_g[(edg)->nr].error;
 
 		if (error < new_error) {
 			error = new_error;
-			largest[1] = &m_g[(*edg)->nr];
+			largest[1] = &m_g[(edg)->nr];
 		}
 	}
 
