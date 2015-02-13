@@ -5,7 +5,6 @@
 #include <string.h>
 #include <iostream>
 
-
 using namespace gmum;
 
 CecConfiguration::CecConfiguration() {
@@ -100,6 +99,7 @@ void CecConfiguration::set_mix(const Rcpp::List clusters) {
         }
     }
 }
+
 void CecConfiguration::set_centroids(const Rcpp::List centroids) {
     if (!Rf_isNull(centroids)) {
         Rcpp::List desc = Rcpp::as < Rcpp::List > (centroids);
@@ -138,8 +138,6 @@ void CecConfiguration::set_log_cluster(bool log_nclusters) {
 void CecConfiguration::set_nstart(const unsigned int nstart) {
     m_params.nstart = nstart;
 }
-
-
 
 void CecConfiguration::set_method_init(const std::string init) {
     m_params.assignment_type = CONST::default_assignment;
@@ -235,7 +233,6 @@ void CecConfiguration::set_method_type(const std::string type) {
     }
 }
 
-
 void CecConfiguration::set_r(const double radius) {
     if (radius != 0 && m_params.clusters.empty()) {
         m_params.radius_set = true;
@@ -258,4 +255,3 @@ void CecConfiguration::set_it_max(const unsigned int it_max) {
 
 void CecConfiguration::set_iters(bool iters) {
 }
-

@@ -1,7 +1,7 @@
 #ifndef CLUSTER_HPP
 #define CLUSTER_HPP
 
-//add_point adn remove_point are updating the cluster. nice! madry stan
+//add_point and remove_point are updating the cluster. nice! madry stan
 
 #include <armadillo>
 #include <cmath>

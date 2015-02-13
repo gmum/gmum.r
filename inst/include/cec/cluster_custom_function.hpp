@@ -24,15 +24,8 @@ public:
 			const arma::mat& cov_mat, const std::string& function_name);
 	ClusterCustomFunction(unsigned int id,
 			const std::vector<unsigned int> &assignment,
-			const arma::mat &points, const std::string &function_name);
-
-    virtual double calculate_entropy(int n){
-    	throw "Not implemented";
-    	return 0.;
-    }
-    
+			const arma::mat &points, const std::string &function_name);    
     virtual ClusterCustomFunction* clone(); 
-
 };
 
 }
