@@ -8,20 +8,19 @@
 #ifndef GNGGraph_H
 #define GNGGraph_H
 
-#include <string>
+#include <boost/smart_ptr/shared_ptr.hpp>
+#include <GNGNode.h>
+#include <logger.h>
+#include <threading.h>
+#include <utils.h>
 #include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <cstring>
 #include <iterator>
 #include <sstream>
-#include <iostream>
-#include <fstream>
-#include <cassert>
-#include <boost/shared_ptr.hpp>
-
-#include "utils/threading.h"
-#include "utils/utils.h"
-
-#include "GNGNode.h"
-#include "GNGGlobals.h"
+#include <string>
+#include <vector>
 
 using namespace std;
 

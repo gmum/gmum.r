@@ -1,4 +1,9 @@
-#include "GNGServer.h"
+#include <boost/smart_ptr/shared_ptr.hpp>
+#include <GNGNode.h>
+#include <GNGServer.h>
+#include <logger.h>
+#include <iostream>
+#include <string>
 
 GNGServer::GNGServer(GNGConfiguration configuration, std::istream * input_graph){
 	init(configuration, input_graph);
