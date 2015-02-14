@@ -279,7 +279,7 @@ svm_node** LibSVMRunner::SparseToSVMNode(arma::vec& x, int r, arma::Col<int>& ro
     int i, ii, count = 0, nnz = 0;
 
     sparse = (struct svm_node **) malloc (r * sizeof(struct svm_node*));
-    for (i = 0; i < r; i++) {
+    for (i = 0; i < rowindex.n_rows; i++) {
 	/* allocate memory for column elements */
 	nnz = rowindex[i+1] - rowindex[i];
 	sparse[i] = (struct svm_node *) malloc ((nnz + 1) * sizeof(struct svm_node));
