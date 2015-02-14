@@ -3,10 +3,12 @@
 \alias{predictCluster.cec}
 \alias{predictClusters.cec}
 \title{predictCluster}
+\format{\preformatted{ NULL
+}}
 \usage{
-predictCluster.cec(c, x)
+predictCluster.cec
 
-predictClusters.cec(c, x)
+predictClusters.cec
 }
 \arguments{
   \item{c}{Trained CEC model object.}
@@ -23,4 +25,5 @@ Returns cluster where belong given point.
 Returns propabilities of belonging to each cluster for
 given point.
 }
+\keyword{datasets}
 

@@ -1,17 +1,17 @@
 \docType{methods}
-\name{centers.cec}
-\alias{centers.cec}
-\title{centers}
+\name{runAll.cec}
+\alias{runAll.cec}
+\title{runAll}
 \format{\preformatted{ NULL
 }}
 \usage{
-centers.cec
+runAll.cec
 }
 \arguments{
   \item{c}{CEC model object.}
 }
 \description{
-Print centers of clusters
+Starts whole algorithm again with same parameters
 }
 \keyword{datasets}
 

@@ -1,17 +1,17 @@
 \docType{methods}
-\name{centers.cec}
-\alias{centers.cec}
-\title{centers}
+\name{x.cec}
+\alias{x.cec}
+\title{x}
 \format{\preformatted{ NULL
 }}
 \usage{
-centers.cec
+x.cec
 }
 \arguments{
   \item{c}{CEC model object.}
 }
 \description{
-Print centers of clusters
+Print input dataset
 }
 \keyword{datasets}
 
