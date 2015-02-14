@@ -24,25 +24,30 @@ struct TotalResult {
 	int iterations;
 	std::list<unsigned int> nclusters;
 	// energy from all iterations of algorithm
-	std::list<double> energy;
-	double min_energy;
+    std::list<double> energy_history;
+    double energy;
 
 	TotalResult() :
 			iterations(0) {
-		min_energy = std::numeric_limits<double>::max();
+        energy = std::numeric_limits<double>::max();
 	}
 	void append(SingleResult result, bool log_nlusters, bool log_energy) {
-		iterations++;
+        ++iterations;
+        energy = result.energy;
 		if (log_nlusters)
+        {
 			nclusters.push_back(result.nclusters);
+        }
 		if (log_energy)
-			energy.push_back(result.energy);
+        {
+            energy_history.push_back(result.energy);
+        }
 	}
 };
 
 class Algorithm {
 protected:
-	bool m_log_nclusters, m_log_energy;
+    bool m_log_nclusters, m_log_energy;
 public:
 	Algorithm(bool log_nclusters, bool log_energy) :
 			m_log_nclusters(log_nclusters), m_log_energy(log_energy) {

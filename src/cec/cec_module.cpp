@@ -50,7 +50,7 @@ RCPP_MODULE(cec) {
             .method("predict", predict_1)
             .method("predict", predict_2)
             .method("log.ncluster", &CecModel::get_nclusters)
-            .method("log.energy", &CecModel::get_energy)
+            .method("log.energy", &CecModel::get_energy_history)
             .method("log.iters", &CecModel::iters)
             .method("x", &CecModel::get_points);
 

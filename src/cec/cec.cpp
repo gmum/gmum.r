@@ -182,7 +182,7 @@ void CecModel::find_best_cec() {
             init(hartigan, assignment);
             loop();
 
-            if (m_result.min_energy < best_cec.get_result().min_energy) {
+            if (m_result.energy < best_cec.get_result().energy) {
                 best_cec = *this;
             }
         }
@@ -262,7 +262,12 @@ std::list<unsigned int> CecModel::get_nclusters() const {
     return m_result.nclusters;
 }
 
-std::list<double> CecModel::get_energy() const {
+std::list<double> CecModel::get_energy_history() const
+{
+    return m_result.energy_history;
+}
+
+double CecModel::get_energy() const {
     return m_result.energy;
 }
 

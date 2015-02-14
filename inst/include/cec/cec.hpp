@@ -5,7 +5,6 @@
 #include <vector>
 #include "boost/foreach.hpp"
 #include "boost/smart_ptr.hpp"
-#include "boost/interprocess/smart_ptr/unique_ptr.hpp"
 #include "algorithm.hpp"
 #include "cluster.hpp"
 #include "cluster_custom_function.hpp"
@@ -53,7 +52,8 @@ public:
     std::vector<arma::mat> cov() const;
     unsigned int iters() const;
     std::list<unsigned int> get_nclusters() const;
-    std::list<double> get_energy() const;
+    std::list<double> get_energy_history() const;
+    double get_energy() const;
     unsigned int predict(std::vector<double> vec) const;
     std::list<double> predict(std::vector<double> vec, bool general);
     const gmum::TotalResult& get_result() const;
