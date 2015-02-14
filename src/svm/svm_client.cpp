@@ -193,7 +193,6 @@ void SVMClient::predict( arma::mat problem ) {
     // FIXME: Calculate TwoE prediction in this method
     if (config.preprocess == TWOE) {
         // Request prediction from handlers when not globally supported
-        // NOTE: Currently LINEAR only
         requestPredict(problem);
         return;
     }
