@@ -8,6 +8,9 @@ General
 
 CEC aims to efficiently implement Cross Entropy Clustering Algorithm as R extension.
 
+More about CEC in paper:
+Tabor, J., & Spurek, P. (2014). Cross-entropy clustering. Pattern Recognition, 47(9), 3046-3059.[here](http://www.sciencedirect.com/science/article/pii/S0031320314000764)
+
 CEC demo
 ------
 
@@ -15,7 +18,7 @@ CEC demo
 library(devtools)
 library('gmum.r')
 
-data(cec.mouse_1_spherical)
+data(cec_mouse_1_spherical)
 dataset = input
 ```
 That is the dataset we want to cluster
@@ -48,7 +51,7 @@ You can learn details of clustering like this
 
 ```{r fig.width=7, fig.height=6}
 centers(c)
-cov(c)
+covMatrix(c)
 ```
 
 You can predict cluster which a point would belong to
@@ -75,3 +78,4 @@ Try the same with random assignment
 c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere', method.init='random')
 plot(c)
 ```
+
