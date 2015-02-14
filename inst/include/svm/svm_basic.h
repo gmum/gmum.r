@@ -87,6 +87,7 @@ public:
 	arma::vec sp_data; 
 	arma::Col<int> row;
 	arma::Col<int> col;
+	int dim;
 
 	Logger log;
 
