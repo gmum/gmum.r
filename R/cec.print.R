@@ -19,12 +19,12 @@ print.cec <- NULL
 evalqOnLoad({
   
     print.cec <<- function(x) {
-        print(sprintf("CEC clustering, %d clusters with %f entropy",
-                      length(x$centers()), x$entropy()))
+        print(sprintf("CEC clustering; %d clusters with energy =  %f",
+                      length(x$centers()), x$energy()))
         print("Centers: ")
         print(x$centers())
         print("Covariances: ")
-        print(x$cov())
+        print(x$covMatrix())
     }
 
     setMethod("print","Rcpp_CecModel", print.cec)
