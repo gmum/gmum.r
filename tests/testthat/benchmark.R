@@ -10,7 +10,7 @@ formula <- X1 ~ .
 
 # Linear kernel
 
-e_svm <- e1071::svm(formula, data=ds, type='C-classification', kernel="linear", cost=1, gamma=1)
+e_svm <- e1071::svm(formula, data=ds, type='C-classification', kernel="linear", cost=1, gamma=1, scale=FALSE)
 glib_svm <- gmum.r::SVM(formula, ds, lib="libsvm", kernel="linear", C=1, verbosity=0)
 glight_svm <- gmum.r::SVM(formula, ds, lib="svmlight", kernel="linear", C=1)
 klar_svmlight <- klaR::svmlight(formula, data=ds, type="C", svm.options="-v 0")
@@ -37,7 +37,7 @@ print(sprintf("gmum libsvm 2e acc: %f", acc))
 
 # Poly kernel
 
-e_svm <- e1071::svm(formula, data=ds, type='C-classification', kernel="poly", cost=1, gamma=1)
+e_svm <- e1071::svm(formula, data=ds, type='C-classification', kernel="poly", cost=1, gamma=1, scale=FALSE)
 glib_svm <- gmum.r::SVM(formula, ds, lib="libsvm", kernel="poly", C=1, verbosity=0, gamma=1)
 glight_svm <- gmum.r::SVM(formula, ds, lib="svmlight", kernel="poly", C=1, gamma=1, coef0=1)
 klar_svmlight <- klaR::svmlight(formula, data=ds, type="C", svm.options="-v 0 -t 1 -s 1 -r 1")
@@ -64,7 +64,7 @@ print(sprintf("gmum libsvm 2e acc: %f", acc))
 
 # RBF kernel
 
-e_svm <- e1071::svm(formula, data=ds, type='C-classification', kernel="radial", cost=1, gamma=1)
+e_svm <- e1071::svm(formula, data=ds, type='C-classification', kernel="radial", cost=1, gamma=1, scale=FALSE)
 glib_svm <- gmum.r::SVM(formula, ds, lib="libsvm", kernel="rbf", C=1, verbosity=0, gamma=1)
 glight_svm <- gmum.r::SVM(formula, ds, lib="svmlight", kernel="rbf", C=1, gamma=1)
 klar_svmlight <- klaR::svmlight(formula, data=ds, type="C", svm.options="-v 0 -t 2 -s 1 -r 1")
@@ -91,7 +91,7 @@ print(sprintf("gmum libsvm 2e acc: %f", acc))
 
 # Sigmoid kernel
 
-e_svm <- e1071::svm(formula, data=ds, type='C-classification', kernel="sigmoid", cost=1, gamma=1)
+e_svm <- e1071::svm(formula, data=ds, type='C-classification', kernel="sigmoid", cost=1, gamma=1, scale=FALSE)
 glib_svm <- gmum.r::SVM(formula, ds, lib="libsvm", kernel="sigmoid", C=1, verbosity=0)
 glight_svm <- gmum.r::SVM(formula, ds, lib="svmlight", kernel="sigmoid", C=1)
 # -r and -s are sigmoid kernel parameters. 1/dimensions = 1/11 = 0.09090909
