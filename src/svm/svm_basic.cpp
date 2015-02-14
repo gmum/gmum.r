@@ -16,7 +16,7 @@ void SVMConfiguration::setSparse(bool sparse) {
 	this->sparse = sparse;
 }
 
-bool SVMConfiguration::isSprase() {
+bool SVMConfiguration::isSparse() {
 	return this->sparse;
 }
 
