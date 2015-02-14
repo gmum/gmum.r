@@ -31,16 +31,17 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 
 //	Training
 	if (!config.isPrediction()) {
-		if(config) {
-			svm_parameter* param = configuration_to_problem(config);
-			prob.l = config.target.n_rows;
-			svm_node** node = armatlib(config.data);
-			prob.y = vectlib(config.target);
-			prob.x = node;
-			save_model_to_config(config, param, prob);
+		svm_node** node;
+		if(config.isSparse()) {
+			node = SparseToSVMNode(config.sp_data, config.dim, config.row, config.col);
 		} else {
-
+			node = armatlib(config.data);
 		}
+		svm_parameter* param = configuration_to_problem(config);
+		prob.l = config.target.n_rows;
+		prob.y = vectlib(config.target);
+		prob.x = node;
+		save_model_to_config(config, param, prob);
 		//Xk is already transposed
 		//examples x dim
 		//config.alpha_y = SvmUtils::arrtoarmavec(config.sv_coef, config.l);
@@ -309,8 +310,11 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 	m = load_model_from_config(config, params);
 
 //	TODO: READ MODEL FROM PARAMETERS
-
-	train = armatlib(config.data);
+	if(config.isSparse()) {
+		train= SparseToSVMNode(config.sp_data, config.dim, config.row, config.col);
+	} else {
+		train = armatlib(config.data);
+	}
 	double* ret = Malloc(double, training_examples);
 
 	for (int i = 0; i < training_examples; i++)
