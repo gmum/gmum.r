@@ -128,7 +128,7 @@ void SVMConfiguration::setDefaultParams() {
 
     // User-defined classification mode labels
     // (will be filled during data processing)
-    label_negative = 0;
-    label_positive = 0;
+    neg_target = 0;
+    pos_target = 0;
 }
 
