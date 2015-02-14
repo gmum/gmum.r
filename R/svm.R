@@ -230,6 +230,7 @@ evalqOnLoad({
       config$sp_row <- x@ia
       config$sp_col <- x@ja
       config$dim <- nrow(x)
+      config$data_dim <- ncol(x)
     }
     else {
       config$sparse <- 0

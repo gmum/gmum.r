@@ -88,6 +88,7 @@ public:
 	arma::Col<int> row;
 	arma::Col<int> col;
 	int dim;
+	int data_dim;
 
 	Logger log;
 
@@ -135,6 +136,7 @@ public:
 
 	void setSparse(bool sparse);
 	bool isSparse();
+	int getDataDim();
 
 };
 

@@ -33,6 +33,7 @@ RCPP_MODULE(svm_wrapper) {
 			.field("sp_row", &SVMConfiguration::row)
 			.field("sp_col", &SVMConfiguration::col)
 			.field("dim", &SVMConfiguration::dim)
+			.field("data_dim", &SVMConfiguration::data_dim)
 
 			.method("setPrediction", &SVMConfiguration::setPrediction)
 			.method("setWeights", &SVMConfiguration::setWeights)

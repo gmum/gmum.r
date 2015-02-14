@@ -99,7 +99,7 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 	//config.sv_indices = (int*) malloc(config.l * sizeof(int));
 	//svm_get_sv_indices(model, config.sv_indices, config.log);
 
-	int dim = config.data.n_cols;
+	int dim = config.getDataDim();
 	ASSERT(dim > 0);
 	config.support_vectors = SvmUtils::libtoarma(model->SV, nr_support_vectors, dim);
 
@@ -280,7 +280,7 @@ svm_node** LibSVMRunner::SparseToSVMNode(arma::vec& x, int r, arma::Col<int>& ro
     int i, ii, count = 0, nnz = 0;
 
     sparse = (struct svm_node **) malloc (r * sizeof(struct svm_node*));
-    for (i = 0; i < rowindex.n_rows; i++) {
+    for (i = 0; i < r; i++) {
 	/* allocate memory for column elements */
 	nnz = rowindex[i+1] - rowindex[i];
 	sparse[i] = (struct svm_node *) malloc ((nnz + 1) * sizeof(struct svm_node));

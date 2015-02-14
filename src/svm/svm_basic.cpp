@@ -8,6 +8,15 @@ SVMConfiguration::SVMConfiguration() {
 	SVMConfiguration::setDefaultParams();
 }
 
+
+int SVMConfiguration::getDataDim() {
+	if(isSparse()) {
+		return this->data_dim;
+	} else {
+		return this->data.n_cols;
+	}
+}
+
 SVMConfiguration::SVMConfiguration(bool prediction) {
 	this->prediction = prediction;
 }
