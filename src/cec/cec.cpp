@@ -107,6 +107,7 @@ void CecModel::init(boost::shared_ptr<Algorithm> algorithm, std::vector<unsigned
                       params.clusters)
         {
             m_clusters.push_back(create_cluster(*cluster, i));
+            ++i;
         }
     } else {
     	//TODO: why pointer?
