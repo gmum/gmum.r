@@ -53,7 +53,6 @@ public:
 
 	int nr_class; /* number of classes, = 2 in regression/one class svm */
 
-
 	//libsvm model parameters
 	//TODO: delete those variables
 	int *label; /* label of each class (label[k]) */
@@ -82,6 +81,12 @@ public:
 	arma::mat data;		// armadillo matrix and vector (double)
 	arma::vec target;
 	arma::vec result;
+
+	// sparse matrix things
+	bool sparse;
+	arma::vec sp_data; 
+	arma::Col<int> row;
+	arma::Col<int> col;
 
 	Logger log;
 
