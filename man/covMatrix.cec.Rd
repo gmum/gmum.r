@@ -1,17 +1,17 @@
 \docType{methods}
-\name{centers.cec}
-\alias{centers.cec}
-\title{centers}
+\name{covMatrix.cec}
+\alias{covMatrix.cec}
+\title{covMatrix}
 \format{\preformatted{ NULL
 }}
 \usage{
-centers.cec
+covMatrix.cec
 }
 \arguments{
   \item{c}{CEC model object.}
 }
 \description{
-Print centers of clusters
+Print covariances of clusters
 }
 \keyword{datasets}
 

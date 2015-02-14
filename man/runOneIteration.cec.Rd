@@ -1,17 +1,17 @@
 \docType{methods}
-\name{centers.cec}
-\alias{centers.cec}
-\title{centers}
+\name{runOneIteration.cec}
+\alias{runOneIteration.cec}
+\title{runOneIteration}
 \format{\preformatted{ NULL
 }}
 \usage{
-centers.cec
+runOneIteration.cec
 }
 \arguments{
   \item{c}{CEC model object.}
 }
 \description{
-Print centers of clusters
+runs one iteration of algorithm
 }
 \keyword{datasets}
 

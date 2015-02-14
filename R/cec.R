@@ -13,7 +13,19 @@
 #' @param x Numeric matrix of data.
 #' @param k Initial number of clusters.
 #' @param method.type Type of clustering (Gauss family).
+#' \enumerate{
+#' \item diagonal Gaussians with diagonal covariance. The clustering will try to divide the data into ellipsoid with radiuses parallel to coordinate axes
+#' \item fsphere Spherical (radial) Gaussian densities (additional parameter - radius)
+#' \item full The clustering will have the tendency to divide the data into clusters resembling the unit circles in the Mahalanobis distance (additional parameter - covaraince matrix required)
+#' \item func Own function dependent on m and sigma (additional parameter)
+#' \item mix Mix of others Gaussian types.
+#' \item standard We divide dataset into ellipsoid-like clusters without any preferences (default)
+#' \item sphere The clustering will try to divide the data into circles of arbitrary sizes}
 #' @param method.init Method to initialize clusters.
+#' \enumerate{
+#' \item centroids
+#' \item kmeans++
+#' \item random}
 #' @param params.r Radius for spherical family.
 #' @param params.cov Covariance matrix for covariance family.
 #' @param params.centroids List of centroids.
@@ -25,7 +37,11 @@
 #' @param log.iters Records number of iterations.
 #' 
 #' @usage CEC(k=3, x=dataset)
-#' @usage CEC(k=3, x=dataset, control.nstart=10, method.type='sphere')
+#' @usage CEC(k=3, x=dataset, control.nstart=10, method.type='sphere', control.eps=0.05)
+#' @usage CEC(k=2, x=dataset, method.type='sphere', method.init='centroids', params.centroids=list(c(-0.5,0.5),c(0,0)))
+#' @usage CEC(k=5, x=dataset, method.type='fsphere', params.r=0.01, control.nstart=10, control.eps=0.07)
+#' @usage CEC(k=5, x=dataset, method.type='full', params.cov=matrix(c(0.03,0,0,0.01),2), control.nstart=10, control.eps=0.06)
+#' @usage CEC(k=1, x=dataset_points, method.type='func', params.function='name_of_my_own_function')
 #' 
 CEC <- NULL
 
