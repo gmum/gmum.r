@@ -99,8 +99,9 @@ loadModule('svm_wrapper', TRUE)
 
 evalqOnLoad({
 
-  SVM <<- function(formula, 
-                   data, 
+  SVM <<- function(formula     = NULL, 
+                   x, 
+                   y           = NULL,
                    lib         = "libsvm",             
                    kernel      = "linear",
                    prep        = "none",
@@ -154,41 +155,86 @@ evalqOnLoad({
       stop("Wrong verbosity level, should be from 0 to 6")
     }
     
-    labels = all.vars(update(formula, .~0))
-    x <- NULL
-    y <- NULL
-    
-    if (is(data, "data.frame")) {
-      y <- data.matrix( data[, labels] )
+    if (is.null(formula) && is.null(y)) {
+      stop("Please provide either data and formula or data and lables")
+    }
+        
+    if (is(x, "data.frame") && !is.null(formula)) {
+      labels <- all.vars(update(formula, .~0))
+      y <- data.matrix( x[, labels] )
       
       # I'm pretty sure this should bo done differently, and equally so I can't find how
       if (formula[3] == ".()") {
-        x <- data.matrix( data[,names(data) != labels]  )
+        x <- data.matrix( x[,names(x) != labels]  )
       }
       else {
         columns = all.vars(update(formula, 0~.))
-        x <- data.matrix( data[, columns] )
+        x <- data.matrix( x[, columns] )
       } 
     }
-    else if (is(data, "matrix")) {
-      y <- data[, labels]
+    else if (is(x, "matrix") && !is.null(formula)) {
+      labels <- all.vars(update(formula, .~0))
+      y <- x[, labels]
       
       # I'm pretty sure this should bo done differently, and equally so I can't find how
       if (formula[3] == ".()") {
-        x <- data[, names(data) != labels]
+        x <- x[, names(data) != labels]
       }
       else {
         columns = all.vars(update(formula, 0~.))
-        x <- data[, columns]
+        x <- x[, columns]
       } 
+    }
+    else if(inherits(x, "Matrix")) {
+      library("SparseM")
+      library("Matrix")
+      x <- as(x, "matrix.csr")
+    }
+    else if(inherits(x, "simple_triplet_matrix")) {
+      library("SparseM")
+      ind <- order(data$i, data$j)
+      x <- new("matrix.csr",
+               ra = x$v[ind],
+               ja = x$j[ind],
+               ia = as.integer(cumsum(c(1, tabulate(x$i[ind])))),
+               dimension = c(x$nrow, data$ncol))
+    }
+    else if(inherits(x, "matrix.csr")) {
+      library("SparseM")
     }
     else {
-      stop("data is of a wrong class, please provide data.frame or matrix")
+      stop("data is of a wrong class, please provide supported format: 
+           matrix or data.frame for dense; 
+           Matrix, simple_triplet_matrix or matrix.csr for sparse")
     }
 
+    sparse <- inherits(x, "matrix.csr")
+    
+    if (sparse) {
+      library("SparseM")
+      if (is.null(y)) {
+        stop("Please provide label vector y for sparse matrix classification")
+      }
+    }
+    
     config <- new(SVMConfiguration)
-    config$x <- x
-    config$y <- y
+    if (!sparse) {
+      config$x <- x
+    }
+    config$y <- data.matrix(y)
+    
+    # sparse 
+    if (sparse) {
+      config$sparse <- 1
+      config$sp_x <- x@ra
+      config$sp_row <- x@ia
+      config$sp_col <- x@ja
+      config$dim <- ncol(x)
+    }
+    else {
+      config$sparse <- 0
+    }
+    
     
     config$setLibrary(lib)
     config$setKernel(kernel)
@@ -329,7 +375,7 @@ evalqOnLoad({
   }
 
   setMethod("print", "Rcpp_SVMClient", print.svm)
-  setMethod("predict", signature("Rcpp_SVMClient"), predict.svm.gmum)
+  setMethod("predict", "Rcpp_SVMClient", predict.svm.gmum)
   setMethod("plot", "Rcpp_SVMClient",  plot.svm)
   setMethod("summary", "Rcpp_SVMClient", summary.svm)
   setMethod("show", "Rcpp_SVMClient", summary.svm)

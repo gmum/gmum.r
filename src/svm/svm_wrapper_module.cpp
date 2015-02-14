@@ -28,12 +28,18 @@ RCPP_MODULE(svm_wrapper) {
 			.field("shrinking", &SVMConfiguration::shrinking)
 			.field("probability", &SVMConfiguration::probability)
 
+			.field("sparse", &SVMConfiguration::sparse)
+			.field("sp_x", &SVMConfiguration::sp_data)
+			.field("sp_row", &SVMConfiguration::row)
+			.field("sp_col", &SVMConfiguration::col)
+			.field("dim", &SVMConfiguration::dim)
+
 			.method("setPrediction", &SVMConfiguration::setPrediction)
 			.method("setWeights", &SVMConfiguration::setWeights)
 			.method("setLibrary", &SVMConfiguration::setLibrary)
 			.method("setKernel", &SVMConfiguration::setKernel)
 			.method("setPreprocess", &SVMConfiguration::setPreprocess)
-      .method("set_verbosity", &SVMConfiguration::set_verbosity)
+      		.method("set_verbosity", &SVMConfiguration::set_verbosity)
 			;
 	class_<SVMClient>("SVMClient")
 			.constructor<SVMConfiguration*>()

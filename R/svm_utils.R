@@ -1,18 +1,3 @@
-svm.dataset.breast_cancer <- function() {
-  data(svm_breast_cancer_dataset)
-  return (svm.breastcancer.dataset)
-}
-
-svm.dataset.2e <- function() {
-  data(svm_two_ellipsoids_dataset)
-  return(svm.twoellipsoids.dataset)
-}
-
-svm.dataset.circles <- function() {
-  data(svm_two_circles_dataset)
-  return(svm.twocircles.dataset)
-}
-
 svm.dataset.xor <- function() {
   matrix( 
     c(0,1,0,1,0,0,1,1,0,1,1,0),
