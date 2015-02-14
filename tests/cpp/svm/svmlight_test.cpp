@@ -3,9 +3,11 @@
 #include <string>
 #include "gtest/gtest.h"
 
+#include "svm_helpers.h"
 #include "svm/log.h"
 #include "svmlight_runner.h"
 #include "svm_basic.h"
+#include "svm_client.h"
 
 namespace {
 
@@ -21,31 +23,28 @@ class SVMLightRunnerTest: public ::testing::Test {
 protected:
 
     SVMLightRunnerTest() {
+        std::cout << "Creating SVMLightRunner..." << std::endl << std::flush;
         svmlr = SVMLightRunner();
+        std::cout << "Creating second SVMLightRunner..." << std::endl << std::flush;
         second_svmlr = SVMLightRunner();
+        std::cout << "Creating SVMConfiguration..." << std::endl << std::flush;
         svm_config = SVMConfiguration();
+        std::cout << "Setting logger..." << std::endl << std::flush;
         svm_config.log.verbosity = log_level;
+        std::cout << "Creating second SVMConfiguration..." << std::endl << std::flush;
         second_svm_config = SVMConfiguration();
+        std::cout << "Setting logger..." << std::endl << std::flush;
         second_svm_config.log.verbosity = log_level;
 
-        learing_data_01
-            << 0.5 << 1.0 << 0.0 << 1.0 << arma::endr
-            << 0.4 << 1.1 << 0.0 << 1.0 << arma::endr
-            << 0.5 << 0.9 << 1.0 << 0.0 << arma::endr
-            << 0.5 << 1.0 << 1.0 << 0.0 << arma::endr
-            << 0.4 << 1.1 << 1.0 << 0.0 << arma::endr;
-        learing_target_01 << -1 << -1 << 1 << 1 << 1;
+        learning_data_01 = helper_learning_data_01();
+        learning_target_01 = helper_learning_target_01();
+        learning_target_02 = helper_learning_target_02();
 
-        learing_target_02 << 2 << 2 << 4 << 4 << 4;
+        testing_data_01 = helper_testing_data_01();
+        testing_target_01 = helper_testing_target_01();
+        testing_target_02 = helper_testing_target_02();
 
-        testing_data_01
-            << 0.4 << 0.9 << 0.0 << 1.0 << arma::endr
-            << 0.5 << 0.9 << 0.0 << 1.0 << arma::endr
-            << 0.4 << 1.0 << 1.0 << 0.0 << arma::endr
-            << 0.5 << 1.0 << 1.0 << 0.0 << arma::endr;
-        testing_target_01 << -1 << -1 << 1 << 1;
-
-        testing_target_02 << 2 << 2 << 4 << 4;
+        std::cout << "Starting test..." << std::endl << std::flush;
     }
 
     virtual ~SVMLightRunnerTest() {}
@@ -63,9 +62,9 @@ protected:
     SVMConfiguration svm_config;
     SVMConfiguration second_svm_config;
 
-    arma::mat learing_data_01;
-    arma::vec learing_target_01;
-    arma::vec learing_target_02;
+    arma::mat learning_data_01;
+    arma::vec learning_target_01;
+    arma::vec learning_target_02;
     arma::mat testing_data_01;
     arma::vec testing_target_01;
     arma::vec testing_target_02;
@@ -78,9 +77,9 @@ protected:
 
 TEST_F(SVMLightRunnerTest, processRequest_learning) {
     std::cout << "SVMConfiguration data..." << std::endl;
-    svm_config.data = learing_data_01;
+    svm_config.data = learning_data_01;
     std::cout << "SVMConfiguration target..." << std::endl;
-    svm_config.target = learing_target_01;
+    svm_config.target = learning_target_01;
     std::cout << "SVMConfiguration setPrediction..." << std::endl;
     svm_config.setPrediction(false);
     std::cout << "Processing request." << std::endl;
@@ -104,13 +103,13 @@ TEST_F(SVMLightRunnerTest, processRequest_learning) {
     // number of support vectors
     ASSERT_EQ(svm_config.l, 5);
     // threshold b
-    ASSERT_DOUBLE_EQ(svm_config.threshold_b, -0.11450359507913976);
+    ASSERT_DOUBLE_EQ(svm_config.threshold_b, 0.11450359507913976);
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_classification) {
-    std::cout << "Testing learing..." << std::endl << std::flush;
-    svm_config.data = learing_data_01;
-    svm_config.target = learing_target_01;
+    std::cout << "Testing learning..." << std::endl << std::flush;
+    svm_config.data = learning_data_01;
+    svm_config.target = learning_target_01;
     svm_config.setPrediction(false);
     svmlr.processRequest(svm_config);
 
@@ -146,9 +145,9 @@ TEST_F(SVMLightRunnerTest, test_globals_cleaning) {
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_classification_tagged_classes) {
-    std::cout << "Testing learing..." << std::endl << std::flush;
-    svm_config.data = learing_data_01;
-    svm_config.target = learing_target_02;
+    std::cout << "Testing learning..." << std::endl << std::flush;
+    svm_config.data = learning_data_01;
+    svm_config.target = learning_target_02;
     svm_config.setPrediction(false);
     svmlr.processRequest(svm_config);
 
@@ -163,10 +162,10 @@ TEST_F(SVMLightRunnerTest, processRequest_classification_tagged_classes) {
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_with_poly_kernel) {
-    std::cout << "Testing learing..." << std::endl << std::flush;
+    std::cout << "Testing learning..." << std::endl << std::flush;
     svm_config.setKernel(std::string("poly"));
-    svm_config.data = learing_data_01;
-    svm_config.target = learing_target_02;
+    svm_config.data = learning_data_01;
+    svm_config.target = learning_target_02;
     svm_config.setPrediction(false);
     svmlr.processRequest(svm_config);
 
@@ -181,10 +180,10 @@ TEST_F(SVMLightRunnerTest, processRequest_with_poly_kernel) {
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_with_rbf_kernel) {
-    std::cout << "Testing learing..." << std::endl << std::flush;
+    std::cout << "Testing learning..." << std::endl << std::flush;
     svm_config.setKernel(std::string("rbf"));
-    svm_config.data = learing_data_01;
-    svm_config.target = learing_target_02;
+    svm_config.data = learning_data_01;
+    svm_config.target = learning_target_02;
     svm_config.setPrediction(false);
     svmlr.processRequest(svm_config);
 
@@ -199,10 +198,10 @@ TEST_F(SVMLightRunnerTest, processRequest_with_rbf_kernel) {
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_with_sigmoid_kernel) {
-    std::cout << "Testing learing..." << std::endl << std::flush;
+    std::cout << "Testing learning..." << std::endl << std::flush;
     svm_config.setKernel(std::string("sigmoid"));
-    svm_config.data = learing_data_01;
-    svm_config.target = learing_target_02;
+    svm_config.data = learning_data_01;
+    svm_config.target = learning_target_02;
     svm_config.setPrediction(false);
     svmlr.processRequest(svm_config);
 
@@ -213,6 +212,26 @@ TEST_F(SVMLightRunnerTest, processRequest_with_sigmoid_kernel) {
 
     for (int i = 0; i < 4; ++i) {
         ASSERT_DOUBLE_EQ(svm_config.result[i], testing_target_02[i]);
+    }
+}
+
+TEST_F(SVMLightRunnerTest, integration_svmclient_predict) {
+    std::cout << "Testing learning..." << std::endl << std::flush;
+    svm_config.data = learning_data_01;
+    svm_config.target = learning_target_01;
+    svm_config.setPrediction(false);
+    svmlr.processRequest(svm_config);
+
+    std::cout << "Testing SVMClient prediction..." << std::endl << std::flush;
+    svm_config.data = testing_data_01;
+    svm_config.setPrediction(true);
+    SVMClient *svm_client = new SVMClient(&svm_config);
+    svm_client->predict(testing_data_01);
+    SVMConfiguration client_config = svm_client->getConfiguration();
+    
+    for (int i = 0; i < 4; ++i) {
+        ASSERT_DOUBLE_EQ(
+            client_config.result[i], testing_target_01[i]);
     }
 }
 

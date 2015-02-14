@@ -229,7 +229,7 @@ evalqOnLoad({
       config$sp_x <- x@ra
       config$sp_row <- x@ia
       config$sp_col <- x@ja
-      config$dim <- ncol(x)
+      config$dim <- nrow(x)
     }
     else {
       config$sparse <- 0
@@ -293,6 +293,9 @@ evalqOnLoad({
   }
   
   plot.svm <<- function(x, mode="normal", dim1 = 1, dim2 = 2, log="") {
+    if (x$isSparse()) {
+      stop("Data is sparse")
+    }
     if (mode != "pca" && mode != "normal" && mode != "contour" ) {
       stop("Wrong mode!") 
     }
@@ -366,10 +369,21 @@ evalqOnLoad({
       stop("Wrong target class, please provide data.frame, matrix or numeric vector")
     }
     
-    if (!is(x, "matrix")) {
-      x <- data.matrix(x)
+    if (!object$isSparse()) {
+      if (!is(x, "matrix") && !is(x, "data.frame")) {
+        stop("Please provide matrix or data.frame")
+      }
+      if (!is(x, "matrix")) {
+        x <- data.matrix(x)
+      }
+      object$predict(x)
     }
-    object$predict(x)
+    else {
+      if (!is(x, "matrix.csr")) {
+        stop("Please provide sparse matrix")
+      }
+      object$sparse_predict(x@ra, ncol(x), x@ja, x@ia)
+    }
     prediction <- object$getPrediction()
     prediction
   }

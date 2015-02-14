@@ -32,8 +32,11 @@ public:
 	void setEps(double);
 	void setShrinking(int);
 	void setProbability(int);
-  void setBias(double);
-  // void setAlpha(double*);
+    void setBias(double);
+    // void setAlpha(double*);
+
+    // additional setters
+    void setConfiguration(SVMConfiguration *);
 
 	// data getters
 	arma::mat getX();
@@ -53,20 +56,29 @@ public:
 	double getEps();
 	bool isShrinking();
 	bool isProbability();
+	bool isSparse();
+
+	// model getters
+    // double** getSV(); // double**, std::vector, arma:mat ?
+    int get_number_sv();
+    int get_number_class();
+    arma::vec getAlpha();
+    double getBias();
+    arma::vec getW();
+    arma::mat getSV();
+
+    // additional getters
+    SVMConfiguration getConfiguration();
 
 	// runners
 	void run();
-	void predict( arma::mat );
+    // Prediction independent of SVMHandlers
+    void predict(arma::mat);
+    void sparse_predict(arma::vec x, int r, arma::Col<int> rowindex, arma::Col<int> colindex);
+    /// Process a request of prediction with a SVMHandlers implementations
+	void requestPredict(arma::mat);
 	void train();
 
-	// model getters
- // double** getSV(); // double**, std::vector, arma:mat ?
-  int get_number_sv();
-  int get_number_class();
-	arma::vec getAlpha();
-	double getBias();
-	arma::vec getW();
-  arma::mat getSV();
 };
 
 #endif

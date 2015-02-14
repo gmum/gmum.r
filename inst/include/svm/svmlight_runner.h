@@ -38,11 +38,6 @@ public:
 protected:
     
     /**
-     * GMUM.R's implementation of prediction
-     */
-    void predict(SVMConfiguration &);
-
-    /**
      * Store numeric results as user-defined labels
      */
     void resultsToLabels(SVMConfiguration &);

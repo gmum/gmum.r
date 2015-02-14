@@ -5,6 +5,11 @@
 #include "two_e_svm_post.h"
 #include "svm_utils.h"
 
+const std::string __file__ = "svm_client.cpp";
+const std::string __client_class__ = "SVMClient";
+const std::string __debug_prefix__ = __file__ + "." + __client_class__;
+
+
 // Constructor
 SVMClient::SVMClient(SVMConfiguration *config): config(*config) {}
 
@@ -49,6 +54,11 @@ void SVMClient::setShrinking(int sh){
 }
 void SVMClient::setProbability(int prob){
 	config.probability = prob;
+}
+
+void SVMClient::setConfiguration(SVMConfiguration *config) {
+	SVMConfiguration current_config = *config;
+	this->config = current_config;
 }
 
 // Getters
@@ -109,6 +119,10 @@ bool SVMClient::isProbability(){
 	return (bool)config.probability;
 }
 
+bool SVMClient::isSparse() {
+    return (bool)config.sparse;
+}
+
 // model getters
 arma::vec SVMClient::getAlpha() {
 	return config.alpha_y;
@@ -142,7 +156,7 @@ arma::vec SVMClient::getW() {
 		return config.w;
 	}
 	else {
-    LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundry is not available with non-linear kernel"));
+    LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundary is not available with non-linear kernel"));
 		return 0;
 	}
 }
@@ -157,6 +171,10 @@ int SVMClient::get_number_class() {
 
 arma::mat SVMClient::getSV(){
   return config.support_vectors;
+}
+
+SVMConfiguration SVMClient::getConfiguration() {
+    return this->config;
 }
 
 // Runners
@@ -174,6 +192,138 @@ void SVMClient::train() {
 }
 
 void SVMClient::predict( arma::mat problem ) {
+    DBG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".predict() Started.");
+
+    // FIXME: Calculate TwoE prediction in this method
+    if (config.preprocess == TWOE) {
+        // Request prediction from handlers when not globally supported
+        requestPredict(problem);
+        return;
+    }
+
+    // Just like in requestPredict()
+	config.setData(problem);
+
+    // Number of docs is a number of rows in data matrix
+    size_t n_docs = config.data.n_rows;
+    config.result = arma::randu<arma::vec>(n_docs);
+
+    // Prediction itself
+    // math:
+    // f(x) = sum{alpha_j * y_j * kernel(x_j, x)} + b, where j means j-th SV}
+    for (int i=0; i < n_docs; ++i) {
+        double doc_result = 0;
+        for (int j=0; j < config.support_vectors.n_rows; ++j) {
+            double kernel_j;
+            switch (config.kernel_type) {
+                case _LINEAR: {
+                    // math:     kernel(x, x') = x^T * x'
+                    // libsvm:   kernel(v, u') = u'*v
+                    // svmlight: kernel(b, a) = a*b
+                    kernel_j = arma::dot(
+                        config.data.row(i),
+                        config.support_vectors.row(j)
+                    );
+                    break;
+                }
+                case _POLY: {
+                    // libsvm:   kernel(v, u') = (gamma*u'*v + coef0)^degree
+                    // svmlight: kernel(b, a) = (s a*b+c)^d
+                    kernel_j = arma::dot(
+                        config.data.row(i),
+                        config.support_vectors.row(j)
+                    );
+                    kernel_j *= config.gamma;
+                    kernel_j += config.coef0;
+                    kernel_j = arma::pow(
+                        arma::mat(&kernel_j, 1, 1),
+                        config.degree
+                    )[0];
+                    break;
+                }
+                case _RBF: {
+                    // libsvm:   kernel(v, u') = exp(-gamma*|u-v|^2)
+                    // svmlight: kernel(b, a) = exp(-gamma ||a-b||^2)
+                    double neg_gamma = -config.gamma;
+                    double norm = arma::norm(
+                        config.data.row(i)
+                        - config.support_vectors.row(j),
+                        2
+                    );
+                    kernel_j = arma::exp(
+                        arma::mat(&neg_gamma, 1, 1) *
+                        arma::pow(
+                            arma::mat(&norm, 1, 1), 2
+                        )
+                    )[0];
+                    break;
+                }
+                case _SIGMOID: {
+                    // libsvm:   kernel(v, u') = tanh(gamma*u'*v + coef0)
+                    // svmlight: kernel(b, a) = tanh(s a*b + c)
+                    double tanh_arg = arma::dot(
+                        config.data.row(i),
+                        config.support_vectors.row(j)
+                    );
+                    tanh_arg *= config.gamma;
+                    tanh_arg += config.coef0;
+                    kernel_j = arma::tanh(arma::mat(&tanh_arg, 1, 1))[0];
+                    break;
+                }
+                default: {
+                    LOG(
+                        config.log,
+                        LogLevel::FATAL,
+                        __debug_prefix__ + ".predict() invalid kernel type!"
+                    );
+                    break;
+                }
+            }
+            kernel_j *= config.alpha_y(j);
+            doc_result += kernel_j;
+        }
+        doc_result += config.threshold_b;
+        config.result[i] = doc_result;
+    }
+
+    // Convert results to userdefined labels
+    n_docs = config.result.n_rows;
+    double doc_result = 0;
+    for (int i=0; i < n_docs; ++i) {
+        doc_result = config.result[i];
+
+        // Store user-defined label
+        if (doc_result < 0) {
+            config.result[i] = config.neg_target;
+        } else if (doc_result > 0) {
+            config.result[i] = config.pos_target;
+        } else {
+            config.result[i] = 0;
+        }
+    }
+
+    DBG(
+        config.log,
+        LogLevel::DEBUG,
+        __debug_prefix__ + ".predict() Done."
+    );
+}
+
+void SVMClient::sparse_predict(arma::vec x, int r, arma::Col<int> rowindex, arma::Col<int> colindex) {
+    config.sp_data = x;
+    config.row = rowindex;
+    config.col = colindex;
+    config.dim = r;
+    if ( SVMHandlers.size() > 0 ) {
+        config.setPrediction(true);
+        for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
+                iter != SVMHandlers.end(); ++iter) {
+            (*iter)->processRequest(config);
+        }
+    }
+}
+
+void SVMClient::requestPredict( arma::mat problem ) {
 	config.setData(problem);
 	if ( SVMHandlers.size() > 0 ) {
 		config.setPrediction(true);
