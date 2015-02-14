@@ -31,12 +31,16 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 
 //	Training
 	if (!config.isPrediction()) {
-		svm_parameter* param = configuration_to_problem(config);
-		prob.l = config.target.n_rows;
-		svm_node** node = armatlib(config.data);
-		prob.y = vectlib(config.target);
-		prob.x = node;
-		save_model_to_config(config, param, prob);
+		if(config) {
+			svm_parameter* param = configuration_to_problem(config);
+			prob.l = config.target.n_rows;
+			svm_node** node = armatlib(config.data);
+			prob.y = vectlib(config.target);
+			prob.x = node;
+			save_model_to_config(config, param, prob);
+		} else {
+
+		}
 		//Xk is already transposed
 		//examples x dim
 		//config.alpha_y = SvmUtils::arrtoarmavec(config.sv_coef, config.l);
@@ -269,7 +273,29 @@ double * LibSVMRunner::vectlib(arma::vec target) {
 	return return_target;
 }
 
+svm_node** LibSVMRunner::SparseToSVMNode(arma::vec& x, int r, arma::Col<int>& rowindex, arma::Col<int>& colindex) { 
+    struct svm_node** sparse;
+    int i, ii, count = 0, nnz = 0;
 
+    sparse = (struct svm_node **) malloc (r * sizeof(struct svm_node*));
+    for (i = 0; i < r; i++) {
+	/* allocate memory for column elements */
+	nnz = rowindex[i+1] - rowindex[i];
+	sparse[i] = (struct svm_node *) malloc ((nnz + 1) * sizeof(struct svm_node));
+
+	/* set column elements */
+	for (ii = 0; ii < nnz; ii++) {
+	    sparse[i][ii].index = colindex[count];
+	    sparse[i][ii].value = x[count];
+	    count++;
+	}
+
+	/* set termination element */
+	sparse[i][ii].index = -1;
+    }    
+
+    return sparse;
+}
 
 
 void LibSVMRunner::arma_prediction(SVMConfiguration& config) {

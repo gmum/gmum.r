@@ -12,6 +12,14 @@ SVMConfiguration::SVMConfiguration(bool prediction) {
 	this->prediction = prediction;
 }
 
+void SVMConfiguration::setSparse(bool sparse) {
+	this->sparse = sparse;
+}
+
+bool SVMConfiguration::isSprase() {
+	return this->sparse;
+}
+
 void SVMConfiguration::setFilename(std::string filename) {
 	this->filename = filename;
 }

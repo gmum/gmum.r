@@ -32,6 +32,7 @@ private:
 	double *	vectlib(arma::vec); //arma vector to lisvm
 	void arma_prediction(SVMConfiguration&);
 	svm_parameter* configuration_to_problem(SVMConfiguration&);
+	svm_node** SparseToSVMNode(arma::vec& x, int r, arma::Col<int>& rowindex, arma::Col<int>& colindex);
 
 	struct svm_model *model;
 	struct svm_problem prob;

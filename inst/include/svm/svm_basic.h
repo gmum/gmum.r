@@ -126,6 +126,10 @@ public:
 	void setB(double b);
 	// logger
 	void set_verbosity( int );
+
+	void setSparse(bool sparse);
+	bool isSparse();
+
 };
 
 #endif
