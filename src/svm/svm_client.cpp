@@ -305,6 +305,20 @@ void SVMClient::predict( arma::mat problem ) {
     );
 }
 
+void SVMClient::sparse_predict(arma::vec x, int r, arma::Col<int> rowindex, arma::Col<int> colindex) {
+    config.sp_data = x;
+    config.row = rowindex;
+    config.col = colindex;
+    config.dim = r;
+    if ( SVMHandlers.size() > 0 ) {
+        config.setPrediction(true);
+        for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
+                iter != SVMHandlers.end(); ++iter) {
+            (*iter)->processRequest(config);
+        }
+    }
+}
+
 void SVMClient::requestPredict( arma::mat problem ) {
 	config.setData(problem);
 	if ( SVMHandlers.size() > 0 ) {

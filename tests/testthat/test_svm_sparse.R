@@ -37,11 +37,11 @@ test_that("sparse matrices work", {
   print(class(x))
   y <- read.table(system.file("inst", "data_sets", "svm", "dexter_train.labels", package="gmum.r"))
   
-  #svm < SVM(x=x, y=y, lib="libsvm", kernel="linear", C=10)
-  #pred <- predict(svm, x)
+  svm <- SVM(x=x, y=y, lib="libsvm", kernel="linear", C=10)
+  pred <- predict(svm, x)
   
-  #acc <- svm.accuracy(prediction=pred, target=target)
-  #print(acc)
+  acc <- svm.accuracy(prediction=pred, target=target)
+  print(acc)
 
 })
 

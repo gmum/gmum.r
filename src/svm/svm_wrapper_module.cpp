@@ -58,7 +58,7 @@ RCPP_MODULE(svm_wrapper) {
 			.method("setEps",&SVMClient::setEps)
 			.method("setShrinking",&SVMClient::setShrinking)
 			.method("setProbability",&SVMClient::setProbability)
-      .method("setBias", &SVMClient::setBias)
+      		.method("setBias", &SVMClient::setBias)
 
 			.method("getX", &SVMClient::getX)
 			.method("getY", &SVMClient::getY)
@@ -79,12 +79,13 @@ RCPP_MODULE(svm_wrapper) {
 			.method("getAlpha", &SVMClient::getAlpha)
 			.method("getBias", &SVMClient::getBias)
 			.method("getW", &SVMClient::getW)
-      .method("get_number_sv", &SVMClient::get_number_sv)
-      .method("get_number_class", &SVMClient::get_number_class)
-      .method("get_SV", &SVMClient::getSV)
+	      	.method("get_number_sv", &SVMClient::get_number_sv)
+	      	.method("get_number_class", &SVMClient::get_number_class)
+	      	.method("get_SV", &SVMClient::getSV)
 
 			.method("train", &SVMClient::train)
 			.method("predict", &SVMClient::predict)
+			.method("sparse_predict", &SVMClient::sparse_predict)
 			;
 
 }
