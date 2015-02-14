@@ -29,25 +29,35 @@
 #' 
 CEC <- NULL
 
-#' @title run
+#' @title runAll
 #' 
-#' @description Start loop of the algorithm where learning is done
+#' @description Starts whole algorithm again with same parameters
 #'
 #' @docType methods
 #'
 #' @param c CEC model object.
 #' 
-run.cec <- NULL
+runAll.cec <- NULL
 
-#' @title entropy
+#' @title runOneIteration
 #' 
-#' @description Print result entropy of clustering found
+#' @description runs one iteration of algorithm
+#'
+#' @docType methods
+#'
+#' @param c CEC model object.
+#' 
+runOneIteration.cec <- NULL
+
+#' @title energy 
+#' 
+#' @description Print result energy of clustering found
 #' 
 #' @docType methods
 #'
 #' @param c CEC model object.
 #' 
-entropy.cec <- NULL
+energy.cec <- NULL
 
 #' @title y
 #' 
@@ -58,6 +68,16 @@ entropy.cec <- NULL
 #' @param c CEC model object.
 #' 
 y.cec <- NULL
+
+#' @title x
+#' 
+#' @description Print input dataset 
+#' 
+#' @docType methods
+#'
+#' @param c CEC model object.
+#' 
+x.cec <- NULL
 
 #' @title centers
 #' 
@@ -166,10 +186,9 @@ evalqOnLoad({
                    params.function = "",
                    control.nstart = 1,
                    control.eps = 1e-4,
-                   control.itmax = 1,
+                   control.itmax = 25,
                    log.energy = FALSE,
-                   log.ncluster= FALSE,
-                   log.iters = FALSE){
+                   log.ncluster= FALSE){
     
     # check for errors
     call <- match.call(expand.dots = TRUE)
@@ -212,7 +231,6 @@ evalqOnLoad({
     config$setR(params.r)
     config$setFunction(params.function)
     config$setItmax(control.itmax)
-    config$setIters(log.iters)
     
     model <- new(CecModel, config)
 
@@ -220,14 +238,14 @@ evalqOnLoad({
     model
   }
   
-  run.cec <<- function(c) {
-    c$run()
+  runAll.cec <<- function(c) {
+    c$runAll()
   }
   
-  entropy.cec <<- function(c) {
-    c$entropy()
+  runOneIteration.cec <<- function(c) {
+    c$runOneIteration()
   }
-  
+
   energy.cec <<- function(c) {
     c$energy()
   }
@@ -236,12 +254,28 @@ evalqOnLoad({
     c$y()
   }
   
+  x.cec <<- function(c) {
+    c$x()
+  }
+
   centers.cec <<- function(c) {
     c$centers()
   }
   
   covMatrix.cec <<- function(c) {
     c$covMatrix()
+  }
+
+  log.ncluster <<- function(c) {
+    c$log.ncluster()
+  }
+
+  log.energy.cec <<- function(c) {
+    c$log.energy()
+  }
+
+  log.iters.cec <<- function(c) {
+    c$log.iters()
   }
   
   predictCluster.cec <<- function(c, x) {
@@ -266,26 +300,11 @@ evalqOnLoad({
     c$predict(x, TRUE)
   }
     
-    log.ncluster.cec <<- function(c) {
-      c$log.ncluster()
-    }
-    
-    log.energy.cec <<- function(c) {
-      c$log.energy()
-    }
-    
-    log.iters.cec <<- function(c) {
-      c$log.iters()
-    }
-    
-    nstart.cec <<- function(c) {
-      c$nstart()
-    }
-    
-    setGeneric("run", function(c) standardGeneric("run"))
-    setGeneric("entropy", function(c) standardGeneric("entropy"))
+    setGeneric("runAll", function(c) standardGeneric("runAll"))
+    setGeneric("runOneIteration", function(c) standardGeneric("runOneIteration"))
     setGeneric("energy", function(c) standardGeneric("energy"))
     setGeneric("y", function(c) standardGeneric("y"))
+    setGeneric("x", function(c) standardGeneric("x"))
     setGeneric("centers", function(c) standardGeneric("centers"))
     setGeneric("covMatrix", function(c) standardGeneric("covMatrix"))
     setGeneric("predictCluster", function(c, ...) standardGeneric("predictCluster"))
@@ -293,12 +312,12 @@ evalqOnLoad({
     setGeneric("log.ncluster", function(c) standardGeneric("log.ncluster"))
     setGeneric("log.energy", function(c) standardGeneric("log.energy"))
     setGeneric("log.iters", function(c) standardGeneric("log.iters"))
-    setGeneric("nstart", function(c) standardGeneric("nstart"))
     
-    setMethod("run", "Rcpp_CecModel", run.cec)
-    setMethod("entropy", "Rcpp_CecModel", entropy.cec)
+    setMethod("runAll", "Rcpp_CecModel", runAll.cec)
+    setMethod("runOneIteration", "Rcpp_CecModel", runOneIteration.cec)
     setMethod("energy", "Rcpp_CecModel", energy.cec)
     setMethod("y", "Rcpp_CecModel", y.cec)
+    setMethod("x", "Rcpp_CecModel", x.cec)
     setMethod("centers", "Rcpp_CecModel", centers.cec)
     setMethod("covMatrix", "Rcpp_CecModel", covMatrix.cec)
     setMethod("predictCluster", "Rcpp_CecModel", predictCluster.cec)
@@ -306,7 +325,6 @@ evalqOnLoad({
     setMethod("log.ncluster", "Rcpp_CecModel", log.ncluster.cec)
     setMethod("log.energy", "Rcpp_CecModel", log.energy.cec)
     setMethod("log.iters", "Rcpp_CecModel", log.iters.cec)
-    setMethod("nstart", "Rcpp_CecModel", nstart.cec)
     
     setMethod("predict", "Rcpp_CecModel", function(object, vec) {
       object$predict(vec)

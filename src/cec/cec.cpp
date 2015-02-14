@@ -148,27 +148,30 @@ void CecModel::init(boost::shared_ptr<Algorithm> algorithm, std::vector<unsigned
 
 void CecModel::find_best_cec() {
     std::vector<unsigned int> assignment;
+    Params params = m_config->get_params();
     boost::shared_ptr<Hartigan> hartigan(
-                new Hartigan(this->m_config->get_params().log_nclusters,
-                             this->m_config->get_params().log_energy));
+                new Hartigan(params.log_nclusters,
+                             params.log_energy,
+                             params.it_max));
 
     Assignment *assignment_type = NULL;
-    switch (this->m_config->get_params().assignment_type) {
+    switch (params.assignment_type) {
     case krandom:
-        assignment_type = new RandomAssignment(*(m_config->get_params().dataset),
-                                               m_config->get_params().nclusters);
+        assignment_type = new RandomAssignment(*(params.dataset),
+                                               params.nclusters);
         break;
     case kkmeanspp:
-        assignment_type = new KmeansppAssignment(*(m_config->get_params().dataset),
-                                                 m_config->get_params().nclusters);
+        assignment_type = new KmeansppAssignment(*(params.dataset),
+                                                 params.nclusters);
         break;
     case kcentroids:
-        assignment_type = new CentroidsAssignment(*(m_config->get_params().dataset),
-                                                  m_config->get_params().centroids);
+        assignment_type = new CentroidsAssignment(*(params.dataset),
+                                                  params.nclusters,
+                                                  params.centroids);
         break;
     }
 
-    assignment.resize(m_config->get_params().dataset->n_rows);
+    assignment.resize(params.dataset->n_rows);
     (*assignment_type)(assignment);
 
     init(hartigan, assignment);
@@ -176,13 +179,12 @@ void CecModel::find_best_cec() {
     try {
         loop();
         CecModel best_cec = *this;
-        gmum::Params params = m_config->get_params();
         for (unsigned int i = 1; i < params.nstart; ++i) {
             (*assignment_type)(assignment);
             init(hartigan, assignment);
             loop();
 
-            if (m_result.min_energy < best_cec.get_result().min_energy) {
+            if (m_result.energy < best_cec.get_result().energy) {
                 best_cec = *this;
             }
         }
@@ -262,7 +264,12 @@ std::list<unsigned int> CecModel::get_nclusters() const {
     return m_result.nclusters;
 }
 
-std::list<double> CecModel::get_energy() const {
+std::list<double> CecModel::get_energy_history() const
+{
+    return m_result.energy_history;
+}
+
+double CecModel::get_energy() const {
     return m_result.energy;
 }
 

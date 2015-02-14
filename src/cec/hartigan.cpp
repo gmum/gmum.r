@@ -5,22 +5,24 @@
 
 namespace gmum {
 
-Hartigan::Hartigan(bool log_nclusters, bool log_energy) : Algorithm(log_nclusters, log_energy),
-		m_logger(Logger()){
-}
+Hartigan::Hartigan(bool log_nclusters, bool log_energy, int max_iter) : Algorithm(log_nclusters, log_energy, max_iter)
+{ }
 
 TotalResult Hartigan::loop(const arma::mat &points, std::vector<unsigned int> &assignment,
                            double kill_threshold, std::vector<Cluster* > &clusters) {
     TotalResult result;
     SingleResult sr;
-    double min_energy = std::numeric_limits<double>::max();
-
     do {
         sr = single_loop(points, assignment, kill_threshold, clusters);
-        min_energy = std::min(min_energy, sr.energy);
         result.append(sr, m_log_nclusters, m_log_energy);
-    } while(sr.switched > 0);
-    result.min_energy = min_energy;
+
+        if( (m_max_iter > 0) && (m_max_iter <= result.iterations) )
+        {
+            // if max iter parameter is enabled and there are already max_iter iterations passed, break
+            break;
+        }
+
+    } while( sr.switched > 0 ) ;
     return result;
 }
 

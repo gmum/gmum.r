@@ -1,12 +1,15 @@
 Cross Entropy Clustering
 ========================================================
 
-Part of gmum.R project. See gmum research group page [here](http://gmum.ii.uj.edu.pl) .
+Part of [gmum.R project](http://r.gmum.net). See also [gmum research group page](http://gmum.net).
 
 General
 ------
 
-CEC aims to efficiently implement Cross Entropy Clustering Algorithm as R extension.
+CEC aims to efficiently implement Cross Entropy Clustering algorithm as R extension.
+
+More about CEC in the paper:
+[Tabor, J., & Spurek, P. (2014). Cross-entropy clustering. Pattern Recognition, 47(9), 3046-3059.](http://www.sciencedirect.com/science/article/pii/S0031320314000764)
 
 CEC demo
 ------
@@ -15,63 +18,64 @@ CEC demo
 library(devtools)
 library('gmum.r')
 
-data(cec.mouse_1_spherical)
+data(cec_mouse_1_spherical)
 dataset = input
 ```
-That is the dataset we want to cluster
+That is the dataset we want to cluster:
 ```{r fig.width=7, fig.height=6}
 plot(dataset)
 ```
 
-Run cec with default parameters. Set number of clusters and dataset.
+Run CEC with default parameters. Set number of clusters and dataset.
 
 ```{r fig.width=7, fig.height=6}
 c <- CEC(k=3, x=dataset)
 plot(c)
 ```
 
-Since initial clusterization is random. It may be a good idea to run cec multiple times and choose the best result.
+Since initial clusterization is random. It may be a good idea to run CEC multiple times and choose the best result.
 
 ```{r fig.width=7, fig.height=6}
 c <- CEC(k=3, x=dataset, control.nstart=10)
 plot(c)
 ```
 
-Better than before, however, we know that clusters are spherical; let's inform cec about that.
+Better than before, however, we know that clusters are spherical; let's inform CEC about that.
 
 ```{r fig.width=7, fig.height=6}
 c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere')
 plot(c)
 ```
 
-You can learn details of clustering like this
+You can learn details of clustering like this:
 
 ```{r fig.width=7, fig.height=6}
 centers(c)
-cov(c)
+covMatrix(c)
 ```
 
-You can predict cluster which a point would belong to
+You can predict cluster which a point would belong to:
 
 ```{r fig.width=7, fig.height=6}
 predictCluster(c, c(1,1))
 ```
 
-or find out what are the probabilities of belonging to each cluster
+or find out what are the probabilities of belonging to each cluster:
 
 ```{r fig.width=7, fig.height=6}
 predictClusters(c, c(1,1))
 ```
 
-You can visualise size and shape of clusters
+You can visualise size and shape of clusters:
 
 ```{r fig.width=7, fig.height=6}
 plot(c, ellipses=TRUE)
 ```
 
-Try the same with random assignment
+Try the same with random assignment.
 
 ```{r fig.width=7, fig.height=6}
 c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere', method.init='random')
 plot(c)
 ```
+
