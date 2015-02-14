@@ -22,7 +22,7 @@ static std::string to_string(const T& x) {
 
 
 class Hartigan: public Algorithm {
-
+private:
 	Logger m_logger;
     void remove_cluster(unsigned int source, const arma::mat &points,
                         std::vector<unsigned int> &assignment,
@@ -32,7 +32,7 @@ class Hartigan: public Algorithm {
     double calc_energy_change(const Cluster& a, const Cluster &b,
                               int npoints);
 public:
-    Hartigan(bool m_log_nclusters, bool m_log_energy);
+    Hartigan(bool log_nclusters, bool log_energy);
     TotalResult loop(const arma::mat &points,
                      std::vector<unsigned int> &assignment, double kill_threshold,
                      std::vector<Cluster* > &clusters);

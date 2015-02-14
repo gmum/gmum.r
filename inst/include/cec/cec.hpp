@@ -46,7 +46,7 @@ public:
     void single_loop();
     double entropy();
     std::vector<unsigned int> get_assignment() const;
-    void set_assignment(std::vector<unsigned int>& m_assignment);
+    void set_assignment(std::vector<unsigned int>& assignment);
     arma::mat get_points();
     std::vector<arma::rowvec> centers() const;
     std::vector<arma::mat> cov() const;

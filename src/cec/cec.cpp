@@ -164,6 +164,7 @@ void CecModel::find_best_cec() {
         break;
     case kcentroids:
         assignment_type = new CentroidsAssignment(*(m_config->get_params().dataset),
+                                                  m_config->get_params().nclusters,
                                                   m_config->get_params().centroids);
         break;
     }
