@@ -56,6 +56,7 @@ public:
 	double getEps();
 	bool isShrinking();
 	bool isProbability();
+	bool isSparse();
 
 	// model getters
     // double** getSV(); // double**, std::vector, arma:mat ?

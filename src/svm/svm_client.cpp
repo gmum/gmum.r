@@ -119,6 +119,10 @@ bool SVMClient::isProbability(){
 	return (bool)config.probability;
 }
 
+bool SVMClient::isSparse() {
+    return (bool)config.sparse;
+}
+
 // model getters
 arma::vec SVMClient::getAlpha() {
 	return config.alpha_y;
