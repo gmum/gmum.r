@@ -1,16 +1,14 @@
 library(testthat)
 library('gmum.r')
 
+source("cec_function.R")
+
 data(cec_simple_1)
 
 expected_energy <- energy_value
 dataset_points <- input
 
 test_that("Entropy is correct", {  
-  f_standard <- function(m, sigma){
-    return (m * log(2 * pi * exp(1)) / 2 + log(det(sigma)) / 2)
-  }
-  
   c1 <- CEC(k=1, x=dataset_points, method.type='func', params.function='f_standard')
   c2 <- CEC(k=1, x=dataset_points, method.type='standard')
 	
