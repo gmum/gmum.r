@@ -40,8 +40,7 @@ public:
 
     void set_r(const double radius);
     void set_function(const std::string function_name);
-    void set_it_max(const unsigned int it_max);
-    void set_iters(bool iters);
+    void set_it_max(int it_max);
 };
 
 #endif /* CECCONFIGURATION_HPP */

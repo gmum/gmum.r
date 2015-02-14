@@ -186,10 +186,9 @@ evalqOnLoad({
                    params.function = "",
                    control.nstart = 1,
                    control.eps = 1e-4,
-                   control.itmax = 1,
+                   control.itmax = 25,
                    log.energy = FALSE,
-                   log.ncluster= FALSE,
-                   log.iters = FALSE){
+                   log.ncluster= FALSE){
     
     # check for errors
     call <- match.call(expand.dots = TRUE)
@@ -232,7 +231,6 @@ evalqOnLoad({
     config$setR(params.r)
     config$setFunction(params.function)
     config$setItmax(control.itmax)
-    config$setIters(log.iters)
     
     model <- new(CecModel, config)
 

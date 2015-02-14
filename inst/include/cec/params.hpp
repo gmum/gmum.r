@@ -21,6 +21,7 @@ public:
     bool log_nclusters;
     bool log_energy;
     unsigned int nstart;
+    int it_max;
     AssignmentType assignment_type;
     bool centroids_set;
     std::list<std::vector<double> > centroids;
@@ -32,6 +33,8 @@ public:
     double radius;
     bool function_name_set;
     std::string function_name;
+
+    Params() : it_max(-1) { }
 };
 
 }

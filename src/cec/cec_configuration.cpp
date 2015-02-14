@@ -250,8 +250,6 @@ void CecConfiguration::set_function(const std::string function_name) {
     }
 }
 
-void CecConfiguration::set_it_max(const unsigned int it_max) {
-}
-
-void CecConfiguration::set_iters(bool iters) {
+void CecConfiguration::set_it_max(int it_max) {
+    m_params.it_max = it_max;
 }

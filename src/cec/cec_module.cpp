@@ -30,8 +30,7 @@ RCPP_MODULE(cec) {
             .method("setCov", &CecConfiguration::set_cov)
             .method("setR", &CecConfiguration::set_r)
             .method("setFunction", &CecConfiguration::set_function)
-            .method("setItmax", &CecConfiguration::set_it_max)
-            .method("setIters", &CecConfiguration::set_iters);
+            .method("setItmax", &CecConfiguration::set_it_max);
 
     std::list<double> (CecModel::*predict_1)(std::vector<double>,
                                              bool) = &CecModel::predict;

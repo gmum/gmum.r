@@ -32,7 +32,7 @@ private:
     double calc_energy_change(const Cluster& a, const Cluster &b,
                               int npoints);
 public:
-    Hartigan(bool log_nclusters, bool log_energy);
+    Hartigan(bool log_nclusters, bool log_energy, int max_iter);
     TotalResult loop(const arma::mat &points,
                      std::vector<unsigned int> &assignment, double kill_threshold,
                      std::vector<Cluster* > &clusters);
