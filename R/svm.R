@@ -366,7 +366,7 @@ evalqOnLoad({
   }
   
   predict.svm.gmum <<- function(object, x) {
-    if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
+    if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric") && !is(x,"matrix.csr") ) {
       stop("Wrong target class, please provide data.frame, matrix or numeric vector")
     }
     
