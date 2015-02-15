@@ -115,24 +115,9 @@ centers.cec <- NULL
 #' 
 covMatrix.cec <- NULL
 
-#' @title predictCluster
+#' @title predict
 #' 
-#' @description Returns cluster where belong given point.
-#' 
-#' @rdname cec-predict-methods
-#' 
-#' @export
-#' 
-#' @docType methods
-#' 
-#' @param c Trained CEC model object.
-#' @param vec Given point.
-#' 
-predictCluster.cec <- NULL
-
-#' @title predictClusters
-#' 
-#' @description Returns propabilities of belonging to each cluster for given point.
+#' @description Classify a new point according to the model (returns index of cluster where given point belong to)
 #' 
 #' @rdname cec-predict-methods
 #' 
@@ -140,10 +125,10 @@ predictCluster.cec <- NULL
 #' 
 #' @docType methods
 #' 
-#' @param c Trained CEC model object.
-#' @param vec Given point.
+#' @param object Trained CEC model object.
+#' @param x Given point.
 #' 
-predictClusters.cec <- NULL
+predict.cec <- NULL
 
 #' @title log.ncluster.cec
 #' 
@@ -293,28 +278,6 @@ evalqOnLoad({
   log.iters.cec <<- function(c) {
     c$log.iters()
   }
-  
-  predictCluster.cec <<- function(c, x) {
-    if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
-      stop("Wrong target class, please provide data.frame, matrix or numeric vector")
-    }
-    
-    if (!is(x, "matrix")) {
-      x = data.matrix(x)
-    }
-    c$predict(x)
-  }
-  
-  predictClusters.cec <<- function(c, x) {
-    if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
-      stop("Wrong target class, please provide data.frame, matrix or numeric vector")
-    }
-    
-    if (!is(x, "matrix")) {
-      x = data.matrix(x)
-    }
-    c$predict(x, TRUE)
-  }
     
     setGeneric("runAll", function(c) standardGeneric("runAll"))
     setGeneric("runOneIteration", function(c) standardGeneric("runOneIteration"))
@@ -323,8 +286,6 @@ evalqOnLoad({
     setGeneric("x", function(c) standardGeneric("x"))
     setGeneric("centers", function(c) standardGeneric("centers"))
     setGeneric("covMatrix", function(c) standardGeneric("covMatrix"))
-    setGeneric("predictCluster", function(c, ...) standardGeneric("predictCluster"))
-    setGeneric("predictClusters", function(c, ...) standardGeneric("predictClusters"))
     setGeneric("log.ncluster", function(c) standardGeneric("log.ncluster"))
     setGeneric("log.energy", function(c) standardGeneric("log.energy"))
     setGeneric("log.iters", function(c) standardGeneric("log.iters"))
@@ -336,13 +297,25 @@ evalqOnLoad({
     setMethod("x", "Rcpp_CecModel", x.cec)
     setMethod("centers", "Rcpp_CecModel", centers.cec)
     setMethod("covMatrix", "Rcpp_CecModel", covMatrix.cec)
-    setMethod("predictCluster", "Rcpp_CecModel", predictCluster.cec)
-    setMethod("predictClusters", "Rcpp_CecModel", predictClusters.cec)
     setMethod("log.ncluster", "Rcpp_CecModel", log.ncluster.cec)
     setMethod("log.energy", "Rcpp_CecModel", log.energy.cec)
     setMethod("log.iters", "Rcpp_CecModel", log.iters.cec)
-    
-    setMethod("predict", "Rcpp_CecModel", function(object, vec) {
-      object$predict(vec)
+  
+    setMethod("predict", "Rcpp_CecModel", function(object, x) {
+      if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
+        stop("Wrong target class, please provide data.frame, matrix or numeric vector")
+      }
+      
+      if(is(x, "vector")){
+        x = matrix(x, nrow=1, byrow=TRUE)
+      }
+      else if (!is(x, "matrix")) {
+        x = data.matrix(x)
+      }
+      
+      apply(x, 1, function(row) {
+        object$predict(row)
+      })
+      
     })
 })

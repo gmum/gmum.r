@@ -54,8 +54,7 @@ public:
     std::list<unsigned int> get_nclusters() const;
     std::list<double> get_energy_history() const;
     double get_energy() const;
-    unsigned int predict(std::vector<double> vec) const;
-    std::list<double> predict(std::vector<double> vec, bool general);
+    unsigned int predict(std::vector<double> vec);
     const gmum::TotalResult& get_result() const;
 };
 

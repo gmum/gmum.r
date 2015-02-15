@@ -32,11 +32,6 @@ RCPP_MODULE(cec) {
             .method("setFunction", &CecConfiguration::set_function)
             .method("setItmax", &CecConfiguration::set_it_max);
 
-    std::list<double> (CecModel::*predict_1)(std::vector<double>,
-                                             bool) = &CecModel::predict;
-    unsigned int (CecModel::*predict_2)(
-                std::vector<double>) const = &CecModel::predict;
-
     class_<CecModel>("CecModel")
             .constructor<CecConfiguration*>()
             .method("runAll", &CecModel::loop)
@@ -46,8 +41,7 @@ RCPP_MODULE(cec) {
             .method("y", &CecModel::get_assignment)
             .method("centers", &CecModel::centers)
             .method("covMatrix", &CecModel::cov)
-            .method("predict", predict_1)
-            .method("predict", predict_2)
+            .method("predict", &CecModel::predict)
             .method("log.ncluster", &CecModel::get_nclusters)
             .method("log.energy", &CecModel::get_energy_history)
             .method("log.iters", &CecModel::iters)
