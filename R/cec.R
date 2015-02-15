@@ -306,9 +306,16 @@ evalqOnLoad({
         stop("Wrong target class, please provide data.frame, matrix or numeric vector")
       }
       
-      if (!is(x, "matrix")) {
+      if(is(x, "vector")){
+        x = matrix(x, nrow=1, byrow=TRUE)
+      }
+      else if (!is(x, "matrix")) {
         x = data.matrix(x)
       }
-      object$predict(x)
+      
+      apply(x, 1, function(row) {
+        object$predict(row)
+      })
+      
     })
 })
