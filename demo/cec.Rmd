@@ -57,13 +57,7 @@ covMatrix(c)
 You can predict cluster which a point would belong to:
 
 ```{r fig.width=7, fig.height=6}
-predictCluster(c, c(1,1))
-```
-
-or find out what are the probabilities of belonging to each cluster:
-
-```{r fig.width=7, fig.height=6}
-predictClusters(c, c(1,1))
+predict(c, c(1,1))
 ```
 
 You can visualise size and shape of clusters:
