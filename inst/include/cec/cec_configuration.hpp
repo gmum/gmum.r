@@ -16,8 +16,19 @@
 class CecConfiguration {
 private:
     gmum::Params m_params;
+
+#ifdef RCPP_INTERFACE
+    void set_mix_handle_standard_cluster(Rcpp::List& list);
+    void set_mix_handle_full_cluster(Rcpp::List& list);
+    void set_mix_handle_fsphere_cluster(Rcpp::List& list);
+    void set_mix_handle_sphere_cluster(Rcpp::List& list);
+    void set_mix_handle_diagonal_cluster(Rcpp::List& list);
+    void set_mix_handle_custom_cluster(Rcpp::List& list);
+#endif
+
 public:
-    CecConfiguration();
+    CecConfiguration() { }
+
     gmum::Params get_params();
     void set_params(gmum::Params params);
 
