@@ -309,11 +309,13 @@ void SVMClient::predict( arma::mat problem ) {
     );
 }
 
-void SVMClient::sparse_predict(arma::vec x, int r, arma::Col<int> rowindex, arma::Col<int> colindex) {
+void SVMClient::sparse_predict(arma::vec x, int r, int c, arma::Col<int> rowindex, arma::Col<int> colindex) {
     config.sp_data = x;
     config.row = rowindex;
     config.col = colindex;
     config.dim = r;
+    config.data_dim = c;
+    config.sparse = true;
     if ( SVMHandlers.size() > 0 ) {
         config.setPrediction(true);
         for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();

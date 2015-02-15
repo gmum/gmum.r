@@ -304,8 +304,7 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 	struct svm_model* m;
 	struct svm_node ** train;
 	svm_parameter *params;
-	arma::mat training_mat = config.data;
-	int training_examples = training_mat.n_rows;
+	int training_examples = config.getDataExamplesNumber();
 
 	params = configuration_to_problem(config);
 	m = load_model_from_config(config, params);

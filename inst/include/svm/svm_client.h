@@ -74,7 +74,7 @@ public:
 	void run();
     // Prediction independent of SVMHandlers
     void predict(arma::mat);
-    void sparse_predict(arma::vec x, int r, arma::Col<int> rowindex, arma::Col<int> colindex);
+    void sparse_predict(arma::vec x, int , int, arma::Col<int> rowindex, arma::Col<int> colindex);
     /// Process a request of prediction with a SVMHandlers implementations
 	void requestPredict(arma::mat);
 	void train();

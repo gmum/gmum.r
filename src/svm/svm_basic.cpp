@@ -8,6 +8,13 @@ SVMConfiguration::SVMConfiguration() {
 	SVMConfiguration::setDefaultParams();
 }
 
+int SVMConfiguration::getDataExamplesNumber() {
+	if(isSparse()) {
+		return this->dim;
+	} else {
+		return this->data.n_rows;
+	}
+}
 
 int SVMConfiguration::getDataDim() {
 	if(isSparse()) {

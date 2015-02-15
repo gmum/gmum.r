@@ -218,9 +218,6 @@ evalqOnLoad({
     }
     
     config <- new(SVMConfiguration)
-    if (!sparse) {
-      config$x <- x
-    }
     config$y <- data.matrix(y)
     
     # sparse 
@@ -234,6 +231,7 @@ evalqOnLoad({
     }
     else {
       config$sparse <- 0
+      config$x <- x
     }
     
     
@@ -369,7 +367,6 @@ evalqOnLoad({
     if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric") && !is(x,"matrix.csr") ) {
       stop("Wrong target class, please provide data.frame, matrix or numeric vector")
     }
-    
     if (!object$isSparse()) {
       if (!is(x, "matrix") && !is(x, "data.frame")) {
         stop("Please provide matrix or data.frame")
@@ -383,7 +380,7 @@ evalqOnLoad({
       if (!is(x, "matrix.csr")) {
         stop("Please provide sparse matrix")
       }
-      object$sparse_predict(x@ra, ncol(x), x@ja, x@ia)
+      object$sparse_predict(x@ra, nrow(x), ncol(x), x@ia, x@ja)
     }
     prediction <- object$getPrediction()
     prediction

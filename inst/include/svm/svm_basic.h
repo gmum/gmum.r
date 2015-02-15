@@ -137,7 +137,7 @@ public:
 	void setSparse(bool sparse);
 	bool isSparse();
 	int getDataDim();
-
+	int getDataExamplesNumber();
 };
 
 #endif
