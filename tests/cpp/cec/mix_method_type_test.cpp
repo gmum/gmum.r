@@ -28,8 +28,7 @@ TEST(MethodTypeMix, SameAsMethodTypeSphere)
     params.nstart = 10;
     params.assignment_type = kkmeanspp;
     params.cluster_type = kmix;
-    boost::shared_ptr<ClusterParams> cluster_param = boost::make_shared<ClusterParams>();
-    cluster_param->type = ksphere;
+    boost::shared_ptr<ClusterParams> cluster_param = boost::make_shared<ClusterParams>(ksphere);
     params.clusters.push_back(cluster_param);
     params.clusters.push_back(cluster_param);
     params.clusters.push_back(cluster_param);
