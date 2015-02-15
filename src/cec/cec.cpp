@@ -88,58 +88,59 @@ CecModel& CecModel::operator=(CecModel& other) {
 	return *this;
 }
 
-void CecModel::init(boost::shared_ptr<Algorithm> algorithm,
-		std::vector<unsigned int>& assignment) {
-	Params params = m_config->get_params();
-	m_assignment = assignment;
-	m_points = *(params.dataset);
-	m_algorithm = algorithm;
-	m_kill_threshold = params.kill_threshold;
-	clear_clusters();
-	m_clusters.reserve(params.nclusters);
+void CecModel::init(boost::shared_ptr<Algorithm> algorithm, std::vector<unsigned int>& assignment) {
+    Params params = m_config->get_params();
+    m_assignment = assignment;
+    m_points = *(params.dataset);
+    m_algorithm = algorithm;
+    m_kill_threshold = params.kill_threshold;
+    clear_clusters();
+    m_clusters.reserve(params.nclusters);
 
-	int i = 0;
-	if (params.cluster_type == kmix) {
-		BOOST_FOREACH(boost::shared_ptr < ClusterParams > cluster,
-				params.clusters) {
-			m_clusters.push_back(create_cluster(*cluster, i));
-		}
-	} else {
-		//TODO: why pointer?
-		ClusterParams *cluster = 0;
-		switch (params.cluster_type) {
-		case kfsphere: {
-			ClusterFsphereParams *proxy = new ClusterFsphereParams();
-			proxy->radius = params.radius;
-			cluster = proxy;
-			break;
-		}
-		case kfull: {
-			ClusterFullParams *proxy = new ClusterFullParams();
-			proxy->cov_mat = params.cov_mat;
-			cluster = proxy;
+    int i = 0;
+    if (params.cluster_type == kmix) {
+        BOOST_FOREACH(boost::shared_ptr < ClusterParams > cluster,
+                      params.clusters)
+        {
+            m_clusters.push_back(create_cluster(*cluster, i));
+            ++i;
+        }
+    } else {
+    	//TODO: why pointer?
+        ClusterParams *cluster = 0;
+        switch (params.cluster_type) {
+        case kfsphere: {
+            ClusterFsphereParams *proxy = new ClusterFsphereParams();
+            proxy->radius = params.radius;
+            cluster = proxy;
+            break;
+        }
+        case kfull: {
+            ClusterFullParams *proxy = new ClusterFullParams();
+            proxy->cov_mat = params.cov_mat;
+            cluster = proxy;
 
-			break;
-		}
-		case kcustom: {
-			ClusterCustomParams *proxy = new ClusterCustomParams();
-			proxy->function_name = params.function_name;
-			cluster = proxy;
-			break;
-		}
-		default:
-			/*case standard:
-			 case diagonal:
-			 case sphere:*/
-			cluster = new ClusterParams();
-			break;
-		}
-		cluster->type = params.cluster_type;
-		for (unsigned int i = 0; i < params.nclusters; ++i)
-			m_clusters.push_back(create_cluster(*cluster, i));
-		//TODO: redelete
-		delete cluster;
-	}
+            break;
+        }
+        case kcustom: {
+            ClusterCustomParams *proxy = new ClusterCustomParams();
+            proxy->function_name = params.function_name;
+            cluster = proxy;
+            break;
+        }
+        default:
+            /*case standard:
+             case diagonal:
+             case sphere:*/
+            cluster = new ClusterParams(params.cluster_type);
+            break;
+        }
+        for (unsigned int i = 0; i < params.nclusters; ++i)
+            m_clusters.push_back(create_cluster(*cluster, i));
+        //TODO: redelete
+        delete cluster;
+    }
+
 }
 
 void CecModel::find_best_cec() {
