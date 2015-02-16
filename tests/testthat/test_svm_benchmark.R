@@ -15,6 +15,12 @@ test_that("our models have not too differents results than other models", {
   y <- as.matrix(ds['X1'])
   formula <- X1 ~ .
   
+  tryCatch({
+    klaR::svmlight(formula, data=ds, type="C", svm.options="-v 0")
+  }, error = function(e) {
+    stop("!!! Install svmlight (download executables or build them and add to path) or this test won't work !!!")
+  })
+  
   # Linear kernel
   
   e_svm <- e1071::svm(formula, data=ds, type='C-classification', kernel="linear", cost=1, gamma=1, scale=FALSE)
