@@ -2,16 +2,13 @@
 #define SVM_CLIENT_H
 
 #include "svm_handler.h"
-#include "libsvm_runner.h"
-#include "two_e_svm_pre.h"
-#include "two_e_svm_post.h"
 #include "svm_basic.h"
 #include <vector>
 
 class SVMClient {
 private:
 	std::vector<SVMHandler*> SVMHandlers;
-	SVMConfiguration config;
+	SVMConfiguration &config;
 	void createFlow();
 
 public:
@@ -35,6 +32,11 @@ public:
 	void setEps(double);
 	void setShrinking(int);
 	void setProbability(int);
+    void setBias(double);
+    // void setAlpha(double*);
+
+    // additional setters
+    void setConfiguration(SVMConfiguration *);
 
 	// data getters
 	arma::mat getX();
@@ -55,19 +57,26 @@ public:
 	bool isShrinking();
 	bool isProbability();
 
+	// model getters
+    // double** getSV(); // double**, std::vector, arma:mat ?
+    int get_number_sv();
+    int get_number_class();
+    arma::vec getAlpha();
+    double getBias();
+    arma::vec getW();
+    arma::mat getSV();
+
+    // additional getters
+    SVMConfiguration getConfiguration();
+
 	// runners
 	void run();
-	void predict( arma::mat );
+    // Prediction independent of SVMHandlers
+    void predict(arma::mat);
+    /// Process a request of prediction with a SVMHandlers implementations
+	void requestPredict(arma::mat);
 	void train();
 
-	// model getters
- // double** getSV(); // double**, std::vector, arma:mat ?
-  int get_number_sv();
-  int get_number_class();
-	double* getAlpha();
-	double getBias();
-	arma::vec getW();
-  arma::mat getSV();
 };
 
 #endif

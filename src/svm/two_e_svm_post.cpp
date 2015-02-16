@@ -27,7 +27,7 @@ void TwoeSVMPostprocessor::processRequest(SVMConfiguration &data) {
 		//-rho = b
 		//TODO: consider multiclass examples
 		double b_dash = data.getB() + (p_plus - p_minus) / (p_plus + p_minus);
-		data.rho[0] = -b_dash;
+		data.setB(b_dash);
 	}
 	data.data = data.tmp_data;
 	data.target = data.tmp_target;

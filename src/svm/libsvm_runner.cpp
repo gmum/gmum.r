@@ -39,9 +39,9 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 		save_model_to_config(config, param, prob);
 		//Xk is already transposed
 		//examples x dim
-		arma::vec arma_coefs = SvmUtils::arrtoarmavec(config.sv_coef, config.l);
+		//config.alpha_y = SvmUtils::arrtoarmavec(config.sv_coef, config.l);
 		//DIM W: (nsv x 1)^T x nsv x dim = 1 x dim
-		config.w = (arma_coefs.t() * config.arma_SV).t();
+		config.w = (config.alpha_y.t() * config.support_vectors).t();
 	} else {
 		arma_prediction(config);
 	}
@@ -62,33 +62,41 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 		LOG(config.log, LogLevel::ERR, "ERROR: " + to_string(error_msg))
 		return false;
 	}
-	int* nr = Malloc(int, 1);
+	//int* nr = Malloc(int, 1);
 	int* nclasses = Malloc(int, 1);
 
 	model = svm_train(&prob, param, config.log);
-	*nr = model->l; //support vectors
+	//*nr = config.support_vectors.n_rows; //support vectors
 	*nclasses = model->nr_class;
 	config.nr_class = model->nr_class;
-	config.l = model->l;
-	//TODO: don't keep support vectors as svm node, remember when Staszek wasn't happy about it?
-	config.sv_coef = (double **) malloc(model->nr_class * sizeof(double*));
+
+	int nr_support_vectors = model->l;
+	//config.sv_coef = (double **) malloc(model->nr_class * sizeof(double*));
 	for (int i = 0; i < config.nr_class - 1; i++) {
-		config.sv_coef[i] = (double *) malloc(model->l * sizeof(double));
-		memcpy(config.sv_coef[i * config.l], model->sv_coef[i],
-				config.l * sizeof(double*));
+		//config.sv_coef[i] = (double *) malloc(nr_support_vectors * sizeof(double));
+		//memcpy(config.sv_coef[i * nr_support_vectors], model->sv_coef[i],
+				//nr_support_vectors * sizeof(double*));
+		
+		arma::vec alpha_y_copy(model->sv_coef[i], nr_support_vectors);
+		config.alpha_y = alpha_y_copy;
+		// std::vector<double> alpha_y(config.alpha_y.begin(), config.alpha_y.end());
+		// memcpy(model->sv_coef[i * config.l], &alpha_y[0] ,config.l * sizeof(double*));
 	}
 
-	config.rho = (double *) malloc(
-			config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
-	memcpy(config.rho, model->rho,
-			config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
+	if(config.nr_class != 2) {
+		throw std::invalid_argument( "Code is not implemented for more than 2 classes right now");
+	}
 
-	config.sv_indices = (int*) malloc(config.l * sizeof(int));
-	svm_get_sv_indices(model, config.sv_indices, config.log);
+	config.threshold_b = -model->rho[0];
+	// memcpy(config.rho, ,
+	// 		config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
+
+	//config.sv_indices = (int*) malloc(config.l * sizeof(int));
+	//svm_get_sv_indices(model, config.sv_indices, config.log);
 
 	int dim = config.data.n_cols;
 	ASSERT(dim > 0);
-	config.arma_SV = SvmUtils::libtoarma(model->SV, config.l, dim);
+	config.support_vectors = SvmUtils::libtoarma(model->SV, nr_support_vectors, dim);
 
 	// config.SV = (svm_node **) malloc(config.l * sizeof(svm_node*));
 	// for (int i = 0; i < config.l; i++) {
@@ -103,6 +111,8 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 		memcpy(config.label, model->label, *nclasses * sizeof(int));
 		memcpy(config.nSV, model->nSV, *nclasses * sizeof(int));
 	}
+    config.neg_target = model->label[1];
+    config.pos_target = model->label[0];
 
 	svm_destroy_param(param,config.log);
 	svm_free_and_destroy_model(&model,config.log);
@@ -123,37 +133,33 @@ svm_model* LibSVMRunner::load_model_from_config(SVMConfiguration& config,
 
 	model = Malloc(svm_model, 1);
 
-	model->l = config.l; //support vectors
+	model->l =  config.support_vectors.n_rows; //support vectors number
 	model->nr_class = config.nr_class;
 	model->param = *param;
 
-	//TODO: don't keep support vectors as svm node, remember when Staszek wasn't happy about it?
 	model->sv_coef = (double **) malloc(model->nr_class * sizeof(double*));
 	for (int i = 0; i < config.nr_class - 1; i++) {
-		model->sv_coef[i] = (double *) malloc(model->l * sizeof(double));
-		memcpy(model->sv_coef[i * config.l], config.sv_coef[i],
-				config.l * sizeof(double*));
+		model->sv_coef[i] = (double *) malloc(config.support_vectors.n_rows * sizeof(double));
+		std::copy(config.alpha_y.begin(), config.alpha_y.end(), model->sv_coef[i *  config.support_vectors.n_rows]);
 	}
 
-	// model->SV = (svm_node **) malloc(config.l * sizeof(svm_node*));
-	// for (int i = 0; i < config.l; i++) {
-	// 	model->SV[i] = (svm_node*) malloc(sizeof(svm_node));
-	// 	memcpy(model->SV, config.SV, sizeof(svm_node));
-	// }
-
-	model->SV = armatlib(config.arma_SV);
+	model->SV = armatlib(config.support_vectors);
 
 	model->rho = (double *) malloc(
 			config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
 
-	memcpy(model->rho, config.rho,
+	//i need change sign in b
+	double local_rho = -config.threshold_b;
+	
+	if(config.nr_class != 2) {
+		throw std::invalid_argument( "Code is not implemented for more than 2 classes right now");
+	}
+
+	memcpy(model->rho, &local_rho,
 			config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
 
 	model->free_sv = 1;
 
-//TODO: check if neccessery
-//	model->sv_indices =(int*) malloc( config.l * sizeof(int));
-//	model->sv_indicessvm_get_sv_indices(model, config.sv_indices);
 
 	if (config.svm_type < 2) {
 		model->label = (int *) malloc(config.nr_class * sizeof(int));

@@ -65,7 +65,10 @@ void SVMConfiguration::setLibrary( std::string library ) {
 		this->library = LIBSVM;
 		this->svm_type = C_SVC;
 	}
-	// else if
+	else if (library == "svmlight" ) {
+    this->library = SVMLIGHT;
+    this->svm_type = C_SVC;
+	}
 }
 
 void SVMConfiguration::setKernel( std::string kernel ) {
@@ -97,7 +100,11 @@ void SVMConfiguration::set_verbosity(int verbosity){
 }
 
 double SVMConfiguration::getB() {
-  return -rho[0];
+  return threshold_b;
+}
+
+void SVMConfiguration::setB(double b) {
+  threshold_b = b;
 }
 
 void SVMConfiguration::setDefaultParams() {
@@ -121,6 +128,9 @@ void SVMConfiguration::setDefaultParams() {
 	nu = 0.5;
 	p = 0.1;
 
-
+    // User-defined classification mode labels
+    // (will be filled during data processing)
+    neg_target = 0;
+    pos_target = 0;
 }
 

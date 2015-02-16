@@ -1,7 +1,13 @@
-SOURCES = $(wildcard svm/*.cpp cec/*.cpp utils/*.cpp gng/*.cpp)
-OBJECTS = $(SOURCES:.cpp=.o)
+CPP_SOURCES = $(wildcard svm/*.cpp cec/*.cpp utils/*.cpp gng/*.cpp)
+SOURCES = $(CPP_SOURCES) $(wildcard svmlight/*.c)
+
+SVMLIGHT_OBJECTS = svmlight/svm_common.o svmlight/svm_hideo.o svmlight/svm_learn.o
+COMPILED_LIBRARIES_OBJECTS = $(SVMLIGHT_OBJECTS)
+OBJECTS = $(CPP_SOURCES:.cpp=.o) $(COMPILED_LIBRARIES_OBJECTS)
+
 
 DEBUG := -DNDEBUG_GMUM -DNDEBUG_GMUM_2
+OPTIMIZATION_FLAGS := -O3
 
 R_HOME :=     $(shell R RHOME)
 RCPPFLAGS :=           $(shell $(R_HOME)/bin/R CMD config --cppflags)
@@ -9,6 +15,8 @@ RLDFLAGS :=            $(shell $(R_HOME)/bin/R CMD config --ldflags)
 RCPPINCL :=            $(shell echo 'Rcpp:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)
 RCPPLIBS :=            $(shell echo 'Rcpp:::LdFlags()'  | $(R_HOME)/bin/R --vanilla --slave)
 RCPPARMAINCL :=                $(shell echo 'RcppArmadillo:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)
+
+
 
 LAPACK_LIBS := $(shell ${R_HOME}/bin/R CMD config LAPACK_LIBS)
 BLAS_LIBS := $(shell ${R_HOME}/bin/R CMD config BLAS_LIBS)

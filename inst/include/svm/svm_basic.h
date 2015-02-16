@@ -55,46 +55,52 @@ public:
 	double* weight;		// for C_SVC
 	int shrinking;		// use the shrinking heuristics
 	int probability; 	// do probability estimates
-	
-	//	libsvm Model parameters
-	int l;
+
 	int nr_class; /* number of classes, = 2 in regression/one class svm */
-	//TODO: don't keep support vectors as svm node, remember when Staszek wasn't happy about it?
-	struct svm_node **SV; /* SVs (SV[l]) */
-	double **sv_coef; /* coefficients for SVs in decision functions (sv_coef[k-1][l]) */
-	double *rho; /* constants in decision functions (rho[k*(k-1)/2]) */
-	int *sv_indices; /* sv_indices[0,...,nSV-1] are values in [1,...,num_traning_data] to indicate SVs in the training set */
 
-	/* for classification only */
 
+	//libsvm model parameters
+	//TODO: delete those variables
 	int *label; /* label of each class (label[k]) */
 	int *nSV; /* number of SVs for each class (nSV[k]) */
 	/* nSV[0] + nSV[1] + ... + nSV[k-1] = l */
-
 
 	/*TODO: neccessery? check what are they doing */
 	double nu; /* for NU_SVC, ONE_CLASS, and NU_SVR */
 	double p; /* for EPSILON_SVR */
 
+	//	libsvm Model parameters
+	int l; //TODO: remove it in svm_ligth
+	//libsvm model parameters
+
+
+    /* SVMLight parameters */
+    double threshold_b;
+    char *kernel_parm_custom;   // Custom kernel parameter(s)
+    arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
+    arma::mat support_vectors;	// sacherus: number of support vectors x data_dim
+    // User-defined classification mode labels
+    //TODO: delete it; we are using pos_target, and neg_target;
+    int label_negative; 
+    int label_positive;
+
 	arma::mat data;		// armadillo matrix and vector (double)
 	arma::vec target;
 	arma::vec result;
 
-
-	arma::mat tmp_data;
-	arma::mat tmp_target;
-	
 	Logger log;
 
 	//universal parameters
 	arma::vec w; //d
 	double pos_target;
 	double neg_target;
-	arma::mat arma_SV;
 
-	//2eParameters
+	//2eParameters & Variables
 	double cov_eps_smoothing;
 	arma::mat inv_of_sqrt_of_cov;
+	arma::mat tmp_data;
+	arma::mat tmp_target;
+
 
 	// constructors
 	SVMConfiguration();
@@ -123,9 +129,10 @@ public:
 	void setLibrary( std::string );
 	void setKernel( std::string );
 	void setPreprocess( std::string );
-  double getB();
-  // logger
-  void set_verbosity( int );
+	double getB();
+	void setB(double b);
+	// logger
+	void set_verbosity( int );
 };
 
 #endif
