@@ -184,7 +184,7 @@ evalqOnLoad({
                    params.cov = matrix(0),
                    params.centroids = NULL,
                    params.mix = NULL,
-                   params.function = "",
+                   params.function = NULL,
                    control.nstart = 1,
                    control.eps = 1e-4,
                    control.itmax = 25,
@@ -221,19 +221,22 @@ evalqOnLoad({
     config$setDataSet(x)
     config$setEps(control.eps)      
     config$setMix(params.mix) 
+    
+    if(is.null(params.function) == FALSE) {
+        config$setFunction(params.function)
+    }
+    
     config$setNrOfClusters(k)
     config$setLogEnergy(log.energy)
     config$setLogCluster(log.ncluster)      
     config$setNstart(control.nstart)
     config$setCentroids(params.centroids)
-    config$setMethodInit(method.init)              
     config$setMethodType(method.type)
+    config$setMethodInit(method.init)              
     config$setCov(params.cov)
     config$setR(params.r)
-    config$setFunction(params.function)
     config$setItmax(control.itmax)
-    
-    model <- new(CecModel, config)
+     model <- new(CecModel, config)
 
     assign("call", call, model)
     model

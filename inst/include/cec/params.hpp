@@ -31,8 +31,7 @@ public:
     arma::mat cov_mat;
     bool radius_set;
     double radius;
-    bool function_name_set;
-    std::string function_name;
+    boost::shared_ptr<Rcpp::Function> function;
 
     Params() : it_max(-1) { }
 };

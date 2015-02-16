@@ -48,8 +48,7 @@ Cluster* CecModel::create_cluster(const ClusterParams &params, int i) {
 	case kcustom: {
 		const ClusterCustomParams &ptr =
 				static_cast<const ClusterCustomParams&>(params);
-		cluster = new ClusterCustomFunction(i, m_assignment, m_points,
-				ptr.function_name);
+        cluster = new ClusterCustomFunction(i, m_assignment, m_points, ptr.function);
 		break;
 	}
 	}
@@ -124,7 +123,7 @@ void CecModel::init(boost::shared_ptr<Algorithm> algorithm, std::vector<unsigned
         }
         case kcustom: {
             ClusterCustomParams *proxy = new ClusterCustomParams();
-            proxy->function_name = params.function_name;
+            proxy->function = params.function;
             cluster = proxy;
             break;
         }

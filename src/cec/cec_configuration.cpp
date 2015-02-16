@@ -64,8 +64,8 @@ void CecConfiguration::set_mix_handle_custom_cluster(Rcpp::List &list)
 {
     if (list.containsElementNamed(CONST::CLUSTERS::function_name))
     {
-        std::string function_name = Rcpp::as < std::string > (list[CONST::CLUSTERS::function_name]);
-        m_params.clusters.push_back(boost::make_shared<ClusterCustomParams>(function_name));
+        Rcpp::Function func = Rcpp::as<Rcpp::Function>(list[CONST::CLUSTERS::function_name]);
+        m_params.clusters.push_back(boost::make_shared<ClusterCustomParams>(boost::make_shared<Rcpp::Function>(func)));
     } else {
         GMUM_ERROR(CONST::ERRORS::function_name_req);
     }
@@ -173,61 +173,71 @@ void CecConfiguration::set_method_init(const std::string init) {
     if (m_params.assignment_type == kcentroids
             && m_params.centroids.size() != m_params.nclusters)
         GMUM_ERROR(CONST::ERRORS::centroids_error);
+
     switch (m_params.cluster_type) {
-    case kstandard: // TODO: handle kstandard parameter
-    case kdiagonal: // TODO: handle kdiagonal parameter
-    case ksphere: // TODO: handle ksphere parameter
-        break;
-    case kfull:
-        if (!m_params.cov_mat_set)
-            GMUM_ERROR(CONST::ERRORS::cov_mat_req);
-        break;
-    case kfsphere:
-        if (!m_params.radius_set)
-            GMUM_ERROR(CONST::ERRORS::radius_req);
-        break;
-    case kno_type:
-        GMUM_ERROR(CONST::ERRORS::cluster_rec_error);
-        break;
-    case kcustom:
-        if (!m_params.function_name_set)
-            GMUM_ERROR(CONST::ERRORS::function_name_req);
-        break;
-    case kmix:
-        BOOST_FOREACH(boost::shared_ptr < ClusterParams > cluster,
-                      m_params.clusters)
+        case kfull:
         {
-            switch (cluster->type) {
-            case kstandard:
-            case kdiagonal:
-            case ksphere:
-            case kmix:
-                break;
-            case kfull: {
-                ClusterFullParams &ptr =
-                        static_cast<ClusterFullParams&>(*cluster);
-                if (!ptr.cov_mat_set)
-                    GMUM_ERROR(CONST::ERRORS::cov_mat_req);
-                break;
-            }
-            case kfsphere: {
-                ClusterFsphereParams &ptr =
-                        static_cast<ClusterFsphereParams&>(*cluster);
-                if (!ptr.radius_set)
-                    GMUM_ERROR(CONST::ERRORS::radius_req);
-                break;
-            }
-            case kno_type:
-                GMUM_ERROR(CONST::ERRORS::cluster_rec_error);
-                break;
-            case kcustom:
-                ClusterCustomParams &ptr =
-                        static_cast<ClusterCustomParams&>(*cluster);
-                if (!ptr.function_name_set)
-                    GMUM_ERROR(CONST::ERRORS::function_name_req);
-                break;
-            }
+            if (!m_params.cov_mat_set) GMUM_ERROR(CONST::ERRORS::cov_mat_req);
+            break;
         }
+        case kfsphere:
+        {
+            if (!m_params.radius_set) GMUM_ERROR(CONST::ERRORS::radius_req);
+            break;
+        }
+        case kno_type:
+        {
+            GMUM_ERROR(CONST::ERRORS::cluster_rec_error);
+            break;
+        }
+        case kcustom:
+        {
+            if (!m_params.function) GMUM_ERROR(CONST::ERRORS::function_name_req);
+            break;
+        }
+        case kmix:
+        {
+            BOOST_FOREACH(boost::shared_ptr < ClusterParams > cluster,
+                          m_params.clusters)
+            {
+                switch (cluster->type) {
+                case kfull:
+                {
+                    ClusterFullParams &ptr =
+                            static_cast<ClusterFullParams&>(*cluster);
+                    if (!ptr.cov_mat_set)
+                        GMUM_ERROR(CONST::ERRORS::cov_mat_req);
+                    break;
+                }
+                case kfsphere:
+                {
+                    ClusterFsphereParams &ptr =
+                            static_cast<ClusterFsphereParams&>(*cluster);
+                    if (!ptr.radius_set)
+                        GMUM_ERROR(CONST::ERRORS::radius_req);
+                    break;
+                }
+                case kno_type:
+                {
+                    GMUM_ERROR(CONST::ERRORS::cluster_rec_error);
+                    break;
+                }
+                case kcustom:
+                {
+                    ClusterCustomParams &ptr =
+                            static_cast<ClusterCustomParams&>(*cluster);
+                    if (!ptr.function)
+                        GMUM_ERROR(CONST::ERRORS::function_name_req);
+                    break;
+                }
+                default:
+                    break;
+                }
+            }
+            break;
+        }
+    default:
+        break;
     }
 }
 
@@ -261,12 +271,9 @@ void CecConfiguration::set_r(const double radius) {
         m_params.radius_set = false;
 }
 
-void CecConfiguration::set_function(const std::string function_name) {
-    if (!function_name.empty() && m_params.clusters.empty()) {
-        m_params.function_name_set = true;
-        m_params.function_name = function_name;
-    } else {
-        m_params.function_name_set = false;
+void CecConfiguration::set_function(Rcpp::Function function) {
+    if (m_params.clusters.empty()) {
+        m_params.function = boost::make_shared<Rcpp::Function>(function);
     }
 }
 

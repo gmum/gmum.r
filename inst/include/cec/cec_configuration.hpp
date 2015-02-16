@@ -16,7 +16,7 @@
 class CecConfiguration {
 private:
     gmum::Params m_params;
-
+    // Rcpp::Function func;
 #ifdef RCPP_INTERFACE
     void set_mix_handle_standard_cluster(Rcpp::List& list);
     void set_mix_handle_full_cluster(Rcpp::List& list);
@@ -50,7 +50,7 @@ public:
     void set_method_type(const std::string type);
 
     void set_r(const double radius);
-    void set_function(const std::string function_name);
+    void set_function(Rcpp::Function function);
     void set_it_max(int it_max);
 };
 

@@ -3,6 +3,8 @@
 
 #include <armadillo>
 #include <string>
+#include <RcppArmadillo.h>
+
 namespace gmum {
 
 enum ClusterType {
@@ -32,10 +34,9 @@ struct ClusterFsphereParams: public ClusterParams {
 };
 
 struct ClusterCustomParams: public ClusterParams {
-    bool function_name_set;
-    std::string function_name;
-    ClusterCustomParams(std::string _function_name) : ClusterParams(kcustom), function_name_set(true), function_name(_function_name) { }
-    ClusterCustomParams() : ClusterParams(kcustom), function_name_set(false) { }
+    boost::shared_ptr<Rcpp::Function> function;
+    ClusterCustomParams(boost::shared_ptr<Rcpp::Function> _function) : ClusterParams(kcustom), function(_function) { }
+    ClusterCustomParams() : ClusterParams(kcustom), function(NULL) { }
 };
 
 }
