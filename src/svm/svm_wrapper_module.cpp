@@ -52,6 +52,7 @@ RCPP_MODULE(svm_wrapper) {
 			.method("setEps",&SVMClient::setEps)
 			.method("setShrinking",&SVMClient::setShrinking)
 			.method("setProbability",&SVMClient::setProbability)
+      .method("setBias", &SVMClient::setBias)
 
 			.method("getX", &SVMClient::getX)
 			.method("getY", &SVMClient::getY)
