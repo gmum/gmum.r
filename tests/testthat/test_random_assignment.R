@@ -1,5 +1,4 @@
 library(testthat)
-library(gtools)
 library('gmum.r')
 
 correctness <- function(correct_assignment, my_assignment, npoints, nclusters)

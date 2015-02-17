@@ -5,9 +5,9 @@ SVMLIGHT_OBJECTS = svmlight/svm_common.o svmlight/svm_hideo.o svmlight/svm_learn
 COMPILED_LIBRARIES_OBJECTS = $(SVMLIGHT_OBJECTS)
 OBJECTS = $(CPP_SOURCES:.cpp=.o) $(COMPILED_LIBRARIES_OBJECTS)
 
-
 DEBUG := -DNDEBUG_GMUM -DNDEBUG_GMUM_2
-OPTIMIZATION_FLAGS := -O3
+OPTIMIZATION_FLAGS := -O3 -mtune=native
+GCC_STD := 
 
 R_HOME :=     $(shell R RHOME)
 RCPPFLAGS :=           $(shell $(R_HOME)/bin/R CMD config --cppflags)
@@ -21,7 +21,9 @@ RCPPARMAINCL :=                $(shell echo 'RcppArmadillo:::CxxFlags()' | $(R_H
 LAPACK_LIBS := $(shell ${R_HOME}/bin/R CMD config LAPACK_LIBS)
 BLAS_LIBS := $(shell ${R_HOME}/bin/R CMD config BLAS_LIBS)
 
-PKG_CPPFLAGS := -std=c++0x -O4 $(DEBUG) -DRCPP_INTERFACE -I ../inst/include/utils -I ../inst/include  -I ../inst/include/cec -I ../inst/include/gng -I ../inst/include/svm -Wall $(shell $(R_HOME)/bin/R CMD config CPPFLAGS)
-PKG_CXXFLAGS := -O4 $(RCPPFLAGS) $(RCPPINCL) $(RCPPARMAINCL) $(RINSIDEINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -g -pthread -fpic
-PKG_LIBS := -O4 $(shell $(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()" ) $(LAPACK_LIBS) $(BLAS_LIBS) $(RLAPACK) $(RLDFLAGS) $(RRPATH) $(RBLAS) $(RCPPLIBS) $(RINSIDELIBS)
+PKG_CPPFLAGS := $(GCC_STD) $(DEBUG) -DARMA_DONT_USE_CXX11 -DRCPP_INTERFACE -I ../inst/include/svmlight -I ../inst/include/utils -I ../inst/include  -I ../inst/include/cec -I ../inst/include/gng -I ../inst/include/svm -Wall $(shell $(R_HOME)/bin/R CMD config CPPFLAGS)
+
+PKG_CXXFLAGS := $(RCPPFLAGS) $(RCPPINCL) $(RCPPARMAINCL) $(RINSIDEINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -g -pthread -fpic
+
+PKG_LIBS := $(shell $(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()" ) $(LAPACK_LIBS) $(BLAS_LIBS) $(RLAPACK) $(RLDFLAGS) $(RRPATH) $(RBLAS) $(RCPPLIBS) $(RINSIDELIBS)
 
