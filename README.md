@@ -14,34 +14,35 @@ Package includes three subpackages:
 SVM Wrapper is a part of the gmum.R project which provides a popular Support Vector Machine inplementations wrapped in the R package.
 
 <small>2e Iris example</small>
-<center><img src="./doc/svm/img/2e.png" width="60%"></img></center>
+<center><img src="./doc/svm/img/2e.png" width="100%"></img></center>
 
 
 ### Example usage
 
 ```R
-        library('gmum.r')
+library('gmum.r')
 
-        # Load a dataset, here we have provided an example 
-        ds <- svm.dataset.breast_cancer()
-        
-        # Create new SVM object
-        svm <- SVM( formula = X1~. ,
-                    data = ds,
-                    lib = "libsvm",
-                    kernel = "linear",
-                    prep = "none",
-                    C = 10) 
-        
-        # You can access the dataset 
-        x <- dataset.X(svm)
-        y <- dataset.Y(svm)
-        
-        # Classify your dataset using predict function
-        prediction <- predict(svm, x)
-        
-        # Check models accuracy
-        acc <- svm.accuracy(prediction=y, target=prediction)
+# Load a dataset, here we have provided an example 
+data(svm_breast_cancer_dataset)
+ds <- svm.breastcancer.dataset
+
+# Create new SVM object
+svm <- SVM( formula = X1~. ,
+            data = ds,
+            lib = "libsvm",
+            kernel = "linear",
+            prep = "none",
+            C = 10) 
+
+# You can access the dataset 
+x <- dataset.X(svm)
+y <- dataset.Y(svm)
+
+# Classify your dataset using predict function
+prediction <- predict(svm, x)
+
+# Check models accuracy
+acc <- svm.accuracy(prediction=y, target=prediction)
 ```
 
 ## Growing Neural Gas
@@ -90,6 +91,8 @@ Cross-entropy clustering (shortly CEC) joins advantages of classical k-means wit
 ### Example usage
 
 ```R
+library(gmum.r)
+
 data(cec_mouse_1_spherical)
 dataset = input
 
@@ -107,7 +110,6 @@ plot(c)
 # Better than before, however, we know that clusters are spherical; let's inform cec about that.
 c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere')
 plot(c)
-# Ain't that great? :D
 
 # You can learn details of clustering like this
 centers(c)
