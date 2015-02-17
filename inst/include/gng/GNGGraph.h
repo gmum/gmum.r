@@ -183,9 +183,9 @@ public:
 	///NOT THREAD SAFE - USE ONLY FROM ALGORITHM THREAD OR LOCK
 	bool isEdge(int a, int b) const {
 
-		FOREACH(edg, g[a])
+		BOOST_FOREACH(GNGEdge * edg, g[a])
 		{
-			if ((*edg)->nr == b)
+			if ((edg)->nr == b)
 				return true;
 		}
 		return false;
@@ -314,13 +314,17 @@ public:
 
 		this->lock();
 
-		FOREACH(edg, g[a])
+		for(typename Node::iterator edg = g[a].begin();
+				edg != g[a].end(); ++edg)
 		{
 			if ((*edg)->nr == b) {
 				Edge *ptr_rev = (Edge *) ((**edg).rev);
 				Edge *ptr = (Edge *) (&(**edg));
 
-				g[b].erase(find(g[b].begin(), g[b].end(), (*edg)->rev));
+				g[b].erase(find
+						(g[b].begin(), g[b].end(), (*edg)->rev));
+
+
 				edg = g[a].erase(edg);
 
 				delete ptr;
@@ -372,10 +376,10 @@ public:
 			string tmp = "";
 			if (occupied[i]) {
 				tmp = tmp + to_str(g[i]) + ":";
-				FOREACH(it2, g[i])
+				BOOST_FOREACH(GNGEdge * it2, g[i])
 				{
-					tmp += to_str((*it2)->nr) + "["
-							+ to_str((((*it2)->rev))->nr) + "],";
+					tmp += to_str((it2)->nr) + "["
+							+ to_str((((it2)->rev))->nr) + "],";
 				}
 				tmp = tmp + "\n";
 			}
@@ -387,8 +391,8 @@ public:
 	~RAMGNGGraph() {
 		for (int i = 0; i < g.size(); ++i) {
 			if (occupied[i]) {
-				FOREACH(edg, g[i])
-					delete *edg;
+				BOOST_FOREACH(GNGEdge * edg, g[i])
+					delete edg;
 			}
 		}
 

@@ -1,7 +1,7 @@
 #ifndef CLUSTERINGCOMPARATOR_HPP
 #define CLUSTERINGCOMPARATOR_HPP
 
-#include <RcppArmadillo.h>
+#include <armadillo>
 #include <cassert>
 
 class ClusteringComparator {

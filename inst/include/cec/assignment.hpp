@@ -2,7 +2,7 @@
 #define ASSIGNMENT_HPP
 
 #include "boost/foreach.hpp"
-#include <RcppArmadillo.h>
+#include <armadillo>
 #include <list>
 
 namespace gmum {

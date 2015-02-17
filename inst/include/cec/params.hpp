@@ -10,17 +10,18 @@
 namespace gmum {
 
 enum AssignmentType {
-    kkmeanspp, krandom, kcentroids, kno_assignment,
+    kkmeanspp, krandom, kcentroids,
 };
 
 struct Params {
 public:
-    boost::shared_ptr<const arma::mat> dataset;
+    boost::shared_ptr< arma::mat > dataset;
     double kill_threshold;
     unsigned int nclusters;
     bool log_nclusters;
     bool log_energy;
     unsigned int nstart;
+    int it_max;
     AssignmentType assignment_type;
     bool centroids_set;
     std::list<std::vector<double> > centroids;
@@ -30,8 +31,9 @@ public:
     arma::mat cov_mat;
     bool radius_set;
     double radius;
-    bool function_name_set;
-    std::string function_name;
+    boost::shared_ptr<Rcpp::Function> function;
+
+    Params() : it_max(-1) { }
 };
 
 }

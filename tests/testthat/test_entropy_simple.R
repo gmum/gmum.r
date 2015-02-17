@@ -9,7 +9,7 @@ dataset_points <- input
 
 test_that("Entropy is correct", {
   c <- CEC(k=1, x=dataset_points)
-  actual_energy <- c$entropy()
+  actual_energy <- c$.entropy()
   
   expect_that(actual_energy, equals(expected_energy, tolerance = 1e-4))
   print("test_entropy_simple: Entropy is correct")

@@ -28,8 +28,8 @@ void UniformGrid<VectorContainer, ListContainer, T>::print3d() {
 				cout << inner_index;
 				//if(TMP[inner_index]) cout<<"::";
 				cout << ":";
-				FOREACH(x, m_grid[inner_index])
-				cout << *x << ",";
+				BOOST_FOREACH(int x, m_grid[inner_index])
+					cout << x << ",";
 				cout << "\t";
 
 			}
@@ -112,19 +112,19 @@ void UniformGrid<VectorContainer, ListContainer, T>::scanCell(int k,
 	if (s_search_query != 2)
 		throw "Not implemented for >2 search query..";
 
-	FOREACH(node, m_grid[k])
+	BOOST_FOREACH(int node, m_grid[k])
 	{
 
-		dist_candidate = m_dist_fnc(*node, query);
+		dist_candidate = m_dist_fnc(node, query);
 
 		//
-		if (*node != s_found_cells[1]
+		if (node != s_found_cells[1]
 				&& (s_found_cells_dist[0] < 0
 						|| dist_candidate <= s_found_cells_dist[0])) {
 
 			//Overwrite worst
 			s_found_cells_dist[0] = dist_candidate;
-			s_found_cells[0] = *node;
+			s_found_cells[0] = node;
 
 			//Swap it to the right place
 			for (int j = 1; j < s_search_query; ++j) {
@@ -343,7 +343,8 @@ bool UniformGrid<VectorContainer, ListContainer, T>::remove(double *p) { //retur
 	int * cell = calculateCell(p);
 	int index = getIndex(cell);
 
-	FOREACH(node, m_grid[index])
+	for(typename Node::iterator node = m_grid[index].begin();
+			node != m_grid[index].end(); ++node)
 	{
 		if (isZero(m_dist_fnc(*node, p))) {
 			m_grid[index].erase(node);
