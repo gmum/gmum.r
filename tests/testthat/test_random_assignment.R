@@ -1,26 +1,7 @@
 library(testthat)
-library(gtools)
 library('gmum.r')
 
-correctness <- function(correct_assignment, my_assignment, npoints, nclusters)
-{
-  perms <- permutations(v=0:(nclusters-1), n=nclusters, r=nclusters, repeats.allowed=F)
-  nperms <- dim(perms)[1]
-  best_percentage <- 0
-  
-  for(i in 1:nperms)
-  {
-    ncorrect <- 0
-    for(j in 1:npoints) {
-      if(correct_assignment[j] == perms[i, my_assignment[j] + 1]) {
-        ncorrect <- ncorrect + 1 
-      }
-    }
-    correct_percentage <- ncorrect / npoints
-    best_percentage <- max(correct_percentage, best_percentage)
-  }
-  return(best_percentage)
-}
+source('combinations.R')
 
 test_that("correctness works", {
   data(cec_ellipse_gauss)
