@@ -16,8 +16,19 @@
 class CecConfiguration {
 private:
     gmum::Params m_params;
+    // Rcpp::Function func;
+#ifdef RCPP_INTERFACE
+    void set_mix_handle_standard_cluster(Rcpp::List& list);
+    void set_mix_handle_full_cluster(Rcpp::List& list);
+    void set_mix_handle_fsphere_cluster(Rcpp::List& list);
+    void set_mix_handle_sphere_cluster(Rcpp::List& list);
+    void set_mix_handle_diagonal_cluster(Rcpp::List& list);
+    void set_mix_handle_custom_cluster(Rcpp::List& list);
+#endif
+
 public:
-    CecConfiguration();
+    CecConfiguration() { }
+
     gmum::Params get_params();
     void set_params(gmum::Params params);
 
@@ -39,9 +50,8 @@ public:
     void set_method_type(const std::string type);
 
     void set_r(const double radius);
-    void set_function(const std::string function_name);
-    void set_it_max(const unsigned int it_max);
-    void set_iters(bool iters);
+    void set_function(Rcpp::Function function);
+    void set_it_max(int it_max);
 };
 
 #endif /* CECCONFIGURATION_HPP */

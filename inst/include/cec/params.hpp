@@ -21,6 +21,7 @@ public:
     bool log_nclusters;
     bool log_energy;
     unsigned int nstart;
+    int it_max;
     AssignmentType assignment_type;
     bool centroids_set;
     std::list<std::vector<double> > centroids;
@@ -30,8 +31,9 @@ public:
     arma::mat cov_mat;
     bool radius_set;
     double radius;
-    bool function_name_set;
-    std::string function_name;
+    boost::shared_ptr<Rcpp::Function> function;
+
+    Params() : it_max(-1) { }
 };
 
 }

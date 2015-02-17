@@ -5,7 +5,6 @@
 #include <vector>
 #include "boost/foreach.hpp"
 #include "boost/smart_ptr.hpp"
-#include "boost/interprocess/smart_ptr/unique_ptr.hpp"
 #include "algorithm.hpp"
 #include "cluster.hpp"
 #include "cluster_custom_function.hpp"
@@ -47,15 +46,15 @@ public:
     void single_loop();
     double entropy();
     std::vector<unsigned int> get_assignment() const;
-    void set_assignment(std::vector<unsigned int>& m_assignment);
+    void set_assignment(std::vector<unsigned int>& assignment);
     arma::mat get_points();
     std::vector<arma::rowvec> centers() const;
     std::vector<arma::mat> cov() const;
     unsigned int iters() const;
     std::list<unsigned int> get_nclusters() const;
-    std::list<double> get_energy() const;
-    unsigned int predict(std::vector<double> vec) const;
-    std::list<double> predict(std::vector<double> vec, bool general);
+    std::list<double> get_energy_history() const;
+    double get_energy() const;
+    unsigned int predict(std::vector<double> vec);
     const gmum::TotalResult& get_result() const;
 };
 
