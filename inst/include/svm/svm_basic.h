@@ -83,6 +83,9 @@ public:
 	arma::vec target;
 	arma::vec result;
 
+    bool use_cost;              // currently only LIBSVM-implemented
+    arma::vec data_cost;
+
 	Logger log;
 
 	//universal parameters
