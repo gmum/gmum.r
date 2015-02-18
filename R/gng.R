@@ -805,10 +805,12 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   }  
 
   save.gng <<- function(object, filename){
+    warning("Saving does not preserve currently training history")
     object$save(filename)
   }
   
   load.gng <<- function(filename){
+    warning("Saving does not preserve currently training history")
     fromFileGNG(filename)
   }
  

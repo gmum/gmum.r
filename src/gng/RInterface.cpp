@@ -22,7 +22,8 @@ using namespace gmum;
 
 
 GNGServer * loadFromFile(std::string filename){
-	return new GNGServer(filename);
+	GNGServer * out = new GNGServer(filename);
+	return out;
 }
 
 RCPP_MODULE(gng_module){
