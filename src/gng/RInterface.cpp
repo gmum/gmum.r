@@ -21,9 +21,15 @@ RCPP_EXPOSED_CLASS(GNGServer);
 using namespace gmum;
 
 
-
+GNGServer * loadFromFile(std::string filename){
+	return new GNGServer(filename);
+}
 
 RCPP_MODULE(gng_module){
+	//TODO: Rcpp doesn't accept dot starting name so no way to hide it easily
+	function("fromFileGNG", &loadFromFile);
+
+
 	class_<GNGConfiguration>("GNGConfiguration" )
 	.constructor()
 
@@ -52,9 +58,11 @@ RCPP_MODULE(gng_module){
 	.method(".check_correctness", &GNGConfiguration::check_correctness)
 	.method(".set_bounding_box", &GNGConfiguration::setBoundingBox);
 
+
+	
+
 	class_<GNGServer>("GNGServer")
 			 .constructor<GNGConfiguration*>()
-			 .constructor<std::string>()
 			.method("save", &GNGServer::save)
 			.method("isRunning", &GNGServer::isRunning)
 			.method("run", &GNGServer::run)

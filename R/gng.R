@@ -809,7 +809,7 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   }
   
   load.gng <<- function(filename){
-    new(GNGServer, filename)
+    fromFileGNG(filename)
   }
  
   
@@ -916,7 +916,8 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   setMethod("convertToGraph" ,
             "Rcpp_GNGServer",
             convertToGraph.gng)
-  
+
+
   setMethod("clustering" ,
             "Rcpp_GNGServer",
             clustering.gng)

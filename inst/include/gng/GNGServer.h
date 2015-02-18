@@ -63,6 +63,8 @@ public:
 	GNGServer(GNGConfiguration configuration, std::istream * input_graph);
 
 	GNGServer(std::string filename){
+		cerr<<filename<<endl;
+
 		std::ifstream input;
 		input.open(filename.c_str(), ios::in | ios::binary);
 
@@ -71,8 +73,6 @@ public:
 
 		init(conf, &input);
 	}
-
-
 
 
 	void run() {
