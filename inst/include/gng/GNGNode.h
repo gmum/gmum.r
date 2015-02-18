@@ -112,7 +112,7 @@ public:
 		dump[6] = dim;
 		dump[7] = extra_data;
 		for (int i = 0; i < dim; ++i) {
-			dump[i + 7] = position[i];
+			dump[i + 8] = position[i];
 		}
 		return dump;
 	}
