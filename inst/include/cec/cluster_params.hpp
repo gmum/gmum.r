@@ -36,7 +36,7 @@ struct ClusterFsphereParams: public ClusterParams {
 struct ClusterCustomParams: public ClusterParams {
     boost::shared_ptr<Rcpp::Function> function;
     ClusterCustomParams(boost::shared_ptr<Rcpp::Function> _function) : ClusterParams(kcustom), function(_function) { }
-    ClusterCustomParams() : ClusterParams(kcustom), function(NULL) { }
+    ClusterCustomParams() : ClusterParams(kcustom) { }
 };
 
 }
