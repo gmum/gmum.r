@@ -9,6 +9,7 @@
 #ifndef GNGALGORITHM_H
 #define GNGALGORITHM_H
 
+
 #include <memory>
 
 #include "utils/threading.h"
@@ -21,6 +22,7 @@
 #include "GNGLazyErrorHeap.h"
 #include <string>
 #include <limits>
+
 using namespace std;
 
 namespace gmum {
@@ -38,7 +40,7 @@ public:
 	//TODO: don't use list in UniformGrid
 	typedef std::list<int> Node;
 
-	circular_buffer<double> m_mean_error; //error of the network
+	circular_buffer<pair<double, double> > m_mean_error; //error of the network
 	int m_lambda; //lambda parameter
 	double m_eps_w, m_eps_n; //epsilon of the winner and of the neighbour
 	int m_max_age;
@@ -164,20 +166,19 @@ public:
 		gmum::scoped_lock<gmum::fast_mutex> alg_lock(m_statistics_mutex);
 		DBG(m_logger, 3, gmum::to_string(m_mean_error.size()));
 		if(m_mean_error.size() == 0){
-
 			return std::numeric_limits<double>::max();
 		}else{
 
-			return m_mean_error[m_mean_error.size()-1];
+			return m_mean_error[m_mean_error.size()-1].second;
 		}
 	}
 
-	vector<double> getMeanErrorStatistics() {
+	vector<pair<double, double> > getMeanErrorStatistics() {
 		gmum::scoped_lock<gmum::fast_mutex> alg_lock(m_statistics_mutex);
 		if(m_mean_error.size() == 0){
-			return vector<double>(1, std::numeric_limits<double>::max());
+			return vector<pair<double, double> >(1, make_pair<double,double>(0., std::numeric_limits<double>::max()));
 		}else{
-			return vector<double>(m_mean_error.begin(), m_mean_error.end());
+			return vector<pair<double, double> >(m_mean_error.begin(), m_mean_error.end());
 		}
 	}
 

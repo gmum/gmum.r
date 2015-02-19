@@ -8,7 +8,10 @@
 //TODO: refactor getExample
 #include "GNGAlgorithm.h"
 #include <cstdlib>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 
+using namespace boost;
 using namespace gmum;
 using namespace std;
 
@@ -584,6 +587,7 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 	//We have to calculate error so we will collect error from adapt
 	//and when count is > dataset size we will set m_mean_error
 	double accumulated_error = 0.0;
+	double time_elapsed =0., time_elapsed_last_error=0.;
 	int accumulated_error_count = 0, accumulated_error_count_last = 0;
 
 	DBG(m_logger, 3, "GNGAlgorithm::init successful, starting the loop"); DBG_2(m_logger, 1, "GNGAlgorithm::gng_status="+to_string(this->m_gng_status));
@@ -599,6 +603,10 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 		}
 		if (this->m_gng_status == GNG_TERMINATED)
 			break;
+
+		double dt =0.;
+		boost::posix_time::ptime start, stop;
+		start = boost::posix_time::microsec_clock::local_time();
 
 		for (s = 0; s < m_lambda; ++s) { //global counter!!
 
@@ -633,20 +641,24 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 		}
 #endif
 
+		dt = (boost::posix_time::microsec_clock::local_time() - start).total_milliseconds()/1000.0 + 1;
+		time_elapsed += dt;
+		time_elapsed_last_error += dt;
+
 		//Calculate mini-batch error
-		if (accumulated_error_count > 40000
-				|| accumulated_error_count > g_db->size()) {
+		if (time_elapsed_last_error > 0.1 ||
+				accumulated_error_count > 40000) {
 			gmum::scoped_lock<gmum::fast_mutex> stat_lock(m_statistics_mutex);
 
 			m_mean_error.push_back(
-					accumulated_error / (float) accumulated_error_count);
+					make_pair<double, double>(
+							time_elapsed,
+							accumulated_error / (float) accumulated_error_count));
 
 			accumulated_error_count_last = accumulated_error_count;
-
-//			if(accumulated_error_count > g_db->size()){
+			time_elapsed_last_error = 0.0;
 			accumulated_error = 0.0;
 			accumulated_error_count = 0;
-//			}
 		}
 
 		DBG_2(m_logger, 4, "GNGAlgorithm::add new node");

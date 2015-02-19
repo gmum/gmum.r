@@ -354,3 +354,4 @@ bool UniformGrid<VectorContainer, ListContainer, T>::remove(double *p) { //retur
 	}
 	return false;
 }
+

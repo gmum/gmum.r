@@ -194,7 +194,12 @@ public:
 	}
 
 	vector<double> getMeanErrorStatistics() {
-		return gngAlgorithm->getMeanErrorStatistics();
+		vector<pair<double, double> > errors = gngAlgorithm->getMeanErrorStatistics();
+		vector<double> out; out.reserve(errors.size());
+		for(unsigned i=0;i<errors.size();++i){
+			out.push_back(errors[i].second);
+		}
+		return out;
 	}
 
 #ifdef RCPP_INTERFACE
