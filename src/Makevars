@@ -1,5 +1,4 @@
 # DEV WARNING: We cannot control R flags (as per http://r.789695.n4.nabble.com/Cannot-override-default-O3-flag-on-Winodws-dll-does-not-have-symbols-td4655106.html). This is why we do not set optimization flags, those are overriden anyway
-
 CPP_SOURCES = $(wildcard svm/*.cpp cec/*.cpp utils/*.cpp gng/*.cpp)
 SOURCES = $(CPP_SOURCES) $(wildcard svmlight/*.c)
 INCLUDES := -I ../inst/include/svmlight -I ../inst/include/utils -I ../inst/include  -I ../inst/include/cec -I ../inst/include/gng -I ../inst/include/svm
@@ -12,14 +11,11 @@ DEBUG := -DNDEBUG_GMUM -DNDEBUG_GMUM_2
 GCC_STD := 
 
 R_HOME :=     $(shell R RHOME)
-
 RCPPLIBS :=            $(shell echo 'Rcpp:::LdFlags()'  | $(R_HOME)/bin/R --vanilla --slave)
 RCPPARMAINCL :=                $(shell echo 'RcppArmadillo:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)
-
 LAPACK_LIBS := $(shell ${R_HOME}/bin/R CMD config LAPACK_LIBS)
 BLAS_LIBS := $(shell ${R_HOME}/bin/R CMD config BLAS_LIBS)
 
-PKG_CPPFLAGS := $(GCC_STD) $(DEBUG) $(RCPPARMAINCL) $(RCPPLIBS) -DARMA_DONT_USE_CXX11 -DRCPP_INTERFACE $(INCLUDES) -Wall -pthread -fpic $(OPTIMIZATION_FLAGS)
-
-PKG_LIBS := $(LAPACK_LIBS) $(BLAS_LIBS) $(RLAPACK) $(RLDFLAGS) $(RRPATH) $(RBLAS) $(RCPPLIBS) $(RINSIDELIBS)
+PKG_CPPFLAGS := $(GCC_STD) $(RCPPFLAGS) $(DEBUG) $(RCPPARMAINCL) -DARMA_DONT_USE_CXX11 -DRCPP_INTERFACE $(INCLUDES) -Wall -pthread
+PKG_LIBS := $(LAPACK_LIBS) $(BLAS_LIBS) $(RLDFLAGS) $(RCPPLIBS) $(RINSIDELIBS) $(RCPPFLAGS)
 
