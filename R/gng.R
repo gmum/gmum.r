@@ -572,50 +572,58 @@ evalqOnLoad({
         initial_patience = 3
         error_index = -1 # always bigger than 0
         patience = initial_patience
-        
-        while(iter < max_iter && server$isRunning()){
-          Sys.sleep(0.1)
-          iter = server$getCurrentIteration()
-          
-          if(previous_iter != iter && iter %% (max_iter/100) == 0){    
-            print(paste("Iteration", iter))
-          }
-       
-          if(length(server$getErrorStatistics()) > 5){
-            errors = server$getErrorStatistics()
 
-            best_previously = min(errors[(length(errors)-5):length(errors)])
+        tryCatch({
+          while(iter < max_iter && server$isRunning()){
+            Sys.sleep(0.1)
+            iter = server$getCurrentIteration()
             
-            #this is same as (best_so_far-best_previously)/best_so_far < min_relative_di
-            #we get minimum of window 5 and look at the history
-            if( (error_index - server$.getGNGErrorIndex()) > 4 && 
-              (best_so_far - best_previously) < best_so_far*min_relative_dif){
-              patience = patience - 1
-              if(patience <= 0){
-                print(sprintf("Best error during training: %f", best_so_far))
-                print(sprintf("Best error in 5 previous iterations %f", best_previously))
-        				print(errors[(length(errors)-5):length(errors)])
-                print("Patience (which you can control) elapsed, bailing out")
-        				break
-              }
-            }else{
-              patience = initial_patience
+            if(previous_iter != iter && iter %% (max_iter/100) == 0){    
+              print(paste("Iteration", iter))
             }
-            
-            
-            error_index = server$.getGNGErrorIndex()
-            best_so_far = min(best_previously, best_so_far)
+         
+            if(length(server$getErrorStatistics()) > 5){
+              errors = server$getErrorStatistics()
+  
+              best_previously = min(errors[(length(errors)-5):length(errors)])
+              
+              #this is same as (best_so_far-best_previously)/best_so_far < min_relative_di
+              #we get minimum of window 5 and look at the history
+              if( (error_index - server$.getGNGErrorIndex()) > 4 && 
+                (best_so_far - best_previously) < best_so_far*min_relative_dif){
+                patience = patience - 1
+                if(patience <= 0){
+                  print(sprintf("Best error during training: %f", best_so_far))
+                  print(sprintf("Best error in 5 previous iterations %f", best_previously))
+          				print(errors[(length(errors)-5):length(errors)])
+                  print("Patience (which you can control) elapsed, bailing out")
+          				break
+                }
+              }else{
+                patience = initial_patience
+              }
+              
+              
+              error_index = server$.getGNGErrorIndex()
+              best_so_far = min(best_previously, best_so_far)
+            }
           }
-        }
-        
-        previous_iter = iter
-        
-        if(server$isRunning()){
-          terminate(server)
-        }
-        else{
-          gmum.error(ERROR, "Training failed")
-        }
+          
+          previous_iter = iter
+          
+          if(server$isRunning()){
+            terminate(server)
+          }
+          else{
+            gmum.error(ERROR, "Training failed")
+          }
+        }, interrupt=
+        function(interrupt){
+          if(server$isRunning()){
+            terminate(server)
+          }
+         
+        })
         
       }
     }

@@ -1,4 +1,3 @@
-library(stats)
 library(gmum.r)
 library(igraph)
 
