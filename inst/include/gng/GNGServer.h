@@ -60,6 +60,7 @@ public:
 	void insertExamples(double * positions, double * extra,
 			double * probability, unsigned int count, unsigned int dim);
 
+	unsigned getGNGErrorIndex() const;
 	bool isRunning() const;
 	vector<double> getMeanErrorStatistics();
 	unsigned int getNumberNodes() const;

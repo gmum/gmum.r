@@ -76,6 +76,7 @@ RCPP_MODULE(gng_module){
 			.method("getConfiguration", &GNGServer::getConfiguration)
 			.method("getNumberNodes", &GNGServer::getNumberNodes)
 			.method(".exportToGraphML", &GNGServer::exportToGraphML)
+			.method(".getGNGErrorIndex", &GNGServer::getGNGErrorIndex)
 			.method("getNode", &GNGServer::getNode)
 			.method("insertExamples", &GNGServer::RinsertExamples)
 			.method("getErrorStatistics", &GNGServer::RgetErrorStatistics)

@@ -646,15 +646,13 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 		time_elapsed_last_error += dt;
 
 		//Calculate mini-batch error
-		if ((time_elapsed_last_error > 0.1 && accumulated_error_count > 1000) ||
-				accumulated_error_count > 40000) {
+		if ((time_elapsed_last_error > 0.1 && accumulated_error_count > 5 * m_g.get_number_nodes()) ||
+				accumulated_error_count > 15 * m_g.get_number_nodes()) {
 			gmum::scoped_lock<gmum::fast_mutex> stat_lock(m_statistics_mutex);
 
-            pair<double, double> tmp;
-            tmp.first = time_elapsed;
-            tmp.second = accumulated_error/(double)accumulated_error_count;
-
-			m_mean_error.push_back(tmp);
+			m_mean_error.push_back(make_pair<double, double>(time_elapsed,
+					accumulated_error/(double)accumulated_error_count
+					));
 
 			accumulated_error_count_last = accumulated_error_count;
 			time_elapsed_last_error = 0.0;
@@ -724,6 +722,10 @@ void GNGAlgorithm::setMaxNodes(int value) {
 
 int GNGAlgorithm::getIteration() const{
 	return m_iteration;
+}
+
+unsigned GNGAlgorithm::getErrorIndex() const{
+	return m_mean_error.size();
 }
 
 double GNGAlgorithm::getMeanError() {

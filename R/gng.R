@@ -47,7 +47,7 @@ gng.train.online <- function(dim){
 .gng.dataset.bagging <- 2
 .gng.dataset.sequential <-1
 
-gng.train.offline <- function(max.iter = 100, min.improvement = 1e-2){
+gng.train.offline <- function(max.iter = 100, min.improvement = 1e-3){
   c(.gng.train.offline, max.iter , min.improvement)
 }
 
@@ -506,8 +506,7 @@ evalqOnLoad({
       config$dim = ncol(x)
     }else{
 	  
-       config$dim = training[2]
-		print(config$dim)    
+    config$dim = training[2]  
 	}
 
     
@@ -517,8 +516,8 @@ evalqOnLoad({
       config$.set_bounding_box(type[2], type[3])
       
       if(training[1] == .gng.train.offline){
-        if(!max(df) <= type[3] && !min(df) >= type[2]){
-          gmum.error("Passed incorrect parameters. The dataset is not in the defined range")
+        if(!max(x) <= type[3] && !min(x) >= type[2]){
+          gmum.error(ERROR_BAD_PARAMS, "Passed incorrect parameters. The dataset is not in the defined range")
         }
       }
       
@@ -568,43 +567,55 @@ evalqOnLoad({
         print(max_iter)
         min_relative_dif = training[3]
         iter = 0
-        errors_calculated = 0
+        previous_iter = -1
         best_so_far = 1e10
         initial_patience = 3
+        error_index = -1 # always bigger than 0
         patience = initial_patience
         
-        while(iter < max_iter || errors_calculated == 0){
+        while(iter < max_iter && server$isRunning()){
           Sys.sleep(0.1)
           iter = server$getCurrentIteration()
           
-          if(iter %% (max_iter/100) == 0){    
+          if(previous_iter != iter && iter %% (max_iter/100) == 0){    
             print(paste("Iteration", iter))
           }
-          
-          # Iter 5 = 5 times passed whole dataset. 
+       
           if(length(server$getErrorStatistics()) > 5){
             errors = server$getErrorStatistics()
 
             best_previously = min(errors[(length(errors)-5):length(errors)])
             
             #this is same as (best_so_far-best_previously)/best_so_far < min_relative_di
-            if((best_so_far - best_previously) < best_so_far*min_relative_dif){
+            #we get minimum of window 5 and look at the history
+            if( (error_index - server$.getGNGErrorIndex()) > 4 && 
+              (best_so_far - best_previously) < best_so_far*min_relative_dif){
               patience = patience - 1
-              if(patience == 0){
+              if(patience <= 0){
+                print(sprintf("Best error during training: %f", best_so_far))
                 print(sprintf("Best error in 5 previous iterations %f", best_previously))
         				print(errors[(length(errors)-5):length(errors)])
-                print("Patience elapsed, bailing out")
+                print("Patience (which you can control) elapsed, bailing out")
         				break
               }
             }else{
               patience = initial_patience
             }
             
+            
+            error_index = server$.getGNGErrorIndex()
             best_so_far = min(best_previously, best_so_far)
           }
         }
         
-        terminate(server)
+        previous_iter = iter
+        
+        if(server$isRunning()){
+          terminate(server)
+        }
+        else{
+          gmum.error(ERROR, "Training failed")
+        }
         
       }
     }
@@ -658,7 +669,7 @@ evalqOnLoad({
 		}
 		call <- match.call(expand.dots = TRUE)
 		gng <- .GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
-eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min=value.range[1]*1.1, max=value.range[2]*1.1), training=training, lambda=lambda, verbosity=verbosity)
+eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min=value.range[1], max=value.range[2]), training=training, lambda=lambda, verbosity=verbosity)
     assign("call", call, gng)
     gng
 	}    
@@ -750,9 +761,9 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
 
   # Autocompletion fix
 
-  #.GlobalEnv$`.DollarNames.C++Object` <- function( x, pattern ){
-  #  grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE)[! (substr(grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE),1,1)==".")]
-  #}
+  .GlobalEnv$`.DollarNames.C++Object` <- function( x, pattern ){
+    grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE)[! (substr(grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE),1,1)==".")]
+  }
   
   #.GlobalEnv$DollarNamesGmumr <- function( x, pattern ){
   #  asNamespace("Rcpp")$`.DollarNames.C++Object`(x, pattern)[! (substr(asNamespace("Rcpp")$`.DollarNames.C++Object`(x, pattern),1,1)==".")]

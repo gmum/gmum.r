@@ -71,6 +71,7 @@ public:
 	bool isRunning();
 	void terminate();
 
+	unsigned getErrorIndex() const;
 	void setMaxNodes(int value);
 	int getIteration() const;
 	double getMeanError();
@@ -85,6 +86,7 @@ public:
 	//TODO: don't use list in UniformGrid
 	typedef std::list<int> Node;
 
+	int calculated_errors; //for convergence checking
 	circular_buffer<pair<double, double> > m_mean_error; //error of the network
 	int m_lambda; //lambda parameter
 	double m_eps_w, m_eps_n; //epsilon of the winner and of the neighbour
@@ -107,7 +109,6 @@ public:
 	int dim;
 	boost::shared_ptr<Logger> m_logger;
 
-	std::map<std::string, long int> times;
 
 	double m_density_threshold, m_grow_rate;
 

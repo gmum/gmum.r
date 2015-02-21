@@ -240,6 +240,10 @@ vector<double> GNGServer::getMeanErrorStatistics() {
 	return out;
 }
 
+unsigned GNGServer::getGNGErrorIndex() const{
+	return gngAlgorithm->getErrorIndex();
+}
+
 #ifdef RCPP_INTERFACE
 
 //This is tricky - used only by convertToIGraph in R, because
@@ -299,7 +303,7 @@ Rcpp::List GNGServer::getNode(int index) {
 }
 
 int GNGServer::Rpredict(Rcpp::NumericVector & r_ex) {
-	return gngAlgorithm->predict(std::vector<double>(r_ex.begin(), r_ex.end()) );
+	return 1+gngAlgorithm->predict(std::vector<double>(r_ex.begin(), r_ex.end()) );
 }
 
 Rcpp::NumericVector GNGServer::RgetClustering() {
