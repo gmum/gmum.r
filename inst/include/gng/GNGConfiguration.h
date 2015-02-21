@@ -151,7 +151,7 @@ using namespace Rcpp;
 			orig = vector<double>(dim, 0);
 			axis = vector<double>(dim, 0);
 
-			for(int i=0;i<dim;++i){
+			for(size_t i=0;i<dim;++i){
 				in >>axis[i]>>orig[i];
 			}
 			/**Max edge age*/
@@ -202,7 +202,7 @@ using namespace Rcpp;
 
 			REPORT(dim);
 
-			for(int i=0;i<dim;++i){
+			for(size_t i=0;i<dim;++i){
 				out<<axis[i]<< endl<<orig[i]<<endl;
 			}
 			/**Max edge age*/
@@ -237,7 +237,7 @@ using namespace Rcpp;
 		void setBoundingBox(double min, double max){
 			orig = vector<double>();
 			axis = vector<double>();
-			for(int i=0;i<dim;++i){
+			for(size_t i=0;i<dim;++i){
 				orig.push_back(min);
 				axis.push_back(max - min);
 			}

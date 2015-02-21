@@ -30,7 +30,7 @@ static inline double powi(double base, int times)
 {
 	double tmp = base, ret = 1.0;
 
-	for(int t=times; t>0; t/=2)
+	for(size_t t=times; t>0; t/=2)
 	{
 		if(t%2==1) ret*=tmp;
 		tmp = tmp * tmp;
@@ -261,7 +261,7 @@ Kernel::Kernel(int l, svm_node * const * x_, const svm_parameter& param)
 	if(kernel_type == RBF)
 	{
 		x_square = new double[l];
-		for(int i=0;i<l;i++)
+		for(size_t i=0;i<l;i++)
 			x_square[i] = dot(x[i],x[i]);
 	}
 	else
@@ -502,14 +502,14 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 	// initialize alpha_status
 	{
 		alpha_status = new char[l];
-		for(int i=0;i<l;i++)
+		for(size_t i=0;i<l;i++)
 			update_alpha_status(i);
 	}
 
 	// initialize active set (for shrinking)
 	{
 		active_set = new int[l];
-		for(int i=0;i<l;i++)
+		for(size_t i=0;i<l;i++)
 			active_set[i] = i;
 		active_size = l;
 	}
@@ -672,7 +672,7 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 		double delta_alpha_i = alpha[i] - old_alpha_i;
 		double delta_alpha_j = alpha[j] - old_alpha_j;
 		
-		for(int k=0;k<active_size;k++)
+		for(size_t k=0;k<active_size;k++)
 		{
 			G[k] += Q_i[k]*delta_alpha_i + Q_j[k]*delta_alpha_j;
 		}
@@ -737,13 +737,13 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 
 	// put back the solution
 	{
-		for(int i=0;i<l;i++)
+		for(size_t i=0;i<l;i++)
 			alpha_[active_set[i]] = alpha[i];
 	}
 
 	// juggle everything back
 	/*{
-		for(int i=0;i<l;i++)
+		for(size_t i=0;i<l;i++)
 			while(active_set[i] != i)
 				swap_index(i,active_set[i]);
 				// or Q.swap_index(i,active_set[i]);
@@ -778,7 +778,7 @@ int Solver::select_working_set(int &out_i, int &out_j)
 	int Gmin_idx = -1;
 	double obj_diff_min = INF;
 
-	for(int t=0;t<active_size;t++)
+	for(size_t t=0;t<active_size;t++)
 		if(y[t]==+1)	
 		{
 			if(!is_upper_bound(t))
@@ -803,7 +803,7 @@ int Solver::select_working_set(int &out_i, int &out_j)
 	if(i != -1) // NULL Q_i not accessed: Gmax=-INF if i=-1
 		Q_i = Q->get_Q(i,active_size);
 
-	for(int j=0;j<active_size;j++)
+	for(size_t j=0;j<active_size;j++)
 	{
 		if(y[j]==+1)
 		{
@@ -948,7 +948,7 @@ double Solver::calculate_rho()
 	double r;
 	int nr_free = 0;
 	double ub = INF, lb = -INF, sum_free = 0;
-	for(int i=0;i<active_size;i++)
+	for(size_t i=0;i<active_size;i++)
 	{
 		double yG = y[i]*G[i];
 
@@ -1025,7 +1025,7 @@ int Solver_NU::select_working_set(int &out_i, int &out_j)
 	int Gmin_idx = -1;
 	double obj_diff_min = INF;
 
-	for(int t=0;t<active_size;t++)
+	for(size_t t=0;t<active_size;t++)
 		if(y[t]==+1)
 		{
 			if(!is_upper_bound(t))
@@ -1054,7 +1054,7 @@ int Solver_NU::select_working_set(int &out_i, int &out_j)
 	if(in != -1)
 		Q_in = Q->get_Q(in,active_size);
 
-	for(int j=0;j<active_size;j++)
+	for(size_t j=0;j<active_size;j++)
 	{
 		if(y[j]==+1)
 		{
@@ -1197,7 +1197,7 @@ double Solver_NU::calculate_rho()
 	double lb1 = -INF, lb2 = -INF;
 	double sum_free1 = 0, sum_free2 = 0;
 
-	for(int i=0;i<active_size;i++)
+	for(size_t i=0;i<active_size;i++)
 	{
 		if(y[i]==+1)
 		{
@@ -1252,7 +1252,7 @@ public:
 		clone(y,y_,prob.l);
 		cache = new Cache(prob.l,(long int)(param.cache_size*(1<<20)));
 		QD = new double[prob.l];
-		for(int i=0;i<prob.l;i++)
+		for(size_t i=0;i<prob.l;i++)
 			QD[i] = (this->*kernel_function)(i,i);
 	}
 	
@@ -1301,7 +1301,7 @@ public:
 	{
 		cache = new Cache(prob.l,(long int)(param.cache_size*(1<<20)));
 		QD = new double[prob.l];
-		for(int i=0;i<prob.l;i++)
+		for(size_t i=0;i<prob.l;i++)
 			QD[i] = (this->*kernel_function)(i,i);
 	}
 	
@@ -1350,7 +1350,7 @@ public:
 		QD = new double[2*l];
 		sign = new schar[2*l];
 		index = new int[2*l];
-		for(int k=0;k<l;k++)
+		for(size_t k=0;k<l;k++)
 		{
 			sign[k] = 1;
 			sign[k+l] = -1;
@@ -1656,7 +1656,7 @@ static decision_function svm_train_one(
 
 	int nSV = 0;
 	int nBSV = 0;
-	for(int i=0;i<prob->l;i++)
+	for(size_t i=0;i<prob->l;i++)
 	{
 		if(fabs(alpha[i]) > 0)
 		{
@@ -2173,7 +2173,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 
 		int p = 0;
 		for(i=0;i<nr_class;i++)
-			for(int j=i+1;j<nr_class;j++)
+			for(size_t j=i+1;j<nr_class;j++)
 			{
 				svm_problem sub_prob;
 				int si = start[i], sj = start[j];
@@ -2242,7 +2242,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 		for(i=0;i<nr_class;i++)
 		{
 			int nSV = 0;
-			for(int j=0;j<count[i];j++)
+			for(size_t j=0;j<count[i];j++)
 				if(nonzero[start[i]+j])
 				{	
 					++nSV;
@@ -2276,7 +2276,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 
 		p = 0;
 		for(i=0;i<nr_class;i++)
-			for(int j=i+1;j<nr_class;j++)
+			for(size_t j=i+1;j<nr_class;j++)
 			{
 				// classifier (i,j): coefficients with
 				// i are in sv_coef[j-1][nz_start[i]...],
@@ -2367,7 +2367,7 @@ void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, i
 			{
 				int begin = start[c]+i*count[c]/nr_fold;
 				int end = start[c]+(i+1)*count[c]/nr_fold;
-				for(int j=begin;j<end;j++)
+				for(size_t j=begin;j<end;j++)
 				{
 					perm[fold_start[i]] = index[j];
 					fold_start[i]++;
@@ -2452,14 +2452,14 @@ int svm_get_nr_class(const svm_model *model, Logger &log)
 void svm_get_labels(const svm_model *model, int* label, Logger &log)
 {
 	if (model->label != NULL)
-		for(int i=0;i<model->nr_class;i++)
+		for(size_t i=0;i<model->nr_class;i++)
 			label[i] = model->label[i];
 }
 
 void svm_get_sv_indices(const svm_model *model, int* indices, Logger &log)
 {
 	if (model->sv_indices != NULL)
-		for(int i=0;i<model->l;i++)
+		for(size_t i=0;i<model->l;i++)
 			indices[i] = model->sv_indices[i];
 }
 
@@ -2519,7 +2519,7 @@ double svm_predict_values(const svm_model *model, const svm_node *x, double* dec
 
 		int p=0;
 		for(i=0;i<nr_class;i++)
-			for(int j=i+1;j<nr_class;j++)
+			for(size_t j=i+1;j<nr_class;j++)
 			{
 				double sum = 0;
 				int si = start[i];
@@ -2588,7 +2588,7 @@ double svm_predict_probability(
 			pairwise_prob[i]=Malloc(double,nr_class);
 		int k=0;
 		for(i=0;i<nr_class;i++)
-			for(int j=i+1;j<nr_class;j++)
+			for(size_t j=i+1;j<nr_class;j++)
 			{
 				pairwise_prob[i][j]=min(max(sigmoid_predict(dec_values[k],model->probA[k],model->probB[k]),min_prob),1-min_prob);
 				pairwise_prob[j][i]=1-pairwise_prob[i][j];
@@ -2649,7 +2649,7 @@ int svm_save_model(const char *model_file_name, const svm_model *model, Logger &
 	
 	{
 		fprintf(fp, "rho");
-		for(int i=0;i<nr_class*(nr_class-1)/2;i++)
+		for(size_t i=0;i<nr_class*(nr_class-1)/2;i++)
 			fprintf(fp," %g",model->rho[i]);
 		fprintf(fp, "\n");
 	}
@@ -2657,7 +2657,7 @@ int svm_save_model(const char *model_file_name, const svm_model *model, Logger &
 	if(model->label)
 	{
 		fprintf(fp, "label");
-		for(int i=0;i<nr_class;i++)
+		for(size_t i=0;i<nr_class;i++)
 			fprintf(fp," %d",model->label[i]);
 		fprintf(fp, "\n");
 	}
@@ -2665,14 +2665,14 @@ int svm_save_model(const char *model_file_name, const svm_model *model, Logger &
 	if(model->probA) // regression has probA only
 	{
 		fprintf(fp, "probA");
-		for(int i=0;i<nr_class*(nr_class-1)/2;i++)
+		for(size_t i=0;i<nr_class*(nr_class-1)/2;i++)
 			fprintf(fp," %g",model->probA[i]);
 		fprintf(fp, "\n");
 	}
 	if(model->probB)
 	{
 		fprintf(fp, "probB");
-		for(int i=0;i<nr_class*(nr_class-1)/2;i++)
+		for(size_t i=0;i<nr_class*(nr_class-1)/2;i++)
 			fprintf(fp," %g",model->probB[i]);
 		fprintf(fp, "\n");
 	}
@@ -2680,7 +2680,7 @@ int svm_save_model(const char *model_file_name, const svm_model *model, Logger &
 	if(model->nSV)
 	{
 		fprintf(fp, "nr_sv");
-		for(int i=0;i<nr_class;i++)
+		for(size_t i=0;i<nr_class;i++)
 			fprintf(fp," %d",model->nSV[i]);
 		fprintf(fp, "\n");
 	}
@@ -2689,9 +2689,9 @@ int svm_save_model(const char *model_file_name, const svm_model *model, Logger &
 	const double * const *sv_coef = model->sv_coef;
 	const svm_node * const *SV = model->SV;
 
-	for(int i=0;i<l;i++)
+	for(size_t i=0;i<l;i++)
 	{
-		for(int j=0;j<nr_class-1;j++)
+		for(size_t j=0;j<nr_class-1;j++)
 			fprintf(fp, "%.16g ",sv_coef[j][i]);
 
 		const svm_node *p = SV[i];
@@ -2801,35 +2801,35 @@ bool read_model_header(FILE *fp, svm_model* model, Logger &log)
 		{
 			int n = model->nr_class * (model->nr_class-1)/2;
 			model->rho = Malloc(double,n);
-			for(int i=0;i<n;i++)
+			for(size_t i=0;i<n;i++)
 				FSCANF(fp,"%lf",&model->rho[i]);
 		}
 		else if(strcmp(cmd,"label")==0)
 		{
 			int n = model->nr_class;
 			model->label = Malloc(int,n);
-			for(int i=0;i<n;i++)
+			for(size_t i=0;i<n;i++)
 				FSCANF(fp,"%d",&model->label[i]);
 		}
 		else if(strcmp(cmd,"probA")==0)
 		{
 			int n = model->nr_class * (model->nr_class-1)/2;
 			model->probA = Malloc(double,n);
-			for(int i=0;i<n;i++)
+			for(size_t i=0;i<n;i++)
 				FSCANF(fp,"%lf",&model->probA[i]);
 		}
 		else if(strcmp(cmd,"probB")==0)
 		{
 			int n = model->nr_class * (model->nr_class-1)/2;
 			model->probB = Malloc(double,n);
-			for(int i=0;i<n;i++)
+			for(size_t i=0;i<n;i++)
 				FSCANF(fp,"%lf",&model->probB[i]);
 		}
 		else if(strcmp(cmd,"nr_sv")==0)
 		{
 			int n = model->nr_class;
 			model->nSV = Malloc(int,n);
-			for(int i=0;i<n;i++)
+			for(size_t i=0;i<n;i++)
 				FSCANF(fp,"%d",&model->nSV[i]);
 		}
 		else if(strcmp(cmd,"SV")==0)
@@ -2925,7 +2925,7 @@ svm_model *svm_load_model(const char *model_file_name, Logger &log)
 
 		p = strtok(line, " \t");
 		model->sv_coef[0][i] = strtod(p,&endptr);
-		for(int k=1;k<m;k++)
+		for(size_t k=1;k<m;k++)
 		{
 			p = strtok(NULL, " \t");
 			model->sv_coef[k][i] = strtod(p,&endptr);
@@ -2963,7 +2963,7 @@ void svm_free_model_content(svm_model* model_ptr, Logger &log)
 		free((void *)(model_ptr->SV[0]));
 	if(model_ptr->sv_coef)
 	{
-		for(int i=0;i<model_ptr->nr_class-1;i++)
+		for(size_t i=0;i<model_ptr->nr_class-1;i++)
 			free(model_ptr->sv_coef[i]);
 	}
 
@@ -3111,7 +3111,7 @@ const char *svm_check_parameter(const svm_problem *prob, const svm_parameter *pa
 		for(i=0;i<nr_class;i++)
 		{
 			int n1 = count[i];
-			for(int j=i+1;j<nr_class;j++)
+			for(size_t j=i+1;j<nr_class;j++)
 			{
 				int n2 = count[j];
 				if(param->nu*(n1+n2)/2 > min(n1,n2))

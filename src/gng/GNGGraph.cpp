@@ -105,7 +105,7 @@ std::string writeToGraphML(GNGGraph &g, string filename) {
 //
 //	  DBG(4, "writeToGraphML::adding verticeS");
 //	  //Add vertexes
-//	  for(int i=0;i<=g.getMaximumIndex();++i)
+//	  for(size_t i=0;i<=g.getMaximumIndex();++i)
 //		if(g.existsNode(i))
 //		{
 //			DBG(1, gmum::to_string(i));
@@ -117,7 +117,7 @@ std::string writeToGraphML(GNGGraph &g, string filename) {
 //
 ////			std::string dump = "";
 ////			//TODO: string builder
-////			for(int j=0;j<g.getDim()-1;++j){
+////			for(size_t j=0;j<g.getDim()-1;++j){
 ////				dump+=to_string(g[i].position[j])+ " ";
 ////
 ////			}

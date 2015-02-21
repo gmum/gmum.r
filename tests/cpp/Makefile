@@ -87,7 +87,7 @@ INCLUDES := $(ROOT_INCLUDE) $(BRANCH_INCLUDES) $(COMPILED_LIBRARIES_INCLUDES)
 ###
 
 CXXFLAGS := $(CXXFLAGS) $(INCLUDES)
-CFLAGS := $(CXXFLAGS)
+CFLAGS := $(CXXFLAGS) -fpic # so it doesnt overwrite svmlight .o for package
 
 all: $(TEST_MAIN_BIN) helper_scripts
 	@echo ... Done!

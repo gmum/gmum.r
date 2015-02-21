@@ -23,7 +23,7 @@ TEST(TraceOnly,AddPoint) {
     }
 
     arma::mat init_matrix(beg,dim);
-    for(int k = 0; k < beg; ++k) {
+    for(size_t k = 0; k < beg; ++k) {
         for (int j = 0; j < dim; ++j) {
             init_matrix(k,j) = data(k,j);
         }
@@ -75,7 +75,7 @@ TEST(TraceOnly,removePoint) {
     }
 
     arma::mat init_matrix(n,dim);
-    for(int k = 0; k < n; ++k) {
+    for(size_t k = 0; k < n; ++k) {
         for (int j = 0; j < dim; ++j) {
             init_matrix(k,j) = data(k,j);
         }

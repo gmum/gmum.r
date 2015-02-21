@@ -169,7 +169,7 @@ public:
 			}
 
 			if(!extra){
-				for(int i=0;i<count;++i)
+				for(size_t i=0;i<count;++i)
 					storage_extra_.push_back(0);
 			}else{
 				storage_extra_.insert(storage_extra_.end(), extra, extra+count);

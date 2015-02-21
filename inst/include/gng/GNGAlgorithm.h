@@ -5,10 +5,8 @@
  * Created on 11 sierpień 2012, 10:02
  */
 
-
 #ifndef GNGALGORITHM_H
 #define GNGALGORITHM_H
-
 
 #include <memory>
 
@@ -65,7 +63,6 @@ public:
 	/** Run main loop of the algorithm*/
 	void runAlgorithm();
 
-
 	///Retrieve closest node's gng_index to the example
 	int predict(const std::vector<double> &);
 
@@ -99,7 +96,6 @@ public:
 
 	double m_utility_k;
 	int m_utility_option;
-
 
 	double m_alpha, m_betha;
 	double * m_betha_powers;
@@ -162,7 +158,6 @@ private:
 	void resetUniformGrid(double * orig, double *axis, double l);
 	void resizeUniformGrid();
 
-
 	//sets clustering assignment of given node
 	void set_clustering(unsigned int ex, unsigned int node_idx);
 
@@ -195,7 +190,6 @@ struct GNGGraphAccessHack {
 		return pool->get_euclidean_dist((*pool)[index].position, position);
 	}
 };
-
 
 }
 

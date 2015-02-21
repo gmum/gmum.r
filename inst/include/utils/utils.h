@@ -13,10 +13,9 @@
 #include "boost/foreach.hpp"
 using namespace std;
 typedef vector<int> VI;
-typedef long long LL;
-#define FOR(x, b, e) for(int x=b; x<=(e); ++x)
-#define FORD(x, b, e) for(int x=b; x>=(e); ––x)
-#define REP(x, n) for(int x=0; x<(n); ++x)
+#define FOR(x, b, e) for(size_t x=b; x<=(e); ++x)
+#define FORD(x, b, e) for(size_t x=b; x>=(e); ––x)
+#define REP(x, n) for(size_t x=0; x<(n); ++x)
 #define VAR(v,n) typeof(n) v=(n)
 #define ALL(c) c.begin(),c.end()
 #define SIZE(x) (int)(x).size()
