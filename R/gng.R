@@ -750,9 +750,9 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
 
   # Autocompletion fix
 
-  .GlobalEnv$`.DollarNames.C++Object` <- function( x, pattern ){
-    grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE)[! (substr(grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE),1,1)==".")]
-  }
+  #.GlobalEnv$`.DollarNames.C++Object` <- function( x, pattern ){
+  #  grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE)[! (substr(grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE),1,1)==".")]
+  #}
   
   #.GlobalEnv$DollarNamesGmumr <- function( x, pattern ){
   #  asNamespace("Rcpp")$`.DollarNames.C++Object`(x, pattern)[! (substr(asNamespace("Rcpp")$`.DollarNames.C++Object`(x, pattern),1,1)==".")]

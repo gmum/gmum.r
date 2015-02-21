@@ -10,8 +10,8 @@ using namespace Rcpp;
 class GNGConfiguration;
 class GNGServer;
 
-RCPP_EXPOSED_CLASS(GNGConfiguration);
-RCPP_EXPOSED_CLASS(GNGServer);
+RCPP_EXPOSED_CLASS(GNGConfiguration)
+RCPP_EXPOSED_CLASS(GNGServer)
 
 
 

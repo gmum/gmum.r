@@ -7,7 +7,6 @@
 #ifndef GNGSERVER_H
 #define GNGSERVER_H
 
-
 #include <cstdlib>
 #include <cstddef>
 #include <map>
@@ -23,7 +22,6 @@
 #include "GNGGraph.h"
 #include "GNGDataset.h"
 #include "GNGAlgorithm.h"
-
 
 #ifdef RCPP_INTERFACE
 #include <RcppArmadillo.h>
@@ -59,9 +57,8 @@ public:
 	void exportToGraphML(std::string filename);
 
 	///Insert examples
-	void insertExamples(double * positions, double * extra, double * probability,
-			unsigned int count, unsigned int dim);
-
+	void insertExamples(double * positions, double * extra,
+			double * probability, unsigned int count, unsigned int dim);
 
 	bool isRunning() const;
 	vector<double> getMeanErrorStatistics();
@@ -78,7 +75,7 @@ public:
 	//Constructor needed for RCPPInterface
 	GNGServer(GNGConfiguration * configuration);
 
-	SEXP m_current_dataset_memory; //will be deleted in ~delete
+	SEXP m_current_dataset_memory;//will be deleted in ~delete
 
 	///Moderately slow function returning node descriptors
 	Rcpp::List getNode(int index);
@@ -90,7 +87,7 @@ public:
 	Rcpp::NumericVector RgetErrorStatistics();
 
 	void RinsertExamples(Rcpp::NumericMatrix & r_points,
-			Rcpp::NumericVector  r_extra =  Rcpp::NumericVector());
+			Rcpp::NumericVector r_extra = Rcpp::NumericVector());
 
 	//This is tricky - used only by convertToIGraph in R, because
 	//it might happen that we delete nodes and have bigger index of the last node
@@ -125,7 +122,23 @@ private:
 	/** Run GNG Server - runs in separate thread and returns control
 	 * @note Runs one extra threads for communication.
 	 */
-	static void _run(void * server);
+	static void _run(void * server) {
+		GNGServer * gng_server = (GNGServer*) server;
+		try {
+			DBG(gng_server->m_logger,10, "GNGServer::run::proceeding to algorithm");
+			gng_server->getAlgorithm().run();
+			gng_server->getAlgorithm().runAlgorithm();
+		} catch (std::exception & e) {
+			cerr << "GNGServer::failed _run with " << e.what() << endl;
+			DBG(gng_server->m_logger,10, e.what());
+		}
+	}
+
+public:
+	//legacy code
+	static GNGServer * constructTestServer(GNGConfiguration config) {
+		return new GNGServer(config, 0 /*input_graph*/);
+	}
 };
 
 #endif

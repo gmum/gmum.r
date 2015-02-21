@@ -55,7 +55,7 @@ using namespace Rcpp;
 
 
 		/**Dimensionality of examples*/
-		int dim;
+		unsigned dim;
 
 
 		std::vector<double> orig;
