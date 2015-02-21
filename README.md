@@ -50,8 +50,8 @@ acc <- svm.accuracy(prediction=y, target=prediction)
 Subpackage containing **efficient**, **online** GNG algorithm. It produces topological graph, that you can easily convert to igraph, or you can
 dump your model to optimized binary file and load it later on.
 
-<small>Reconstruction of the Buddha figure from Standford Repositories</small>
-<center><img src="./doc/img/gng_readme.png" width="80%"></img></center>
+<small>Clustering of the UCI wine dataset</small>
+<center><img src="./doc/img/gng_readme.png" width="100%"></img></center>
 
 ### Example: cluster wine dataset
 
