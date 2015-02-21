@@ -2,7 +2,7 @@ include ../../src/Makevars
 
 # Explicit Makevars inheritances adn overrides
 CXX := $(CXX)
-CXXFLAGS := $(PKG_CPPFLAGS) -O2 -g -s
+CPPFLAGS := $(PKG_CPPFLAGS) -O2 -g -s
 LDLIBS := $(PKG_LIBS) -lpthread -lgtest -lgtest_main -larmadillo
 
 ###
@@ -86,8 +86,8 @@ INCLUDES := $(ROOT_INCLUDE) $(BRANCH_INCLUDES) $(COMPILED_LIBRARIES_INCLUDES)
 # Compilation rules
 ###
 
-CXXFLAGS := $(CXXFLAGS) $(INCLUDES)
-CFLAGS := $(CXXFLAGS) -fpic # so it doesnt overwrite svmlight .o for package
+CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
+CFLAGS := $(CPPFLAGS)
 
 all: $(TEST_MAIN_BIN) helper_scripts
 	@echo ... Done!
@@ -104,7 +104,7 @@ $(TEST_MAIN_BIN): $(TEST_OBJECTS) $(OBJECTS) $(COMPILED_LIBRARIES_OBJECTS)
 
 %.o: %.cpp %.hpp
 	@echo Compiling $@ ...
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@ 
+	$(CXX) $(CXXFLAGS) -c $< -o $@ 
 
 helper_scripts:
 	@echo Making helper scripts...
