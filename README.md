@@ -51,21 +51,21 @@ Subpackage containing **efficient**, **online** GNG algorithm. It produces topol
 dump your model to optimized binary file and load it later on.
 
 <small>Reconstruction of the Buddha figure from Standford Repositories</small>
-<center><img src="./doc/img/ex3.png" width="60%"></img></center>
+<center><img src="./doc/img/gng_readme.png" width="80%"></img></center>
 
 ### Example: cluster wine dataset
 
 In this example we will construct a clustering of UCI wine dataset using offline GNG.
 
 ```R
-library("GrowingNeuralGas")
+library(gmum.r)
 
 # Load data
 data(wine, package="rattle")
 scaled_wine <- scale(wine[-1])
 
 # Train in an offline manner
-gng <- GNG(scaled_wine, labels=wine$Type, max_nodes=20)
+gng <- GNG(scaled_wine, labels=wine$Type, max.nodes=20)
 
 # Find closest node to vector [1,1,1]
 predict(gng, c(1,1,1))
@@ -75,7 +75,7 @@ meanError(gng)
 
 # Plot with first 2 coordinates as position
 plot(gng, mode=gng.plot.2d.errors, vertex.color=gng.plot.color.cluster, 
-     layout=gng.plot.layout.v2d)
+     layout=gng.plot.layout.igraph.fruchterman)
 ```
 
 ## Cross Entropy Clustering
