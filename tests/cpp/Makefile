@@ -104,7 +104,7 @@ $(TEST_MAIN_BIN): $(TEST_OBJECTS) $(OBJECTS) $(COMPILED_LIBRARIES_OBJECTS)
 
 %.o: %.cpp %.hpp
 	@echo Compiling $@ ...
-	$(CXX) $(CXXFLAGS) -c $< -o $@ 
+	$(CXX) $(CPPFLAGS) -c $< -o $@ 
 
 helper_scripts:
 	@echo Making helper scripts...
