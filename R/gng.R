@@ -855,7 +855,7 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     #indexing in gng can be non-continuous)
     
     # Warning: This is a hack. If there is a bug look for it here
-    indexesGNGToIGraph <- 1:(object$.getLastNodeIndex()+10) 
+    indexesGNGToIGraph <- 1:(2*object$.getLastNodeIndex()) 
     indexesIGraphToGNG <- 1:object$getNumberNodes()
     
     if(object$.getLastNodeIndex() != object$getNumberNodes()){

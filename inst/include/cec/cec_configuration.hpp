@@ -44,13 +44,14 @@ public:
     void set_centroids(const Rcpp::List centroids);
     void set_data_set(const Rcpp::NumericMatrix proxy_dataset);
     void set_cov(const Rcpp::NumericMatrix cov_mat_proxy);
+    void set_function(Rcpp::Function function);
 #endif
 
     void set_method_init(const std::string init);
     void set_method_type(const std::string type);
 
     void set_r(const double radius);
-    void set_function(Rcpp::Function function);
+
     void set_it_max(int it_max);
 };
 

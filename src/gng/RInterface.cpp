@@ -4,7 +4,7 @@
 
 #ifdef RCPP_INTERFACE
 
-#include <RcppCommon.h>
+#include <RcppArmadillo.h>
 using namespace Rcpp;
 
 class GNGConfiguration;
@@ -28,7 +28,7 @@ GNGServer * loadFromFile(std::string filename){
 
 RCPP_MODULE(gng_module){
 	//TODO: Rcpp doesn't accept dot starting name so no way to hide it easily
-	function("fromFileGNG", &loadFromFile);
+    Rcpp::function("fromFileGNG", &loadFromFile);
 
 
 	class_<GNGConfiguration>("GNGConfiguration" )

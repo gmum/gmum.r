@@ -3,7 +3,10 @@
 
 #include <armadillo>
 #include <string>
+
+#ifdef RCPP_INTERFACE
 #include <RcppArmadillo.h>
+#endif
 
 namespace gmum {
 
@@ -33,11 +36,13 @@ struct ClusterFsphereParams: public ClusterParams {
     ClusterFsphereParams() : ClusterParams(kfsphere), radius_set(false) { }
 };
 
+#ifdef RCPP_INTERFACE
 struct ClusterCustomParams: public ClusterParams {
     boost::shared_ptr<Rcpp::Function> function;
     ClusterCustomParams(boost::shared_ptr<Rcpp::Function> _function) : ClusterParams(kcustom), function(_function) { }
     ClusterCustomParams() : ClusterParams(kcustom) { }
 };
+#endif
 
 }
 

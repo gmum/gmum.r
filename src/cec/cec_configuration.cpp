@@ -190,11 +190,13 @@ void CecConfiguration::set_method_init(const std::string init) {
             GMUM_ERROR(CONST::ERRORS::cluster_rec_error);
             break;
         }
+#ifdef RCPP_INTERFACE
         case kcustom:
         {
             if (!m_params.function) GMUM_ERROR(CONST::ERRORS::function_name_req);
             break;
         }
+#endif
         case kmix:
         {
             BOOST_FOREACH(boost::shared_ptr < ClusterParams > cluster,
@@ -222,6 +224,7 @@ void CecConfiguration::set_method_init(const std::string init) {
                     GMUM_ERROR(CONST::ERRORS::cluster_rec_error);
                     break;
                 }
+#ifdef RCPP_INTERFACE
                 case kcustom:
                 {
                     ClusterCustomParams &ptr =
@@ -230,6 +233,7 @@ void CecConfiguration::set_method_init(const std::string init) {
                         GMUM_ERROR(CONST::ERRORS::function_name_req);
                     break;
                 }
+#endif
                 default:
                     break;
                 }
@@ -271,11 +275,13 @@ void CecConfiguration::set_r(const double radius) {
         m_params.radius_set = false;
 }
 
+#ifdef RCPP_INTERFACE
 void CecConfiguration::set_function(Rcpp::Function function) {
     if (m_params.clusters.empty()) {
         m_params.function = boost::make_shared<Rcpp::Function>(function);
     }
 }
+#endif
 
 void CecConfiguration::set_it_max(int it_max) {
     m_params.it_max = it_max;

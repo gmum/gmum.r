@@ -31,7 +31,10 @@ public:
     arma::mat cov_mat;
     bool radius_set;
     double radius;
+
+#ifdef RCPP_INTERFACE
     boost::shared_ptr<Rcpp::Function> function;
+#endif
 
     Params() : it_max(-1) { }
 };
