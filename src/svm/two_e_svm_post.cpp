@@ -15,7 +15,7 @@ void TwoeSVMPostprocessor::processRequest(SVMConfiguration &data) {
 		// cout << "SVs: " << data.l << endl;
 		// cout << "dim: " << dim << endl;
 		// cout << "Classes: " << data.nr_class << endl;
-		// for(int i = 0; i < data.nr_class; i++) {
+		// for(size_t i = 0; i < data.nr_class; i++) {
 		// 	cout << "Class: " << i << " SVs: " << data.nSV[i];
 
 		//TODO: Use copying memory for better memory optimalization

@@ -1,27 +1,25 @@
-CPP_SOURCES = $(wildcard svm/*.cpp cec/*.cpp utils/*.cpp gng/*.cpp)
-SOURCES = $(CPP_SOURCES) $(wildcard svmlight/*.c)
+# Note!: R is overwriting all optimization flags, if you are a dev you can change flags in ~/.R/Makevars 
+
+CPP_SOURCES := $(wildcard svm/*.cpp cec/*.cpp utils/*.cpp gng/*.cpp)
+SOURCES := $(CPP_SOURCES) $(wildcard svmlight/*.c)
+INCLUDES := -I ../inst/include/svmlight -I ../inst/include/utils -I ../inst/include  -I ../inst/include/cec -I ../inst/include/gng -I ../inst/include/svm
 
 SVMLIGHT_OBJECTS = svmlight/svm_common.o svmlight/svm_hideo.o svmlight/svm_learn.o
 COMPILED_LIBRARIES_OBJECTS = $(SVMLIGHT_OBJECTS)
 OBJECTS = $(CPP_SOURCES:.cpp=.o) $(COMPILED_LIBRARIES_OBJECTS)
 
-
 DEBUG := -DNDEBUG_GMUM -DNDEBUG_GMUM_2
-OPTIMIZATION_FLAGS := -O3
+PREPROCESS := $(DEBUG) -DARMA_DONT_USE_CXX11 -DRCPP_INTERFACE
+
+GCC_STD := 
 
 R_HOME :=     $(shell R RHOME)
-RCPPFLAGS :=           $(shell $(R_HOME)/bin/R CMD config --cppflags)
-RLDFLAGS :=            $(shell $(R_HOME)/bin/R CMD config --ldflags)
-RCPPINCL :=            $(shell echo 'Rcpp:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)
-RCPPLIBS :=            $(shell echo 'Rcpp:::LdFlags()'  | $(R_HOME)/bin/R --vanilla --slave)
-RCPPARMAINCL :=                $(shell echo 'RcppArmadillo:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)
-
-
-
+R_LIBS :=    $(shell $(R_HOME)/bin/R CMD config --ldflags)  $(shell echo 'Rcpp:::LdFlags()'  | $(R_HOME)/bin/R --vanilla --slave)
+R_CPPFLAGS := $(shell $(R_HOME)/bin/R CMD config --cppflags)  $(shell echo 'Rcpp:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)     $(shell echo 'RcppArmadillo:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)
 LAPACK_LIBS := $(shell ${R_HOME}/bin/R CMD config LAPACK_LIBS)
 BLAS_LIBS := $(shell ${R_HOME}/bin/R CMD config BLAS_LIBS)
 
-PKG_CPPFLAGS := -std=c++0x -O4 $(DEBUG) -DRCPP_INTERFACE -I ../inst/include/utils -I ../inst/include  -I ../inst/include/cec -I ../inst/include/gng -I ../inst/include/svm -I ../inst/include/svmlight -Wall $(shell $(R_HOME)/bin/R CMD config CPPFLAGS)
-PKG_CXXFLAGS := -O4 $(RCPPFLAGS) $(RCPPINCL) $(RCPPARMAINCL) $(RINSIDEINCL) $(shell $(R_HOME)/bin/R CMD config CXXFLAGS) -g -pthread -fpic
-PKG_LIBS := -O4 $(shell $(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()" ) $(LAPACK_LIBS) $(BLAS_LIBS) $(RLAPACK) $(RLDFLAGS) $(RRPATH) $(RBLAS) $(RCPPLIBS) $(RINSIDELIBS)
+PKG_CPPFLAGS := $(GCC_STD) $(PREPROCESS) $(R_CPPFLAGS) $(INCLUDES) -Wall -pthread -pedantic -mtune=native
+PKG_LIBS := $(LAPACK_LIBS) $(BLAS_LIBS) $(R_LIBS)
+
 

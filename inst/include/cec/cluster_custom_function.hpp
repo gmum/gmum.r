@@ -13,8 +13,10 @@
 #include <RcppArmadillo.h>
 #endif
 
-namespace gmum {
 
+
+#ifdef RCPP_INTERFACE
+namespace gmum {
 class ClusterCustomFunction: public ClusterUseCovMat {
 private:
     boost::shared_ptr<Rcpp::Function> m_function;
@@ -29,4 +31,9 @@ public:
 };
 
 }
+
+#endif
+
+
+
 #endif  //  CLUSTER_CUSTOM_FUNCTION_HPP

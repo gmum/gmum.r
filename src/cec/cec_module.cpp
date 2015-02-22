@@ -1,7 +1,7 @@
 #ifndef CEC_MODULE_H
 #define CEC_MODULE_H
 
-#include <RcppCommon.h>
+#include <RcppArmadillo.h>
 using namespace Rcpp;
 
 class CecConfiguration;

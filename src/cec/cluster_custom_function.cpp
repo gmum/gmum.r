@@ -1,6 +1,10 @@
 #include "cluster_custom_function.hpp"
 
 namespace gmum {
+
+#ifdef RCPP_INTERFACE
+
+
 ClusterCustomFunction::ClusterCustomFunction(int count,
         const arma::rowvec& mean, const arma::mat& cov_mat,
         boost::shared_ptr<Rcpp::Function> function) :
@@ -17,19 +21,17 @@ ClusterCustomFunction::ClusterCustomFunction(unsigned int id,
 
 double ClusterCustomFunction::calculate_entropy(int n,
 		const arma::mat &cov_mat) {
-#ifdef RCPP_INTERFACE
+
     return Rcpp::as<double>(
             (*m_function)(Rcpp::Named("m", Rcpp::wrap(n)),
 					Rcpp::Named("sigma", Rcpp::wrap(cov_mat))));
-#else
-	std::cerr << "Rcpp support not compiled\n";
-	exit(1);
-#endif
 }
 
 ClusterCustomFunction* ClusterCustomFunction::clone()
 {
     return new ClusterCustomFunction(m_count, m_mean, m_cov_mat, m_function);
 }
+
+#endif
 
 }

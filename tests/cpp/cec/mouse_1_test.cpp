@@ -56,8 +56,9 @@ TEST_F(Mouse1Test,IsEnergyCorrect) {
         number_of_times_acceptable += (percentage >= 0.9) || (cec.entropy() < energy*1.5);
 #ifdef SHOW_CLUSTERING
         std::cout << "BEGIN" << std::endl;
-        for (std::vector<unsigned int>::iterator it = assignment.begin(); it!=assignment.end(); ++it)
+        for (std::vector<unsigned int>::iterator it = assignment.begin(); it!=assignment.end(); ++it){
             std::cout << *it << std::endl;
+        }
         std::cout << "END" << std::endl;
 #endif
     }

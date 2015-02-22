@@ -45,12 +45,14 @@ Cluster* CecModel::create_cluster(const ClusterParams &params, int i) {
 		cluster = new ClusterConstRadius(ptr.radius, i, m_assignment, m_points);
 		break;
 	}
+#ifdef RCPP_INTERFACE
 	case kcustom: {
 		const ClusterCustomParams &ptr =
 				static_cast<const ClusterCustomParams&>(params);
         cluster = new ClusterCustomFunction(i, m_assignment, m_points, ptr.function);
 		break;
 	}
+#endif
 	}
 	return cluster;
 }
@@ -121,12 +123,14 @@ void CecModel::init(boost::shared_ptr<Algorithm> algorithm, std::vector<unsigned
 
             break;
         }
+#ifdef RCPP_INTERFACE
         case kcustom: {
             ClusterCustomParams *proxy = new ClusterCustomParams();
             proxy->function = params.function;
             cluster = proxy;
             break;
         }
+#endif
         default:
             /*case standard:
              case diagonal:
