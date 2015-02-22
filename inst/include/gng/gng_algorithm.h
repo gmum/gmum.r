@@ -8,16 +8,16 @@
 #ifndef GNGALGORITHM_H
 #define GNGALGORITHM_H
 
+#include <globals.h>
+#include <gng_dataset.h>
+#include <gng_graph.h>
+#include <gng_lazy_error_heap.h>
+#include <uniform_grid.h>
 #include <memory>
 
 #include "utils/threading.h"
 #include "utils/circular_buffer.h"
 
-#include "GNGGlobals.h"
-#include "GNGGraph.h"
-#include "GNGDataset.h"
-#include "UniformGrid.h"
-#include "GNGLazyErrorHeap.h"
 #include <string>
 #include <limits>
 

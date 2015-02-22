@@ -1,6 +1,6 @@
 #include <boost/smart_ptr/shared_ptr.hpp>
-#include <GNGNode.h>
-#include <GNGServer.h>
+#include <gng_node.h>
+#include <gng_server.h>
 #include <logger.h>
 #include <iostream>
 #include <string>

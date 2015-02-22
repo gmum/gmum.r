@@ -6,11 +6,11 @@
  */
 
 //TODO: refactor getExample
-#include "GNGAlgorithm.h"
 #include <cstdlib>
 #include <utility>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <gng_algorithm.h>
 
 using namespace boost;
 using namespace gmum;
@@ -839,9 +839,6 @@ std::pair<int, int> GNGAlgorithm::_getNearestNeurons(const double *ex){
 		}
 }
 
-double GNGAlgorithm::calculateAccumulatedError();
-
-void GNGAlgorithm::testAgeCorrectness();
 
 void GNGAlgorithm::resetUniformGrid(double * orig, double *axis, double l) {
 	ug->purge(orig, axis, l);
@@ -853,20 +850,6 @@ void GNGAlgorithm::resetUniformGrid(double * orig, double *axis, double l) {
 			ug->insert(m_g[i].position, m_g[i].nr);
 	}
 }
-
-GNGNode ** GNGAlgorithm::LargestErrorNodesLazy();
-
-GNGNode ** GNGAlgorithm::LargestErrorNodes();
-
-
-void GNGAlgorithm::randomInit();
-
-void GNGAlgorithm::addNewNode();
-
-//@return error and closest node index
-std::pair<double, int> GNGAlgorithm::adapt(const double * ex, const double * extra);
-
-void GNGAlgorithm::resizeUniformGrid();
 
 bool GNGAlgorithm::stoppingCriterion() {
 	return m_g.get_number_nodes() > m_max_nodes;

@@ -11,11 +11,11 @@
 #include <string.h>
 #include <vector>
 #include <boost/shared_ptr.hpp>
+#include <globals.h>
+#include <gng_configuration.h>
 
 #include "utils/threading.h"
 #include "utils/utils.h"
-#include "GNGGlobals.h"
-#include "GNGConfiguration.h"
 
 namespace gmum {
 

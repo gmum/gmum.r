@@ -15,9 +15,9 @@ RCPP_EXPOSED_CLASS(GNGServer)
 
 
 
-#include "GNG.h"
-#include "GNGServer.h"
-#include "GNGConfiguration.h"
+#include <gng.h>
+#include <gng_server.h>
+#include <gng_configuration.h>
 using namespace gmum;
 
 

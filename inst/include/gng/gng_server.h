@@ -7,6 +7,12 @@
 #ifndef GNGSERVER_H
 #define GNGSERVER_H
 
+#include <globals.h>
+#include <gng_algorithm.h>
+#include <gng_configuration.h>
+#include <gng_dataset.h>
+#include <gng_defines.h>
+#include <gng_graph.h>
 #include <cstdlib>
 #include <cstddef>
 #include <map>
@@ -16,12 +22,6 @@
 #include "utils/threading.h"
 #include "utils/utils.h"
 
-#include "GNGDefines.h"
-#include "GNGConfiguration.h"
-#include "GNGGlobals.h"
-#include "GNGGraph.h"
-#include "GNGDataset.h"
-#include "GNGAlgorithm.h"
 
 #ifdef RCPP_INTERFACE
 #include <RcppArmadillo.h>

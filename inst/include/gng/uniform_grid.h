@@ -9,7 +9,7 @@
 #define UNIFORM_GRID_H
 
 #include <boost/smart_ptr/shared_ptr.hpp>
-#include <GNGGlobals.h>
+#include <globals.h>
 #include <logger.h>
 #include <utils.h>
 #include <algorithm>
@@ -173,7 +173,7 @@ private:
 	}
 };
 
-#include "UniformGrid.hpp"
+#include <uniform_grid.hpp>
 
 }
 

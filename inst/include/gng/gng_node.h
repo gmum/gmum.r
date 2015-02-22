@@ -8,6 +8,7 @@
 #ifndef SHGRAPHDEFS_H
 #define SHGRAPHDEFS_H
 
+#include <globals.h>
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -15,7 +16,6 @@
 #include <cstring>
 #include <iterator>
 
-#include "GNGGlobals.h"
 /**
  * Basic interface for Edge in GNGGraph.
  */
