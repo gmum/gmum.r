@@ -7,11 +7,12 @@ ds <- svm.breastcancer.dataset
 
 # Create CV folds
 K <- 5
-folds <- createFolds(ds$V1, k=K)
+
+folds <- createFolds(ds$X1, k=K)
 mean_acc <- 0
 
 # SVM model needs to know how the labels depend on data
-formula <- V1~. 
+formula <- X1~. 
 
 # Iterate through folds
 for ( i in seq(1,K,1) ) {
@@ -27,8 +28,8 @@ for ( i in seq(1,K,1) ) {
   if (i == 1) plot(svm, mode="pca")
   
   # Seperate lables in test data
-  test_x <- subset(test, select = -c(V1))
-  target <- test[,"V1"]
+  test_x <- subset(test, select = -c(X1))
+  target <- test[,"X1"]
   
   # predict on test data
   pred <- predict(svm, test_x)

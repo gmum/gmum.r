@@ -1,5 +1,5 @@
 #include <cmath>
-#include <RcppArmadillo.h>
+#include <armadillo>
 
 #include "two_e_svm_post.h"
 #include "svm_handler.h"
@@ -15,7 +15,7 @@ void TwoeSVMPostprocessor::processRequest(SVMConfiguration &data) {
 		// cout << "SVs: " << data.l << endl;
 		// cout << "dim: " << dim << endl;
 		// cout << "Classes: " << data.nr_class << endl;
-		// for(int i = 0; i < data.nr_class; i++) {
+		// for(size_t i = 0; i < data.nr_class; i++) {
 		// 	cout << "Class: " << i << " SVs: " << data.nSV[i];
 
 		//TODO: Use copying memory for better memory optimalization
@@ -27,7 +27,7 @@ void TwoeSVMPostprocessor::processRequest(SVMConfiguration &data) {
 		//-rho = b
 		//TODO: consider multiclass examples
 		double b_dash = data.getB() + (p_plus - p_minus) / (p_plus + p_minus);
-		data.rho[0] = -b_dash;
+		data.setB(b_dash);
 	}
 	data.data = data.tmp_data;
 	data.target = data.tmp_target;

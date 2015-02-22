@@ -1,7 +1,7 @@
 #ifndef CEC_MODULE_H
 #define CEC_MODULE_H
 
-#include <RcppCommon.h>
+#include <RcppArmadillo.h>
 using namespace Rcpp;
 
 class CecConfiguration;
@@ -30,30 +30,21 @@ RCPP_MODULE(cec) {
             .method("setCov", &CecConfiguration::set_cov)
             .method("setR", &CecConfiguration::set_r)
             .method("setFunction", &CecConfiguration::set_function)
-            .method("setItmax", &CecConfiguration::set_it_max)
-            .method("setIters", &CecConfiguration::set_iters);
-
-    std::list<double> (CecModel::*predict_1)(std::vector<double>,
-                                             bool) = &CecModel::predict;
-    unsigned int (CecModel::*predict_2)(
-                std::vector<double>) const = &CecModel::predict;
+            .method("setItmax", &CecConfiguration::set_it_max);
 
     class_<CecModel>("CecModel")
             .constructor<CecConfiguration*>()
-            .method("loop", &CecModel::loop)
-            .method("singleLoop", &CecModel::single_loop)
-            .method("entropy", &CecModel::entropy)
+            .method("runAll", &CecModel::loop)
+            .method("runOneIteration", &CecModel::single_loop)
+            .method(".entropy", &CecModel::entropy)
             .method("energy", &CecModel::get_energy)
             .method("y", &CecModel::get_assignment)
-            .method("clustering",&CecModel::get_assignment)
             .method("centers", &CecModel::centers)
-            .method("cov", &CecModel::cov)
-            .method("predict", predict_1)
-            .method("predict", predict_2)
+            .method("covMatrix", &CecModel::cov)
+            .method("predict", &CecModel::predict)
             .method("log.ncluster", &CecModel::get_nclusters)
-            .method("log.energy", &CecModel::get_energy)
+            .method("log.energy", &CecModel::get_energy_history)
             .method("log.iters", &CecModel::iters)
             .method("x", &CecModel::get_points);
-
 }
 #endif

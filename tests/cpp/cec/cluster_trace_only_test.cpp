@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "cluster.hpp"
-#include <RcppArmadillo.h>
+#include <armadillo>
 #include <boost/shared_ptr.hpp>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,7 +23,7 @@ TEST(TraceOnly,AddPoint) {
     }
 
     arma::mat init_matrix(beg,dim);
-    for(int k = 0; k < beg; ++k) {
+    for(size_t k = 0; k < beg; ++k) {
         for (int j = 0; j < dim; ++j) {
             init_matrix(k,j) = data(k,j);
         }
@@ -31,7 +31,7 @@ TEST(TraceOnly,AddPoint) {
 
     ASSERT_TRUE(true);
 
-    boost::shared_ptr<Cluster> m(new ClusterSpherical(id,fits,init_matrix));
+    Cluster * m(new ClusterSpherical(id,fits,init_matrix));
     // Dodajemy element o indeksie i
     for (int i = beg; i < n-1; ++i) {
 
@@ -43,8 +43,8 @@ TEST(TraceOnly,AddPoint) {
         arma::mat real_m = mean(tmp_matrix);
 
         arma::rowvec point(data.row(i));
-        m = m->add_point(point);
-        ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m.get());
+        m->add_point(point);
+        ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m);
         ClusterStandard tmp(id,fits,tmp_matrix);
         arma::rowvec mean_online_difference = upref->get_mean() - real_m;
         float trace_diff = upref->get_cov_mat_trace() - arma::trace(covariance);
@@ -75,13 +75,13 @@ TEST(TraceOnly,removePoint) {
     }
 
     arma::mat init_matrix(n,dim);
-    for(int k = 0; k < n; ++k) {
+    for(size_t k = 0; k < n; ++k) {
         for (int j = 0; j < dim; ++j) {
             init_matrix(k,j) = data(k,j);
         }
     }
 
-    boost::shared_ptr<Cluster> m(new ClusterSpherical(id,fits,init_matrix));
+    Cluster * m(new ClusterSpherical(id,fits,init_matrix));
     // Dodajemy element o indeksie i
     for (int i = n-1; i > end; --i) {
 
@@ -92,11 +92,12 @@ TEST(TraceOnly,removePoint) {
         arma::mat covariance= cov(tmp_matrix,1);
         arma::mat real_m = mean(tmp_matrix);
 
+
         arma::rowvec point(data.row(i));
-        m = m->remove_point(point);
+        m->remove_point(point);
         ClusterStandard tmp(id,fits,tmp_matrix);
 
-        ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m.get());
+        ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m);
         arma::rowvec mean_online_difference = upref->get_mean() - real_m;
         float trace_diff = upref->get_cov_mat_trace() - arma::trace(covariance);
         // float relative_error = std::abs(trace_diff/arma::trace(covariance));
