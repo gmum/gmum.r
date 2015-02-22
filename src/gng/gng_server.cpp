@@ -308,7 +308,9 @@ int GNGServer::Rpredict(Rcpp::NumericVector & r_ex) {
 
 Rcpp::NumericVector GNGServer::RgetClustering() {
 	const vector<int> & x = gngAlgorithm->get_clustering();
-	return NumericVector(x.begin(), x.end());
+	Rcpp::NumericVector out = NumericVector(x.begin(), x.end());
+	for(size_t i=0;i<out.size();++i) out[i] += 1; //indexing starts from 1 in R
+	return out;
 }
 
 Rcpp::NumericVector GNGServer::RgetErrorStatistics() {
