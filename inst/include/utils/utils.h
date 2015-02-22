@@ -53,10 +53,6 @@ typedef vector<int> VI;
 
 #define REPORT_PRODUCTION(x) cout<<#x<<"="<<(x)<<endl<<std::flush;
 
-void __init_rnd();
-int __rnd(int min, int max);
-int __int_rnd(int min, int max);
-double __double_rnd(double min, double max);
 
 template<class T>
 void write_array(T* begin, T*end) {
