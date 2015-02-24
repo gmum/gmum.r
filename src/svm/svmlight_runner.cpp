@@ -1055,7 +1055,7 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
         //printf("#%s\n",v->userdefined);
       }
     }
-
+    config.w = (config.alpha_y.t() * config.support_vectors).t();
     LOG(
         config.log,
         LogLevel::DEBUG,

@@ -119,6 +119,14 @@ bool SVMClient::isProbability(){
 	return (bool)config.probability;
 }
 
+arma::vec SVMClient::getExampleWeights(){
+    return config.data_cost;
+}
+
+bool 
+SVMClient::areExamplesWeighted() {
+    return (bool)config.use_cost;
+}
 // model getters
 arma::vec SVMClient::getAlpha() {
 	return config.alpha_y;
