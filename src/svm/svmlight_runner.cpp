@@ -956,9 +956,24 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
         ss << 0;
     }
 
-    for (long int j = 1; j <= config.data.n_cols; ++j) {
-        ss << ' ' << j << ':' << std::setprecision(8) << config.data(line_num, j-1);
+    // Sparse matrix CRS decompression
+    if (config.sparse) {
+
+        for (size_t i = config.row[line_num]; i < config.row[line_num+1]; ++i) {
+            ss << ' ' << (config.col[i] + 1) << ':'
+                << std::setprecision(8) << config.sp_data[i];
+        }
+
+    // Armadillo matrix
+    } else {
+
+        for (long int i = 1; i <= config.data.n_cols; ++i) {
+            ss << ' ' << i << ':'
+               << std::setprecision(8) << config.data(line_num, i-1);
+        }
+
     }
+
     ss << std::endl;
     line_string = ss.str();
 
