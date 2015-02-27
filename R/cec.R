@@ -186,7 +186,7 @@ evalqOnLoad({
                    params.mix = NULL,
                    params.function = NULL,
                    control.nstart = 1,
-                   control.eps = 1e-4,
+                   control.eps = 0.05,
                    control.itmax = 25,
                    log.energy = FALSE,
                    log.ncluster= FALSE){
@@ -208,7 +208,7 @@ evalqOnLoad({
       stop("Number of starts should be a positive integer!");
     
     if (control.eps > 1.0 / k)
-      stop("killThreshold " + contorl.eps + " is too high!");  
+      stop("killThreshold = ", control.eps, " is too high!");  
     
     if (control.itmax <= 0)
       stop("Maximum number of iterations should be a positive integer!");
