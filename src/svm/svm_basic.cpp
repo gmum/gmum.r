@@ -49,6 +49,7 @@ void SVMConfiguration::setPrediction(bool prediction) {
 	this->prediction = prediction;
 }
 
+#ifdef RCPP_INTERFACE
 void SVMConfiguration::setWeights( Rcpp::NumericVector weights ) {
 	this->nr_weight = weights.size();
 	this->weight = new double[nr_weight];
@@ -57,6 +58,7 @@ void SVMConfiguration::setWeights( Rcpp::NumericVector weights ) {
 		weight[i] = weights(1);
 	}
 }
+#endif
 
 void SVMConfiguration::setLibrary( std::string library ) {
 	if ( library == "libsvm" ) {
