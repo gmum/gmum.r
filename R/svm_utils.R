@@ -4,8 +4,9 @@
 urls_data.path <- system.file("data_sets","svm", "Day0.svm", package="gmum.r")
 # http://archive.ics.uci.edu/ml/machine-learning-databases/url/url_svmlight.tar.gz
 
-duke.path <- system.file("data_sets","svm", "duke", package="gmum.r")
-# http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/duke.bz
+svm.data.root <- system.file("data_sets", "svm", package="gmum.r")
+colon_cancer.url <- "http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/colon-cancer.bz2" 
+colon_cancer.filename <- "colon-cancer"
 
 read.libsvm <- function(filename, dimensionality) {
   
@@ -48,8 +49,9 @@ read.libsvm <- function(filename, dimensionality) {
 #   return(bc)
 # }
 
-svm.dataset.duke <- function()  {
-  bc <- read.libsvm( duke.path,  7129 )
+svm.dataset.colon_cancer <- function()  {
+  colon_cancer.path <- svm.download.dataset(colon_cancer.url, colon_cancer.filename)
+  bc <- read.libsvm( colon_cancer.path,  2000 )
   return(bc)
 }
 
@@ -71,3 +73,24 @@ svm.accuracy <- function(prediction, target) {
   acc <- sum(diff == 0) / len
   return(acc) 
 }
+
+#right now is working only wiz bzip2
+svm.download.dataset <- function(url, filename) {
+	destfile <- file.path(svm.data.root,filename)
+	if(!file.exists(destfile)) {
+		filename_download <- basename(url) 
+		ext <- strsplit(filename_download, "\\.")[[1]][2]
+		ext <- switch(ext,
+		       bz2 = "bzip2")
+		destfile_download <- file.path(svm.data.root,filename_download)
+		download.file(url,destfile=destfile_download)	
+		destfile_con <- file(destfile, "w")
+		destfile_download_con <- bzfile(destfile_download)
+		writeLines(readLines(destfile_download_con, warn=FALSE), destfile_con) 
+		unlink(destfile_download)
+		close(destfile_con)
+		close(destfile_download_con)
+	}
+	destfile
+}
+

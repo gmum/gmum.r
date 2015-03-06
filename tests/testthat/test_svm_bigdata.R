@@ -1,7 +1,8 @@
+library("gmum.r")
+
 test_that("2e works with really big dataset", {
   
-  ds = svm.dataset.farm_ads()
-  ds2 = svm.dataset.farm_ads()
+  ds = svm.dataset.colon_cancer()
   formula = X1 ~ .
   
   svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "none", C=10);

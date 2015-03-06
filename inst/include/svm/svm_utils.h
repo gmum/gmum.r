@@ -33,17 +33,11 @@ public:
 		double cov_eps_smoothing_end = cov_eps_smoothing_start;
 		bool not_singular = false;
 		while(!not_singular) {
-			// try {
-				not_singular = inv_sympd(inverse,matrix);
-				//not_singular = true;
-			// }
-			// catch(std::runtime_error& e) {
-				matrix = (1-cov_eps_smoothing_end) * matrix +
-				mu * cov_eps_smoothing_end * arma::eye(matrix.n_cols, matrix.n_cols);
-				cov_eps_smoothing_end *= 2;
-			// }
+			not_singular = inv_sympd(inverse,matrix);
+			matrix = (1-cov_eps_smoothing_end) * matrix +
+			mu * cov_eps_smoothing_end * arma::eye(matrix.n_cols, matrix.n_cols);
+			cov_eps_smoothing_end *= 2;
 		}
-		//arma::mat inverse = arma::inv(matrix);
 		arma::eig_sym(eigenValue, eigenVector,inverse);
 		finalMat = eigenVector * arma::sqrt(arma::diagmat(eigenValue))	* eigenVector.t();
 		return cov_eps_smoothing_end;
