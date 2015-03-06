@@ -32,6 +32,16 @@ void SVMConfiguration::setSparse(bool sparse) {
 	this->sparse = sparse;
 }
 
+void SVMConfiguration::setSparseData(
+	arma::uvec rowind,
+    arma::uvec colptr,
+    arma::vec values,
+    size_t n_rows,
+    size_t n_cols
+) {
+    sparse_data = arma::sp_mat(rowind, colptr, values, n_rows, n_cols);
+}
+
 bool SVMConfiguration::isSparse() {
 	return this->sparse;
 }
@@ -39,6 +49,7 @@ bool SVMConfiguration::isSparse() {
 void SVMConfiguration::setFilename(std::string filename) {
 	this->filename = filename;
 }
+
 std::string SVMConfiguration::getFilename() {
 	return this->filename;
 }
@@ -46,6 +57,7 @@ std::string SVMConfiguration::getFilename() {
 void SVMConfiguration::setModelFilename(std::string filename) {
 	this->model_filename = filename;
 }
+
 std::string SVMConfiguration::getModelFilename() {
 	return this->model_filename;
 }

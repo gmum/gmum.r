@@ -82,8 +82,11 @@ public:
 	arma::vec target;
 	arma::vec result;
 
-	// sparse matrix things
+    // sparse data
 	bool sparse;
+    arma::sp_mat sparse_data;
+
+	// sparse matrix things
 	arma::vec sp_data; 
 	arma::Col<int> row;
 	arma::Col<int> col;
@@ -135,6 +138,18 @@ public:
 	void set_verbosity( int );
 
 	void setSparse(bool sparse);
+
+    /**
+     * Sets sparse data from CSC sparse matrix format
+     */
+    void setSparseData(
+        arma::uvec rowind,
+        arma::uvec colptr,
+        arma::vec values,
+        size_t n_rows,
+        size_t n_cols
+    );
+
 	bool isSparse();
 	int getDataDim();
 	int getDataExamplesNumber();
