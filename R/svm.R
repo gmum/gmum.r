@@ -108,7 +108,7 @@ evalqOnLoad({
                    C           = 1,
                    gamma       = 0.01,
                    coef0       = 0,
-                   degree      = 1,
+                   degree      = 3,
                    shrinking   = TRUE,
                    probability = FALSE,
                    cweights    = NULL,
