@@ -128,6 +128,9 @@ void SVMConfiguration::setDefaultParams() {
 	nu = 0.5;
 	p = 0.1;
 
+    // Additional features
+    use_cost = false;
+
     // User-defined classification mode labels
     // (will be filled during data processing)
     neg_target = 0;
