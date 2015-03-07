@@ -270,7 +270,7 @@ evalqOnLoad({
     c$covMatrix()
   }
 
-  log.ncluster <<- function(c) {
+  log.ncluster.cec <<- function(c) {
     c$log.ncluster()
   }
 
