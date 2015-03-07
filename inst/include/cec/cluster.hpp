@@ -16,128 +16,155 @@ namespace gmum {
  */
 class Cluster {
 protected:
-    unsigned int m_n;
-    int m_count;
-    arma::rowvec m_mean;
-    double m_entropy;
+	unsigned int m_n;
+	int m_count;
+	arma::rowvec m_mean;
+	double m_entropy;
 
-    Cluster(int count, const arma::rowvec& mean);
-    Cluster(unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);
-    arma::rowvec initialize_mean(unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);
+	Cluster(int count, const arma::rowvec& mean);
+	Cluster(unsigned int id, const std::vector<unsigned int> &assignment,
+			const arma::mat &points);
+	arma::rowvec initialize_mean(unsigned int id,
+			const std::vector<unsigned int> &assignment,
+			const arma::mat &points);
 public:
-    virtual ~Cluster() { }
-    virtual void add_point(const arma::rowvec& point) = 0;
-    virtual void remove_point(const arma::rowvec& point) = 0;
+	virtual ~Cluster() {
+	}
+	virtual void add_point(const arma::rowvec& point) = 0;
+	virtual void remove_point(const arma::rowvec& point) = 0;
 
-    virtual double entropy_after_add_point(const arma::rowvec &point) = 0;
-    virtual double entropy_after_remove_point(const arma::rowvec &point) = 0;
-    virtual Cluster* clone() = 0;
-    
-    double entropy() const;
-    int size() const;
-    arma::rowvec get_mean();
-    virtual arma::mat get_cov_mat(unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points) = 0;
+	virtual double entropy_after_add_point(const arma::rowvec &point) = 0;
+	virtual double entropy_after_remove_point(const arma::rowvec &point) = 0;
+	virtual Cluster* clone() = 0;
+
+	double entropy() const;
+	int size() const;
+	arma::rowvec get_mean();
+	virtual arma::mat get_cov_mat(unsigned int id,
+			const std::vector<unsigned int> &assignment,
+			const arma::mat &points) = 0;
 };
 
 //abstract, never created
 class ClusterUseCovMat: public Cluster {
 protected:
-    arma::mat m_cov_mat;
-    arma::mat m_cov_mat_tmp;
+	arma::mat m_cov_mat;
+	arma::mat m_cov_mat_tmp;
 
-    void initialize_cov_mat(unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);
-    ClusterUseCovMat(int count, const arma::rowvec &mean,const arma::mat& cov_mat);
-    ClusterUseCovMat(unsigned int id,const std::vector<unsigned int> &assignment, const arma::mat &points);
+	void initialize_cov_mat(unsigned int id,
+			const std::vector<unsigned int> &assignment,
+			const arma::mat &points);
+	ClusterUseCovMat(int count, const arma::rowvec &mean,
+			const arma::mat& cov_mat);
+	ClusterUseCovMat(unsigned int id,
+			const std::vector<unsigned int> &assignment,
+			const arma::mat &points);
 
-    virtual double calculate_entropy(int n, const arma::mat &cov_mat) = 0;
+	virtual double calculate_entropy(int n, const arma::mat &cov_mat) = 0;
 public:
-    void add_point(const arma::rowvec &point);
-    void remove_point(const arma::rowvec &point);
+	void add_point(const arma::rowvec &point);
+	void remove_point(const arma::rowvec &point);
 
-    double entropy_after_add_point(const arma::rowvec &point);
-    double entropy_after_remove_point(const arma::rowvec &point);
+	double entropy_after_add_point(const arma::rowvec &point);
+	double entropy_after_remove_point(const arma::rowvec &point);
 
-
-    arma::mat get_cov_mat(unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);
+	arma::mat get_cov_mat(unsigned int id,
+			const std::vector<unsigned int> &assignment,
+			const arma::mat &points);
 };
 
 //abstract, never created
 class ClusterOnlyTrace: public Cluster {
 protected:
-    double m_cov_mat_trace;
-    ClusterOnlyTrace(int count, const arma::rowvec & mean, double cov_mat_trace);
-    ClusterOnlyTrace(unsigned int id, const std::vector<unsigned int> & assignment, const arma::mat & points);
-    void compute_cov_mat_trace(unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);
-    virtual double calculate_entropy(double, int) =0;
+	double m_cov_mat_trace;
+	ClusterOnlyTrace(int count, const arma::rowvec & mean,
+			double cov_mat_trace);
+	ClusterOnlyTrace(unsigned int id,
+			const std::vector<unsigned int> & assignment,
+			const arma::mat & points);
+	void compute_cov_mat_trace(unsigned int id,
+			const std::vector<unsigned int> &assignment,
+			const arma::mat &points);
+	virtual double calculate_entropy(double, int) =0;
 public:
-    virtual arma::mat get_cov_mat(unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);
+	virtual arma::mat get_cov_mat(unsigned int id,
+			const std::vector<unsigned int> &assignment,
+			const arma::mat &points);
 
-    void add_point(const arma::rowvec & point);
-    void remove_point(const arma::rowvec &point);
+	void add_point(const arma::rowvec & point);
+	void remove_point(const arma::rowvec &point);
 
-    double entropy_after_add_point(const arma::rowvec &point);
-    double entropy_after_remove_point(const arma::rowvec &point);
+	double entropy_after_add_point(const arma::rowvec &point);
+	double entropy_after_remove_point(const arma::rowvec &point);
 
-
-    double get_cov_mat_trace();
+	double get_cov_mat_trace();
 
 };
 
 class ClusterStandard: public ClusterUseCovMat {
 private:
-    double calculate_entropy(int n, const arma::mat &cov_mat);
+	double calculate_entropy(int n, const arma::mat &cov_mat);
 
 public:
-    ClusterStandard(int count, const arma::rowvec &mean, const arma::mat &cov_mat);
-    ClusterStandard(unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);    
-    virtual ClusterStandard* clone();
-    
+	ClusterStandard(int count, const arma::rowvec &mean,
+			const arma::mat &cov_mat);
+	ClusterStandard(unsigned int id,
+			const std::vector<unsigned int> &assignment,
+			const arma::mat &points);
+	virtual ClusterStandard* clone();
+
 };
 
 class ClusterCovMat: public ClusterUseCovMat {
 private:
-    arma::mat m_inv_sigma;
-    double m_sigma_det;
+	arma::mat m_inv_sigma;
+	double m_sigma_det;
 
-    double calculate_entropy(int n, const arma::mat &cov_mat);
+	double calculate_entropy(int n, const arma::mat &cov_mat);
 public:
-    ClusterCovMat(const arma::mat& inv_sigma, double sigma_det, int count, const arma::rowvec & mean, const arma::mat & cov_mat);
-    ClusterCovMat(const arma::mat & sigma, unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);    
-    virtual ClusterCovMat* clone();
+	ClusterCovMat(const arma::mat& inv_sigma, double sigma_det, int count,
+			const arma::rowvec & mean, const arma::mat & cov_mat);
+	ClusterCovMat(const arma::mat & sigma, unsigned int id,
+			const std::vector<unsigned int> &assignment,
+			const arma::mat &points);
+	virtual ClusterCovMat* clone();
 };
 
 class ClusterConstRadius: public ClusterOnlyTrace {
 private:
-    double calculate_entropy(double, int);
-    double m_r;
+	double calculate_entropy(double, int);
+	double m_r;
 public:
-    ClusterConstRadius(double r, int count,const arma::rowvec & mean, double cov_mat_trace);
-    ClusterConstRadius(double r, unsigned int id, const std::vector<unsigned int> &assignment, const arma::mat &points);
-    virtual ClusterConstRadius* clone();
+	ClusterConstRadius(double r, int count, const arma::rowvec & mean,
+			double cov_mat_trace);
+	ClusterConstRadius(double r, unsigned int id,
+			const std::vector<unsigned int> &assignment,
+			const arma::mat &points);
+	virtual ClusterConstRadius* clone();
 };
 
 class ClusterSpherical: public ClusterOnlyTrace {
 private:
-    double calculate_entropy(double, int);
+	double calculate_entropy(double, int);
 public:
-    ClusterSpherical(int count, const arma::rowvec & mean,
-                     double cov_mat_trace);
-    ClusterSpherical(unsigned int id,
-                     const std::vector<unsigned int> &assignment,
-                     const arma::mat &points);    
-    virtual ClusterSpherical* clone();
+	ClusterSpherical(int count, const arma::rowvec & mean,
+			double cov_mat_trace);
+	ClusterSpherical(unsigned int id,
+			const std::vector<unsigned int> &assignment,
+			const arma::mat &points);
+	virtual ClusterSpherical* clone();
 };
 
 class ClusterDiagonal: public ClusterUseCovMat {
 private:
-    double calculate_entropy(int n, const arma::mat &cov_mat);
+	double calculate_entropy(int n, const arma::mat &cov_mat);
 public:
-    ClusterDiagonal(int count, const arma::rowvec & mean,
-                    const arma::mat & cov_mat);
-    ClusterDiagonal(unsigned int id,
-                    const std::vector<unsigned int> &assignment,
-                    const arma::mat &points);
-    virtual ClusterDiagonal* clone();
+	ClusterDiagonal(int count, const arma::rowvec & mean,
+			const arma::mat & cov_mat);
+	ClusterDiagonal(unsigned int id,
+			const std::vector<unsigned int> &assignment,
+			const arma::mat &points);
+	virtual ClusterDiagonal* clone();
 };
 
 }

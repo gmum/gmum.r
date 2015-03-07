@@ -25,7 +25,7 @@ void RandomAssignment::operator()(std::vector<unsigned int> &assignment) {
     for (unsigned int i = 0; i < m_nclusters; i++) {
         while (true) {
             unsigned int center = dist(gen);
-            if (std::find(centers.begin(), centers.end(), center)
+			if (std::find(centers.begin(), centers.end(), center)
                     == centers.end()) {
                 /* centers does not contain dist(gen) */
                 centers.push_back(center);
