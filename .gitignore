@@ -144,7 +144,7 @@ test/cpp/svm/libsvm_test
 tests/testthat/Rplots.pdf
 
 #svm big data
-tests/testthat/color-cancer
+inst/data_sets/svm/colon-cancer
 
 .depend/
 build/
