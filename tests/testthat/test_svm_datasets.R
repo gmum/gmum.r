@@ -8,7 +8,7 @@ data(svm_two_circles_dataset)
 test_that('breast_cancer dataset works', {
   
   ds <- svm.breastcancer.dataset
-  formula <- V1 ~ .
+  formula <- X1 ~ .
   svm <- SVM(formula, ds, lib="libsvm", kernel="linear", C=10)
 
   x <- svm$getX()

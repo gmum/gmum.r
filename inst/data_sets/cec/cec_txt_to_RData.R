@@ -1,9 +1,9 @@
 #EllipseGauss
-energy_value_value <- as.numeric(read.table(system.file("data_sets", "cec", "EllipseGauss","energy.txt", package="gmum.r")));
+energy_value <- as.numeric(read.table(system.file("data_sets", "cec", "EllipseGauss","energy.txt", package="gmum.r")));
 input <- as.matrix(read.table(system.file("data_sets", "cec", "EllipseGauss","input.txt", package="gmum.r")));
 cluster <- as.vector(read.table(system.file("data_sets", "cec", "EllipseGauss","cluster.txt", package="gmum.r")));
 
-typeof(energy_value_value);
+typeof(energy_value);
 typeof(input);
 typeof(cluster);
 

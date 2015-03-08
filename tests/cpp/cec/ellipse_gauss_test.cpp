@@ -8,7 +8,7 @@
 #include "algorithm.hpp"
 #include <boost/shared_ptr.hpp>
 #include <vector>
-#include <RcppArmadillo.h>
+#include <armadillo>
 
 using namespace gmum;
 TEST(EllipseGauss,answer_cluster_same_length) {
@@ -27,12 +27,21 @@ TEST(EllipseGauss,answer_cluster_same_length) {
     BestPermutationComparator comparator;
     EXPECT_EQ(comparator.evaluate_clustering(4,m,clustering,clustering),1.0);
 }
+
+#include "boost/date_time/posix_time/posix_time.hpp"
+
+typedef boost::posix_time::ptime Time;
+typedef boost::posix_time::time_duration TimeDuration;
+
+
 TEST(EllipseGauss,real_test) {
     std::vector<unsigned int> clustering;
 
     ClusterReader cluster_reader("EllipseGauss", 2);
+
     boost::shared_ptr<arma::mat> points(
                 new arma::mat(cluster_reader.get_points_in_matrix()));
+
     cluster_reader.get_clustering(clustering);
     BestPermutationComparator comparator;
 
@@ -43,23 +52,37 @@ TEST(EllipseGauss,real_test) {
     params.cluster_type = kstandard;
     params.nstart = 10;
 
+
     double number_of_times_acceptable = 0;
     int t = 20;
     for (int x = 0; x < t; ++x) {
+    	Time t1(boost::posix_time::microsec_clock::local_time());
+
+
+
+
+    	std::cerr<<number_of_times_acceptable<<std::endl;
         // CEC init
         CecConfiguration conf;
         conf.set_params(params);
         conf.set_method_init("random");
+        std::cerr<<"Creating"<<std::endl;
         CecModel cec(&conf);
+        std::cerr<<"Created\n"<<std::endl;
         // cec.loop();
         SingleResult sr;
         cec.loop();
-        double percentage = comparator.evaluate_clustering(params.nclusters, *points, cec.get_assignment(), clustering);
+        std::vector<unsigned int> a = cec.get_assignment();
+        double percentage = comparator.evaluate_clustering(params.nclusters, *points, a, clustering);
         // std::cout << "Percentage " << percentage << std::endl;
         // EXPECT_GT(percentage, 0.9);
         number_of_times_acceptable += (percentage >= 0.9) || (cec.entropy() < cluster_reader.get_energy()*1.5);
-
+        std::cerr<<number_of_times_acceptable<<std::endl;
         // EXPECT_LT(cec.entropy(),clusterReader.getEnergy()*1.5);
+
+	    Time t2(boost::posix_time::microsec_clock::local_time());
+	    TimeDuration dt = t2 - t1;
+	    std::cerr << dt << std::endl;
     }
     EXPECT_GT(number_of_times_acceptable , t/2);
 }

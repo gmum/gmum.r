@@ -2,8 +2,13 @@
 #define SVM_BASIC_H
 
 #include <string>
-#include <RcppArmadillo.h>
+#include <armadillo>
+
+#ifdef RCPP_INTERFACE
 #include <R.h>
+#include <RcppArmadillo.h>
+#endif
+
 #include "log.h"
 
 enum KernelType {
@@ -83,6 +88,9 @@ public:
 	arma::vec target;
 	arma::vec result;
 
+    bool use_cost;              // currently only LIBSVM-implemented
+    arma::vec data_cost;
+
 	Logger log;
 
 	//universal parameters
@@ -119,7 +127,9 @@ public:
 	void setPrediction(bool);
 	bool isPrediction();
 
+#ifdef RCPP_INTERFACE
 	void setWeights( Rcpp::NumericVector );
+#endif
 	void setLibrary( std::string );
 	void setKernel( std::string );
 	void setPreprocess( std::string );

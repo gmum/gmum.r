@@ -43,7 +43,7 @@ SVM <- NULL
 #' @docType methods
 #' 
 #' @aliases test
-predict.svm <- NULL
+predict.svm.gmum <- NULL
 
 #' @title print
 #' 
@@ -108,11 +108,11 @@ evalqOnLoad({
                    C           = 1,
                    gamma       = 0.01,
                    coef0       = 0,
-                   degree      = 1,
+                   degree      = 3,
                    shrinking   = TRUE,
                    probability = FALSE,
                    cweights    = NULL,
-                   sweights    = NULL,
+                   example_weights    = NULL,
                    cache_size  = 200,
                    tol         = 1e-3,
                    verbosity   = 4) {
@@ -159,27 +159,27 @@ evalqOnLoad({
     y <- NULL
     
     if (is(data, "data.frame")) {
-      y = data.matrix( data[, labels] )
+      y <- data.matrix( data[, labels] )
       
       # I'm pretty sure this should bo done differently, and equally so I can't find how
       if (formula[3] == ".()") {
-        x = data.matrix( data[,names(data) != labels]  )
+        x <- data.matrix( data[,names(data) != labels]  )
       }
       else {
         columns = all.vars(update(formula, 0~.))
-        x = data.matrix( data[, columns] )
+        x <- data.matrix( data[, columns] )
       } 
     }
     else if (is(data, "matrix")) {
-      y = data[, labels]
+      y <- data[, labels]
       
       # I'm pretty sure this should bo done differently, and equally so I can't find how
       if (formula[3] == ".()") {
-        x = data[, names(data) != labels]
+        x <- data[, names(data) != labels]
       }
       else {
         columns = all.vars(update(formula, 0~.))
-        x = data[, columns]
+        x <- data[, columns]
       } 
     }
     else {
@@ -204,6 +204,11 @@ evalqOnLoad({
     
     if (!is.null(cweights)) {
       config$setWeights(cweights)
+    }
+    
+    if (!is.null(example_weights)) {
+      config$use_example_weights <- 1
+      config$example_weights <- example_weights
     }
     
     if (shrinking) {
@@ -250,10 +255,13 @@ evalqOnLoad({
     if (mode != "pca" && mode != "normal" && mode != "contour" ) {
       stop("Wrong mode!") 
     }
+    kernel <- x$getKernel()
     df <- data.frame( x$getX() )
     t <- x$getY()
-    w <- c(x$getW())
-    if (mode == "pca") {
+    if (mode != "contour" && kernel == "linear") {
+      w <- c(x$getW())
+    }
+    if (mode == "pca" && kernel == "linear") {
       pca_data = prcomp(df, scale=TRUE)
       scores = data.frame(df, pca_data$x[,1:2])
       w <- w %*% pca_data$rotation
@@ -268,7 +276,7 @@ evalqOnLoad({
         geom_point(data=scores, aes(PC1, PC2), colour=factor(t+2)) + geom_abline(slope=s, intercept=int)
       plot(pl)
     }
-    else if (mode == "normal") { 
+    else if (mode == "normal" && kernel == "linear") { 
       if (dim1 > ncol(df) || dim2 > ncol(df)) {
         stop("Too large dimensions")
       }
@@ -278,11 +286,14 @@ evalqOnLoad({
       s <- -A/B
       int <- -C/B
     
-      pl <- ggplot() + geom_point(data=df, aes(X1, X2), colour=factor(t+6))  +
+      t <- replace(t, t==1, 'blue')
+      t <- replace(t, t==-1, 'red')
+      
+      pl <- ggplot() + geom_point(data=df, aes(X1, X2), colour=t)  +
         geom_abline(slope=s, intercept=int)
       plot(pl)
     }
-    else if (mode == "contour") {    # test mode
+    else if (mode == "contour" || kernel != "linear") {    # test mode
       warning("This is experimental mode, it will change your SVM's data!")
       temp_target <- x$getY()
       x_col <- df[colnames(df)[1]]
@@ -298,24 +309,26 @@ evalqOnLoad({
       grid <- data.frame(x_axis,y_axis)
       grid <- expand.grid(x=x_axis,y=y_axis)
       target <- predict(x, grid)
-      A <- w[1]
-      B <- w[2]
-      C <- x$getBias()
       
-      s <- -A/B
-      int <- -C/B
+      if (x$areExamplesWeighted()) {
+        df['sizes'] <- x$getExampleWeights()
+      }
+      else {
+        df['sizes'] <- 0.1
+      }
       
+      t <- replace(t, t==1, 'blue')
+      t <- replace(t, t==-1, 'red')
       grid["target"] <- target
-      x$setY(temp_target)
-      x$setX(data.matrix(df))  
+      
       pl <- ggplot()+ 
-        geom_tile(data=grid, aes(x=x,y=y,fill=target)) + theme(legend.position="none") +
-        geom_point(data=df, aes(X1, X2), colour=factor(t+6))
+        geom_tile(data=grid, aes(x=x,y=y, fill=factor(target))) + theme(legend.position="none") +
+        geom_point(data=df, aes(X1, X2, size=sizes), colour=t) + scale_size_continuous(range = c(3, 6))
       plot(pl)
     }
   }
   
-  predict.svm <<- function(object, x) {
+  predict.svm.gmum <<- function(object, x) {
     if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
       stop("Wrong target class, please provide data.frame, matrix or numeric vector")
     }
@@ -329,7 +342,7 @@ evalqOnLoad({
   }
 
   setMethod("print", "Rcpp_SVMClient", print.svm)
-  setMethod("predict", signature("Rcpp_SVMClient"), predict.svm)
+  setMethod("predict", signature("Rcpp_SVMClient"), predict.svm.gmum)
   setMethod("plot", "Rcpp_SVMClient",  plot.svm)
   setMethod("summary", "Rcpp_SVMClient", summary.svm)
   setMethod("show", "Rcpp_SVMClient", summary.svm)

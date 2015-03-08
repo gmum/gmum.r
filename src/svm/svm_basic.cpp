@@ -49,6 +49,7 @@ void SVMConfiguration::setPrediction(bool prediction) {
 	this->prediction = prediction;
 }
 
+#ifdef RCPP_INTERFACE
 void SVMConfiguration::setWeights( Rcpp::NumericVector weights ) {
 	this->nr_weight = weights.size();
 	this->weight = new double[nr_weight];
@@ -57,6 +58,7 @@ void SVMConfiguration::setWeights( Rcpp::NumericVector weights ) {
 		weight[i] = weights(1);
 	}
 }
+#endif
 
 void SVMConfiguration::setLibrary( std::string library ) {
 	if ( library == "libsvm" ) {
@@ -127,9 +129,12 @@ void SVMConfiguration::setDefaultParams() {
 	nu = 0.5;
 	p = 0.1;
 
+    // Additional features
+    use_cost = false;
+
     // User-defined classification mode labels
     // (will be filled during data processing)
-    label_negative = 0;
-    label_positive = 0;
+    neg_target = 0;
+    pos_target = 0;
 }
 

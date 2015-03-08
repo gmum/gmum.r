@@ -48,6 +48,9 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 }
 
 bool LibSVMRunner::canHandle(SVMConfiguration& config) {
+    if (config.use_cost) {
+        return false;
+    }
 	return config.library == LIBSVM;
 }
 
@@ -71,7 +74,6 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 	config.nr_class = model->nr_class;
 
 	int nr_support_vectors = model->l;
-	//TODO: don't keep support vectors as svm node, remember when Staszek wasn't happy about it?
 	//config.sv_coef = (double **) malloc(model->nr_class * sizeof(double*));
 	for (int i = 0; i < config.nr_class - 1; i++) {
 		//config.sv_coef[i] = (double *) malloc(nr_support_vectors * sizeof(double));
@@ -112,6 +114,8 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 		memcpy(config.label, model->label, *nclasses * sizeof(int));
 		memcpy(config.nSV, model->nSV, *nclasses * sizeof(int));
 	}
+    config.neg_target = model->label[1];
+    config.pos_target = model->label[0];
 
 	svm_destroy_param(param,config.log);
 	svm_free_and_destroy_model(&model,config.log);

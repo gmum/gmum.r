@@ -8,7 +8,7 @@
 class SVMClient {
 private:
 	std::vector<SVMHandler*> SVMHandlers;
-	SVMConfiguration config;
+	SVMConfiguration &config;
 	void createFlow();
 
 public:
@@ -32,8 +32,11 @@ public:
 	void setEps(double);
 	void setShrinking(int);
 	void setProbability(int);
-  void setBias(double);
-  // void setAlpha(double*);
+    void setBias(double);
+    // void setAlpha(double*);
+
+    // additional setters
+    void setConfiguration(SVMConfiguration *);
 
 	// data getters
 	arma::mat getX();
@@ -53,20 +56,29 @@ public:
 	double getEps();
 	bool isShrinking();
 	bool isProbability();
+	bool areExamplesWeighted();
+	arma::vec getExampleWeights();
+
+	// model getters
+    // double** getSV(); // double**, std::vector, arma:mat ?
+    int get_number_sv();
+    int get_number_class();
+    arma::vec getAlpha();
+    double getBias();
+    arma::vec getW();
+    arma::mat getSV();
+
+    // additional getters
+    SVMConfiguration getConfiguration();
 
 	// runners
 	void run();
-	void predict( arma::mat );
+    // Prediction independent of SVMHandlers
+    void predict(arma::mat);
+    /// Process a request of prediction with a SVMHandlers implementations
+	void requestPredict(arma::mat);
 	void train();
 
-	// model getters
- // double** getSV(); // double**, std::vector, arma:mat ?
-  int get_number_sv();
-  int get_number_class();
-	arma::vec getAlpha();
-	double getBias();
-	arma::vec getW();
-  arma::mat getSV();
 };
 
 #endif
