@@ -1,7 +1,7 @@
 mouseGaussGenerator<-function(listSizeOfData,EarDistance){
+  dimensionOfData<-2
   dataSeat<-matrix(,,dimensionOfData)
   label<-c()
-  dimensionOfData<-2
   #glowa
   n<-listSizeOfData[1]
   r<-2;
@@ -33,10 +33,10 @@ mouseGaussGenerator<-function(listSizeOfData,EarDistance){
   dataSeat<-tail(dataSeat,n=-1)
   list(data=dataSeat,label=label)
 }
-listSizeOfData<-c(1000,500,500)
-EarDistance<-2
-test<-mouseGaussGenerator(listSizeOfData,EarDistance)
-plot(test$data,pch=20,col=test$label)
+#listSizeOfData<-c(1000,500,500)
+#EarDistance<-2
+#test<-mouseGaussGenerator(listSizeOfData,EarDistance)
+#plot(test$data,pch=20,col=test$label)
 
 #write.table(test$data,file="C:\\Users\\admin\\Dropbox\\CEC_plugin_R\\TESTY\\mouse_1\\data.txt",row.names=FALSE,col.names=FALSE);
 #write.table(test$label,file="C:\\Users\\admin\\Dropbox\\CEC_plugin_R\\TESTY\\mouse_1\\data_cluster.txt",row.names=FALSE,col.names=FALSE,sep = "\n");

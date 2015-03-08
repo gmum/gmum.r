@@ -27,6 +27,8 @@ RCPP_MODULE(svm_wrapper) {
 			.field("cache_size", &SVMConfiguration::cache_size)
 			.field("shrinking", &SVMConfiguration::shrinking)
 			.field("probability", &SVMConfiguration::probability)
+      .field("example_weights", &SVMConfiguration::data_cost)
+      .field("use_example_weights", &SVMConfiguration::use_cost)
 
 			.field("sparse", &SVMConfiguration::sparse)
 			.field("sp_x", &SVMConfiguration::sp_data)
@@ -77,7 +79,8 @@ RCPP_MODULE(svm_wrapper) {
 			.method("isShrinking", &SVMClient::isShrinking)
 			.method("isProbability", &SVMClient::isProbability)
 			.method("isSparse", &SVMClient::isSparse)
-      
+      		.method("getExampleWeights", &SVMClient::getExampleWeights)
+      		.method("areExamplesWeighted", &SVMClient::areExamplesWeighted)
 			.method("getAlpha", &SVMClient::getAlpha)
 			.method("getBias", &SVMClient::getBias)
 			.method("getW", &SVMClient::getW)

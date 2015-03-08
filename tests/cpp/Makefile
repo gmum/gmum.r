@@ -2,9 +2,8 @@ include ../../src/Makevars
 
 # Explicit Makevars inheritances adn overrides
 CXX := $(CXX)
-CPPFLAGS := $(PKG_CPPFLAGS)
-CXXFLAGS := $(PKG_CXXFLAGS) -O2 -g -s
-LDLIBS := $(PKG_LIBS) -lpthread -lgtest -lgtest_main
+CPPFLAGS := $(PKG_CPPFLAGS) -O2 -g -s
+LDLIBS := $(PKG_LIBS) -lpthread -lgtest -lgtest_main -larmadillo
 
 ###
 # Compilation parameters
@@ -88,6 +87,7 @@ INCLUDES := $(ROOT_INCLUDE) $(BRANCH_INCLUDES) $(COMPILED_LIBRARIES_INCLUDES)
 ###
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
+CFLAGS := $(CPPFLAGS)
 
 all: $(TEST_MAIN_BIN) helper_scripts
 	@echo ... Done!
@@ -104,7 +104,7 @@ $(TEST_MAIN_BIN): $(TEST_OBJECTS) $(OBJECTS) $(COMPILED_LIBRARIES_OBJECTS)
 
 %.o: %.cpp %.hpp
 	@echo Compiling $@ ...
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) -c $< -o $@ 
 
 helper_scripts:
 	@echo Making helper scripts...

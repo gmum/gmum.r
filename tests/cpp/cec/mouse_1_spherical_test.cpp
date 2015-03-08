@@ -6,7 +6,7 @@
 #include "cec_configuration.hpp"
 #include "cec.hpp"
 #include <vector>
-#include <RcppArmadillo.h>
+#include <armadillo>
 #include <boost/smart_ptr.hpp>
 #include <vector>
 

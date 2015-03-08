@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include <RcppArmadillo.h>
+#include <armadillo>
 #include "libsvm_runner.h"
 #include "svm_basic.h"
 #include "two_e_svm_post.h"
@@ -38,7 +38,8 @@ TEST(TwoESVMTest, TestPreprocessor) {
 
 	TwoeSVMPreprocessor two_e_pre_runner;
 	two_e_pre_runner.processRequest(svm_config);
-	SvmUtils::sqrtInvMat(cov(posMat) + cov(negMat), SqrtInv);
+	arma::mat my_cov = cov(posMat) + cov(negMat);
+	SvmUtils::sqrtInvMat(my_cov, SqrtInv);
 	ASSERT_LT(abs(arma::norm(two_e_pre_runner.cov0InvSqrt - SqrtInv)), epsilon);
 }
 
