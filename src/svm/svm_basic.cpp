@@ -123,7 +123,8 @@ void SVMConfiguration::setDefaultParams() {
 	nr_weight = 0;
 	weight_label = NULL;
 	weight = NULL;
-	cov_eps_smoothing = 1.0e-10;
+	cov_eps_smoothing_start = 2.22e-16; //2^(-23)
+	//cov_eps_smoothing_start = 
 //	Probably not necessery
 	nu = 0.5;
 	p = 0.1;

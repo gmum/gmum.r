@@ -99,7 +99,8 @@ public:
 	double neg_target;
 
 	//2eParameters & Variables
-	double cov_eps_smoothing;
+	double cov_eps_smoothing_start;
+	double cov_eps_smoothing_end;
 	arma::mat inv_of_sqrt_of_cov;
 	arma::mat tmp_data;
 	arma::mat tmp_target;
