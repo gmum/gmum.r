@@ -1,6 +1,5 @@
 svm.data.root <- system.file("data_sets", "svm", package="gmum.r")
-colon_cancer.filename <- "colon-cancer"
-colon_cancer.path <- file.path(svm.data.root, colon_cancer.filename)
+svm.colon_cancer.path <- file.path(svm.data.root, "colon-cancer")
 
 svm.dataset.breast_cancer <- function() {
   data(svm_breast_cancer_dataset)
@@ -15,6 +14,11 @@ svm.dataset.2e <- function() {
 svm.dataset.circles <- function() {
   data(svm_two_circles_dataset)
   return(svm.twocircles.dataset)
+}
+
+svm.dataset.colon_cancer <- function() {
+  bc <- read.libsvm(svm.colon_cancer.path, 2000)
+  return(bc)
 }
 
 svm.dataset.xor <- function() {

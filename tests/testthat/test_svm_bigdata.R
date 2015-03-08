@@ -1,8 +1,8 @@
 library("gmum.r")
 
-if(!file.exists(colon_cancer.path)) {
+if(!file.exists(svm.colon_cancer.path)) {
+	print(svm.colon_cancer.path)
 	warning("Please run download_svm_data.R from main repo directory in order to download big data sets devtools:install")
-	return  
 } else {
 	 test_that("2e works with really big dataset", {
 
