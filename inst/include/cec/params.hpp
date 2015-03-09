@@ -36,7 +36,7 @@ public:
     boost::shared_ptr<Rcpp::Function> function;
 #endif
 
-    Params() : it_max(-1) { }
+    Params() : log_nclusters(false), log_energy(false), it_max(-1) { }
 };
 
 }

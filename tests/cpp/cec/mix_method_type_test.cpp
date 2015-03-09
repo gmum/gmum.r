@@ -38,7 +38,7 @@ TEST(MethodTypeMix, SameAsMethodTypeSphere)
     conf.set_params(params);
     CecModel cec(&conf);
     std::vector<unsigned int> a = cec.get_assignment();
-    double percentage = comparator.evaluate_clustering(params.nclusters, *points, a, clustering);
+    double percentage = comparator.evaluate_clustering(params.nclusters, a, clustering);
     EXPECT_GT(percentage, 0.80);
     EXPECT_NEAR(cec.get_energy(), expected_energy, 10e-5);
 }

@@ -25,7 +25,7 @@ TEST(EllipseGauss,answer_cluster_same_length) {
     EXPECT_EQ(points.size(), m.n_rows);
     EXPECT_EQ(points[0].size(), m.n_cols);
     BestPermutationComparator comparator;
-    EXPECT_EQ(comparator.evaluate_clustering(4,m,clustering,clustering),1.0);
+    EXPECT_EQ(comparator.evaluate_clustering(4,clustering,clustering),1.0);
 }
 
 #include "boost/date_time/posix_time/posix_time.hpp"
@@ -73,7 +73,7 @@ TEST(EllipseGauss,real_test) {
         SingleResult sr;
         cec.loop();
         std::vector<unsigned int> a = cec.get_assignment();
-        double percentage = comparator.evaluate_clustering(params.nclusters, *points, a, clustering);
+        double percentage = comparator.evaluate_clustering(params.nclusters, a, clustering);
         // std::cout << "Percentage " << percentage << std::endl;
         // EXPECT_GT(percentage, 0.9);
         number_of_times_acceptable += (percentage >= 0.9) || (cec.entropy() < cluster_reader.get_energy()*1.5);

@@ -50,7 +50,7 @@ TEST_F(Mouse1Test,IsEnergyCorrect) {
         CecModel cec(&conf);
         cec.loop();
         std::vector<unsigned int> assignment = cec.get_assignment();
-        double percentage = comparator.evaluate_clustering(params.nclusters,*points,assignment,*clustering);
+        double percentage = comparator.evaluate_clustering(params.nclusters,assignment,*clustering);
         // std::cout << "Percentage " << percentage << std::endl;
         // std::cout << "Energy " << cec.entropy() << std::endl;
         number_of_times_acceptable += (percentage >= 0.9) || (cec.entropy() < energy*1.5);
