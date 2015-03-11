@@ -373,8 +373,6 @@ void GNGServer::terminate() {
 	DBG(m_logger,20, "GNGServer::getAlgorithm terminated, joining algorithm thread");
 	if (algorithm_thread)
 		algorithm_thread->join();
-	DBG(m_logger,20, "GNGServer::algorithm thread terminated, joining statistic thread");
-	gmum::sleep(100);
 }
 
 GNGAlgorithm & GNGServer::getAlgorithm() {
