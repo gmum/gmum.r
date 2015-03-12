@@ -24,34 +24,33 @@ struct TotalResult {
 	int iterations;
 	std::list<unsigned int> nclusters;
 	// energy from all iterations of algorithm
-    std::list<double> energy_history;
-    double energy;
+	std::list<double> energy_history;
+	double energy;
 
 	TotalResult() :
 			iterations(0) {
-        energy = std::numeric_limits<double>::max();
+		energy = std::numeric_limits<double>::max();
 	}
 	void append(SingleResult result, bool log_nlusters, bool log_energy) {
-        ++iterations;
-        energy = result.energy;
-		if (log_nlusters)
-        {
+		++iterations;
+		energy = result.energy;
+		if (log_nlusters) {
 			nclusters.push_back(result.nclusters);
-        }
-		if (log_energy)
-        {
-            energy_history.push_back(result.energy);
-        }
+		}
+		if (log_energy) {
+			energy_history.push_back(result.energy);
+		}
 	}
 };
 
 class Algorithm {
 protected:
-    bool m_log_nclusters, m_log_energy;
-    int m_max_iter;
+	bool m_log_nclusters, m_log_energy;
+	int m_max_iter;
 public:
-    Algorithm(bool log_nclusters, bool log_energy, int max_iter) :
-            m_log_nclusters(log_nclusters), m_log_energy(log_energy), m_max_iter(max_iter) {
+	Algorithm(bool log_nclusters, bool log_energy, int max_iter) :
+			m_log_nclusters(log_nclusters), m_log_energy(log_energy), m_max_iter(
+					max_iter) {
 	}
 	virtual TotalResult loop(const arma::mat &points,
 			std::vector<unsigned int> &assignment, double kill_threshold,

@@ -956,6 +956,11 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
         ss << 0;
     }
 
+    // Optional feature: cost :)
+    if (config.use_cost) {
+        ss << " cost:" << std::setprecision(8) << config.data_cost[line_num];
+    }
+
     for (long int j = 1; j <= config.data.n_cols; ++j) {
         ss << ' ' << j << ':' << std::setprecision(8) << config.data(line_num, j-1);
     }
@@ -1050,7 +1055,7 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
         //printf("#%s\n",v->userdefined);
       }
     }
-
+    config.w = (config.alpha_y.t() * config.support_vectors).t();
     LOG(
         config.log,
         LogLevel::DEBUG,

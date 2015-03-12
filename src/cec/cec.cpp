@@ -46,12 +46,12 @@ Cluster* CecModel::create_cluster(const ClusterParams &params, int i) {
 		break;
 	}
 #ifdef RCPP_INTERFACE
-	case kcustom: {
-		const ClusterCustomParams &ptr =
-				static_cast<const ClusterCustomParams&>(params);
-        cluster = new ClusterCustomFunction(i, m_assignment, m_points, ptr.function);
-		break;
-	}
+		case kcustom: {
+			const ClusterCustomParams &ptr =
+			static_cast<const ClusterCustomParams&>(params);
+			cluster = new ClusterCustomFunction(i, m_assignment, m_points, ptr.function);
+			break;
+		}
 #endif
 	}
 	return cluster;
@@ -89,60 +89,61 @@ CecModel& CecModel::operator=(CecModel& other) {
 	return *this;
 }
 
-void CecModel::init(boost::shared_ptr<Algorithm> algorithm, std::vector<unsigned int>& assignment) {
-    Params params = m_config->get_params();
-    m_assignment = assignment;
-    m_points = *(params.dataset);
-    m_algorithm = algorithm;
-    m_kill_threshold = params.kill_threshold;
-    clear_clusters();
-    m_clusters.reserve(params.nclusters);
+void CecModel::init(boost::shared_ptr<Algorithm> algorithm,
+		std::vector<unsigned int>& assignment) {
+	Params params = m_config->get_params();
+	m_assignment = assignment;
+	m_points = *(params.dataset);
+	m_algorithm = algorithm;
+	m_kill_threshold = params.kill_threshold;
+	clear_clusters();
+	m_clusters.reserve(params.nclusters);
 
-    int i = 0;
-    if (params.cluster_type == kmix) {
-        BOOST_FOREACH(boost::shared_ptr < ClusterParams > cluster,
-                      params.clusters)
-        {
-            m_clusters.push_back(create_cluster(*cluster, i));
-            ++i;
-        }
-    } else {
-    	//TODO: why pointer?
-        ClusterParams *cluster = 0;
-        switch (params.cluster_type) {
-        case kfsphere: {
-            ClusterFsphereParams *proxy = new ClusterFsphereParams();
-            proxy->radius = params.radius;
-            cluster = proxy;
-            break;
-        }
-        case kfull: {
-            ClusterFullParams *proxy = new ClusterFullParams();
-            proxy->cov_mat = params.cov_mat;
-            cluster = proxy;
+	int i = 0;
+	if (params.cluster_type == kmix) {
+		BOOST_FOREACH(boost::shared_ptr < ClusterParams > cluster,
+				params.clusters)
+		{
+			m_clusters.push_back(create_cluster(*cluster, i));
+			++i;
+		}
+	} else {
+		//TODO: why pointer?
+		ClusterParams *cluster = 0;
+		switch (params.cluster_type) {
+		case kfsphere: {
+			ClusterFsphereParams *proxy = new ClusterFsphereParams();
+			proxy->radius = params.radius;
+			cluster = proxy;
+			break;
+		}
+		case kfull: {
+			ClusterFullParams *proxy = new ClusterFullParams();
+			proxy->cov_mat = params.cov_mat;
+			cluster = proxy;
 
-            break;
-        }
+			break;
+		}
 #ifdef RCPP_INTERFACE
-        case kcustom: {
-            ClusterCustomParams *proxy = new ClusterCustomParams();
-            proxy->function = params.function;
-            cluster = proxy;
-            break;
-        }
+			case kcustom: {
+				ClusterCustomParams *proxy = new ClusterCustomParams();
+				proxy->function = params.function;
+				cluster = proxy;
+				break;
+			}
 #endif
-        default:
-            /*case standard:
-             case diagonal:
-             case sphere:*/
-            cluster = new ClusterParams(params.cluster_type);
-            break;
-        }
-        for (unsigned int i = 0; i < params.nclusters; ++i)
-            m_clusters.push_back(create_cluster(*cluster, i));
-        //TODO: redelete
-        delete cluster;
-    }
+		default:
+			/*case standard:
+			 case diagonal:
+			 case sphere:*/
+			cluster = new ClusterParams(params.cluster_type);
+			break;
+		}
+		for (unsigned int i = 0; i < params.nclusters; ++i)
+			m_clusters.push_back(create_cluster(*cluster, i));
+		//TODO: redelete
+		delete cluster;
+	}
 
 }
 
@@ -218,7 +219,8 @@ void CecModel::single_loop() {
 double CecModel::entropy() {
 	double s = 0.0;
 
-	BOOST_FOREACH(Cluster * cluster, m_clusters) {
+	BOOST_FOREACH(Cluster * cluster, m_clusters)
+	{
 		s += cluster->entropy();
 	}
 	return s;
@@ -238,7 +240,7 @@ arma::mat CecModel::get_points() {
 }
 
 std::vector<arma::rowvec> CecModel::centers() const {
-	std::vector<arma::rowvec> array;
+	std::vector < arma::rowvec > array;
 	array.reserve(m_clusters.size());
 	for (unsigned int i = 0; i < m_clusters.size(); ++i) {
 		array.push_back(m_clusters[i]->get_mean());
@@ -247,7 +249,7 @@ std::vector<arma::rowvec> CecModel::centers() const {
 }
 
 std::vector<arma::mat> CecModel::cov() const {
-	std::vector<arma::mat> array;
+	std::vector < arma::mat > array;
 	array.reserve(m_clusters.size());
 
 	for (unsigned int i = 0; i < m_clusters.size(); ++i) {
@@ -274,7 +276,7 @@ double CecModel::get_energy() const {
 }
 
 unsigned int CecModel::predict(std::vector<double> vec) {
-	arma::rowvec x = arma::conv_to<arma::rowvec>::from(vec);
+	arma::rowvec x = arma::conv_to < arma::rowvec > ::from(vec);
 
 	unsigned int assign = 0;
 	double result = std::numeric_limits<double>::min();
