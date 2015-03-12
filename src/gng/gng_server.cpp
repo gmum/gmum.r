@@ -322,6 +322,11 @@ void GNGServer::RinsertExamples(Rcpp::NumericMatrix & r_points,
 	std::vector<double> extra(r_extra.begin(), r_extra.end());
 	arma::mat * points = new arma::mat(r_points.begin(), r_points.nrow(), r_points.ncol(), false);
 
+	if(!(r_points.nrow() == r_extra.length())){
+		cerr<<"Error: please pass same number of labels as examples\n";
+		return;
+	}
+
 	arma::Row<double> mean_colwise = arma::mean(*points, 0 /*dim*/);
 	arma::Row<double> std_colwise = arma::stddev(*points, 0 /*dim*/);
 	arma::Row<double> diff_std = arma::abs(std_colwise - 1.0);

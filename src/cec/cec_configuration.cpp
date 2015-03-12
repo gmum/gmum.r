@@ -23,7 +23,7 @@ void CecConfiguration::set_params(Params params)
 void CecConfiguration::set_data_set(const Rcpp::NumericMatrix proxy_dataset)
 {
     m_params.dataset = boost::shared_ptr<arma::mat>(new arma::mat(proxy_dataset.begin(), proxy_dataset.nrow(),
-                                                                  proxy_dataset.ncol(), false));
+                                                                  proxy_dataset.ncol()));
 }
 void CecConfiguration::set_cov(const Rcpp::NumericMatrix cov_mat_proxy)
 {
