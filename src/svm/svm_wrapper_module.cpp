@@ -35,6 +35,8 @@ RCPP_MODULE(svm_wrapper) {
 			.field("dim", &SVMConfiguration::dim)
 			.field("data_dim", &SVMConfiguration::data_dim)
 
+			.method("set_sparse_data", &SVMConfiguration::setSparseData)
+
 			.method("setPrediction", &SVMConfiguration::setPrediction)
 			.method("setWeights", &SVMConfiguration::setWeights)
 			.method("setLibrary", &SVMConfiguration::setLibrary)
