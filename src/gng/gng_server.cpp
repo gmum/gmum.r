@@ -322,10 +322,6 @@ void GNGServer::RinsertExamples(Rcpp::NumericMatrix & r_points,
 	std::vector<double> extra(r_extra.begin(), r_extra.end());
 	arma::mat * points = new arma::mat(r_points.begin(), r_points.nrow(), r_points.ncol(), false);
 
-	if(!(r_points.nrow() == r_extra.length())){
-		cerr<<"Error: please pass same number of labels as examples\n";
-		return;
-	}
 
 	arma::Row<double> mean_colwise = arma::mean(*points, 0 /*dim*/);
 	arma::Row<double> std_colwise = arma::stddev(*points, 0 /*dim*/);
@@ -354,10 +350,20 @@ void GNGServer::RinsertExamples(Rcpp::NumericMatrix & r_points,
 
 	arma::inplace_trans( *points, "lowmem");
 
+
+
+
 	if(extra.size()) {
+		if(!(points->n_cols== extra.size())){
+
+			cerr<<"Error: please pass same number of labels as examples\n";
+			cerr<<"Error: passed "<<points->n_cols<<" "<<extra.size()<<"\n";
+			return;
+		}
 		insertExamples(points->memptr(), &extra[0], 0 /*probabilty vector*/,
 				(unsigned int)points->n_cols, (unsigned int)points->n_rows);
 	} else {
+
 		insertExamples(points->memptr(), 0 /* extra vector */, 0 /*probabilty vector*/,
 				(unsigned int)points->n_cols, (unsigned int)points->n_rows);
 	}
