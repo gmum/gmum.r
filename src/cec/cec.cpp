@@ -151,25 +151,22 @@ void CecModel::find_best_cec() {
 	std::vector<unsigned int> assignment;
 	Params params = m_config->get_params();
     boost::shared_ptr<Hartigan> hartigan = boost::make_shared<Hartigan>(params.log_nclusters, params.log_energy, params.it_max);
+    boost::shared_ptr<Assignment> assignment_type;
 
-	Assignment *assignment_type = NULL;
 	switch (params.assignment_type) {
 	case krandom:
-		assignment_type = new RandomAssignment(*(params.dataset),
-				params.nclusters);
+        assignment_type = boost::make_shared<RandomAssignment>(*(params.dataset), params.nclusters);
 		break;
 	case kkmeanspp:
-		assignment_type = new KmeansppAssignment(*(params.dataset),
-				params.nclusters);
+        assignment_type = boost::make_shared<KmeansppAssignment>(*(params.dataset), params.nclusters);
 		break;
 	case kcentroids:
-		assignment_type = new CentroidsAssignment(*(params.dataset),
-				params.nclusters, params.centroids);
+        assignment_type = boost::make_shared<CentroidsAssignment>(*(params.dataset), params.nclusters, params.centroids);
 		break;
 	}
 
-	assignment.resize(params.dataset->n_rows);
-	(*assignment_type)(assignment);
+    assignment.resize(params.dataset->n_rows);
+    (*assignment_type)(assignment);
 
 	init(hartigan, assignment);
 
@@ -187,7 +184,6 @@ void CecModel::find_best_cec() {
 		}
 		*this = best_cec;
 	} catch (std::exception &e) {
-		delete assignment_type;
 #ifdef RCPP_INTERFACE
 		Rcpp::stop(std::string("exception ") + e.what() + " caught in CEC_new");
 #else
@@ -196,7 +192,6 @@ void CecModel::find_best_cec() {
 		exit(1);
 #endif
 	}
-	delete assignment_type;
 }
 
 void CecModel::loop() {

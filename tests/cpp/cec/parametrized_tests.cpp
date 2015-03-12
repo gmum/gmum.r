@@ -24,7 +24,7 @@ TEST_P(TestsFixture, IsEnergyCorrect)
             ++number_of_times_acceptable;
         }
     }
-    EXPECT_GT(number_of_times_acceptable , t/2);
+    EXPECT_GT(number_of_times_acceptable , t / 2.0);
 }
 
 TEST_P(TestsFixture, IsCoverageCorrect)
@@ -47,7 +47,7 @@ TEST_P(TestsFixture, IsCoverageCorrect)
             ++number_of_times_acceptable;
         }
     }
-    EXPECT_GT(number_of_times_acceptable , t/2);
+    EXPECT_GT(number_of_times_acceptable , t / 2.0);
 }
 
 INSTANTIATE_TEST_CASE_P(CEC, TestsFixture, ::testing::Values(
