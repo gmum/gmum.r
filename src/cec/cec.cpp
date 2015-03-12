@@ -150,9 +150,7 @@ void CecModel::init(boost::shared_ptr<Algorithm> algorithm,
 void CecModel::find_best_cec() {
 	std::vector<unsigned int> assignment;
 	Params params = m_config->get_params();
-	boost::shared_ptr<Hartigan> hartigan(
-			new Hartigan(params.log_nclusters, params.log_energy,
-					params.it_max));
+    boost::shared_ptr<Hartigan> hartigan = boost::make_shared<Hartigan>(params.log_nclusters, params.log_energy, params.it_max);
 
 	Assignment *assignment_type = NULL;
 	switch (params.assignment_type) {

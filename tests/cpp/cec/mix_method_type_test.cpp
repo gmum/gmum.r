@@ -11,6 +11,8 @@
 
 using namespace gmum;
 
+
+
 TEST(MethodTypeMix, SameAsMethodTypeSphere)
 {
     std::vector<unsigned int> clustering;
@@ -19,8 +21,13 @@ TEST(MethodTypeMix, SameAsMethodTypeSphere)
                 new arma::mat(cluster_reader.get_points_in_matrix()));
 
     cluster_reader.get_clustering(clustering);
-    BestPermutationComparator comparator;
+    int min = *(std::min_element(clustering.begin(), clustering.end()));
+    for (std::vector<unsigned int>::iterator it = clustering.begin();
+         it != clustering.end(); ++it) {
+        *it -= min;
+    }
 
+    BestPermutationComparator comparator;
     Params params;
     params.nclusters = 3;
     params.kill_threshold = 0.0001;
@@ -38,7 +45,7 @@ TEST(MethodTypeMix, SameAsMethodTypeSphere)
     conf.set_params(params);
     CecModel cec(&conf);
     std::vector<unsigned int> a = cec.get_assignment();
-    double percentage = comparator.evaluate_clustering(params.nclusters, a, clustering);
+    double percentage = comparator.evaluate_clustering(params.nclusters, clustering, a);
     EXPECT_GT(percentage, 0.80);
     EXPECT_NEAR(cec.get_energy(), expected_energy, 10e-5);
 }

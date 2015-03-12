@@ -9,6 +9,9 @@ double ClusteringComparator::correct(std::vector<unsigned int> f,
     int ncorrect = 0;
     for (unsigned int i = 0; i < nelements; ++i)
     {
+        assert(my_fits[i] < f.size());
+        assert(real_fits[i] < f.size());
+
         if(real_fits[i] == f[my_fits[i]])
         {
             ++ncorrect;
@@ -24,6 +27,7 @@ double ClusteringComparator::evaluate_clustering(unsigned int nclusters,
                                                  std::vector<unsigned int> & my_fits)
 {
     std::vector<unsigned int> f = compute_permutation(nclusters, real_fits, my_fits);
+    assert(f.size() == nclusters);
     return correct(f, real_fits, my_fits);
 }
 
