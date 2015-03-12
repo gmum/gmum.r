@@ -11,10 +11,16 @@ devtools::install_github("gmum/gmum.r")
 ## Windows
 
 Please download appropriate version of (http://cran.r-project.org/bin/windows/Rtools/)[http://cran.r-project.org/bin/windows/Rtools/].
-Run R matching your cpu architecture (x64 vs x368)
+Run R matching your cpu architecture (x64 vs x86)
 
 ```{R}
 devtools::install_github("gmum/gmum.r", args="--no-lock --no-multiarch")
+```
+
+To build both x64 and x86 run
+
+```{R}
+devtools::install_github("gmum/gmum.r", args="--no-lock --preclean")
 ```
 
 ### Known issues:
