@@ -97,7 +97,7 @@ void CecModel::init(boost::shared_ptr<Algorithm> algorithm,
 	m_algorithm = algorithm;
 	m_kill_threshold = params.kill_threshold;
 	clear_clusters();
-	m_clusters.reserve(params.nclusters);
+    m_clusters.reserve(params.nclusters);
 
 	int i = 0;
 	if (params.cluster_type == kmix) {

@@ -42,7 +42,7 @@ public:
         log_nclusters(false),
         log_energy(false),
         nstart(1),
-        it_max(-1),
+        it_max(25),
         assignment_type(kkmeanspp),
         centroids_set(false),
         cluster_type(kno_type),
