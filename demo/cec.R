@@ -1,4 +1,4 @@
-data(cec.mouse_1_spherical)
+data(cec_mouse_1_spherical)
 dataset = input
 
 # That is the dataset we want to cluster
@@ -19,13 +19,10 @@ plot(c)
 
 # You can learn details of clustering like this
 centers(c)
-cov(c)
+covMatrix(c)
 
-# You can predict cluster which a point would belong to
-predictCluster(c, c(1,1))
-
-# or find out what are the probabilities of belonging to each cluster
-predictClusters(c, c(1,1))
+# You can predict cluster which a point would belong to:
+predict(c, c(1,1))
 
 # You can visualise size and shape of clusters
 plot(c, ellipses=TRUE)

@@ -86,22 +86,23 @@ libsvmlight_hideo: svm_learn_main.o svm_learn.o svm_common.o svm_hideo.o
 # Compile components
 
 svm_hideo.o: svm_hideo.c
-	$(CC) -c $(CFLAGS) svm_hideo.c -o svm_hideo.o 
+	$(CC) -c $(CFLAGS) svm_hideo.c -o svm_hideo.o -I ../inst/include/svmlight
 
 #svm_loqo.o: svm_loqo.c 
 #	$(CC) -c $(CFLAGS) svm_loqo.c -o svm_loqo.o 
 
 svm_common.o: svm_common.c svm_common.h kernel.h
-	$(CC) -c $(CFLAGS) svm_common.c -o svm_common.o 
+	$(CC) -I ../inst/include/svmlight -c $(CFLAGS) svm_common.c -o svm_common.o
 
 svm_learn.o: svm_learn.c svm_common.h
-	$(CC) -c $(CFLAGS) svm_learn.c -o svm_learn.o 
+	$(CC) -c $(CFLAGS) svm_learn.c -o svm_learn.o -I ../inst/include/svmlight
 
 svm_learn_main.o: svm_learn_main.c svm_learn.h svm_common.h
-	$(CC) -c $(CFLAGS) svm_learn_main.c -o svm_learn_main.o 
+	$(CC) -c $(CFLAGS) svm_learn_main.c -o svm_learn_main.o -I ../inst/include/svmlight
 
 svm_classify.o: svm_classify.c svm_common.h kernel.h
-	$(CC) -c $(CFLAGS) svm_classify.c -o svm_classify.o
+	$(CC) -c $(CFLAGS) svm_classify.c -o svm_classify.o -I ../inst/include/svmlight
+
 
 #loqo: pr_loqo/pr_loqo.o
 

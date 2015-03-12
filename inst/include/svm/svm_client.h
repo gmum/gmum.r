@@ -57,6 +57,8 @@ public:
 	bool isShrinking();
 	bool isProbability();
 	bool isSparse();
+	bool areExamplesWeighted();
+	arma::vec getExampleWeights();
 
 	// model getters
     // double** getSV(); // double**, std::vector, arma:mat ?

@@ -1,0 +1,100 @@
+source('common.R')
+x = seq(min_npoints * 3, max_npoints * 3, by=npoints_step * 3)
+
+for(i in 1:method_type_num)
+{
+    method_type_name = gmum_cran_method_type_map[i]
+
+    gmum_result_path = get_gmum_result_file_path(i)
+    cran_result_path = get_cran_result_file_path(i)
+    gmum_cec_result <- as.matrix(read.table(gmum_result_path))
+    cran_cec_result <- as.matrix(read.table(cran_result_path))
+    
+    gmum_iters = gmum_cec_result[,2]
+    gmum_energy = gmum_cec_result[,3]
+    gmum_time = gmum_cec_result[,1]
+
+    cran_iters = cran_cec_result[,2]
+    cran_energy = cran_cec_result[,3]
+    cran_time = cran_cec_result[,1]
+
+    print(method_type_name)
+    print("Iteration (mean) comparision")
+    print(mean(cran_iters))
+    print(mean(gmum_iters))
+    print("Time (mean) comparision")
+    print(mean(cran_time))
+    print(mean(gmum_time))
+    print("Energy (mean) comparision")
+    print(mean(cran_energy))
+    print(mean(gmum_energy))
+
+
+    min_x = min(x)
+    max_x = max(x)
+
+    min_gmum_time = min(gmum_time)
+    min_gmum_iters = min(gmum_iters)
+    min_gmum_energy = min(gmum_energy)
+
+    max_gmum_time = max(gmum_time)
+    max_gmum_iters = max(gmum_iters)
+    max_gmum_energy = max(gmum_energy)
+
+    min_cran_time = min(cran_time)
+    min_cran_iters = min(cran_iters)
+    min_cran_energy = min(cran_energy)
+
+    max_cran_time = max(cran_time)
+    max_cran_iters = max(cran_iters)
+    max_cran_energy = max(cran_energy)
+
+    jpeg(paste(c(method_type_name,'_times_plot.jpg'), collapse=''))
+    plot( c(min_x, max_x), c(min(min_gmum_time, min_cran_time), max(max_gmum_time, max_cran_time)), type="n", xlab="Number of points", ylab="Seconds" )
+    title(main=paste(c(method_type_name,'time plot'), collapse=' '))
+    lines(x, gmum_time, col="green", lwd=2.5)
+    lines(x, cran_time, col="red", lwd=2.5)
+    par(xpd=TRUE)
+    legend("bottom",legend = c("GMUM", "CRAN"), text.width = max(sapply(text, strwidth)),
+           col=c("green", "red"), lwd=5, cex=1, horiz = TRUE)
+    par(xpd=FALSE)
+    dev.off()
+
+    jpeg(paste(c(method_type_name,'_iters_plot.jpg'), collapse=''))
+    plot( c(min_x, max_x), c(min(min_gmum_iters, min_cran_iters), max(max_gmum_iters, max_cran_iters)), type="n", xlab="Number of points", ylab="Iterations" )
+    title(main=paste(c(method_type_name,'iterations plot'), collapse=' '))
+    lines(x, gmum_iters, col="green", lwd=2.5)
+    lines(x, cran_iters, col="red", lwd=2.5)
+    par(xpd=TRUE)
+    legend("bottom",legend = c("GMUM", "CRAN"), text.width = max(sapply(text, strwidth)),
+           col=c("green", "red"), lwd=5, cex=1, horiz = TRUE)
+    par(xpd=FALSE)
+    dev.off()
+    
+    jpeg(paste(c(method_type_name,'_energy_plot.jpg'), collapse=''))
+    plot( c(min_x, max_x), c(min(min_gmum_energy, min_cran_energy), max(max_gmum_energy, max_cran_energy)), type="n", xlab="Number of points", ylab="Energy" )
+    title(main=paste(c(method_type_name,'energy plot'), collapse=' '))
+    lines(x, gmum_energy, col="green", lwd=2.5)
+    lines(x, cran_energy, col="red", lwd=2.5)
+    par(xpd=TRUE)
+    legend("bottom",legend = c("GMUM", "CRAN"), text.width = max(sapply(text, strwidth)),
+           col=c("green", "red"), lwd=5, cex=1, horiz = TRUE)
+    par(xpd=FALSE)
+    dev.off()
+
+    jpeg(paste(c(method_type_name,'_time_iter_plot.jpg'), collapse=''))
+    plot( c(min_x, max_x), c(min(min_gmum_time/max_gmum_iters, min_cran_time/max_cran_iters), max(max_gmum_time/min_gmum_iters, max_cran_time/min_cran_iters)), type="n", xlab="Number of points", ylab="Energy" )
+    title(main=paste(c(method_type_name,'time/iter plot'), collapse=' '))
+    lines(x, gmum_time/gmum_iters, col="green", lwd=2.5)
+    lines(x, cran_time/cran_iters, col="red", lwd=2.5)
+    par(xpd=TRUE)
+    legend("bottom",legend = c("GMUM", "CRAN"), text.width = max(sapply(text, strwidth)),
+           col=c("green", "red"), lwd=5, cex=1, horiz = TRUE)
+    par(xpd=FALSE)
+    dev.off()
+
+
+}
+
+
+

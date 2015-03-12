@@ -1,5 +1,5 @@
 #include <cmath>
-#include <RcppArmadillo.h>
+#include <armadillo>
 
 #include "two_e_svm_post.h"
 #include "svm_handler.h"
@@ -15,12 +15,12 @@ void TwoeSVMPostprocessor::processRequest(SVMConfiguration &data) {
 		// cout << "SVs: " << data.l << endl;
 		// cout << "dim: " << dim << endl;
 		// cout << "Classes: " << data.nr_class << endl;
-		// for(int i = 0; i < data.nr_class; i++) {
+		// for(size_t i = 0; i < data.nr_class; i++) {
 		// 	cout << "Class: " << i << " SVs: " << data.nSV[i];
 
 		//TODO: Use copying memory for better memory optimalization
 		//DIM PROJECTION: examps x dim x dim x 1 = exams x 1
-    data.w = data.inv_of_sqrt_of_cov.t() * data.w;
+    	data.w = data.inv_of_sqrt_of_cov.t() * data.w;
 		double p_plus = stddev(SvmUtils::matrixByValue(data.data, data.target, data.pos_target) * data.w);
 		double p_minus = stddev(SvmUtils::matrixByValue(data.data, data.target, data.neg_target) * data.w);
     

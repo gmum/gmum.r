@@ -2,8 +2,13 @@
 #define SVM_BASIC_H
 
 #include <string>
-#include <RcppArmadillo.h>
+#include <armadillo>
+
+#ifdef RCPP_INTERFACE
 #include <R.h>
+#include <RcppArmadillo.h>
+#endif
+
 #include "log.h"
 
 enum KernelType {
@@ -92,6 +97,8 @@ public:
 	arma::Col<int> col;
 	int dim;
 	int data_dim;
+    bool use_cost;              // currently only svmligth-implemented
+    arma::vec data_cost;
 
 	Logger log;
 
@@ -101,7 +108,8 @@ public:
 	double neg_target;
 
 	//2eParameters & Variables
-	double cov_eps_smoothing;
+	double cov_eps_smoothing_start;
+	double cov_eps_smoothing_end;
 	arma::mat inv_of_sqrt_of_cov;
 	arma::mat tmp_data;
 	arma::mat tmp_target;
@@ -128,7 +136,9 @@ public:
 	void setPrediction(bool);
 	bool isPrediction();
 
+#ifdef RCPP_INTERFACE
 	void setWeights( Rcpp::NumericVector );
+#endif
 	void setLibrary( std::string );
 	void setKernel( std::string );
 	void setPreprocess( std::string );
