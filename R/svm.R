@@ -106,7 +106,7 @@ evalqOnLoad({
                    prep        = "none",
                    mclass      = "none",
                    C           = 1,
-                   gamma       = 0.01,
+                   gamma       = 0,
                    coef0       = 0,
                    degree      = 3,
                    shrinking   = TRUE,
@@ -138,20 +138,12 @@ evalqOnLoad({
       stop(paste(GMUM_NOT_SUPPORTED, ": multiclass" ))
       # log error: Sorry, multiclass is not yet supported
     }
-    
+    if (verbosity < 0 || verbosity > 6) {
+      stop("Wrong verbosity level, should be from 0 to 6")
+    }
     if (C < 0 || gamma < 0 || degree < 1) {
       stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
       # log error: bad paramters
-    }
-    
-    if (kernel=="linear" && degree != 1) {
-      warning("Degree parameter is not used with linear kernel")
-    }
-    if (kernel=="linear" && gamma != 0.01) {
-      warning("Gamma parameter is not used with linear kernel")
-    }
-    if (verbosity < 0 || verbosity > 6) {
-      stop("Wrong verbosity level, should be from 0 to 6")
     }
     
     labels = all.vars(update(formula, .~0))
@@ -196,6 +188,9 @@ evalqOnLoad({
     config$set_verbosity(verbosity)
     
     config$C <- C
+    if (gamma == 0) {
+      gamma <- 1/ncol(x) 
+    }
     config$gamma <- gamma
     config$coef0 <- coef0
     config$degree <- degree
