@@ -1,4 +1,4 @@
-#include "tests_fixture.h"
+#include "tests_fixture.hpp"
 #include "clustering_comparator.hpp"
 #include "cec.hpp"
 
