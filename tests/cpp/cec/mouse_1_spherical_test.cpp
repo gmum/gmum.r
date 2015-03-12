@@ -19,11 +19,6 @@ protected:
         cluster_reader.get_clustering(*clustering);
         points.reset(new arma::mat(cluster_reader.get_points_in_matrix()));
         energy = cluster_reader.get_energy();
-        int min = *(std::min_element(clustering->begin(), clustering->end()));
-        for (std::vector<unsigned int>::iterator it = clustering->begin();
-             it != clustering->end(); ++it) {
-            *it -= min;
-        }
         params.nclusters = 3;
         params.kill_threshold = 0.0001;
         params.dataset = points;

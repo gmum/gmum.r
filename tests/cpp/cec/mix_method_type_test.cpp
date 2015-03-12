@@ -17,16 +17,8 @@ TEST(MethodTypeMix, SameAsMethodTypeSphere)
 {
     std::vector<unsigned int> clustering;
     ClusterReader cluster_reader("mouse_1_spherical", 2);
-    boost::shared_ptr<arma::mat> points(
-                new arma::mat(cluster_reader.get_points_in_matrix()));
-
+    boost::shared_ptr<arma::mat> points = boost::make_shared<arma::mat>(cluster_reader.get_points_in_matrix());
     cluster_reader.get_clustering(clustering);
-    int min = *(std::min_element(clustering.begin(), clustering.end()));
-    for (std::vector<unsigned int>::iterator it = clustering.begin();
-         it != clustering.end(); ++it) {
-        *it -= min;
-    }
-
     BestPermutationComparator comparator;
     Params params;
     params.nclusters = 3;
