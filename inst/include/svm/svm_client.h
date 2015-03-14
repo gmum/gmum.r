@@ -11,6 +11,8 @@ private:
 	SVMConfiguration &config;
 	void createFlow();
 
+    double kernel(size_t data_i, size_t sv_j);
+
 public:
 	//constructors
 	SVMClient(SVMConfiguration*);
@@ -76,7 +78,15 @@ public:
 	void run();
     // Prediction independent of SVMHandlers
     void predict(arma::mat);
-    void sparse_predict(arma::vec x, int , int, arma::Col<int> rowindex, arma::Col<int> colindex);
+    void predictFromConfig();
+    void sparse_predict(
+        arma::uvec &rowind,
+        arma::uvec &colptr,
+        arma::vec &values,
+        size_t n_rows,
+        size_t n_cols
+    );
+
     /// Process a request of prediction with a SVMHandlers implementations
 	void requestPredict(arma::mat);
 	void train();

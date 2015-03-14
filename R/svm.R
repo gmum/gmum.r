@@ -224,16 +224,16 @@ evalqOnLoad({
     if (sparse) {
       config$sparse <- 1
       
-      # OLD
-#       config$sp_x <- x@ra
-#       config$sp_row <- x@ia
-#       config$sp_col <- x@ja
-#       config$dim <- nrow(x)
-#       config$data_dim <- ncol(x)
+      # OLD (for our conversion) TODO: Delete after rewrite in LibSVMRunner
+      config$sp_x <- x@ra
+      config$sp_row <- x@ia
+      config$sp_col <- x@ja
+      config$dim <- nrow(x)
+      config$data_dim <- ncol(x)
 
       # NEW (for arma::sp_mat)  
-        x <- as.matrix.csc(x)
-        config$set_sparse_data(x@ja, x@ia, x@ra, nrow(x), ncol(x))
+      x <- as.matrix.csc(x)
+      config$set_sparse_data(x@ja, x@ia, x@ra, nrow(x), ncol(x))
     }
     else {
       config$sparse <- 0
@@ -399,7 +399,8 @@ evalqOnLoad({
       if (!is(x, "matrix.csr")) {
         stop("Please provide sparse matrix")
       }
-      object$sparse_predict(x@ra, nrow(x), ncol(x), x@ia, x@ja)
+      x <- as.matrix.csc(x)
+      object$sparse_predict(x@ja, x@ia, x@ra, nrow(x), ncol(x))
     }
     prediction <- object$getPrediction()
     prediction

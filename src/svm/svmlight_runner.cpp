@@ -236,7 +236,7 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     learn_parm->svm_iter_to_shrink=-9999;
     learn_parm->maxiter=100000;
     learn_parm->kernel_cache_size=40;
-    learn_parm->svm_c=0.0;
+    learn_parm->svm_c=config.C;
     learn_parm->eps=0.1;
     learn_parm->transduction_posratio=-1.0;
     learn_parm->svm_costratio=1.0;
@@ -255,11 +255,10 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     strcpy(kernel_parm->custom,"empty");
     strcpy(type,"c");
 
-    // GMUM.R changes {
     if (static_cast<long int>(config.kernel_type) == 3) {
         // sigmoid tanh(s a*b + c)
         // s = 1.0/highest_feature_index
-        kernel_parm->coef_lin = 1.0/config.data.n_cols;
+        kernel_parm->coef_lin = 1.0/config.getDataDim();
         // c
         kernel_parm->coef_const = -1.0;
     }
@@ -463,7 +462,7 @@ int SVMLightRunner::librarySVMClassifyMain(
         line = (char *)my_malloc(sizeof(char)*lld);
     } else {
         max_docs = config.target.n_rows;
-        max_words_doc = config.data.n_cols;
+        max_words_doc = config.getDataDim();
         config.result = arma::randu<arma::vec>(max_docs);
         // Prevent writing to the file
         pred_format = -1;
@@ -496,7 +495,7 @@ int SVMLightRunner::librarySVMClassifyMain(
         newline = (!feof(docfl)) && fgets(line,(int)lld,docfl);
     } else {
         newline = false;
-        if (totdoc < config.data.n_rows) {
+        if (totdoc < config.getDataExamplesNumber()) {
             newline = true;
             std::string str = SVMConfigurationToSVMLightLearnInputLine(config, totdoc);
             line = new char[str.size() + 1];
@@ -563,7 +562,7 @@ int SVMLightRunner::librarySVMClassifyMain(
           // Store prediction result in config
           config.result[totdoc-1] = dist;
           // Read next line
-          if (totdoc < config.data.n_rows) {
+          if (totdoc < config.getDataExamplesNumber()) {
               newline = true;
               std::string str = SVMConfigurationToSVMLightLearnInputLine(config, totdoc);
               line = new char[str.size() + 1];
@@ -710,7 +709,7 @@ MODEL * SVMLightRunner::libraryReadModel(
         fscanf(modelfl,"%ld%*[^\n]\n", &model->sv_num);
         fscanf(modelfl,"%lf%*[^\n]\n", &model->b);
     } else { // use_gmumr
-        max_words = config.data.n_cols;
+        max_words = config.getDataDim();
         words = (WORD *)my_malloc(sizeof(WORD)*(max_words+10));
 
         LOG(
@@ -734,7 +733,7 @@ MODEL * SVMLightRunner::libraryReadModel(
         char * model_kernel_parm_custom = model->kernel_parm.custom;
         model_kernel_parm_custom = kernel_parm_custom;
         // highest feature index
-        model->totwords = config.data.n_cols;
+        model->totwords = config.getDataDim();
         // number of training documents
         model->totdoc = config.target.n_rows;
         // number of support vectors plus 1 (!)
@@ -830,7 +829,7 @@ void SVMLightRunner::libraryReadDocuments (
         nol_ll(docfile,&max_docs,&max_words_doc,&ll); /* scan size of input file */
     } else {
         max_docs = config.target.n_rows;
-        max_words_doc = config.data.n_cols;
+        max_words_doc = config.getDataDim();
         // ll used only for file reading
     }
     // GMUM.R changes }
@@ -956,34 +955,29 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
         ss << 0;
     }
 
-    // Sparse matrix CRS decompression
-    if (config.sparse) {
-
-        for (size_t i = config.row[line_num]; i < config.row[line_num+1]; ++i) {
-            ss << ' ' << (config.col[i] + 1) << ':'
-                << std::setprecision(8) << config.sp_data[i];
-        }
-
-    // Armadillo matrix
-    } else {
-
-        for (long int i = 1; i <= config.data.n_cols; ++i) {
-            ss << ' ' << i << ':'
-               << std::setprecision(8) << config.data(line_num, i-1);
-        }
-    }
-
     // Optional feature: cost :)
     if (config.use_cost) {
         ss << " cost:" << std::setprecision(8) << config.data_cost[line_num];
     }
 
-    for (long int j = 1; j <= config.data.n_cols; ++j) {
-        ss << ' ' << j << ':' << std::setprecision(8) << config.data(line_num, j-1);
+    // Matrix type handling
+    if (config.sparse) {
+        for (long int i = 1; i <= config.sparse_data.n_cols; ++i) {
+            if (config.sparse_data(line_num, i-1) != 0) {
+                ss << ' ' << i << ':' << std::setprecision(8);
+                ss << config.sparse_data(line_num, i-1);
+            }
+        }
+    } else {
+        for (long int i = 1; i <= config.data.n_cols; ++i) {
+            ss << ' ' << i << ':' << std::setprecision(8);
+            ss << config.data(line_num, i-1);
+        }
     }
 
     ss << std::endl;
     line_string = ss.str();
+    //std::cout << line_string << std::flush;
 
     return line_string;
 }

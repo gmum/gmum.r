@@ -78,6 +78,7 @@ public:
     char *kernel_parm_custom;   // Custom kernel parameter(s)
     arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
     arma::mat support_vectors;	// sacherus: number of support vectors x data_dim
+    arma::sp_mat sparse_support_vectors;
     // User-defined classification mode labels
     //TODO: delete it; we are using pos_target, and neg_target;
     int label_negative; 
@@ -93,10 +94,12 @@ public:
 
 	// sparse matrix things
 	arma::vec sp_data; 
-	arma::Col<int> row;
-	arma::Col<int> col;
-	int dim;
-	int data_dim;
+	arma::uvec row;
+	arma::uvec col;
+	size_t dim;
+	size_t data_dim;
+
+    // Data cost
     bool use_cost;              // currently only svmligth-implemented
     arma::vec data_cost;
 
@@ -153,16 +156,19 @@ public:
      * Sets sparse data from CSC sparse matrix format
      */
     void setSparseData(
-        arma::uvec rowind,
-        arma::uvec colptr,
-        arma::vec values,
+        arma::uvec &rowind,
+        arma::uvec &colptr,
+        arma::vec &values,
         size_t n_rows,
         size_t n_cols
     );
 
+    arma::sp_mat getSparseData();
+
 	bool isSparse();
 	int getDataDim();
 	int getDataExamplesNumber();
+    size_t getSVCount();
 };
 
 #endif

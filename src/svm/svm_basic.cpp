@@ -10,6 +10,7 @@ SVMConfiguration::SVMConfiguration() {
 
 int SVMConfiguration::getDataExamplesNumber() {
 	if(isSparse()) {
+        // FIXME: change to sparse_data.n_rows after libsvm refactor
 		return this->dim;
 	} else {
 		return this->data.n_rows;
@@ -18,10 +19,15 @@ int SVMConfiguration::getDataExamplesNumber() {
 
 int SVMConfiguration::getDataDim() {
 	if(isSparse()) {
+        // FIXME: change to sparse_data.n_cols after libsvm refactor
 		return this->data_dim;
 	} else {
 		return this->data.n_cols;
 	}
+}
+
+size_t SVMConfiguration::getSVCount() {
+    return this->support_vectors.n_rows;
 }
 
 SVMConfiguration::SVMConfiguration(bool prediction) {
@@ -33,13 +39,17 @@ void SVMConfiguration::setSparse(bool sparse) {
 }
 
 void SVMConfiguration::setSparseData(
-	arma::uvec rowind,
-    arma::uvec colptr,
-    arma::vec values,
+	arma::uvec &rowind,
+    arma::uvec &colptr,
+    arma::vec &values,
     size_t n_rows,
     size_t n_cols
 ) {
-    sparse_data = arma::sp_mat(rowind, colptr, values, n_rows, n_cols);
+    this->sparse_data = arma::sp_mat(rowind, colptr, values, n_rows, n_cols);
+}
+
+arma::sp_mat SVMConfiguration::getSparseData() {
+    return this->sparse_data;
 }
 
 bool SVMConfiguration::isSparse() {
@@ -164,6 +174,9 @@ void SVMConfiguration::setDefaultParams() {
 //	Probably not necessery
 	nu = 0.5;
 	p = 0.1;
+    
+    // Sparse data
+    sparse = false;
 
     // Additional features
     use_cost = false;
