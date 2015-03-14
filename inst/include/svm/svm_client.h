@@ -80,9 +80,9 @@ public:
     void predict(arma::mat);
     void predictFromConfig();
     void sparse_predict(
-        arma::uvec &rowind,
-        arma::uvec &colptr,
-        arma::vec &values,
+        arma::uvec rowind,
+        arma::uvec colptr,
+        arma::vec values,
         size_t n_rows,
         size_t n_cols
     );

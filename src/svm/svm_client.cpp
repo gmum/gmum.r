@@ -223,7 +223,7 @@ void SVMClient::predictFromConfig() {
     config.result = arma::randu<arma::vec>(n_docs);
 
     config.sparse_support_vectors = arma::sp_mat(config.support_vectors);
-    
+
     LOG(config.log, LogLevel::DEBUG,
         __debug_prefix__ + ".predictFromConfig() Calculating prediction...");
     // Prediction itself
@@ -340,9 +340,9 @@ double SVMClient::kernel(size_t i, size_t j) {
 }
 
 void SVMClient::sparse_predict(
-	arma::uvec &rowind,
-    arma::uvec &colptr,
-    arma::vec &values,
+	arma::uvec rowind,
+    arma::uvec colptr,
+    arma::vec values,
     size_t n_rows,
     size_t n_cols
 ) {

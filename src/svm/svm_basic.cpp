@@ -39,9 +39,9 @@ void SVMConfiguration::setSparse(bool sparse) {
 }
 
 void SVMConfiguration::setSparseData(
-	arma::uvec &rowind,
-    arma::uvec &colptr,
-    arma::vec &values,
+	arma::uvec rowind,
+    arma::uvec colptr,
+    arma::vec values,
     size_t n_rows,
     size_t n_cols
 ) {

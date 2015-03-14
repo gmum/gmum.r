@@ -156,9 +156,9 @@ public:
      * Sets sparse data from CSC sparse matrix format
      */
     void setSparseData(
-        arma::uvec &rowind,
-        arma::uvec &colptr,
-        arma::vec &values,
+        arma::uvec rowind,
+        arma::uvec colptr,
+        arma::vec values,
         size_t n_rows,
         size_t n_cols
     );
