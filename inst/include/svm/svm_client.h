@@ -72,7 +72,7 @@ public:
     arma::mat getSV();
 
     // additional getters
-    SVMConfiguration getConfiguration();
+    SVMConfiguration &getConfiguration();
 
 	// runners
 	void run();

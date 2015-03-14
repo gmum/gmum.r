@@ -181,7 +181,7 @@ arma::mat SVMClient::getSV(){
   return config.support_vectors;
 }
 
-SVMConfiguration SVMClient::getConfiguration() {
+SVMConfiguration &SVMClient::getConfiguration() {
     return this->config;
 }
 
