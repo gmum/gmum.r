@@ -6,6 +6,7 @@
 #include <vector>
 #include "boost/smart_ptr.hpp"
 #include "cluster_params.hpp"
+#include "algorithm.hpp"
 
 namespace gmum {
 
@@ -15,7 +16,7 @@ enum AssignmentType {
 
 struct Params {
 public:
-	boost::shared_ptr<arma::mat> dataset;
+    arma::mat dataset;
 	double kill_threshold;
 	unsigned int nclusters;
 	bool log_nclusters;
@@ -31,6 +32,7 @@ public:
 	arma::mat cov_mat;
 	bool radius_set;
 	double radius;
+    boost::shared_ptr<gmum::Algorithm> algorithm;
 
 #ifdef RCPP_INTERFACE
 	boost::shared_ptr<Rcpp::Function> function;

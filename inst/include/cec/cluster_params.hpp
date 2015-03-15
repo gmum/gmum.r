@@ -22,6 +22,7 @@ struct ClusterParams {
 	ClusterParams(ClusterType _type) :
 			type(_type) {
 	}
+    virtual ~ClusterParams() { };
 };
 
 struct ClusterFullParams: public ClusterParams {
@@ -33,6 +34,7 @@ struct ClusterFullParams: public ClusterParams {
 	ClusterFullParams() :
 			ClusterParams(kfull), cov_mat_set(false) {
 	}
+    virtual ~ClusterFullParams() { }
 };
 
 struct ClusterFsphereParams: public ClusterParams {
@@ -44,6 +46,7 @@ struct ClusterFsphereParams: public ClusterParams {
 	ClusterFsphereParams() :
 			ClusterParams(kfsphere), radius_set(false) {
 	}
+    virtual ~ClusterFsphereParams() { }
 };
 
 #ifdef RCPP_INTERFACE
@@ -51,6 +54,7 @@ struct ClusterCustomParams: public ClusterParams {
 	boost::shared_ptr<Rcpp::Function> function;
 	ClusterCustomParams(boost::shared_ptr<Rcpp::Function> _function) : ClusterParams(kcustom), function(_function) {}
 	ClusterCustomParams() : ClusterParams(kcustom) {}
+    virtual ~ClusterCustomParams() { }
 };
 #endif
 

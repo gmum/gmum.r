@@ -11,7 +11,7 @@
 using namespace gmum;
 
 #define SHOW(x) std::cout << #x << " = " << x << std::endl
-TEST(Simple_1,IsEnergyCorrect) {
+TEST(CEC_Simple_1,IsEnergyCorrect) {
     // std::cout.precision(21);
     boost::shared_ptr<std::vector<unsigned int> > clustering(new std::vector<unsigned int>);
     ClusterReader cluster_reader("simple_1",2);
@@ -21,7 +21,7 @@ TEST(Simple_1,IsEnergyCorrect) {
     for (std::vector<unsigned int>::iterator it = clustering->begin(); it!= clustering->end(); ++it)
         *it -= min;
 
-    boost::shared_ptr<arma::mat> points(new arma::mat(cluster_reader.get_points_in_matrix()));
+    arma::mat points(cluster_reader.get_points_in_matrix());
     Params params;
     params.kill_threshold = 0.0001;
     params.nclusters = 1;
@@ -32,6 +32,7 @@ TEST(Simple_1,IsEnergyCorrect) {
     CecConfiguration conf;
     conf.set_params(params);
     conf.set_method_init("random");
+    conf.set_algorithm("hartigan");
     // TODO set clustering
     //conf->setMix(*clustering);
     CecModel cec(&conf);

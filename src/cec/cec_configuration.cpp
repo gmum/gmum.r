@@ -4,12 +4,17 @@
 #include <sstream>
 #include <string.h>
 #include <iostream>
+#include <hartigan.hpp>
 
 using namespace gmum;
 
 
 
-Params CecConfiguration::get_params()
+CecConfiguration::CecConfiguration()
+{
+}
+
+Params &CecConfiguration::get_params()
 {
     return this->m_params;
 }
@@ -22,8 +27,7 @@ void CecConfiguration::set_params(Params params)
 #ifdef RCPP_INTERFACE
 void CecConfiguration::set_data_set(const Rcpp::NumericMatrix proxy_dataset)
 {
-    m_params.dataset = boost::shared_ptr<arma::mat>(new arma::mat(proxy_dataset.begin(), proxy_dataset.nrow(),
-                                                                  proxy_dataset.ncol()));
+    m_params.dataset = arma::mat(proxy_dataset.begin(), proxy_dataset.nrow(), proxy_dataset.ncol());
 }
 void CecConfiguration::set_cov(const Rcpp::NumericMatrix cov_mat_proxy)
 {
@@ -143,7 +147,7 @@ void CecConfiguration::set_nclusters(const unsigned int nclusters) {
     else
         m_params.nclusters = CONST::nclusters_init;
 
-    if (m_params.dataset->n_rows < m_params.nclusters)
+    if (m_params.dataset.n_rows < m_params.nclusters)
         GMUM_ERROR(CONST::ERRORS::dataset_size);
 }
 
@@ -285,4 +289,9 @@ void CecConfiguration::set_function(Rcpp::Function function) {
 
 void CecConfiguration::set_it_max(int it_max) {
     m_params.it_max = it_max;
+}
+
+void CecConfiguration::set_algorithm(const std::string algorithm)
+{
+    m_params.algorithm = boost::make_shared<Hartigan>(m_params.log_nclusters, m_params.log_energy, m_params.it_max);
 }

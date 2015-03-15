@@ -11,19 +11,16 @@
 
 using namespace gmum;
 
-
-
-TEST(MethodTypeMix, SameAsMethodTypeSphere)
+TEST(CEC_MethodTypeMix, SameAsMethodTypeSphere)
 {
     std::vector<unsigned int> clustering;
     ClusterReader cluster_reader("mouse_1_spherical", 2);
-    boost::shared_ptr<arma::mat> points = boost::make_shared<arma::mat>(cluster_reader.get_points_in_matrix());
     cluster_reader.get_clustering(clustering);
     BestPermutationComparator comparator;
     Params params;
     params.nclusters = 3;
     params.kill_threshold = 0.0001;
-    params.dataset = points;
+    params.dataset = cluster_reader.get_points_in_matrix();
     params.nstart = 10;
     params.assignment_type = kkmeanspp;
     params.cluster_type = kmix;
@@ -35,6 +32,7 @@ TEST(MethodTypeMix, SameAsMethodTypeSphere)
 
     CecConfiguration conf;
     conf.set_params(params);
+    conf.set_algorithm("hartigan");
     CecModel cec(&conf);
     std::vector<unsigned int> a = cec.get_assignment();
     double percentage = comparator.evaluate_clustering(params.nclusters, clustering, a);

@@ -11,13 +11,13 @@
 #include <vector>
 
 using namespace gmum;
-class Mouse1SphericalTest: public ::testing::Test {
+class CEC_Mouse1SphericalTest: public ::testing::Test {
 protected:
-    Mouse1SphericalTest() {
+    CEC_Mouse1SphericalTest() {
         clustering.reset(new std::vector<unsigned int>());
         ClusterReader cluster_reader("mouse_1_spherical", 2);
         cluster_reader.get_clustering(*clustering);
-        points.reset(new arma::mat(cluster_reader.get_points_in_matrix()));
+        points = arma::mat(cluster_reader.get_points_in_matrix());
         energy = cluster_reader.get_energy();
         params.nclusters = 3;
         params.kill_threshold = 0.0001;
@@ -27,12 +27,12 @@ protected:
         // std::cout << "initialized data" << std::endl;
     }
     boost::shared_ptr<std::vector<unsigned int> > clustering;
-    boost::shared_ptr<arma::mat> points;
+    arma::mat points;
     double energy;
     Params params;
 };
 
-TEST_F(Mouse1SphericalTest,IsEnergyCorrect) {
+TEST_F(CEC_Mouse1SphericalTest,IsEnergyCorrect) {
     BestPermutationComparator comparator;
     int t = 20;
     int number_of_times_acceptable = 0;
@@ -41,6 +41,7 @@ TEST_F(Mouse1SphericalTest,IsEnergyCorrect) {
         CecConfiguration conf;
         conf.set_params(params);
         conf.set_method_init("random");
+        conf.set_algorithm("hartigan");
         CecModel cec(&conf);
         cec.loop();
         std::vector<unsigned int> assignment = cec.get_assignment();
@@ -58,7 +59,7 @@ TEST_F(Mouse1SphericalTest,IsEnergyCorrect) {
     EXPECT_GT(number_of_times_acceptable , t/2);
 }
 
-TEST_F(Mouse1SphericalTest,StartingFromCorrectAssignment) {
+TEST_F(CEC_Mouse1SphericalTest,StartingFromCorrectAssignment) {
     BestPermutationComparator comparator;
     int t = 1;
     int number_of_times_acceptable = 0;
@@ -70,6 +71,7 @@ TEST_F(Mouse1SphericalTest,StartingFromCorrectAssignment) {
         CecConfiguration conf;
         conf.set_params(params);
         conf.set_method_init("random");
+        conf.set_algorithm("hartigan");
         CecModel cec(&conf);
         // cec.setAssignment(assignment); //is it ok?
         cec.loop();

@@ -15,6 +15,7 @@ TEST_P(TestsFixture, IsEnergyCorrect)
     {
         CecConfiguration conf;
         conf.set_params(params);
+        conf.set_algorithm("hartigan");
         CecModel cec(&conf);
         cec.loop();
         double diff = std::fabs(cec.get_energy() - expected_energy);
@@ -37,6 +38,7 @@ TEST_P(TestsFixture, IsCoverageCorrect)
     {
         CecConfiguration conf;
         conf.set_params(params);
+        conf.set_algorithm("hartigan");
         CecModel cec(&conf);
         cec.loop();
         std::vector<unsigned int> clustering = cec.get_assignment();
@@ -51,8 +53,8 @@ TEST_P(TestsFixture, IsCoverageCorrect)
 }
 
 INSTANTIATE_TEST_CASE_P(CEC, TestsFixture, ::testing::Values(
-    TestsFixtureParam(ClusterReader("mouse_1_spherical", 2), DefaultParams(3, ksphere)),
-    TestsFixtureParam(ClusterReader("mouse_1", 2), DefaultParams(3, ksphere)),
-    TestsFixtureParam(ClusterReader("EllipseGauss", 2), DefaultParams(4, kstandard))
-    // TestsFixtureParam(ClusterReader("mouse_1_spherical", 2), DefaultParams(3, kmix, {boost::make_shared<ClusterParams>(ksphere), boost::make_shared<ClusterParams>(ksphere), boost::make_shared<ClusterParams>(ksphere)}))
+    TestsFixtureParam(ClusterReader("mouse_1_spherical", 2), boost::make_shared<DefaultGmumParams>(3, ksphere)),
+    TestsFixtureParam(ClusterReader("mouse_1", 2), boost::make_shared<DefaultGmumParams>(3, ksphere)),
+    TestsFixtureParam(ClusterReader("EllipseGauss", 2), boost::make_shared<DefaultGmumParams>(4, kstandard)),
+    TestsFixtureParam(ClusterReader("mouse_1_spherical", 2), boost::make_shared<MixTypeParamsThreeSpheres>())
 ));

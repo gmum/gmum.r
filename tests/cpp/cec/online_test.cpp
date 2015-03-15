@@ -7,7 +7,7 @@
 #include "cluster.hpp"
 using namespace gmum;
 
-TEST(OnlineFormulas,AddPoint) {
+TEST(CEC_OnlineFormulas,AddPoint) {
     //arma_rng::set_seed(0);
     int n = 100;
     int dim = 2;
@@ -29,7 +29,7 @@ TEST(OnlineFormulas,AddPoint) {
         }
     }
 
-    Cluster * m(new ClusterStandard(id,fits,init_matrix));
+    boost::shared_ptr<Cluster> m = boost::make_shared<ClusterStandard>(id,fits,init_matrix);
     // Dodajemy element o indeksie i
     for (int i = beg; i < n-1; ++i) {
 
@@ -64,7 +64,7 @@ TEST(OnlineFormulas,AddPoint) {
     }
 }
 
-TEST(OnlineFormulas,removePoint) {
+TEST(CEC_OnlineFormulas,removePoint) {
     //arma_rng::set_seed(0);
     int n = 100;
     int dim = 2;
@@ -86,7 +86,7 @@ TEST(OnlineFormulas,removePoint) {
         }
     }
 
-    Cluster * m(new ClusterStandard(id,fits,init_matrix));
+    boost::shared_ptr<Cluster> m = boost::make_shared<ClusterStandard>(id,fits,init_matrix);
     // Dodajemy element o indeksie i
     for (int i = n-1; i > end; --i) {
 

@@ -1,32 +1,37 @@
 #include "tests_fixture.hpp"
+#include "cluster_params.hpp"
 
-DefaultParams::DefaultParams(unsigned int nclusters, gmum::ClusterType cluster_type, int it_max)
+DefaultGmumParams::DefaultGmumParams(unsigned int nclusters, gmum::ClusterType cluster_type, int it_max)
 {
-    params.nclusters = nclusters;
-    params.cluster_type = cluster_type;
-    params.it_max = it_max;
+    gmum_params.nclusters = nclusters;
+    gmum_params.cluster_type = cluster_type;
+    gmum_params.it_max = it_max;
 }
 
-DefaultParams::DefaultParams(unsigned int nclusters, gmum::ClusterType cluster_type, std::list<boost::shared_ptr<gmum::ClusterParams> > clusters, int it_max)
+MixTypeParamsThreeSpheres::MixTypeParamsThreeSpheres(int it_max)
+    :   DefaultGmumParams(3, gmum::kmix, it_max)
 {
-    params.nclusters = nclusters;
-    params.cluster_type = cluster_type;
-    params.it_max = it_max;
-    params.clusters = clusters;
+    gmum_params.clusters.push_back(boost::make_shared<gmum::ClusterParams>(gmum::ksphere));
+    gmum_params.clusters.push_back(boost::make_shared<gmum::ClusterParams>(gmum::ksphere));
+    gmum_params.clusters.push_back(boost::make_shared<gmum::ClusterParams>(gmum::ksphere));
 }
 
-TestsFixtureParam::TestsFixtureParam(ClusterReader _reader, DefaultParams _params)
-    :   reader(_reader), params(_params)
+TestsFixtureParam::TestsFixtureParam(ClusterReader _reader, boost::shared_ptr<DefaultGmumParams> _params)
+    :   reader(_reader), default_params(_params)
 { }
 
 TestsFixture::TestsFixture()
 {
     TestsFixtureParam p(GetParam());
     p.reader.get_clustering(expected_clustering);
-    points = p.reader.get_points_in_matrix();
     expected_energy = p.reader.get_energy();
-    params = p.params.params;
-    params.dataset = boost::make_shared<arma::mat>(points);
+    params = p.default_params->gmum_params;
+    params.dataset = p.reader.get_points_in_matrix();
+    params.nstart = 3;
 }
 
 TestsFixture::~TestsFixture() { }
+
+
+
+

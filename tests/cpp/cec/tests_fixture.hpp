@@ -6,26 +6,26 @@
 #include "cluster_reader.hpp"
 #include "params.hpp"
 
-struct DefaultParams
+struct DefaultGmumParams
 {
-    DefaultParams(unsigned int nclusters,
+    DefaultGmumParams(unsigned int nclusters,
                   gmum::ClusterType cluster_type,
                   int it_max = -1);
 
-    DefaultParams(unsigned int nclusters,
-                  gmum::ClusterType cluster_type,
-                  std::list< boost::shared_ptr<gmum::ClusterParams> > clusters,
-                  int it_max = -1);
+    gmum::Params gmum_params;
+};
 
-    gmum::Params params;
+struct MixTypeParamsThreeSpheres : public DefaultGmumParams
+{
+    MixTypeParamsThreeSpheres(int it_max = -1);
 };
 
 struct TestsFixtureParam
 {
-    TestsFixtureParam(ClusterReader _reader, DefaultParams _params);
+    TestsFixtureParam(ClusterReader _reader, boost::shared_ptr<DefaultGmumParams> _params);
 
     ClusterReader reader;
-    DefaultParams params;
+    boost::shared_ptr<DefaultGmumParams> default_params;
 };
 
 class TestsFixture : public ::testing::TestWithParam< TestsFixtureParam >
@@ -35,7 +35,6 @@ public:
     virtual ~TestsFixture();
 
 protected:
-    arma::mat points;
     std::vector<unsigned int> expected_clustering;
     double expected_energy;
     gmum::Params params;
