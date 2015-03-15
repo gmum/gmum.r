@@ -3,7 +3,7 @@ include ../../src/Makevars
 # Explicit Makevars inheritances adn overrides
 CXX := $(CXX)
 CPPFLAGS := $(PKG_CPPFLAGS) -O2 -g -s
-LDLIBS := $(PKG_LIBS) -lpthread -lgtest -lgtest_main -larmadillo
+LDLIBS := $(PKG_LIBS) -lpthread -lgtest -lgtest_main
 
 ###
 # Compilation parameters
