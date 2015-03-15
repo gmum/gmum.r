@@ -10,8 +10,8 @@ devtools::install_github("gmum/gmum.r")
 
 ## Windows
 
-Please download appropriate version of (http://cran.r-project.org/bin/windows/Rtools/)[http://cran.r-project.org/bin/windows/Rtools/].
-Run R matching your cpu architecture (x64 vs x86)
+Please download appropriate version of [Rtools](http://cran.r-project.org/bin/windows/Rtools/).
+Run R matching your CPU architecture (x64 vs x86)
 
 ```{R}
 devtools::install_github("gmum/gmum.r", args="--no-lock --no-multiarch")
@@ -31,4 +31,4 @@ devtools::install_github("gmum/gmum.r", args="--no-lock --preclean")
 R CMD INSTALL . --no-lock --no-multiarch --preclean --library=<path_to_your_R_library_folder>
 ```
 
-,where path might be `C:\Program Files\R\R-3.1.2\library"`. 
+, where path might be `C:\Program Files\R\R-3.1.2\library"`. 
