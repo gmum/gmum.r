@@ -4,7 +4,7 @@ source('../../../../../R/R_scripts/mouseGaussGenerator.R')
 library(gmum.r)
 library(CEC)
 
-run_tests <- function(npoints_start, ndatasets, npoints_step, max_iterations, averaging) {
+run_tests <- function(npoints_start, ndatasets, npoints_step, max_iterations, averaging, gmum_cec_function, cran_cec_function) {
     results = list(
         gmum=list(
             standard=list(time=c(), iters=c(), energy=c()), 
@@ -29,8 +29,8 @@ run_tests <- function(npoints_start, ndatasets, npoints_step, max_iterations, av
             gmum_method_type_name = method_types$gmum[j]
             cran_method_type_name = method_types$cran[j]
             
-            results$gmum[[gmum_method_type_name]] = append_gmum_result(gmum_method_type_name, dataset, averaging, max_iterations, results$gmum[[gmum_method_type_name]])
-            results$cran[[cran_method_type_name]] = append_cran_result(cran_method_type_name, dataset, averaging, max_iterations, results$cran[[cran_method_type_name]])
+            results$gmum[[gmum_method_type_name]] = append_result(gmum_method_type_name, dataset, averaging, max_iterations, results$gmum[[gmum_method_type_name]], gmum_cec_function)
+            results$cran[[cran_method_type_name]] = append_result(cran_method_type_name, dataset, averaging, max_iterations, results$cran[[cran_method_type_name]], cran_cec_function)
         }            
     }    
     
@@ -64,4 +64,18 @@ run_tests <- function(npoints_start, ndatasets, npoints_step, max_iterations, av
     }            
 }
 
-run_tests(npoints_start=200, ndatasets=100, npoints_step=500, max_iterations=200, averaging=5)
+gmum_cec <- function(method_type, points, max_iter) {        
+    t = as.numeric(system.time(c <- CEC(k=3, control.nstart=1, x=points, method.init='random', method.type=method_type, control.itmax=max_iter))[3])
+    it = c$log.iters()
+    e = c$energy()
+    return (list(time=t, iters=it, energy=e))
+}
+
+cran_cec <- function(method_type, points, max_iter) {    
+    t = as.numeric(system.time(c <- cec(centers=3, nstart=1, x=points, centers.init='random', type=method_type, iter.max=max_iter))[3])
+    it = c$iterations
+    e = tail(c$cost, n=1)
+    return (list(time=t, iters=it, energy=e))
+}
+
+run_tests(npoints_start=200, ndatasets=10, npoints_step=500, max_iterations=200, averaging=5, gmum_cec_function=gmum_cec, cran_cec_function=cran_cec)
