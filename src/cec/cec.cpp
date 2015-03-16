@@ -99,24 +99,24 @@ void CecModel::init_clusters(std::vector<unsigned int>& assignment) {
 		}
 	} else {
 		//TODO: why pointer?
-        boost::shared_ptr<ClusterParams> cluster;
+        boost::scoped_ptr<ClusterParams> cluster;
 		switch (params.cluster_type) {
         case kfsphere:
-            cluster = boost::make_shared<ClusterFsphereParams>(params.radius);
+            cluster.reset(new ClusterFsphereParams(params.radius));
 			break;
         case kfull:
-            cluster = boost::make_shared<ClusterFullParams>(params.cov_mat);
+            cluster.reset(new ClusterFullParams(params.cov_mat));
 			break;
 #ifdef RCPP_INTERFACE
         case kcustom:
-            cluster = boost::make_shared<ClusterCustomParams>(params.function);
+            cluster.reset(new ClusterCustomParams(params.function));
             break;
 #endif
 		default:
 			/*case standard:
 			 case diagonal:
 			 case sphere:*/
-            cluster = boost::make_shared<ClusterParams>(params.cluster_type);
+            cluster.reset(new ClusterParams(params.cluster_type));
             break;
         }
 		for (unsigned int i = 0; i < params.nclusters; ++i)
@@ -129,17 +129,17 @@ void CecModel::init_clusters(std::vector<unsigned int>& assignment) {
 void CecModel::find_best_cec() {
 	std::vector<unsigned int> assignment;
     Params& params = m_config->get_params();
-    boost::shared_ptr<Assignment> assignment_type;
+    boost::scoped_ptr<Assignment> assignment_type;
 
 	switch (params.assignment_type) {
 	case krandom:
-        assignment_type = boost::make_shared<RandomAssignment>(params.dataset, params.nclusters);
+        assignment_type.reset(new RandomAssignment(params.dataset, params.nclusters));
 		break;
 	case kkmeanspp:
-        assignment_type = boost::make_shared<KmeansppAssignment>(params.dataset, params.nclusters);
+        assignment_type.reset(new KmeansppAssignment(params.dataset, params.nclusters));
 		break;
 	case kcentroids:
-        assignment_type = boost::make_shared<CentroidsAssignment>(params.dataset, params.nclusters, params.centroids);
+        assignment_type.reset(new CentroidsAssignment(params.dataset, params.nclusters, params.centroids));
 		break;
 	}
 

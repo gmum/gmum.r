@@ -293,5 +293,5 @@ void CecConfiguration::set_it_max(int it_max) {
 
 void CecConfiguration::set_algorithm(const std::string algorithm)
 {
-    m_params.algorithm = boost::make_shared<Hartigan>(m_params.log_nclusters, m_params.log_energy, m_params.it_max);
+    m_params.algorithm.reset(new Hartigan(m_params.log_nclusters, m_params.log_energy, m_params.it_max));
 }
