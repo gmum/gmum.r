@@ -1,0 +1,1 @@
+(devnote) - put gmum.r.dll in x64 and i386 for binary package. These can be produced by devtools::install(".", args="--arch=i386/x64") assuming Windows is configured for compiling Rcpp package.
