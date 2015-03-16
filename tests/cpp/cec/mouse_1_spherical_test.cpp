@@ -11,19 +11,14 @@
 #include <vector>
 
 using namespace gmum;
-class Mouse1SphericalTest: public ::testing::Test {
+class CEC_Mouse1SphericalTest: public ::testing::Test {
 protected:
-    Mouse1SphericalTest() {
+    CEC_Mouse1SphericalTest() {
         clustering.reset(new std::vector<unsigned int>());
         ClusterReader cluster_reader("mouse_1_spherical", 2);
         cluster_reader.get_clustering(*clustering);
-        points.reset(new arma::mat(cluster_reader.get_points_in_matrix()));
+        points = arma::mat(cluster_reader.get_points_in_matrix());
         energy = cluster_reader.get_energy();
-        int min = *(std::min_element(clustering->begin(), clustering->end()));
-        for (std::vector<unsigned int>::iterator it = clustering->begin();
-             it != clustering->end(); ++it) {
-            *it -= min;
-        }
         params.nclusters = 3;
         params.kill_threshold = 0.0001;
         params.dataset = points;
@@ -32,12 +27,12 @@ protected:
         // std::cout << "initialized data" << std::endl;
     }
     boost::shared_ptr<std::vector<unsigned int> > clustering;
-    boost::shared_ptr<arma::mat> points;
+    arma::mat points;
     double energy;
     Params params;
 };
 
-TEST_F(Mouse1SphericalTest,IsEnergyCorrect) {
+TEST_F(CEC_Mouse1SphericalTest,IsEnergyCorrect) {
     BestPermutationComparator comparator;
     int t = 20;
     int number_of_times_acceptable = 0;
@@ -46,10 +41,11 @@ TEST_F(Mouse1SphericalTest,IsEnergyCorrect) {
         CecConfiguration conf;
         conf.set_params(params);
         conf.set_method_init("random");
+        conf.set_algorithm("hartigan");
         CecModel cec(&conf);
         cec.loop();
         std::vector<unsigned int> assignment = cec.get_assignment();
-        double percentage = comparator.evaluate_clustering(params.nclusters,*points,assignment,*clustering);
+        double percentage = comparator.evaluate_clustering(params.nclusters,assignment,*clustering);
         // std::cout << "Percentage " << percentage << std::endl;
         // std::cout << "Energy " << cec.entropy() << std::endl;
         number_of_times_acceptable += (percentage >= 0.9) || (cec.entropy() < energy*1.5);
@@ -63,7 +59,7 @@ TEST_F(Mouse1SphericalTest,IsEnergyCorrect) {
     EXPECT_GT(number_of_times_acceptable , t/2);
 }
 
-TEST_F(Mouse1SphericalTest,StartingFromCorrectAssignment) {
+TEST_F(CEC_Mouse1SphericalTest,StartingFromCorrectAssignment) {
     BestPermutationComparator comparator;
     int t = 1;
     int number_of_times_acceptable = 0;
@@ -75,10 +71,11 @@ TEST_F(Mouse1SphericalTest,StartingFromCorrectAssignment) {
         CecConfiguration conf;
         conf.set_params(params);
         conf.set_method_init("random");
+        conf.set_algorithm("hartigan");
         CecModel cec(&conf);
         // cec.setAssignment(assignment); //is it ok?
         cec.loop();
-        double percentage = comparator.evaluate_clustering(params.nclusters,*points,*assignment,*clustering);
+        double percentage = comparator.evaluate_clustering(params.nclusters,*assignment,*clustering);
         // std::cout << "Percentage " << percentage << std::endl;
         // std::cout << "Energy " << cec.entropy() << std::endl;
         number_of_times_acceptable += (percentage >= 0.9) || (cec.entropy() < energy*1.5);

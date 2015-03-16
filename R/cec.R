@@ -236,6 +236,7 @@ evalqOnLoad({
     config$setCov(params.cov)
     config$setR(params.r)
     config$setItmax(control.itmax)
+    config$setAlgorithm("hartigan")
      model <- new(CecModel, config)
 
     assign("call", call, model)

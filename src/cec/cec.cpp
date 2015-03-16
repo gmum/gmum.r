@@ -18,38 +18,36 @@ void CecModel::clear_clusters() {
 	m_clusters.clear();
 }
 
-Cluster* CecModel::create_cluster(const ClusterParams &params, int i) {
+Cluster* CecModel::create_cluster(ClusterParams* cluster_params, int i) {
+    Params& params = m_config->get_params();
 	Cluster * cluster = 0;
-	switch (params.type) {
+    switch (cluster_params->type) {
 	case kno_type: // TODO: handle knoType parameter
 	case kmix: // TODO: handle kmix parameter
 		break;
 	case kstandard:
-		cluster = new ClusterStandard(i, m_assignment, m_points);
+        cluster = new ClusterStandard(i, m_assignment, params.dataset);
 		break;
 	case kfull: {
-		const ClusterFullParams &ptr =
-				static_cast<const ClusterFullParams&>(params);
-		cluster = new ClusterCovMat(ptr.cov_mat, i, m_assignment, m_points);
+        ClusterFullParams *ptr = dynamic_cast<ClusterFullParams*>(cluster_params);
+        cluster = new ClusterCovMat(ptr->cov_mat, i, m_assignment, params.dataset);
 		break;
 	}
 	case kdiagonal:
-		cluster = new ClusterDiagonal(i, m_assignment, m_points);
+        cluster = new ClusterDiagonal(i, m_assignment, params.dataset);
 		break;
 	case ksphere:
-		cluster = new ClusterSpherical(i, m_assignment, m_points);
+        cluster = new ClusterSpherical(i, m_assignment, params.dataset);
 		break;
 	case kfsphere: {
-		const ClusterFsphereParams &ptr =
-				static_cast<const ClusterFsphereParams&>(params);
-		cluster = new ClusterConstRadius(ptr.radius, i, m_assignment, m_points);
+        ClusterFsphereParams* ptr = dynamic_cast<ClusterFsphereParams*>(cluster_params);
+        cluster = new ClusterConstRadius(ptr->radius, i, m_assignment, params.dataset);
 		break;
 	}
 #ifdef RCPP_INTERFACE
 		case kcustom: {
-			const ClusterCustomParams &ptr =
-			static_cast<const ClusterCustomParams&>(params);
-			cluster = new ClusterCustomFunction(i, m_assignment, m_points, ptr.function);
+            ClusterCustomParams* ptr = dynamic_cast<ClusterCustomParams*>(cluster_params);
+            cluster = new ClusterCustomFunction(i, m_assignment, params.dataset, ptr->function);
 			break;
 		}
 #endif
@@ -74,9 +72,6 @@ CecModel& CecModel::operator=(CecModel& other) {
 	if (this != &other) {
 		m_result = other.m_result;
 		m_assignment = other.m_assignment;
-		m_points = other.m_points;
-		m_algorithm = other.m_algorithm;
-		m_kill_threshold = other.m_kill_threshold;
 		m_inv_set = other.m_inv_set;
 		m_inv = other.m_inv;
 		m_config = other.m_config;
@@ -89,98 +84,76 @@ CecModel& CecModel::operator=(CecModel& other) {
 	return *this;
 }
 
-void CecModel::init(boost::shared_ptr<Algorithm> algorithm,
-		std::vector<unsigned int>& assignment) {
-	Params params = m_config->get_params();
+void CecModel::init_clusters(std::vector<unsigned int>& assignment) {
+    Params& params = m_config->get_params();
 	m_assignment = assignment;
-	m_points = *(params.dataset);
-	m_algorithm = algorithm;
-	m_kill_threshold = params.kill_threshold;
 	clear_clusters();
-	m_clusters.reserve(params.nclusters);
+    m_clusters.reserve(params.nclusters);
 
 	int i = 0;
 	if (params.cluster_type == kmix) {
-		BOOST_FOREACH(boost::shared_ptr < ClusterParams > cluster,
-				params.clusters)
-		{
-			m_clusters.push_back(create_cluster(*cluster, i));
+        for(std::list<boost::shared_ptr<ClusterParams> >::iterator it = params.clusters.begin(); it != params.clusters.end(); ++it)
+        {
+            m_clusters.push_back(create_cluster(it->get(), i));
 			++i;
 		}
 	} else {
 		//TODO: why pointer?
-		ClusterParams *cluster = 0;
+        boost::scoped_ptr<ClusterParams> cluster;
 		switch (params.cluster_type) {
-		case kfsphere: {
-			ClusterFsphereParams *proxy = new ClusterFsphereParams();
-			proxy->radius = params.radius;
-			cluster = proxy;
+        case kfsphere:
+            cluster.reset(new ClusterFsphereParams(params.radius));
 			break;
-		}
-		case kfull: {
-			ClusterFullParams *proxy = new ClusterFullParams();
-			proxy->cov_mat = params.cov_mat;
-			cluster = proxy;
-
+        case kfull:
+            cluster.reset(new ClusterFullParams(params.cov_mat));
 			break;
-		}
 #ifdef RCPP_INTERFACE
-			case kcustom: {
-				ClusterCustomParams *proxy = new ClusterCustomParams();
-				proxy->function = params.function;
-				cluster = proxy;
-				break;
-			}
+        case kcustom:
+            cluster.reset(new ClusterCustomParams(params.function));
+            break;
 #endif
 		default:
 			/*case standard:
 			 case diagonal:
 			 case sphere:*/
-			cluster = new ClusterParams(params.cluster_type);
-			break;
-		}
+            cluster.reset(new ClusterParams(params.cluster_type));
+            break;
+        }
 		for (unsigned int i = 0; i < params.nclusters; ++i)
-			m_clusters.push_back(create_cluster(*cluster, i));
-		//TODO: redelete
-		delete cluster;
+        {
+            m_clusters.push_back(create_cluster(cluster.get(), i));
+        }
 	}
-
 }
 
 void CecModel::find_best_cec() {
 	std::vector<unsigned int> assignment;
-	Params params = m_config->get_params();
-	boost::shared_ptr<Hartigan> hartigan(
-			new Hartigan(params.log_nclusters, params.log_energy,
-					params.it_max));
+    Params& params = m_config->get_params();
+    boost::scoped_ptr<Assignment> assignment_type;
 
-	Assignment *assignment_type = NULL;
 	switch (params.assignment_type) {
 	case krandom:
-		assignment_type = new RandomAssignment(*(params.dataset),
-				params.nclusters);
+        assignment_type.reset(new RandomAssignment(params.dataset, params.nclusters));
 		break;
 	case kkmeanspp:
-		assignment_type = new KmeansppAssignment(*(params.dataset),
-				params.nclusters);
+        assignment_type.reset(new KmeansppAssignment(params.dataset, params.nclusters));
 		break;
 	case kcentroids:
-		assignment_type = new CentroidsAssignment(*(params.dataset),
-				params.nclusters, params.centroids);
+        assignment_type.reset(new CentroidsAssignment(params.dataset, params.nclusters, params.centroids));
 		break;
 	}
 
-	assignment.resize(params.dataset->n_rows);
-	(*assignment_type)(assignment);
+    assignment.resize(params.dataset.n_rows);
+    (*assignment_type)(assignment);
 
-	init(hartigan, assignment);
+    init_clusters(assignment);
 
 	try {
 		loop();
 		CecModel best_cec = *this;
 		for (unsigned int i = 1; i < params.nstart; ++i) {
 			(*assignment_type)(assignment);
-			init(hartigan, assignment);
+            init_clusters(assignment);
 			loop();
 
 			if (m_result.energy < best_cec.get_result().energy) {
@@ -189,7 +162,6 @@ void CecModel::find_best_cec() {
 		}
 		*this = best_cec;
 	} catch (std::exception &e) {
-		delete assignment_type;
 #ifdef RCPP_INTERFACE
 		Rcpp::stop(std::string("exception ") + e.what() + " caught in CEC_new");
 #else
@@ -198,22 +170,20 @@ void CecModel::find_best_cec() {
 		exit(1);
 #endif
 	}
-	delete assignment_type;
 }
 
 void CecModel::loop() {
-	m_result = m_algorithm->loop(m_points, m_assignment, m_kill_threshold,
-			m_clusters);
+    Params& params = m_config->get_params();
+    m_result = params.algorithm->loop(params.dataset, m_assignment, params.kill_threshold, m_clusters);
 	int nclusters = m_clusters.size();
 	m_inv_set.resize(nclusters, false);
 	m_inv.resize(nclusters);
 }
 
 void CecModel::single_loop() {
-	SingleResult sr = m_algorithm->single_loop(m_points, m_assignment,
-			m_kill_threshold, m_clusters);
-	m_result.append(sr, m_config->get_params().log_nclusters,
-			m_config->get_params().log_energy);
+    Params& params = m_config->get_params();
+    SingleResult sr = params.algorithm->single_loop(params.dataset, m_assignment, params.kill_threshold, m_clusters);
+    m_result.append(sr, params.log_nclusters, params.log_energy);
 }
 
 double CecModel::entropy() {
@@ -236,7 +206,7 @@ void CecModel::set_assignment(std::vector<unsigned int>& assignment) {
 }
 
 arma::mat CecModel::get_points() {
-	return m_points;
+    return m_config->get_params().dataset;
 }
 
 std::vector<arma::rowvec> CecModel::centers() const {
@@ -249,11 +219,12 @@ std::vector<arma::rowvec> CecModel::centers() const {
 }
 
 std::vector<arma::mat> CecModel::cov() const {
+    Params& params = m_config->get_params();
 	std::vector < arma::mat > array;
 	array.reserve(m_clusters.size());
 
 	for (unsigned int i = 0; i < m_clusters.size(); ++i) {
-		array.push_back(m_clusters[i]->get_cov_mat(i, m_assignment, m_points));
+        array.push_back(m_clusters[i]->get_cov_mat(i, m_assignment, params.dataset));
 	}
 
 	return array;
@@ -276,13 +247,13 @@ double CecModel::get_energy() const {
 }
 
 unsigned int CecModel::predict(std::vector<double> vec) {
+    Params& params = m_config->get_params();
 	arma::rowvec x = arma::conv_to < arma::rowvec > ::from(vec);
 
 	unsigned int assign = 0;
 	double result = std::numeric_limits<double>::min();
 	for (unsigned int i = 0; i < m_clusters.size(); ++i) {
-		arma::mat cov_mat = m_clusters[i]->get_cov_mat(i, m_assignment,
-				m_points);
+        arma::mat cov_mat = m_clusters[i]->get_cov_mat(i, m_assignment, params.dataset);
 		arma::rowvec mean = m_clusters[i]->get_mean();
 		if (!m_inv_set[i]) {
 			arma::mat Q, R;
@@ -298,7 +269,7 @@ unsigned int CecModel::predict(std::vector<double> vec) {
 		double scalar = arma::as_scalar(
 				(x - mean) * m_inv[i] * ((x - mean).t()));
 		double exponens = exp(-0.5 * scalar);
-		double p = m_clusters[i]->size() / (double) m_points.n_rows;
+        double p = m_clusters[i]->size() / (double) params.dataset.n_rows;
 		double tmp = p + const_multiplier * exponens;
 
 		if (tmp > result) {

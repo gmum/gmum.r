@@ -35,7 +35,7 @@ public:
 			std::vector<Cluster*> &clusters);
 	SingleResult single_loop(const arma::mat &points,
 			std::vector<unsigned int> &assignment, double kill_threshold,
-			std::vector<Cluster*> &clusters);
+            std::vector<Cluster*> &clusters);
 	double entropy(boost::shared_ptr<Cluster> ptr_to_cluster, int npoints);
 };
 

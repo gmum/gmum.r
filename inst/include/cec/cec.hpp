@@ -21,19 +21,15 @@ private:
 	std::vector<gmum::Cluster*> m_clusters;
 	gmum::TotalResult m_result;
 	std::vector<unsigned int> m_assignment;
-	arma::mat m_points;
-	boost::shared_ptr<gmum::Algorithm> m_algorithm;
-	double m_kill_threshold;
 	std::vector<bool> m_inv_set;
 	std::vector<arma::mat> m_inv;
 
 	// pointer to the object created by R, it shouldn't be freed by the user because R built in GC will do it.
 	CecConfiguration* m_config;
 
-	gmum::Cluster * create_cluster(const gmum::ClusterParams &params, int i);
+    gmum::Cluster * create_cluster(gmum::ClusterParams* cluster_params, int i);
 	void find_best_cec();
-	void init(boost::shared_ptr<gmum::Algorithm> algorithm,
-			std::vector<unsigned int>& assignment);
+    void init_clusters(std::vector<unsigned int>& assignment);
 	void clear_clusters();
 
 public:
