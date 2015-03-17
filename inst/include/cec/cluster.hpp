@@ -28,8 +28,7 @@ protected:
 			const std::vector<unsigned int> &assignment,
 			const arma::mat &points);
 public:
-	virtual ~Cluster() {
-	}
+    virtual ~Cluster() { }
 	virtual void add_point(const arma::rowvec& point) = 0;
 	virtual void remove_point(const arma::rowvec& point) = 0;
 
@@ -71,6 +70,7 @@ public:
 	arma::mat get_cov_mat(unsigned int id,
 			const std::vector<unsigned int> &assignment,
 			const arma::mat &points);
+    virtual ~ClusterUseCovMat() { }
 };
 
 //abstract, never created
@@ -99,6 +99,8 @@ public:
 
 	double get_cov_mat_trace();
 
+    virtual ~ClusterOnlyTrace() { }
+
 };
 
 class ClusterStandard: public ClusterUseCovMat {
@@ -113,6 +115,7 @@ public:
 			const arma::mat &points);
 	virtual ClusterStandard* clone();
 
+    virtual ~ClusterStandard() { }
 };
 
 class ClusterCovMat: public ClusterUseCovMat {
@@ -128,6 +131,7 @@ public:
 			const std::vector<unsigned int> &assignment,
 			const arma::mat &points);
 	virtual ClusterCovMat* clone();
+    virtual ~ClusterCovMat() { }
 };
 
 class ClusterConstRadius: public ClusterOnlyTrace {
@@ -141,6 +145,8 @@ public:
 			const std::vector<unsigned int> &assignment,
 			const arma::mat &points);
 	virtual ClusterConstRadius* clone();
+
+    virtual ~ClusterConstRadius() { }
 };
 
 class ClusterSpherical: public ClusterOnlyTrace {
@@ -153,6 +159,8 @@ public:
 			const std::vector<unsigned int> &assignment,
 			const arma::mat &points);
 	virtual ClusterSpherical* clone();
+
+    virtual ~ClusterSpherical() { }
 };
 
 class ClusterDiagonal: public ClusterUseCovMat {
@@ -165,6 +173,8 @@ public:
 			const std::vector<unsigned int> &assignment,
 			const arma::mat &points);
 	virtual ClusterDiagonal* clone();
+
+    virtual ~ClusterDiagonal() { }
 };
 
 }

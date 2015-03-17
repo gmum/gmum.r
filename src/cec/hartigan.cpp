@@ -41,8 +41,8 @@ double Hartigan::calc_energy_change(const Cluster& a, const Cluster &b,
 }
 
 SingleResult Hartigan::single_loop(const arma::mat &points,
-		std::vector<unsigned int> &assignment, double kill_threshold,
-		std::vector<Cluster*> &clusters_raw) {
+        std::vector<unsigned int> &assignment, double kill_threshold,
+        std::vector<Cluster *> &clusters_raw) {
 
 	int switched = 0;  //number of point which has been moved to another cluster
 	int dimension = points.n_cols;
@@ -141,7 +141,9 @@ void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
 		std::vector<unsigned int> &assignment,
 		std::vector<Cluster *> &clusters) {
 	//delete cluster
-	clusters.erase(clusters.begin() + source);
+    std::vector<Cluster *>::iterator it = clusters.begin() + source;
+    delete *it;
+    clusters.erase(it);
 
 	//assign points of erased cluster
 	unsigned int npoints = points.n_rows;

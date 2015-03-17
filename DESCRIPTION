@@ -11,7 +11,7 @@ Depends:
     MASS (>= 7.3),
     Rcpp (>= 0.11.0),
     RcppArmadillo(>= 0.4.600.0),
-    ggplot2 (>= 1.0.0),
+    ggplot2(>= 1.0.0),
     BH,
     igraph
 LinkingTo: Rcpp, RcppArmadillo, BH

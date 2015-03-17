@@ -1,4 +1,4 @@
-/*
+﻿/*
  * File: GNGAlgorithm.cpp
  * Author: staszek "kudkudak" jastrzebski <grimghil<at>gmail.com>
  *
@@ -566,14 +566,18 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 	DBG_2(m_logger, 3, "GNGAlgorithm::check size of the db " + to_string(size));
 
 	while (g_db->size() < 2) {
+this->status_change_mutex.lock();
 		while (this->m_gng_status != GNG_RUNNING) {
 			DBG(m_logger, 1,
 					"GNGAlgorithm::status in database loop = "
 							+ to_string(this->m_gng_status));
-			if (this->m_gng_status == GNG_TERMINATED)
+			if (this->m_gng_status == GNG_TERMINATED){
+				this->status_change_mutex.unlock();
 				return;
+			}
 			this->status_change_condition.wait(this->status_change_mutex);
 		}
+this->status_change_mutex.unlock();
 	}
 
 	if (m_g.get_number_nodes() == 0) {
@@ -593,7 +597,7 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 
 	DBG(m_logger, 3, "GNGAlgorithm::init successful, starting the loop"); DBG_2(m_logger, 1, "GNGAlgorithm::gng_status="+to_string(this->m_gng_status));
 	while (true) {
-
+		this->status_change_mutex.lock();
 		while (this->m_gng_status != GNG_RUNNING) {
 			DBG(m_logger, 1,
 					"GNGAlgorithm::status in main loop = "
@@ -602,6 +606,7 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 				break;
 			this->status_change_condition.wait(this->status_change_mutex);
 		}
+		this->status_change_mutex.unlock();
 		if (this->m_gng_status == GNG_TERMINATED)
 			break;
 

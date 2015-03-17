@@ -33,6 +33,15 @@ std::string ClusterReader::dimension_path() {
     return prefix() + "dimension.txt";
 }
 
+void ClusterReader::normalize_clustering()
+{
+    int min = *(std::min_element(m_clustering.begin(), m_clustering.end()));
+    for (std::vector<unsigned int>::iterator it = m_clustering.begin();
+         it != m_clustering.end(); ++it) {
+        *it -= min;
+    }
+}
+
 void ClusterReader::read_points() {
     // std::cout << " read points " << std::endl;
     std::ifstream file(input_path().c_str());
@@ -74,6 +83,7 @@ void ClusterReader::read_clustering() {
             m_clustering.push_back(x);
         }
         file.close();
+        normalize_clustering();
     } else {
         std::cerr << "Failed to open " << cluster_path() << std::endl;
         throw cluster_path() + "Failed to open ";
