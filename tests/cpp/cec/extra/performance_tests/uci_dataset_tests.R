@@ -31,15 +31,23 @@ test_files = list(
     )
 )
 
-gmum_cec_uci <- function(method_type, points, nclusters) {
-    return (gmum_cec(nstart = 5, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = 0.01))     
+gmum_cec_uci <- function(method_type, points, nclusters, output_plot_path = NULL) {
+    return (gmum_cec(nstart = 5, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = 0.01, output_plot_path))     
 }
 
-cran_cec_uci <- function(method_type, points, nclusters) {
-    return (cran_cec(nstart = 5, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = 1))
+cran_cec_uci <- function(method_type, points, nclusters, output_plot_path = NULL) {
+    return (cran_cec(nstart = 5, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = 1, output_plot_path))
 }
 
-dir.create(file.path('.', 'data'), showWarnings = FALSE)
+data_path <- file.path('.', 'data')
+plots_path <- file.path('.', 'plots')
+gmum_plot_path <- file.path(plots_path, 'gmum')
+cran_plot_path <- file.path(plots_path, 'cran')
+
+dir.create(data_path, showWarnings = FALSE, recursive = TRUE)
+dir.create(gmum_plot_path, showWarnings = FALSE, recursive = TRUE)
+dir.create(cran_plot_path, showWarnings = FALSE, recursive = TRUE)
+
 for(name in names(test_files)) {
     d = file.path('.', 'data', name)
     dir.create(d, showWarnings = FALSE)
@@ -56,7 +64,8 @@ for(name in names(test_files)) {
         
         cat(name, '/', item$name, '( M =',item$M,')' ,'\n')
         for(j in 1:nmethod_types) {
-            gmum_result <- gmum_cec_uci(method_type = method_types$gmum[j], points = dataset, nclusters = item$M)
+            plot_file_name <- paste(c(name, item$name, method_types$gmum[j], '.jpg'), collapse='_')
+            gmum_result <- gmum_cec_uci(method_type = method_types$gmum[j], points = dataset, nclusters = item$M, file.path(gmum_plot_path, plot_file_name))
             cran_result <- cran_cec_uci(method_type = method_types$cran[j], points = dataset, nclusters = item$M)
             
             clustering_df <- data.frame(gmum_result$clustering, cran_result$clustering)

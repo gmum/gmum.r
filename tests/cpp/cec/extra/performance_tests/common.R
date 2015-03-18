@@ -5,8 +5,15 @@ normalize_clustering <- function(clustering) {
     return (clustering - min(clustering))
 }
 
-gmum_cec <- function(nclusters, nstart, points, init_type, method_type, max_iterations, eps) {        
+gmum_cec <- function(nclusters, nstart, points, init_type, method_type, max_iterations, eps, output_plot_path = NULL) {        
     t = as.numeric(system.time(c <- CEC(k=nclusters, control.nstart=nstart, x=points, method.init=init_type, method.type=method_type, control.itmax=max_iterations, control.eps=eps))[3])
+    
+    if( !is.null(output_plot_path) ) {
+        jpeg(output_plot_path)
+        plot(c)
+        dev.off()
+    }    
+    
     return (list(
         time=t, 
         iters=c$log.iters(), 
@@ -15,8 +22,15 @@ gmum_cec <- function(nclusters, nstart, points, init_type, method_type, max_iter
         centers=c$centers()))
 }
 
-cran_cec <- function(nclusters, nstart, points, init_type, method_type, max_iterations, eps) {    
+cran_cec <- function(nclusters, nstart, points, init_type, method_type, max_iterations, eps, output_plot_path = NULL) {    
     t = as.numeric(system.time(c <- cec(centers=nclusters, nstart=nstart, x=points, centers.init=init_type, type=method_type, iter.max=max_iterations, card.min=eps))[3])
+    
+    if( !is.null(output_plot_path) ) {
+        jpeg(output_plot_path)
+        plot(c)
+        dev.off()
+    } 
+    
     return (list(
         time=t, 
         iters=c$iterations,

@@ -1,2 +1,2 @@
 #!/bin/bash
-rm -Rf data *.jpg *.log
+rm -Rf plots data *.jpg *.log
