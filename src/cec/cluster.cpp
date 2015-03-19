@@ -15,6 +15,7 @@ Cluster::Cluster(unsigned int id, const std::vector<unsigned int> &assignment,
 		throw(NoPointsInCluster());
 
 	m_n = points.n_cols;
+    m_entropy = 0.0;
 }
 
 arma::rowvec Cluster::initialize_mean(unsigned int id,
@@ -199,6 +200,11 @@ arma::mat ClusterOnlyTrace::get_cov_mat(unsigned int id,
 }
 
 double ClusterStandard::calculate_entropy(int n, const arma::mat &cov_mat) {
+    double d = arma::det(cov_mat);
+    if(d == 0)
+    {
+        std::cout << cov_mat;
+    }
 	return n * log(2 * M_PI * M_E) / 2 + log(arma::det(cov_mat)) / 2;
 }
 
