@@ -27,10 +27,9 @@ private:
 #endif
 
 public:
-	CecConfiguration() {
-	}
+    CecConfiguration();
 
-	gmum::Params get_params();
+    gmum::Params& get_params();
 	void set_params(gmum::Params params);
 
 	void set_eps(const double kill_threshold);
@@ -54,6 +53,8 @@ public:
 	void set_r(const double radius);
 
 	void set_it_max(int it_max);
+    void set_algorithm(const std::string algorithm);
+
 };
 
 #endif /* CECCONFIGURATION_HPP */

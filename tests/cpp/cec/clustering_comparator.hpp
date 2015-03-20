@@ -7,15 +7,15 @@
 class ClusteringComparator {
 public:
     virtual std::vector<unsigned int> compute_permutation(
-            unsigned int nclusters, arma::mat & points,
+            unsigned int nclusters,
             std::vector<unsigned int> & real_fits,
             std::vector<unsigned int> & my_fits) = 0;
 
     double correct(std::vector<unsigned int> f,
                    std::vector<unsigned int> & real_fits,
-                   std::vector<unsigned int> & my_fits, unsigned int nelements);
+                   std::vector<unsigned int> & my_fits);
 
-    double evaluate_clustering(unsigned int nclusters, arma::mat & points,
+    double evaluate_clustering(unsigned int nclusters,
                                std::vector<unsigned int> & real_fits,
                                std::vector<unsigned int> & my_fits);
 };
@@ -23,7 +23,7 @@ public:
 class BestPermutationComparator: public ClusteringComparator {
 public:
     virtual std::vector<unsigned int> compute_permutation(
-            unsigned int nclusters, arma::mat & points,
+            unsigned int nclusters,
             std::vector<unsigned int> & real_fits,
             std::vector<unsigned int> & my_fits);
 };
