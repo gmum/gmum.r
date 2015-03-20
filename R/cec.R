@@ -41,8 +41,11 @@
 #' @usage CEC(k=2, x=dataset, method.type='sphere', method.init='centroids', params.centroids=list(c(-0.5,0.5),c(0,0)))
 #' @usage CEC(k=5, x=dataset, method.type='fsphere', params.r=0.01, control.nstart=10, control.eps=0.07)
 #' @usage CEC(k=5, x=dataset, method.type='full', params.cov=matrix(c(0.03,0,0,0.01),2), control.nstart=10, control.eps=0.06)
-#' @usage CEC(k=1, x=dataset_points, method.type='func', params.function='name_of_my_own_function')
-#' 
+#' @usage CEC(k=1, x=dataset, method.type='func', params.function='name_of_my_own_function')
+#' @usage  fsphere_cluster_param = list(method.type = 'fsphere', params.r = 0.001)
+#' full_cluster_param = list(method.type = 'full', params.cov=matrix(c(0.05, 0, 0, 0.001), 2))
+#' CEC(x = dataset, k = 5, params.mix = list(full_cluster_param, fsphere_cluster_param, fsphere_cluster_param, fsphere_cluster_param, fsphere_cluster_param), control.nstart = 10)
+
 CEC <- NULL
 
 #' @title runAll
@@ -210,8 +213,8 @@ evalqOnLoad({
     if (control.eps > 1.0 / k)
       stop("killThreshold = ", control.eps, " is too high!");  
     
-    if (control.itmax <= 0)
-      stop("Maximum number of iterations should be a positive integer!");
+    if (control.itmax < 0)
+      stop("Maximum number of iterations should be a natural number!");
     
     if(is(params.cov, "data.frame")){
      params.cov = data.matrix(params.cov);
@@ -231,13 +234,14 @@ evalqOnLoad({
     config$setLogCluster(log.ncluster)      
     config$setNstart(control.nstart)
     config$setCentroids(params.centroids)
-    config$setMethodType(method.type)
-    config$setMethodInit(method.init)              
+    config$setMethodType(method.type)             
     config$setCov(params.cov)
     config$setR(params.r)
+    config$setMethodInit(method.init) 
     config$setItmax(control.itmax)
-    config$setAlgorithm("hartigan")
-     model <- new(CecModel, config)
+    config$setAlgorithm('hartigan')
+    
+    model <- new(CecModel, config)
 
     assign("call", call, model)
     model
