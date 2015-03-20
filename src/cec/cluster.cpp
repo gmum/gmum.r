@@ -56,7 +56,7 @@ void ClusterUseCovMat::initialize_cov_mat(unsigned int id,
 			arma::rowvec point = points.row(i);
 			arma::rowvec tmp = point - m;
 			out += (tmp.t() * tmp) / (m_count);
-		}
+        }
 
 	m_cov_mat = out;
 	m_cov_mat_tmp = m_cov_mat;
@@ -200,11 +200,6 @@ arma::mat ClusterOnlyTrace::get_cov_mat(unsigned int id,
 }
 
 double ClusterStandard::calculate_entropy(int n, const arma::mat &cov_mat) {
-    double d = arma::det(cov_mat);
-    if(d == 0)
-    {
-        std::cout << cov_mat;
-    }
 	return n * log(2 * M_PI * M_E) / 2 + log(arma::det(cov_mat)) / 2;
 }
 

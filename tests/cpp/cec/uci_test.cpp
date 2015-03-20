@@ -26,6 +26,7 @@ TEST(CEC_UCI_TestCase, dummy)
     conf.set_params(params);
     conf.set_algorithm("hartigan");
     CecModel cec(&conf);
-    std::cout << cec.get_energy();
+    double e = cec.get_energy();
+    ASSERT_TRUE(std::isnormal(e)); // check if it's not nan or inf
 }
 

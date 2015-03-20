@@ -17,7 +17,6 @@ TEST_P(TestsFixture, IsEnergyCorrect)
         conf.set_params(params);
         conf.set_algorithm("hartigan");
         CecModel cec(&conf);
-        cec.loop();
         double diff = std::fabs(cec.get_energy() - expected_energy);
 
         if( (cec.get_energy() < expected_energy) || (diff <= 10e-5) )
@@ -40,7 +39,6 @@ TEST_P(TestsFixture, IsCoverageCorrect)
         conf.set_params(params);
         conf.set_algorithm("hartigan");
         CecModel cec(&conf);
-        cec.loop();
         std::vector<unsigned int> clustering = cec.get_assignment();
         double percentage = comparator.evaluate_clustering(params.nclusters, expected_clustering, clustering);
 
