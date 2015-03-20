@@ -234,12 +234,13 @@ evalqOnLoad({
     config$setLogCluster(log.ncluster)      
     config$setNstart(control.nstart)
     config$setCentroids(params.centroids)
-    config$setMethodType(method.type)
-    config$setMethodInit(method.init)              
+    config$setMethodType(method.type)             
     config$setCov(params.cov)
     config$setR(params.r)
+    config$setMethodInit(method.init) 
     config$setItmax(control.itmax)
-     model <- new(CecModel, config)
+    
+    model <- new(CecModel, config)
 
     assign("call", call, model)
     model
