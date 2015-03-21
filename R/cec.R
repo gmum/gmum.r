@@ -259,8 +259,8 @@ evalqOnLoad({
     c$energy()
   }
   
-  clusters.cec <<- function(c) {
-    c$clusters()
+  clustering.cec <<- function(c) {
+    c$clustering()
   }
   
   x.cec <<- function(c) {
