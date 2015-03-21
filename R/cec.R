@@ -188,7 +188,7 @@ evalqOnLoad({
                    params.centroids = NULL,
                    params.mix = NULL,
                    params.function = NULL,
-                   control.nstart = 1,
+                   control.nstart = 10,
                    control.eps = 0.05,
                    control.itmax = 25,
                    log.energy = FALSE,
