@@ -148,6 +148,8 @@ void CecModel::find_best_cec() {
 
     init_clusters(assignment);
 
+    if(params.it_max == 0) return;
+
 	try {
 		loop();
 		CecModel best_cec = *this;
