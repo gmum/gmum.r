@@ -39,7 +39,7 @@ RCPP_MODULE(cec) {
 	.method("runOneIteration", &CecModel::single_loop)
 	.method(".entropy", &CecModel::entropy)
 	.method("energy", &CecModel::get_energy)
-	.method("y", &CecModel::get_assignment)
+	.method("clustering", &CecModel::get_assignment)
 	.method("centers", &CecModel::centers)
 	.method("covMatrix", &CecModel::cov)
 	.method("predict", &CecModel::predict)

@@ -1,5 +1,3 @@
-loadModule("cec", TRUE)
-
 #' Print CEC
 #'
 #' @title print
@@ -27,6 +25,5 @@ evalqOnLoad({
         print(x$covMatrix())
     }
 
-    setMethod("print","Rcpp_CecModel", print.cec)
-    
+    setMethod("print","Rcpp_CecModel", print.cec)    
 })
