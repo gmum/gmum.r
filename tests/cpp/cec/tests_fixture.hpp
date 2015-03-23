@@ -22,10 +22,11 @@ struct MixTypeParamsThreeSpheres : public DefaultGmumParams
 
 struct TestsFixtureParam
 {
-    TestsFixtureParam(ClusterReader _reader, boost::shared_ptr<DefaultGmumParams> _params);
+    TestsFixtureParam(ClusterReader _reader, boost::shared_ptr<DefaultGmumParams> _params, int _times = 20);
 
     ClusterReader reader;
     boost::shared_ptr<DefaultGmumParams> default_params;
+    int times;
 };
 
 class TestsFixture : public ::testing::TestWithParam< TestsFixtureParam >
@@ -35,9 +36,33 @@ public:
     virtual ~TestsFixture();
 
 protected:
-    std::vector<unsigned int> expected_clustering;
-    double expected_energy;
     gmum::Params params;
+    int times;
+};
+
+class EnergyTests : public TestsFixture
+{
+public:
+    EnergyTests();
+    virtual ~EnergyTests();
+protected:
+    double expected_energy;
+};
+
+class CoverageTests : public TestsFixture
+{
+public:
+    CoverageTests();
+    virtual ~CoverageTests();
+protected:
+    std::vector<unsigned int> expected_clustering;
+};
+
+class BigDataTests : public TestsFixture
+{
+public:
+    BigDataTests();
+    virtual ~BigDataTests();
 };
 
 #endif // TESTS_FIXTURE_H

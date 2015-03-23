@@ -16,22 +16,52 @@ MixTypeParamsThreeSpheres::MixTypeParamsThreeSpheres(int it_max)
     gmum_params.clusters.push_back(boost::make_shared<gmum::ClusterParams>(gmum::ksphere));
 }
 
-TestsFixtureParam::TestsFixtureParam(ClusterReader _reader, boost::shared_ptr<DefaultGmumParams> _params)
-    :   reader(_reader), default_params(_params)
+TestsFixtureParam::TestsFixtureParam(ClusterReader _reader, boost::shared_ptr<DefaultGmumParams> _params, int _times)
+    :   reader(_reader), default_params(_params), times(_times)
 { }
 
 TestsFixture::TestsFixture()
 {
     TestsFixtureParam p(GetParam());
-    p.reader.get_clustering(expected_clustering);
-    expected_energy = p.reader.get_energy();
     params = p.default_params->gmum_params;
     params.dataset = p.reader.get_points_in_matrix();
     params.nstart = 3;
+    times = p.times;
 }
 
 TestsFixture::~TestsFixture() { }
 
+EnergyTests::EnergyTests()
+{
+    TestsFixtureParam p(GetParam());
+    expected_energy = p.reader.get_energy();
+}
+
+EnergyTests::~EnergyTests()
+{
+
+}
 
 
+CoverageTests::CoverageTests()
+{
+    TestsFixtureParam p(GetParam());
+    p.reader.get_clustering(expected_clustering);
+}
 
+CoverageTests::~CoverageTests()
+{
+
+}
+
+
+BigDataTests::BigDataTests()
+{
+   params.nstart = 10;
+   params.it_max = 200;
+}
+
+BigDataTests::~BigDataTests()
+{
+
+}

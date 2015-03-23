@@ -10,10 +10,12 @@ struct SingleResult {
 	int switched;
 	int nclusters;
 	double energy;
+    bool valid;
 	SingleResult() {
 		switched = 0;
 		nclusters = 0;
 		energy = 0.0;
+        valid = true;
 	}
 	SingleResult(int switched, int nclusters, double energy) :
 			switched(switched), nclusters(nclusters), energy(energy) {
@@ -26,9 +28,10 @@ struct TotalResult {
 	// energy from all iterations of algorithm
 	std::list<double> energy_history;
 	double energy;
+    bool valid;
 
 	TotalResult() :
-			iterations(0) {
+            iterations(0), valid(false) {
 		energy = std::numeric_limits<double>::max();
 	}
 	void append(SingleResult result, bool log_nlusters, bool log_energy) {

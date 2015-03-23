@@ -6,12 +6,10 @@
 
 using namespace gmum;
 
-TEST_P(TestsFixture, IsEnergyCorrect)
+TEST_P(EnergyTests, IsEnergyCorrect)
 {
-    int t = 20;
     int number_of_times_acceptable = 0;
-
-    for (int i = 0; i < t; ++i)
+    for (int i = 0; i < times; ++i)
     {
         CecConfiguration conf;
         conf.set_params(params);
@@ -24,16 +22,14 @@ TEST_P(TestsFixture, IsEnergyCorrect)
             ++number_of_times_acceptable;
         }
     }
-    EXPECT_GT(number_of_times_acceptable , t / 2.0);
+    EXPECT_GT(number_of_times_acceptable , times / 2.0);
 }
 
-TEST_P(TestsFixture, IsCoverageCorrect)
+TEST_P(CoverageTests, IsCoverageCorrect)
 {
     BestPermutationComparator comparator;
-    int t = 20;
     int number_of_times_acceptable = 0;
-
-    for (int i = 0; i < t; ++i)
+    for (int i = 0; i < times; ++i)
     {
         CecConfiguration conf;
         conf.set_params(params);
@@ -47,12 +43,42 @@ TEST_P(TestsFixture, IsCoverageCorrect)
             ++number_of_times_acceptable;
         }
     }
-    EXPECT_GT(number_of_times_acceptable , t / 2.0);
+    EXPECT_GT(number_of_times_acceptable , times / 2.0);
 }
 
-INSTANTIATE_TEST_CASE_P(CEC, TestsFixture, ::testing::Values(
-    TestsFixtureParam(ClusterReader("mouse_1_spherical", 2), boost::make_shared<DefaultGmumParams>(3, ksphere)),
-    TestsFixtureParam(ClusterReader("mouse_1", 2), boost::make_shared<DefaultGmumParams>(3, ksphere)),
-    TestsFixtureParam(ClusterReader("EllipseGauss", 2), boost::make_shared<DefaultGmumParams>(4, kstandard)),
-    TestsFixtureParam(ClusterReader("mouse_1_spherical", 2), boost::make_shared<MixTypeParamsThreeSpheres>())
+TEST_P(BigDataTests, IsEnergyNan)
+{
+    for (int i = 0; i < times; ++i)
+    {
+        CecConfiguration conf;
+        conf.set_params(params);
+        conf.set_algorithm("hartigan");
+        CecModel cec(&conf);
+        ASSERT_FALSE(std::isnan(cec.get_energy()));
+    }
+}
+
+INSTANTIATE_TEST_CASE_P(CEC, EnergyTests, ::testing::Values(
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, ksphere)),
+    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, ksphere)),
+    TestsFixtureParam(ClusterReader("EllipseGauss"), boost::make_shared<DefaultGmumParams>(4, kstandard)),
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<MixTypeParamsThreeSpheres>())
 ));
+
+INSTANTIATE_TEST_CASE_P(CEC, CoverageTests, ::testing::Values(
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, ksphere)),
+    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, ksphere)),
+    TestsFixtureParam(ClusterReader("EllipseGauss"), boost::make_shared<DefaultGmumParams>(4, kstandard)),
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<MixTypeParamsThreeSpheres>())
+));
+
+/*
+INSTANTIATE_TEST_CASE_P(CEC_NumericTest, BigDataTests, ::testing::Values(
+    TestsFixtureParam(ClusterReader("DimSets_32"), boost::make_shared<DefaultGmumParams>(16, ksphere), 1),
+    TestsFixtureParam(ClusterReader("DimSets_32"), boost::make_shared<DefaultGmumParams>(16, kstandard), 1),
+    TestsFixtureParam(ClusterReader("DimSets_32"), boost::make_shared<DefaultGmumParams>(16, kdiagonal), 1),
+    TestsFixtureParam(ClusterReader("DimSets_64"), boost::make_shared<DefaultGmumParams>(16, ksphere), 1),
+    TestsFixtureParam(ClusterReader("DimSets_64"), boost::make_shared<DefaultGmumParams>(16, kstandard), 1),
+    TestsFixtureParam(ClusterReader("DimSets_64"), boost::make_shared<DefaultGmumParams>(16, kdiagonal), 1)
+));
+*/

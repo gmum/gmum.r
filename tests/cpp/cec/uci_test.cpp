@@ -18,8 +18,8 @@ TEST(CEC_UCI_TestCase, dummy)
     params.nclusters = 7;
     params.kill_threshold = 0.05;
     params.dataset = cluster_reader.get_points_in_matrix();
-    params.nstart = 5;
-    params.assignment_type = kkmeanspp;
+    params.nstart = 1000;
+    params.assignment_type = krandom;
     params.cluster_type = kstandard;
 
     CecConfiguration conf;
@@ -27,6 +27,7 @@ TEST(CEC_UCI_TestCase, dummy)
     conf.set_algorithm("hartigan");
     CecModel cec(&conf);
     double e = cec.get_energy();
+    std::cout << e;
     ASSERT_TRUE(std::isnormal(e)); // check if it's not nan or inf
 }
 

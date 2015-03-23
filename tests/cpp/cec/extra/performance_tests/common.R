@@ -1,12 +1,31 @@
 method_types = list(gmum=c('standard', 'sphere', 'diagonal'), cran=c('all', 'spherical', 'diagonal'))
 nmethod_types = length(method_types$gmum)
 
+load_dataset <- function(data_path) {
+    points_file = file.path(data_path, 'input.txt')
+    clusters_file = file.path(data_path, 'cluster.txt')
+    
+    if(!file.exists(points_file)) {
+        stop(points_file, ": File does not exist")
+    }
+    
+    if(!file.exists(clusters_file)) {
+        stop(clusters_file, ": File does not exist")
+    }
+    
+    dataset <- as.matrix(read.table(file=points_file, colClasses='numeric'))
+    clusters <- as.matrix(read.table(file=clusters_file))
+    k <- max(clusters)
+    name <- basename(data_path) 
+    return(list(name=name, k=k, clustering=normalize_clustering(clusters), dataset=dataset))
+}
+
 normalize_clustering <- function(clustering) {
     return (clustering - min(clustering))
 }
 
 gmum_cec <- function(nclusters, nstart, points, init_type, method_type, max_iterations, eps, output_plot_path = NULL) {        
-    t = as.numeric(system.time(c <- CEC(k=nclusters, control.nstart=nstart, x=points, method.init=init_type, method.type=method_type, control.itmax=max_iterations, control.eps=eps))[3])
+    t = as.numeric(system.time(c <- CEC(k=nclusters, control.nstart=nstart, x=points, method.init=init_type, method.type=method_type, control.itmax=max_iterations, control.eps=eps, log.ncluster=TRUE))[3])
     
     if( !is.null(output_plot_path) ) {
         jpeg(output_plot_path)
@@ -19,7 +38,8 @@ gmum_cec <- function(nclusters, nstart, points, init_type, method_type, max_iter
         iters=c$log.iters(), 
         energy=c$energy(), 
         clustering=normalize_clustering(c$y()), 
-        centers=c$centers()))
+        centers=c$centers(),
+        final_nclusters=tail(c$log.ncluster(), n=1)))
 }
 
 cran_cec <- function(nclusters, nstart, points, init_type, method_type, max_iterations, eps, output_plot_path = NULL) {    
@@ -36,7 +56,8 @@ cran_cec <- function(nclusters, nstart, points, init_type, method_type, max_iter
         iters=c$iterations,
         energy=tail(c$cost, n=1),
         clustering=normalize_clustering(c$cluster),
-        centers=c$centers))
+        centers=c$centers,
+        final_nclusters=c$final.nclusters))
 }
 
 append_result <- function(method_type, points, times, results, cec_function) {
