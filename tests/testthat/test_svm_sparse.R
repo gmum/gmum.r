@@ -36,18 +36,18 @@ test_that("sparse matrices work", {
   x <- read.matrix.csr(system.file("inst", "data_sets", "svm", "dexter_train.data", mustWork=TRUE, package="gmum.r"))
   y <- read.table(system.file("inst", "data_sets", "svm", "dexter_train.labels", mustWork=TRUE, package="gmum.r"))
 
-  liblist <- c("svmlight")
+  liblist <- c("svmlight", "libsvm")
 
   for (lib_i in liblist) {
 
       print(sprintf("Testing %s", lib_i))
 
       print("Learning...")
-      svm <- SVM(x=x, y=y, lib=lib_i, kernel="linear", C=10, verbosity=6)
+      svm <- SVM(x=x, y=y, lib=lib_i, kernel="linear", C=10, verbosity=0)
 
       print("Prediction...")
       pred <- predict(svm, x)
-      
+
       target <- svm$getY()
       print(length(pred))
       print(length(target))

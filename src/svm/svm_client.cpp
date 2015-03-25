@@ -273,7 +273,7 @@ double SVMClient::kernel(size_t i, size_t j) {
             if (isSparse()) {
                 result = arma::dot(
                     config.sparse_data.row(i),
-                    config.sparse_support_vectors.row(j)
+                    config.support_vectors.row(j)
                 );
             } else {
                 result = arma::dot(
@@ -286,10 +286,17 @@ double SVMClient::kernel(size_t i, size_t j) {
         case _POLY: {
             // libsvm:   kernel(v, u') = (gamma*u'*v + coef0)^degree
             // svmlight: kernel(b, a) = (s a*b+c)^d
-            result = arma::dot(
-                config.data.row(i),
-                config.sparse_support_vectors.row(j)
-            );
+            if (isSparse()) {
+                result = arma::dot(
+                    config.sparse_data.row(i),
+                    config.support_vectors.row(j)
+                );
+            } else {
+                result = arma::dot(
+                    config.data.row(i),
+                    config.sparse_support_vectors.row(j)
+                );
+            }
             result *= config.gamma;
             result += config.coef0;
             result = arma::pow(
@@ -302,11 +309,20 @@ double SVMClient::kernel(size_t i, size_t j) {
             // libsvm:   kernel(v, u') = exp(-gamma*|u-v|^2)
             // svmlight: kernel(b, a) = exp(-gamma ||a-b||^2)
             double neg_gamma = -config.gamma;
-            double norm = arma::norm(
-                config.data.row(i)
-                - config.sparse_support_vectors.row(j),
-                2
-            );
+            double norm = 0;
+            if (isSparse()) {
+                norm = arma::norm(
+                    config.data.row(i)
+                    - config.sparse_support_vectors.row(j),
+                    2
+                );
+            } else {
+                norm = arma::norm(
+                    config.sparse_data.row(i)
+                    - config.support_vectors.row(j),
+                    2
+                );
+            }
             result = arma::exp(
                 arma::mat(&neg_gamma, 1, 1) *
                 arma::pow(
@@ -318,10 +334,18 @@ double SVMClient::kernel(size_t i, size_t j) {
         case _SIGMOID: {
             // libsvm:   kernel(v, u') = tanh(gamma*u'*v + coef0)
             // svmlight: kernel(b, a) = tanh(s a*b + c)
-            double tanh_arg = arma::dot(
-                config.data.row(i),
-                config.sparse_support_vectors.row(j)
-            );
+            double tanh_arg = 0;
+            if (isSparse()) {
+                tanh_arg = arma::dot(
+                    config.sparse_data.row(i),
+                    config.support_vectors.row(j)
+                );
+            } else {
+                tanh_arg = arma::dot(
+                    config.data.row(i),
+                    config.sparse_support_vectors.row(j)
+                );
+            }
             tanh_arg *= config.gamma;
             tanh_arg += config.coef0;
             result = arma::tanh(arma::mat(&tanh_arg, 1, 1))[0];
@@ -357,24 +381,27 @@ void SVMClient::sparse_predict(
     );
 
     // TODO: Delete after libsvm refactor
-    config.sp_data = values;
-    config.row = rowind;
-    config.col = colptr;
-    config.dim = n_rows;
-    config.data_dim = n_cols;
-    config.sparse = true;
-    if ( config.library == LIBSVM && SVMHandlers.size() > 0 ) {
+    /*
+    if (config.library == LIBSVM && SVMHandlers.size() > 0 ) {
+        config.sp_data = values;
+        config.row = arma::conv_to< arma::Col< int > >::from(rowind);
+        config.col = arma::conv_to< arma::Col< int > >::from(colptr);
+        config.dim = n_rows;
+        config.data_dim = n_cols;
+        config.sparse = true;
         config.setPrediction(true);
         for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
                 iter != SVMHandlers.end(); ++iter) {
+            LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".sparse_predict() processRequest()");
             (*iter)->processRequest(config);
         }
     } else {
+    */
     // NOTE: end of deletion
 
         predictFromConfig();
 
-    }
+    //}
     LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".sparse_predict() Done.");
 }
 

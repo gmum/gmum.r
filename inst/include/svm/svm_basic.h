@@ -94,10 +94,10 @@ public:
 
 	// sparse matrix things
 	arma::vec sp_data; 
-	arma::uvec row;
-	arma::uvec col;
-	size_t dim;
-	size_t data_dim;
+	arma::Col<int> row;
+	arma::Col<int> col;
+	int dim;
+	int data_dim;
 
     // Data cost
     bool use_cost;              // currently only svmligth-implemented

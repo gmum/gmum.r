@@ -42,10 +42,36 @@ void SVMConfiguration::setSparseData(
 	arma::uvec rowind,
     arma::uvec colptr,
     arma::vec values,
-    size_t n_rows,
-    size_t n_cols
+    size_t nrow,
+    size_t ncol
 ) {
-    this->sparse_data = arma::sp_mat(rowind, colptr, values, n_rows, n_cols);
+    //this->sparse_data = arma::sp_mat(rowind, colptr, values, n_rows, n_cols);
+    this->sparse_data = arma::sp_mat(nrow, ncol);
+
+    // create space for values, and copy
+    arma::access::rw(this->sparse_data.values)
+        = arma::memory::acquire_chunked<double>(values.size() + 1);
+    arma::arrayops::copy(
+        arma::access::rwp(this->sparse_data.values), values.begin(), values.size() + 1);
+
+    // create space for row_indices, and copy
+    arma::access::rw(this->sparse_data.row_indices)
+        = arma::memory::acquire_chunked<arma::uword>(rowind.size() + 1);
+    arma::arrayops::copy(
+        arma::access::rwp(this->sparse_data.row_indices), rowind.begin(), rowind.size() + 1);
+    
+    // create space for col_ptrs, and copy 
+    arma::access::rw(this->sparse_data.col_ptrs)
+        = arma::memory::acquire<arma::uword>(colptr.size() + 2);
+    arma::arrayops::copy(
+        arma::access::rwp(this->sparse_data.col_ptrs), colptr.begin(), colptr.size() + 1);
+
+    // important: set the sentinel as well
+    arma::access::rwp(this->sparse_data.col_ptrs)[colptr.size()+1]
+        = std::numeric_limits<arma::uword>::max();
+    
+    // set the number of non-zero elements
+    arma::access::rw(this->sparse_data.n_nonzero) = values.size();
 }
 
 arma::sp_mat SVMConfiguration::getSparseData() {

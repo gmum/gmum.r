@@ -278,7 +278,7 @@ double * LibSVMRunner::vectlib(arma::vec target) {
 	return return_target;
 }
 
-svm_node** LibSVMRunner::SparseToSVMNode(arma::vec& x, size_t r, arma::uvec& rowindex, arma::uvec& colindex) { 
+svm_node** LibSVMRunner::SparseToSVMNode(arma::vec& x, int r, arma::Col<int>& rowindex, arma::Col<int>& colindex) { 
     struct svm_node** sparse;
     int i, ii, count = 0, nnz = 0;
 
