@@ -3,7 +3,7 @@ library(igraph)
   .gng.plot3d<-function(gngServer){
 	if("rgl" %in% rownames(installed.packages()) == TRUE){
 	    g <- convertToGraph(gngServer)
-	    .visualizeIGraphRGL(g)
+	    .visualizeIGraphRGL(g, radius=0.3)
 	}else{
 	    warning("Please install rgl package to plot 3d graphs")
 	}
@@ -50,9 +50,9 @@ library(igraph)
 	      k = k + 2
 	    }  
 	    
-	    if(is.null(radius)){
-	      radius <- 8.0*(0.3333* (abs(max(x) - min(x))+abs(max(y) - min(y))+abs(max(z) - min(z)))/(nodes+0.0))
-	    }
+	    #if(is.null(radius)){
+	    #  radius <- 8.0*(0.3333* (abs(max(x) - min(x))+abs(max(y) - min(y))+abs(max(z) - min(z)))/(nodes+0.0))
+	    #}
 	    
 	    cx <- V(g)$error
 	    cx <- abs(cx)/max(abs(cx)) 

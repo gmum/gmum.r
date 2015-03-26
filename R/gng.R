@@ -1018,16 +1018,15 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
             insertExamples.gng)
   
 
-  methods = list()
-    methods[[name]] = eval(substitute(
-      function(...) .CppObject$WHAT(...), list(WHAT = as.name(name)))) 
-  }
-  
-  methods[["initialize"]] <- function(...){
-    
-  }
-  
-
+    methods = list()
+    for(name in names(GNGConfiguration@methods)){
+            methods[[name]] = eval(substitute(
+                                                    function(...) .CppObject$WHAT(...), list(WHAT = as.name(name)))) 
+      }
+      
+      methods[["initialize"]] <- function(...){
+              
+   }
+      
 
 })
-

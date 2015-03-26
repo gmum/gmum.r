@@ -80,7 +80,7 @@ RCPP_MODULE(gng_module){
 			.method(".getGNGErrorIndex", &GNGServer::getGNGErrorIndex)
 			.method("getNode", &GNGServer::getNode)
 			.method("insertExamples", &GNGServer::RinsertExamples)
-			.method("insertLabeledExamples", &GNGServer::RinsertExamples)
+			.method("insertLabeledExamples", &GNGServer::RinsertLabeledExamples)
 			.method("getErrorStatistics", &GNGServer::RgetErrorStatistics)
 			.method("predict", &GNGServer::Rpredict)
 
