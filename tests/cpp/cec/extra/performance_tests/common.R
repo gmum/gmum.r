@@ -14,10 +14,10 @@ load_dataset <- function(data_path) {
     }
     
     dataset <- as.matrix(read.table(file=points_file, colClasses='numeric'))
-    clusters <- as.matrix(read.table(file=clusters_file))
+    clusters <- normalize_clustering(as.matrix(read.table(file=clusters_file)))
     k <- max(clusters)
     name <- basename(data_path) 
-    return(list(name=name, k=k, clustering=normalize_clustering(clusters), dataset=dataset))
+    return(list(name=name, k=k, clustering=clusters, dataset=dataset))
 }
 
 normalize_clustering <- function(clustering) {
@@ -26,20 +26,26 @@ normalize_clustering <- function(clustering) {
 
 gmum_cec <- function(nclusters, nstart, points, init_type, method_type, max_iterations, eps, output_plot_path = NULL) {        
     t = as.numeric(system.time(c <- CEC(k=nclusters, control.nstart=nstart, x=points, method.init=init_type, method.type=method_type, control.itmax=max_iterations, control.eps=eps, log.ncluster=TRUE))[3])
-    
     if( !is.null(output_plot_path) ) {
         jpeg(output_plot_path)
         plot(c)
         dev.off()
     }    
     
+    time_ = t
+    iters_ = c$log.iters()
+    energy_ = c$energy()
+    clustering_ = normalize_clustering(c$y())
+    centers_ = c$centers()
+    final_nclusters_ = tail(c$log.ncluster(), n=1)    
+    
     return (list(
-        time=t, 
-        iters=c$log.iters(), 
-        energy=c$energy(), 
-        clustering=normalize_clustering(c$y()), 
-        centers=c$centers(),
-        final_nclusters=tail(c$log.ncluster(), n=1)))
+        time=time_, 
+        iters=iters_, 
+        energy=energy_, 
+        clustering=clustering_, 
+        centers=centers_,
+        final_nclusters=final_nclusters_))
 }
 
 cran_cec <- function(nclusters, nstart, points, init_type, method_type, max_iterations, eps, output_plot_path = NULL) {    

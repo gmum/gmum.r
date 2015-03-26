@@ -1,5 +1,5 @@
 source('common.R')
-library(fossil)
+library(mclust)
 library(nlme)
 library(gmum.r)
 library(CEC)
@@ -12,21 +12,32 @@ dir.create(gmum_plot_path, showWarnings = FALSE, recursive = TRUE)
 dir.create(cran_plot_path, showWarnings = FALSE, recursive = TRUE)
 test_data = list()
 
-test_data[['DimSet']] = list(
-    DimSets_32 = load_dataset(data_path = file.path(data_path, "DimSets_32")),
-    DimSets_64 = load_dataset(data_path = file.path(data_path, "DimSets_64")),
-    DimSets_128 = load_dataset(data_path = file.path(data_path, "DimSets_128")),
-    DimSets_256 = load_dataset(data_path = file.path(data_path, "DimSets_256")),
-    DimSets_512 = load_dataset(data_path = file.path(data_path, "DimSets_512"))
+#test_data[['DimSet']] = list(
+#    DimSets_32 = load_dataset(data_path = file.path(data_path, "DimSets_32")),
+#    DimSets_64 = load_dataset(data_path = file.path(data_path, "DimSets_64")),
+#    DimSets_128 = load_dataset(data_path = file.path(data_path, "DimSets_128")),
+#    DimSets_256 = load_dataset(data_path = file.path(data_path, "DimSets_256")),
+#    DimSets_512 = load_dataset(data_path = file.path(data_path, "DimSets_512"))
 #    DimSets_1024 = load_dataset(data_path = file.path(data_path, "DimSets_1024"))
+#)
+
+test_data[['UCI']] = list(
+    iris = load_dataset(data_path = file.path(data_path, "UCI","iris")),
+    glass = load_dataset(data_path = file.path(data_path, "UCI", "glass")),
+    vowel = load_dataset(data_path = file.path(data_path, "UCI", "vowel")),
+    wine = load_dataset(data_path = file.path(data_path, "UCI", "wine")),
+    pendigits = load_dataset(data_path = file.path(data_path, "UCI", "pendigits")),
+    poker = load_dataset(data_path = file.path(data_path, "UCI", "poker")),
+    connect_4 = load_dataset(data_path = file.path(data_path, "UCI", "connect_4"))
+    #covtype = load_dataset(data_path = file.path(data_path, "UCI", "covtype"))
 )
 
 gmum_cec_uci <- function(method_type, points, nclusters, output_plot_path = NULL) {
-    return (gmum_cec(nstart = 10, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = 0.01, output_plot_path))     
+    return (gmum_cec(nstart = 1000, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = 0.01, output_plot_path))     
 }
 
 cran_cec_uci <- function(method_type, points, nclusters, output_plot_path = NULL) {
-    return (cran_cec(nstart = 10, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = "1%", output_plot_path))
+    return (cran_cec(nstart = 1000, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = "1%", output_plot_path))
 }
 
 for(name in names(test_data)) {    
@@ -43,7 +54,7 @@ for(name in names(test_data)) {
                 gmum_result <- gmum_cec_uci(method_type = method_types$gmum[j], points = dataset, nclusters = item$k)
                 gmum_clustering_df <- data.frame(gmum_result$clustering, item$clustering)
                 colnames(gmum_clustering_df) <- c('gmum', 'correct')
-                gmum_rand_index <- rand.index(gmum_result$clustering, item$clustering)
+                gmum_rand_index <- adjustedRandIndex(gmum_result$clustering, item$clustering)
                 gmum_bic <- BIC(lm(gmum ~ correct, data=gmum_clustering_df))
                 list(
                     energy = gmum_result$energy,
@@ -68,7 +79,7 @@ for(name in names(test_data)) {
                 cran_result <- cran_cec_uci(method_type = method_types$cran[j], points = dataset, nclusters = item$k)
                 cran_clustering_df <- data.frame(cran_result$clustering, item$clustering)
                 colnames(cran_clustering_df) <- c('cran', 'correct')
-                cran_rand_index <- rand.index(cran_result$clustering, item$clustering)           
+                cran_rand_index <- adjustedRandIndex(cran_result$clustering, item$clustering)           
                 cran_bic <- BIC(lm(cran ~ correct, data=cran_clustering_df))            
                 list(
                     energy = cran_result$energy,
