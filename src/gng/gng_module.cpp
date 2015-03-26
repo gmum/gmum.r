@@ -71,6 +71,7 @@ RCPP_MODULE(gng_module){
 			.method("pause", &GNGServer::pause)
 			.method("terminate", &GNGServer::terminate)
 			.method("getMeanError", &GNGServer::getMeanError)
+			.method("hasStarted", &GNGServer::hasStarted)
 			.method("nodeDistance", &GNGServer::nodeDistance)
 			.method("clustering", &GNGServer::RgetClustering)
 			.method("getConfiguration", &GNGServer::getConfiguration)
@@ -79,9 +80,12 @@ RCPP_MODULE(gng_module){
 			.method(".getGNGErrorIndex", &GNGServer::getGNGErrorIndex)
 			.method("getNode", &GNGServer::getNode)
 			.method("insertExamples", &GNGServer::RinsertExamples)
+			.method("insertLabeledExamples", &GNGServer::RinsertExamples)
 			.method("getErrorStatistics", &GNGServer::RgetErrorStatistics)
 			.method("predict", &GNGServer::Rpredict)
-			.method(".getLastNodeIndex", &GNGServer::_getLastNodeIndex);
+
+			.method(".getLastNodeIndex", &GNGServer::_getLastNodeIndex)
+			.method(".updateClustering", &GNGServer::_updateClustering);
 }
 
 #include <RcppArmadillo.h>

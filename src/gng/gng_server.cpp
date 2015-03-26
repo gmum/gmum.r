@@ -225,8 +225,14 @@ unsigned int GNGServer::getNumberNodes() const {
 	return nr;
 }
 
+
+
 double GNGServer::getMeanError() {
 	return gngAlgorithm->getMeanError();
+}
+
+bool GNGServer::hasStarted() const{
+	return this->getCurrentIteration() != 0;
 }
 
 vector<double> GNGServer::getMeanErrorStatistics() {
@@ -245,6 +251,10 @@ unsigned GNGServer::getGNGErrorIndex() const{
 }
 
 #ifdef RCPP_INTERFACE
+
+void GNGServer::_updateClustering(){
+	gngAlgorithm->updateClustering();
+}
 
 //This is tricky - used only by convertToIGraph in R, because
 //it might happen that we delete nodes and have bigger index of the last node
@@ -317,7 +327,12 @@ Rcpp::NumericVector GNGServer::RgetErrorStatistics() {
 	vector<double> x = getMeanErrorStatistics();
 	return NumericVector(x.begin(), x.end());
 }
-void GNGServer::RinsertExamples(Rcpp::NumericMatrix & r_points,
+
+void GNGServer::RinsertExamples(Rcpp::NumericMatrix & r_points){
+	RinsertLabeledExamples(r_points, Rcpp::NumericVector());
+}
+
+void GNGServer::RinsertLabeledExamples(Rcpp::NumericMatrix & r_points,
 		Rcpp::NumericVector r_extra ) {
 	std::vector<double> extra(r_extra.begin(), r_extra.end());
 	arma::mat * points = new arma::mat(r_points.begin(), r_points.nrow(), r_points.ncol(), false);

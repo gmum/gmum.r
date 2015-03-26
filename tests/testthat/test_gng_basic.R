@@ -74,6 +74,14 @@ for(k in 1:3){
 
 })
 
+test_that("GNG is working on mouse dataset", {
+    data(cec_mouse_1_spherical)
+    dataset = input
+    gng <- GNG(dataset)
+  expect_that(gng$getMeanError() < 0.005, is_true())
+  expect_that(all(gng$clustering() == predict(gng,dataset)), is_true())
+})
+
 test_that("GNG clustering and predict are returning the same", {
   X <- replicate(10, rnorm(20))
   gng <- GNG(X)

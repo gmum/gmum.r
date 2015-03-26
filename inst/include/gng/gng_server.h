@@ -45,6 +45,8 @@ public:
 
 	void pause();
 
+	bool hasStarted() const;
+
 	void terminate();
 
 	double nodeDistance(int id1, int id2) const;
@@ -59,6 +61,8 @@ public:
 	///Insert examples
 	void insertExamples(double * positions, double * extra,
 			double * probability, unsigned int count, unsigned int dim);
+
+
 
 	unsigned getGNGErrorIndex() const;
 	bool isRunning() const;
@@ -85,16 +89,21 @@ public:
 
 	Rcpp::NumericVector RgetClustering();
 
+
 	Rcpp::NumericVector RgetErrorStatistics();
 
-	void RinsertExamples(Rcpp::NumericMatrix & r_points,
-			Rcpp::NumericVector r_extra = Rcpp::NumericVector());
+	void RinsertExamples(Rcpp::NumericMatrix & r_points);
+
+	void RinsertLabeledExamples(Rcpp::NumericMatrix & r_points,
+			Rcpp::NumericVector r_extra);
 
 	//This is tricky - used only by convertToIGraph in R, because
 	//it might happen that we delete nodes and have bigger index of the last node
 	//than actual nodes (especially in the case of utility version of GNG)
 	unsigned int _getLastNodeIndex() const;
 
+	///Calls updateClustering on the GNGAlgorithm object
+	void _updateClustering();
 #endif
 
 private:

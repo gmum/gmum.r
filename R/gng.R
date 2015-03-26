@@ -610,13 +610,18 @@ evalqOnLoad({
           }
           
           previous_iter = iter
+         
           
+
           if(server$isRunning()){
             terminate(server)
           }
           else{
             gmum.error(ERROR, "Training failed")
           }
+
+          server$.updateClustering()
+
         }, interrupt=
         function(interrupt){
           if(server$isRunning()){
@@ -626,6 +631,8 @@ evalqOnLoad({
         })
         
       }
+    }else{
+        server$run()
     }
     
     
@@ -754,16 +761,21 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   }
   
   summary.gng <<- function(object){
-    print(sprintf("Growing Neural Gas, nodes %d with mean error %f", 
-                  object$getNumberNodes(), object$getMeanError()))
-    print(sprintf("Trained %d iterations", object$getCurrentIteration()))
-    print("Mean errors[s]: ")
-    errors = object$getErrorStatistics()
-    if(length(errors) > 10){
-      errors = errors[(length(errors)-10):length(errors)]
+    print("Growing Neural Gas")
+    print(object$call)
+    if(object$hasStarted()){
+        print(sprintf("%d nodes with mean error %f", 
+                      object$getNumberNodes(), object$getMeanError()))
+        
+        print(sprintf("Trained %d iterations", object$getCurrentIteration()))
+        print("Mean errors[s]: ")
+        errors = object$getErrorStatistics()
+        if(length(errors) > 10){
+          errors = errors[(length(errors)-10):length(errors)]
+        }
+        
+        print(errors)
     }
-    
-    print(errors)
   }
 
 
@@ -971,7 +983,7 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   
   insertExamples.gng <<- function(object, examples, labels=c()){   
 	  if(length(labels) == 0){
-      	object$insertExamples(examples, vector(mode="numeric", length=0))
+      	object$insertExamples(examples)
 	  }else if(typeof(labels) == "character"){
 		if(typeof(labels) == "list"){
 			if(is.null(examples$labels)){
@@ -979,13 +991,13 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
 			}else{
 				label.column <- examples$labels
 				examples$labels <- NULL
-				object$insertExamples(examples, label.column)
+				object$insertLabeledExamples(examples, label.column)
 			}
 		}else{
 	  		gmum.error(ERROR_BAD_PARAMS, "Please pass data frame")
 		}
 	  }else{
-        object$insertExamples(examples, labels)
+        object$insertLabeledExamples(examples, labels)
 	  }    
 	
   }

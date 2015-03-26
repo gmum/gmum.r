@@ -277,6 +277,7 @@ void GNGAlgorithm::addNewNode() {
 	DBG_2(m_logger, 3, "GNGAlgorith::AddNewNode::delete done");
 }
 
+
 int GNGAlgorithm::predict(const std::vector<double> & ex) {
 
 	if (m_g.get_number_nodes() == 0)
@@ -553,6 +554,13 @@ GNGNode ** GNGAlgorithm::LargestErrorNodes() {
 	return largest;
 }
 
+void GNGAlgorithm::updateClustering() {
+	gmum::scoped_lock<GNGDataset> db_lock(*g_db);
+	for(unsigned int i=0;i<g_db->size();++i){
+		set_clustering(i, _getNearestNeurons(g_db->getPosition(i)).first);
+	}
+}
+
 void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that computes)
 	this->running = true;
 	int size = g_db->size();
@@ -621,6 +629,8 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 				//Fined grained locks are necessary to prevent deadlocks
 				gmum::scoped_lock<GNGDataset> db_lock(*g_db);
 				ex = g_db->drawExample();
+
+
 				position = g_db->getPosition(ex);
 				vertex_data = g_db->getExtraData(ex);
 				DBG(m_logger, 0, "GNGAlgorithm::draw example");
@@ -738,7 +748,7 @@ double GNGAlgorithm::getMeanError() {
 	gmum::scoped_lock<gmum::fast_mutex> alg_lock(m_statistics_mutex);
 	DBG(m_logger, 3, gmum::to_string(m_mean_error.size()));
 	if(m_mean_error.size() == 0){
-		return std::numeric_limits<double>::max();
+		return -1.0;
 	}else{
 
 		return m_mean_error[m_mean_error.size()-1].second;

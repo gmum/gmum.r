@@ -66,6 +66,9 @@ public:
 	///Retrieve closest node's gng_index to the example
 	int predict(const std::vector<double> &);
 
+	//Updates clustering field on the dataset kept in memory
+	void updateClustering();
+
 	void run();
 	void pause();
 	bool isRunning();
