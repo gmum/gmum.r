@@ -609,6 +609,7 @@ evalqOnLoad({
             }
           }
           
+          print(paste("Iteration", iter))
           previous_iter = iter
          
           
@@ -1018,7 +1019,6 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   
 
   methods = list()
-  for(name in names(GNGConfiguration@methods)){
     methods[[name]] = eval(substitute(
       function(...) .CppObject$WHAT(...), list(WHAT = as.name(name)))) 
   }
