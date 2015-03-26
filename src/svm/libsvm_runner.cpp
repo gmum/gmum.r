@@ -48,6 +48,9 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 }
 
 bool LibSVMRunner::canHandle(SVMConfiguration& config) {
+    if (config.use_cost) {
+        return false;
+    }
 	return config.library == LIBSVM;
 }
 

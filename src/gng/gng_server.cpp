@@ -322,6 +322,7 @@ void GNGServer::RinsertExamples(Rcpp::NumericMatrix & r_points,
 	std::vector<double> extra(r_extra.begin(), r_extra.end());
 	arma::mat * points = new arma::mat(r_points.begin(), r_points.nrow(), r_points.ncol(), false);
 
+
 	arma::Row<double> mean_colwise = arma::mean(*points, 0 /*dim*/);
 	arma::Row<double> std_colwise = arma::stddev(*points, 0 /*dim*/);
 	arma::Row<double> diff_std = arma::abs(std_colwise - 1.0);
@@ -349,10 +350,20 @@ void GNGServer::RinsertExamples(Rcpp::NumericMatrix & r_points,
 
 	arma::inplace_trans( *points, "lowmem");
 
+
+
+
 	if(extra.size()) {
+		if(!(points->n_cols== extra.size())){
+
+			cerr<<"Error: please pass same number of labels as examples\n";
+			cerr<<"Error: passed "<<points->n_cols<<" "<<extra.size()<<"\n";
+			return;
+		}
 		insertExamples(points->memptr(), &extra[0], 0 /*probabilty vector*/,
 				(unsigned int)points->n_cols, (unsigned int)points->n_rows);
 	} else {
+
 		insertExamples(points->memptr(), 0 /* extra vector */, 0 /*probabilty vector*/,
 				(unsigned int)points->n_cols, (unsigned int)points->n_rows);
 	}
@@ -373,8 +384,6 @@ void GNGServer::terminate() {
 	DBG(m_logger,20, "GNGServer::getAlgorithm terminated, joining algorithm thread");
 	if (algorithm_thread)
 		algorithm_thread->join();
-	DBG(m_logger,20, "GNGServer::algorithm thread terminated, joining statistic thread");
-	gmum::sleep(100);
 }
 
 GNGAlgorithm & GNGServer::getAlgorithm() {

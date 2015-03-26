@@ -2,7 +2,6 @@
 #define SVM_BASIC_H
 
 #include <string>
-#include <armadillo>
 
 #ifdef RCPP_INTERFACE
 #include <R.h>
@@ -87,6 +86,9 @@ public:
 	arma::mat data;		// armadillo matrix and vector (double)
 	arma::vec target;
 	arma::vec result;
+
+    bool use_cost;              // currently only LIBSVM-implemented
+    arma::vec data_cost;
 
 	Logger log;
 

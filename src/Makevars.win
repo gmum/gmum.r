@@ -11,13 +11,10 @@ OBJECTS = $(CPP_SOURCES:.cpp=.o) $(COMPILED_LIBRARIES_OBJECTS)
 DEBUG := -DNDEBUG_GMUM -DNDEBUG_GMUM_2
 PREPROCESS := $(DEBUG) -DARMA_DONT_USE_CXX11 -DRCPP_INTERFACE
 
-GCC_STD := 
+R_LIBS :=    $(shell R CMD config --ldflags)  $(shell echo 'Rcpp:::LdFlags()'  | R --vanilla --slave)
+R_CPPFLAGS := $(shell R CMD config --cppflags)  $(shell echo 'Rcpp:::CxxFlags()' | R --vanilla --slave)     $(shell echo 'RcppArmadillo:::CxxFlags()' | R --vanilla --slave)
+LAPACK_LIBS := $(shell R CMD config LAPACK_LIBS)
+BLAS_LIBS := $(shell R CMD config BLAS_LIBS)
 
-R_HOME :=     $(shell R RHOME)
-R_LIBS :=    $(shell $(R_HOME)/bin/R CMD config --ldflags)  $(shell echo 'Rcpp:::LdFlags()'  | $(R_HOME)/bin/R --vanilla --slave)
-R_CPPFLAGS := $(shell $(R_HOME)/bin/R CMD config --cppflags)  $(shell echo 'Rcpp:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)     $(shell echo 'RcppArmadillo:::CxxFlags()' | $(R_HOME)/bin/R --vanilla --slave)
-LAPACK_LIBS := $(shell ${R_HOME}/bin/R CMD config LAPACK_LIBS)
-BLAS_LIBS := $(shell ${R_HOME}/bin/R CMD config BLAS_LIBS)
-
-PKG_CPPFLAGS := $(GCC_STD) $(PREPROCESS) $(R_CPPFLAGS) $(INCLUDES) -Wall -pthread -pedantic -mtune=native
-PKG_LIBS := $(LAPACK_LIBS) $(BLAS_LIBS) $(R_LIBS)
+PKG_CPPFLAGS := $(PKG_CPPFLAGS) $(GCC_STD) $(PREPROCESS) $(R_CPPFLAGS) $(INCLUDES) -Wall -pedantic -mtune=native -static-libstdc++ -static-libgcc -lstdc++ -lpthread
+PKG_LIBS := $(PKG_LIBS) $(LAPACK_LIBS) $(BLAS_LIBS) $(R_LIBS) -static-libstdc++ -static-libgcc -lstdc++ -lpthread
