@@ -563,6 +563,7 @@ void GNGAlgorithm::updateClustering() {
 
 void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that computes)
 	this->running = true;
+	run();
 	int size = g_db->size();
 
 	DBG_2(m_logger, 3, "GNGAlgorithm::runAlgorithm()");

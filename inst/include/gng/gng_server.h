@@ -136,7 +136,6 @@ private:
 		GNGServer * gng_server = (GNGServer*) server;
 		try {
 			DBG(gng_server->m_logger,10, "GNGServer::run::proceeding to algorithm");
-			gng_server->getAlgorithm().run();
 			gng_server->getAlgorithm().runAlgorithm();
 		} catch (std::exception & e) {
 			cerr << "GNGServer::failed _run with " << e.what() << endl;

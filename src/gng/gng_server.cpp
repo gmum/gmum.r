@@ -127,11 +127,14 @@ void GNGServer::init(GNGConfiguration configuration,
 }
 
 void GNGServer::run() {
-	DBG(m_logger,10, "GNGServer::runing algorithm thread");
-	algorithm_thread = new gmum::gmum_thread(&GNGServer::_run, (void*) this);
-	DBG(m_logger,10, "GNGServer::runing collect_statistics thread");
-
-	m_running_thread_created = true;
+	if(!algorithm_thread){
+		DBG(m_logger,10, "GNGServer::runing algorithm thread");
+		algorithm_thread = new gmum::gmum_thread(&GNGServer::_run, (void*) this);
+		DBG(m_logger,10, "GNGServer::runing collect_statistics thread");
+		m_running_thread_created = true;
+	}else{
+		gngAlgorithm->run();
+	}
 }
 
 GNGConfiguration GNGServer::getConfiguration() {
@@ -384,6 +387,10 @@ void GNGServer::RinsertLabeledExamples(Rcpp::NumericMatrix & r_points,
 	}
 
 	arma::inplace_trans( *points, "lowmem");
+
+	if(!isRunning()){
+		run();
+	}
 }
 
 #endif

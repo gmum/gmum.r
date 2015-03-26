@@ -17,7 +17,7 @@ gng.plot.layout.igraph.fruchterman.fast <- layout.fruchterman.reingold
 gng.plot.layout.igraph.auto <- layout.auto
 
 gng.plot.2d <- 1
-gng.plot.rgl3d <- 2
+gng.plot.3d <- 2
 gng.plot.2d.errors <- 3
 
 
@@ -71,7 +71,7 @@ gng.train.offline <- function(max.iter = 100, min.improvement = 1e-3){
 #' 
 #' @docType methods
 #'
-#' @param mode gng.plot.rgl3d (3d plot), gng.plot.2d (igraph plot) or
+#' @param mode gng.plot.3d (3d plot), gng.plot.2d (igraph plot) or
 #' gng.plot.2d.errors (igraph plot with mean error log plot)
 #' 
 #' @param layout layout to be used when plotting. Possible values: gng.plot.layour.igraph.v2d (first two dimensions),
@@ -89,7 +89,7 @@ gng.train.offline <- function(max.iter = 100, min.improvement = 1e-3){
 #' plot(gng, mode=gng.plot.2d.errors, layout=gng.plot.layout.v2d, vertex.color=gng.plot.color.cluster)
 #' 
 #' # Plot rgl (make sure you have installed rgl library)
-#' plot(gng, mode=gng.plot.rgl, layout=gng.plot.layout.v2d, vertex.color=gng.plot.color.cluster)
+#' plot(gng, mode=gng.plot.3d, layout=gng.plot.layout.v2d, vertex.color=gng.plot.color.cluster)
 #' 
 #' # For more possibilities see gng.plot.* constants
 #' 
@@ -404,7 +404,7 @@ errorStatistics.gng <- NULL
 #' # Train in an offline manner
 #' gng <- GNG(scaled.wine, labels=wine$Type, max.nodes=20)
 #' # Plot
-#' plot(gng, mode=gng.plot.2d.cluster)
+#' plot(gng)
 #'
 #' # Train in an online manner with utility (erasing obsolete nodes)
 #' gng <- GNG(scaled.wine, labels=wine$Type, max.nodes=20, training=gng.train.online(), k=1.3)
@@ -413,7 +413,7 @@ errorStatistics.gng <- NULL
 #' Sys.sleep(10)
 #' terminate(gng)
 #' # Plot
-#' plot(gng, mode=gng.plot.2d.cluster)
+#' plot(gng)
 #'
 GNG <- NULL
 
@@ -632,7 +632,6 @@ evalqOnLoad({
         
       }
     }else{
-        server$run()
     }
     
     
@@ -729,7 +728,7 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
                 function(object, ...) standardGeneric("numberNodes"))
      
   
-  plot.gng <<- function(x, vertex.color=gng.plot.color.cluster, layout=gng.plot.layout.v2d, mode){
+  plot.gng <<- function(x, vertex.color=gng.plot.color.cluster, layout=gng.plot.layout.v2d, mode=gng.plot.2d){
     
     if(x$getNumberNodes() > 4000){
       warning("Trying to plot very large graph (>4000 nodes). It might take a while.")
@@ -739,12 +738,12 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
       return
     }
     
-    if(mode == gng.plot.rgl3d && !("rgl" %in% rownames(installed.packages()))){
+    if(mode == gng.plot.3d && !("rgl" %in% rownames(installed.packages()))){
       warning("Please install rgl and reload the package to plot 3d")
       return
     }
     
-    if(mode == gng.plot.rgl3d){
+    if(mode == gng.plot.3d){
       .gng.plot3d(x)
     }
     else if(mode == gng.plot.2d){
@@ -982,6 +981,8 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   
   
   insertExamples.gng <<- function(object, examples, labels=c()){   
+   
+
 	  if(length(labels) == 0){
       	object$insertExamples(examples)
 	  }else if(typeof(labels) == "character"){
@@ -999,7 +1000,6 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
 	  }else{
         object$insertLabeledExamples(examples, labels)
 	  }    
-	
   }
   
 

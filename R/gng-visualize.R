@@ -121,14 +121,13 @@ library(igraph)
 #' @note It is quite slow, works for graphs < 2000 nodes, and for graphs <400 when using layout
 .visualizeIGraph2d<-function(g, vertex.color, layout){
   L<-layout(g)
-  
   if(vertex.color == 'cluster'){   
     communities <- infomap.community(g)
     communities
     col <- rainbow(length(communities))
     vertex.color <- col[membership(communities)]
   }
-  if(vertex.color == 'fast_cluster'){
+  else if(vertex.color == 'fast_cluster'){
     l = fastgreedy.community(g)#as.undirected(g))
     col <- rainbow(length(l))
     print(membership(l))
