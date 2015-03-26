@@ -210,8 +210,8 @@ evalqOnLoad({
     if (control.nstart <= 0)
       stop("Number of starts should be a positive integer!");
     
-    if (control.eps > 1.0 / k)
-      stop("control.eps = ", control.eps, " is too high!");  
+    if (control.eps <= 0)
+      stop("control.eps = ", control.eps, " should be greater than 0!");  
     
     if (control.itmax < 0)
       stop("Maximum number of iterations should be a natural number!");

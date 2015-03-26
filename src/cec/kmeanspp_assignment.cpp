@@ -14,7 +14,7 @@ void KmeansppAssignment::operator()(std::vector<unsigned int> &assignment) {
 
 	//select points for centers
 	std::list<Point> selected;
-	unsigned int nsections = 100;
+	unsigned int nsections = m_nclusters;
 	unsigned int section = npoints / nsections;
 	if (section <= 1)
 		for (unsigned int i = 0; i < npoints; ++i)
