@@ -22,6 +22,10 @@ body {
     overflow-x: hidden;
 }
 
+a, a:hover {
+    color: #d95c5c;
+}
+
 section {
     padding-top: 70px;
     padding-bottom: 10px;
@@ -444,6 +448,11 @@ hr.primary {
     color: #555;
 }
 
+#tfml #tfml-link {
+    font-weight: bold;
+    color: #cc181e;
+}
+
 #contribute {
     background-color: #e0e0e0;
     color: #686868;
@@ -462,6 +471,10 @@ hr.primary {
 
 #contribute .footer .inline-graphical-link i, #contribute .footer .inline-graphical-link a {
     color: #d95c5c;
+}
+
+#repository-history {
+    padding: 0;
 }
 
 #theory {
