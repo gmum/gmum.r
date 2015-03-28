@@ -465,7 +465,7 @@ hr.primary {
 #contribute .footer {
     background-color: rgba(217, 92, 92, 0.1);
     display: inline-block;
-    margin: auto 10px;
+    margin: auto 10px 20px 10px;
     padding: 10px;
 }
 
