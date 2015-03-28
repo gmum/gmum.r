@@ -43,14 +43,12 @@ test_that("sparse matrices work", {
       print(sprintf("Testing %s", lib_i))
 
       print("Learning...")
-      svm <- SVM(x=x, y=y, lib=lib_i, kernel="linear", C=10, verbosity=0)
+      svm <- SVM(x=x, y=y, lib=lib_i, kernel="linear", C=1, verbosity=0)
 
       print("Prediction...")
       pred <- predict(svm, x)
 
       target <- svm$getY()
-      print(length(pred))
-      print(length(target))
       acc <- svm.accuracy(prediction=pred, target=target)
       print(sprintf("Sparse acc, %s prediction: %f", lib_i, acc))
   }

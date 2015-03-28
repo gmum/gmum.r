@@ -236,10 +236,10 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     learn_parm->svm_iter_to_shrink=-9999;
     learn_parm->maxiter=100000;
     learn_parm->kernel_cache_size=40;
-    learn_parm->svm_c=config.C;
+    learn_parm->svm_c=0;
     learn_parm->eps=0.1;
     learn_parm->transduction_posratio=-1.0;
-    learn_parm->svm_costratio=1.0;
+    learn_parm->svm_costratio=config.C;
     learn_parm->svm_costratio_unlab=1.0;
     learn_parm->svm_unlabbound=1E-5;
     learn_parm->epsilon_crit=0.001;

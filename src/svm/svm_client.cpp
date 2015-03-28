@@ -312,13 +312,13 @@ double SVMClient::kernel(size_t i, size_t j) {
             double norm = 0;
             if (isSparse()) {
                 norm = arma::norm(
-                    config.data.row(i)
+                    config.sparse_data.row(i)
                     - config.sparse_support_vectors.row(j),
                     2
                 );
             } else {
                 norm = arma::norm(
-                    config.sparse_data.row(i)
+                    config.data.row(i)
                     - config.support_vectors.row(j),
                     2
                 );
