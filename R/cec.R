@@ -78,7 +78,7 @@ runOneIteration.cec <- NULL
 #' 
 energy.cec <- NULL
 
-#' @title y
+#' @title clustering
 #' 
 #' @description Print labels assigned
 #' 
@@ -86,7 +86,7 @@ energy.cec <- NULL
 #'
 #' @param c CEC model object.
 #' 
-y.cec <- NULL
+clustering.cec <- NULL
 
 #' @title x
 #' 
@@ -191,8 +191,8 @@ evalqOnLoad({
                    control.nstart = 10,
                    control.eps = 0.05,
                    control.itmax = 25,
-                   log.energy = FALSE,
-                   log.ncluster= FALSE){
+                   log.energy = TRUE,
+                   log.ncluster= TRUE){
     
     # check for errors
     call <- match.call(expand.dots = TRUE)
@@ -210,8 +210,8 @@ evalqOnLoad({
     if (control.nstart <= 0)
       stop("Number of starts should be a positive integer!");
     
-    if (control.eps > 1.0 / k)
-      stop("killThreshold = ", control.eps, " is too high!");  
+    if (control.eps <= 0)
+      stop("control.eps = ", control.eps, " should be greater than 0!");  
     
     if (control.itmax < 0)
       stop("Maximum number of iterations should be a natural number!");
@@ -259,8 +259,8 @@ evalqOnLoad({
     c$energy()
   }
   
-  y.cec <<- function(c) {
-    c$y()
+  clustering.cec <<- function(c) {
+    c$clustering()
   }
   
   x.cec <<- function(c) {
@@ -290,7 +290,7 @@ evalqOnLoad({
     setGeneric("runAll", function(c) standardGeneric("runAll"))
     setGeneric("runOneIteration", function(c) standardGeneric("runOneIteration"))
     setGeneric("energy", function(c) standardGeneric("energy"))
-    setGeneric("y", function(c) standardGeneric("y"))
+    setGeneric("clustering", function(c) standardGeneric("clustering"))
     setGeneric("x", function(c) standardGeneric("x"))
     setGeneric("centers", function(c) standardGeneric("centers"))
     setGeneric("covMatrix", function(c) standardGeneric("covMatrix"))
@@ -301,7 +301,7 @@ evalqOnLoad({
     setMethod("runAll", "Rcpp_CecModel", runAll.cec)
     setMethod("runOneIteration", "Rcpp_CecModel", runOneIteration.cec)
     setMethod("energy", "Rcpp_CecModel", energy.cec)
-    setMethod("y", "Rcpp_CecModel", y.cec)
+    setMethod("clustering", "Rcpp_CecModel", clustering.cec)
     setMethod("x", "Rcpp_CecModel", x.cec)
     setMethod("centers", "Rcpp_CecModel", centers.cec)
     setMethod("covMatrix", "Rcpp_CecModel", covMatrix.cec)
