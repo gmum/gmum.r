@@ -1,6 +1,7 @@
 #include <climits>
 #include <cmath>
 #include "hartigan.hpp"
+#include "cec_configuration.hpp" // for GMUM_WARNING, TODO: move GMUM_WARNING and GMUM_ERROR to other file.
 
 #define isnan(x) (x != x)
 
@@ -17,12 +18,6 @@ TotalResult Hartigan::loop(const arma::mat &points,
     SingleResult sr;
     do {
         sr = single_loop(points, assignment, kill_threshold, clusters);
-        if(!sr.valid)
-        {
-            result.valid = false;
-            return result;
-        }
-
         result.append(sr, m_log_nclusters, m_log_energy);
         if ((m_max_iter > 0) && (m_max_iter <= result.iterations)) {
             // if max iter parameter is enabled and there are already max_iter iterations passed, break
@@ -30,8 +25,6 @@ TotalResult Hartigan::loop(const arma::mat &points,
         }
 
     } while (sr.switched > 0);
-
-    result.valid = true;
     return result;
 }
 
@@ -97,10 +90,7 @@ SingleResult Hartigan::single_loop(const arma::mat &points,
                 }
 
                 if (!std::isnormal(whole_entropy_change)) {
-                    // LOG(m_logger, LogLevel::ERR, "entropy change is NAN");
-                    sr.valid = false;
-                    return sr;
-                    // whole_entropy_change = std::numeric_limits<double>::max();
+                    continue; // ignore this cluster, it will be removed later
                 }
 
                 if (whole_entropy_change < best_entropy_change) { //newEntropy < oldEntropy
@@ -121,10 +111,8 @@ SingleResult Hartigan::single_loop(const arma::mat &points,
             try {
                 //if cluster has number of members lower than threshold, remove the cluster
                 //threshold is fraction of all points
-                if (clusters_raw[source]->size()
-                        < std::max(int(kill_threshold * npoints),
-                                   dimension + 1)) {
-
+                if (clusters_raw[source]->size() < std::max(int(kill_threshold * npoints), dimension + 1))
+                {
                     remove_cluster(source, points, assignment, clusters_raw);
                 }
             } catch (std::exception &e) {
@@ -133,21 +121,44 @@ SingleResult Hartigan::single_loop(const arma::mat &points,
                 LOG(m_logger, LogLevel::ERR, "removeCluster");
                 throw(e);
             }
-
         }
     }  //for iterates points
 
-    double energy = 0;
-    for (unsigned int i = 0; i < clusters_raw.size(); ++i) {
-        energy += calc_energy(clusters_raw[i]->entropy(), clusters_raw[i]->size(), npoints);
-    }
+    double curr_cluster_energy;
+    bool end_cleaning;
+    do
+    {
+        end_cleaning = true;
+        for (unsigned int i = 0; i < clusters_raw.size(); ++i) {
+            curr_cluster_energy = calc_energy(clusters_raw[i]->entropy(), clusters_raw[i]->size(), npoints);
+            if(!std::isnormal(curr_cluster_energy))
+            {
+                remove_cluster(i, points, assignment, clusters_raw);
+                end_cleaning = false;
+                break;
+            }
+        }
+        if(clusters_raw.size() == 1)
+        {
+            end_cleaning = true;
+        }
+    } while(!end_cleaning);
 
     //LOG(m_logger, LogLevel::INFO, energy);
+
+    double energy = 0;
+    for (unsigned int i = 0; i < clusters_raw.size(); ++i) {
+        curr_cluster_energy = calc_energy(clusters_raw[i]->entropy(), clusters_raw[i]->size(), npoints);
+        if(!std::isnormal(curr_cluster_energy))
+        {
+            GMUM_WARNING("There are degenerated clusters! You should try to run CEC with other parameters")
+        }
+        energy += curr_cluster_energy;
+    }
 
     sr.energy = energy;
     sr.switched = switched;
     sr.nclusters = clusters_raw.size();
-    sr.valid = true;
     return sr;
 }
 
@@ -188,7 +199,11 @@ void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
 
                 clusters[k]->remove_point(point_to_assign);
 
+                assert(std::isnormal(min_energy_change) == true);
+                if(!std::isnormal(energy_change)) { continue; } // ignore degenerated clusters
+
                 if (energy_change < min_energy_change) {
+                    assert(std::isnormal(energy_change) == true);
                     min_energy_change = energy_change;
                     min_energy_change_element_index = k;
                 }

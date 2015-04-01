@@ -1,12 +1,14 @@
 # Defines the following:
 #  R_COMMAND           - Path to R command
 #  R_HOME              - Path to 'R home', as reported by R
-#  R_INCLUDE_DIR       - Path to R include directory
+#  R_INCLUDE_DIR       - Path to R include directories
 #  R_CXX_FLAGS         - Rcpp and RcppArmadillo CXX flags (include directories)
 #  R_LD_FLAGS          - -llib1 -llib2 -llib3 flags for linker used by R
 #  R_LIBRARY_DEPS      - list of libraries required by R
 #  R_LD_LIBRARY_PATH   - -L/r-library-path flag
 #  R_LIBRARY_PATH      - r-library-path, just path without flag prefix
+#  RCPPARMADILLO_CXX_FLAGS - CXX flags required by RcppArmadillo
+#  RCPP_INCLUDE_PATHS  - Rcpp and RcppArmadillo include paths
 
 find_program(R_COMMAND R DOC "R executable.")
 
@@ -100,7 +102,14 @@ if(R_COMMAND)
     STRING(REPLACE "-l" "" R_LIBRARY_BLAS_NAME ${R_LIBRARY_BLAS})
     set(R_LIBRARY_DEPS ${R_LIBRARY_DEPS} ${R_LIBRARY_BLAS_NAME} ${R_LIBRARY_LAPACK_NAME})
     set(R_CXX_FLAGS "${RCPP_CXX_FLAGS} ${RCPPARMADILLO_CXX_FLAGS}")
-    
+
+    STRING(REGEX MATCHALL "-I.*" RCPP_INCLUDE_PATHS "${R_CXX_FLAGS}")
+    STRING(REPLACE "-I" "" RCPP_INCLUDE_PATHS "${RCPP_INCLUDE_PATHS}")
+    STRING(REPLACE "\"" "" RCPP_INCLUDE_PATHS "${RCPP_INCLUDE_PATHS}")
+    SEPARATE_ARGUMENTS(RCPP_INCLUDE_PATHS)
+    message("-- RCPP_INCLUDE_PATHS: ${RCPP_INCLUDE_PATHS}")
+
+   
     MESSAGE("-- R dependencies found: ${R_LIBRARY_DEPS}")
 else()
     message(SEND_ERROR "FindR.cmake requires the following variables to be set: R_COMMAND")

@@ -14,7 +14,7 @@ load_dataset <- function(data_path) {
     }
     
     dataset <- as.matrix(read.table(file=points_file, colClasses='numeric'))
-    clusters <- normalize_clustering(as.matrix(read.table(file=clusters_file)))
+    clusters <- normalize_clustering(as.vector(as.matrix(read.table(file=clusters_file))))
     k <- max(clusters)
     name <- basename(data_path) 
     return(list(name=name, k=k, clustering=clusters, dataset=dataset))
@@ -35,7 +35,7 @@ gmum_cec <- function(nclusters, nstart, points, init_type, method_type, max_iter
     time_ = t
     iters_ = c$log.iters()
     energy_ = c$energy()
-    clustering_ = normalize_clustering(c$y())
+    clustering_ = normalize_clustering(c$clustering())
     centers_ = c$centers()
     final_nclusters_ = tail(c$log.ncluster(), n=1)    
     

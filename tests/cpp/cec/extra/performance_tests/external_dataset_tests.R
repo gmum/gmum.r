@@ -33,11 +33,11 @@ test_data[['UCI']] = list(
 )
 
 gmum_cec_uci <- function(method_type, points, nclusters, output_plot_path = NULL) {
-    return (gmum_cec(nstart = 1000, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = 0.01, output_plot_path))     
+    return (gmum_cec(nstart = 10, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = 0.01, output_plot_path))     
 }
 
 cran_cec_uci <- function(method_type, points, nclusters, output_plot_path = NULL) {
-    return (cran_cec(nstart = 1000, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = "1%", output_plot_path))
+    return (cran_cec(nstart = 10, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = "1%", output_plot_path))
 }
 
 for(name in names(test_data)) {    
@@ -55,6 +55,13 @@ for(name in names(test_data)) {
                 gmum_clustering_df <- data.frame(gmum_result$clustering, item$clustering)
                 colnames(gmum_clustering_df) <- c('gmum', 'correct')
                 gmum_rand_index <- adjustedRandIndex(gmum_result$clustering, item$clustering)
+                if(gmum_rand_index < 0) {
+                    print('rand index < 0!')
+                    print('gmum clustering')
+                    print(gmum_result$clustering)
+                    print('correct clustering')
+                    print(item$clustering)
+                }
                 gmum_bic <- BIC(lm(gmum ~ correct, data=gmum_clustering_df))
                 list(
                     energy = gmum_result$energy,
@@ -79,7 +86,14 @@ for(name in names(test_data)) {
                 cran_result <- cran_cec_uci(method_type = method_types$cran[j], points = dataset, nclusters = item$k)
                 cran_clustering_df <- data.frame(cran_result$clustering, item$clustering)
                 colnames(cran_clustering_df) <- c('cran', 'correct')
-                cran_rand_index <- adjustedRandIndex(cran_result$clustering, item$clustering)           
+                cran_rand_index <- adjustedRandIndex(cran_result$clustering, item$clustering)   
+                if(cran_rand_index < 0) {
+                    print('rand index < 0!')
+                    print('cran clustering')
+                    print(cran_result$clustering)
+                    print('correct clustering')
+                    print(item$clustering)
+                }
                 cran_bic <- BIC(lm(cran ~ correct, data=cran_clustering_df))            
                 list(
                     energy = cran_result$energy,

@@ -172,11 +172,6 @@ void CecModel::find_best_cec() {
         exit(1);
 #endif
     }
-
-    if(!m_result.valid)
-    {
-        GMUM_ERROR("Could not handle given dataset, please try other configuration of parameters.");
-    }
 }
 
 void CecModel::loop() {

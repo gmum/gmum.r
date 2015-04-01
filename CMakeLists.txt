@@ -20,6 +20,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${R_CXX_FLAGS}")
 
 include_directories(${INCLUDE_DIR} ${INCLUDE_DIR}/cec ${INCLUDE_DIR}/gng ${INCLUDE_DIR}/svm ${INCLUDE_DIR}/svmlight ${INCLUDE_DIR}/utils)
 include_directories(${R_INCLUDE_DIR})
+include_directories(${RCPP_INCLUDE_PATHS})
 
 add_definitions(-DARMA_DONT_USE_CXX11 -DRCPP_INTERFACE)
 add_definitions(-DTEST_DATA_PATH="${TEST_DATA_PATH}")

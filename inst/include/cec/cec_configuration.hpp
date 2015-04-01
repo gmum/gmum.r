@@ -9,8 +9,10 @@
 
 #ifdef RCPP_INTERFACE
 #define GMUM_ERROR(x) Rcpp::stop(x);
+#define GMUM_WARNING(x) Rcpp::Rcout << x;
 #else
 #define GMUM_ERROR(x) throw x;
+#define GMUM_WARNING(x) std::cerr << x;
 #endif
 
 class CecConfiguration {
