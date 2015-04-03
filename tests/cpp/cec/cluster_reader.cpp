@@ -37,11 +37,11 @@ std::string ClusterReader::dimension_path() {
     return prefix() + "dimension.txt";
 }
 
-void ClusterReader::normalize_clustering()
+void ClusterReader::normalize_clustering(std::vector<int> &clusters)
 {
-    int min = *(std::min_element(m_clustering.begin(), m_clustering.end()));
-    for (std::vector<unsigned int>::iterator it = m_clustering.begin();
-         it != m_clustering.end(); ++it) {
+    int min = *(std::min_element(clusters.begin(), clusters.end()));
+    for (std::vector<int>::iterator it = clusters.begin();
+         it != clusters.end(); ++it) {
         *it -= min;
     }
 }
@@ -75,6 +75,7 @@ void ClusterReader::read_points() {
 void ClusterReader::read_clustering() {
     // std::cout << "reading clusters " << std::endl;
     std::ifstream file(cluster_path().c_str());
+    std::vector<int> clusters;
     if (file.is_open()) {
         std::string line;
         while (file.good()) {
@@ -82,12 +83,16 @@ void ClusterReader::read_clustering() {
             std::stringstream ss(line);
             if (line.size() == 0)
                 continue;
-            unsigned int x;
+            int x;
             ss >> x;
-            m_clustering.push_back(x);
+            clusters.push_back(x);
         }
         file.close();
-        normalize_clustering();
+        normalize_clustering(clusters);
+        for(int i = 0; i < clusters.size(); ++i)
+        {
+            m_clustering.push_back(clusters[i]);
+        }
     } else {
         std::cerr << "Failed to open " << cluster_path() << std::endl;
         throw cluster_path() + "Failed to open ";

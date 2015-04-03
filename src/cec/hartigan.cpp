@@ -128,6 +128,11 @@ SingleResult Hartigan::single_loop(const arma::mat &points,
     bool end_cleaning;
     do
     {
+        if(clusters_raw.size() == 1)
+        {
+            break;
+        }
+
         end_cleaning = true;
         for (unsigned int i = 0; i < clusters_raw.size(); ++i) {
             curr_cluster_energy = calc_energy(clusters_raw[i]->entropy(), clusters_raw[i]->size(), npoints);
@@ -138,10 +143,6 @@ SingleResult Hartigan::single_loop(const arma::mat &points,
                 break;
             }
         }
-        if(clusters_raw.size() == 1)
-        {
-            end_cleaning = true;
-        }
     } while(!end_cleaning);
 
     //LOG(m_logger, LogLevel::INFO, energy);
@@ -151,7 +152,7 @@ SingleResult Hartigan::single_loop(const arma::mat &points,
         curr_cluster_energy = calc_energy(clusters_raw[i]->entropy(), clusters_raw[i]->size(), npoints);
         if(!std::isnormal(curr_cluster_energy))
         {
-            GMUM_WARNING("There are degenerated clusters! You should try to run CEC with other parameters")
+            GMUM_WARNING("There are degenerated clusters! You should try run CEC with other parameters")
         }
         energy += curr_cluster_energy;
     }
@@ -173,8 +174,22 @@ void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
         clusters.erase(it);
     }
 
-    //assign points of erased cluster
     unsigned int npoints = points.n_rows;
+
+    if(clusters.size() == 1)
+    {
+        for(unsigned int j = 0; j < npoints; ++j)
+        {
+            if(assignment[j] == source)
+            {
+                clusters[0]->add_point(points.row(j));
+                assignment[j] = 0;
+            }
+        }
+        return;
+    }
+
+    //assign points of erased cluster
     for (unsigned int j = 0; j < npoints; j++) {
 
         //find point of deleted cluster
@@ -199,11 +214,9 @@ void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
 
                 clusters[k]->remove_point(point_to_assign);
 
-                assert(std::isnormal(min_energy_change) == true);
                 if(!std::isnormal(energy_change)) { continue; } // ignore degenerated clusters
 
                 if (energy_change < min_energy_change) {
-                    assert(std::isnormal(energy_change) == true);
                     min_energy_change = energy_change;
                     min_energy_change_element_index = k;
                 }
@@ -212,13 +225,27 @@ void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
 #ifdef DEBUG
             assert(minEntropyChangeElementIndex > -1);
 #endif
+            if(min_energy_change_element_index == -1)
+            {
+                // all clusters are degenerated, find first cluster that is not source cluster
+                for(unsigned int k = 0; k < clusters.size(); ++k)
+                {
+                    if(k != source)
+                    {
+                        min_energy_change_element_index = k;
+                        break;
+                    }
+                }
+            }
+
             //we are here adding and then removing
             clusters[min_energy_change_element_index]->add_point(
                         point_to_assign);
             assignment[j] = min_energy_change_element_index;
 
-        } else if (assignment[j] > source)
+        } else if (assignment[j] > source) {
             assignment[j]--;
+        }
         //number of clusters is expected to be small in comparison to number
         //of data points. When you remove a cluster you decrease assignment of all
         //points belonging to clusters with higher position in vector, in order

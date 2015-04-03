@@ -21,7 +21,7 @@ load_dataset <- function(data_path) {
 }
 
 normalize_clustering <- function(clustering) {
-    return (clustering - min(clustering))
+    return( (clustering - min(clustering)) + 1 )
 }
 
 gmum_cec <- function(nclusters, nstart, points, init_type, method_type, max_iterations, eps, output_plot_path = NULL) {        

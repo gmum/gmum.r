@@ -1,5 +1,5 @@
 source('common.R')
-library(mclust)
+library(phyclust)
 library(nlme)
 library(gmum.r)
 library(CEC)
@@ -33,11 +33,11 @@ test_data[['UCI']] = list(
 )
 
 gmum_cec_uci <- function(method_type, points, nclusters, output_plot_path = NULL) {
-    return (gmum_cec(nstart = 10, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = 0.01, output_plot_path))     
+    return (gmum_cec(nstart = 1, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = 0.01, output_plot_path))     
 }
 
 cran_cec_uci <- function(method_type, points, nclusters, output_plot_path = NULL) {
-    return (cran_cec(nstart = 10, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = "1%", output_plot_path))
+    return (cran_cec(nstart = 1, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = "1%", output_plot_path))
 }
 
 for(name in names(test_data)) {    
@@ -54,7 +54,7 @@ for(name in names(test_data)) {
                 gmum_result <- gmum_cec_uci(method_type = method_types$gmum[j], points = dataset, nclusters = item$k)
                 gmum_clustering_df <- data.frame(gmum_result$clustering, item$clustering)
                 colnames(gmum_clustering_df) <- c('gmum', 'correct')
-                gmum_rand_index <- adjustedRandIndex(gmum_result$clustering, item$clustering)
+                gmum_rand_index <- RRand(prcl = gmum_result$clustering, trcl = item$clustering)$Rand
                 if(gmum_rand_index < 0) {
                     print('rand index < 0!')
                     print('gmum clustering')
@@ -86,7 +86,7 @@ for(name in names(test_data)) {
                 cran_result <- cran_cec_uci(method_type = method_types$cran[j], points = dataset, nclusters = item$k)
                 cran_clustering_df <- data.frame(cran_result$clustering, item$clustering)
                 colnames(cran_clustering_df) <- c('cran', 'correct')
-                cran_rand_index <- adjustedRandIndex(cran_result$clustering, item$clustering)   
+                cran_rand_index <- RRand(prcl = cran_result$clustering, trcl = item$clustering)$Rand   
                 if(cran_rand_index < 0) {
                     print('rand index < 0!')
                     print('cran clustering')
