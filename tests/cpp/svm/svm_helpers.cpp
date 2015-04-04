@@ -52,3 +52,37 @@ arma::vec helper_testing_target_02() {
     return vector;
 }
 
+// Sparse matrix CSC (CCS) data from:
+// http://netlib.org/linalg/html_templates/node92.html
+
+arma::uvec helper_sparse_matrix_csc_01_row_indices() {
+    arma::uvec vector;
+    vector
+        << 1 << 2 << 4 << 2 << 3 << 5 << 6 << 3 << 4 << 3 << 4 << 5 << 1 << 4
+        << 5 << 6 << 2 << 5 << 6;
+    return vector;
+}
+
+arma::uvec helper_sparse_matrix_csc_01_column_pointers() {
+    arma::uvec vector;
+    vector
+        << 1 << 4 << 8 << 10 << 13 << 17 << 20;
+    return vector;
+}
+
+arma::vec helper_sparse_matrix_csc_01_values() {
+    arma::vec vector;
+    vector
+        << 10 << 3 << 3 << 9 << 7 << 8 << 4 << 8 << 8 << 7 << 7 << 9 << -2 << 5
+        << 9 << 2 << 3 << 13 << -1;
+    return vector;
+}
+
+size_t helper_sparse_matrix_csc_01_nrow() {
+    return 6;
+}
+
+size_t helper_sparse_matrix_csc_01_ncol() {
+    return 6;
+}
+

@@ -15,108 +15,108 @@ SVMClient::SVMClient(SVMConfiguration *config): config(*config) {}
 
 // Setters
 void SVMClient::setX( arma::mat x ){
-	config.data = x;
+    config.data = x;
 }
 void SVMClient::setY( arma::vec y ){
-	config.target = y;
+    config.target = y;
 }
 
 void SVMClient::setLibrary(std::string library){
-	config.setLibrary(library);
+    config.setLibrary(library);
 }
 void SVMClient::setKernel(std::string kernel){
-	config.setKernel(kernel);
+    config.setKernel(kernel);
 }
 void SVMClient::setPreprocess(std::string prep){
-	config.setPreprocess(prep);
+    config.setPreprocess(prep);
 }
 
 void SVMClient::setCacheSize(double cache) {
-	config.cache_size = cache;
+    config.cache_size = cache;
 }
 void SVMClient::setDegree(int degree){
-	config.degree = degree;
+    config.degree = degree;
 }
 void SVMClient::setGamma(double gamma){
-	config.gamma = gamma;
+    config.gamma = gamma;
 }
 void SVMClient::setCoef0(double coef0 ){
-	config.coef0 = coef0;
+    config.coef0 = coef0;
 }
 void SVMClient::setC(double C){
-	config.C = C;
+    config.C = C;
 }
 void SVMClient::setEps(double eps){
-	config.eps = eps;
+    config.eps = eps;
 }
 void SVMClient::setShrinking(int sh){
-	config.shrinking = sh;
+    config.shrinking = sh;
 }
 void SVMClient::setProbability(int prob){
-	config.probability = prob;
+    config.probability = prob;
 }
 
 void SVMClient::setConfiguration(SVMConfiguration *config) {
-	SVMConfiguration current_config = *config;
-	this->config = current_config;
+    SVMConfiguration current_config = *config;
+    this->config = current_config;
 }
 
 // Getters
 arma::mat SVMClient::getX(){
-	return config.data;
+    return config.data;
 }
 arma::vec SVMClient::getY(){
-	return config.target;
+    return config.target;
 }
 arma::vec SVMClient::getPrediction() {
-	return SVMClient::config.result;
+    return SVMClient::config.result;
 }
 std::string SVMClient::getLibrary(){
-	switch(config.svm_type) {
-	case LIBSVM : return "libsvm";
+    switch(config.svm_type) {
+    case LIBSVM : return "libsvm";
     case SVMLIGHT : return "svmlight";
     default : return "error"; 
-	}
+    }
 }
 std::string SVMClient::getKernel(){
-	switch(config.kernel_type) {
-	case _LINEAR : return "linear";
-	case _POLY : return "poly"; 
-	case _RBF : return "rbf"; 
-	case _SIGMOID : return "sigmoid"; 
+    switch(config.kernel_type) {
+    case _LINEAR : return "linear";
+    case _POLY : return "poly"; 
+    case _RBF : return "rbf"; 
+    case _SIGMOID : return "sigmoid"; 
   default : return "error"; 
-	}
+    }
 }
 std::string SVMClient::getPreprocess() {
-	switch(config.preprocess) {
-	case TWOE : return "2e";
-	case NONE : return "none";
+    switch(config.preprocess) {
+    case TWOE : return "2e";
+    case NONE : return "none";
   default : return "error";
-	}
+    }
 }
 double SVMClient::getCacheSize(){
-	return config.cache_size;
+    return config.cache_size;
 }
 int SVMClient::getDegree(){
-	return config.degree;
+    return config.degree;
 }
 double SVMClient::getGamma(){
-	return config.gamma;
+    return config.gamma;
 }
 double SVMClient::getCoef0(){
-	return config.coef0;
+    return config.coef0;
 }
 double SVMClient::getC(){
-	return config.C;
+    return config.C;
 }
 double SVMClient::getEps(){
-	return config.eps;
+    return config.eps;
 }
 bool SVMClient::isShrinking(){
-	return (bool)config.shrinking;
+    return (bool)config.shrinking;
 }
 bool SVMClient::isProbability(){
-	return (bool)config.probability;
+    return (bool)config.probability;
 }
 
 bool SVMClient::isSparse() {
@@ -133,7 +133,7 @@ SVMClient::areExamplesWeighted() {
 }
 // model getters
 arma::vec SVMClient::getAlpha() {
-	return config.alpha_y;
+    return config.alpha_y;
 }
 
 //void SVMClient::setAlpha(double* alpha) {
@@ -152,21 +152,21 @@ arma::vec SVMClient::getAlpha() {
 //}
 
 void SVMClient::setBias(double bias) {
-	config.setB(bias);
+    config.setB(bias);
 }
 
-double SVMClient::getBias() {	
-	return config.getB();		
+double SVMClient::getBias() {   
+    return config.getB();       
 }
 
-arma::vec SVMClient::getW() {		
-	if ( config.kernel_type == _LINEAR ) {
-		return config.w;
-	}
-	else {
+arma::vec SVMClient::getW() {       
+    if ( config.kernel_type == _LINEAR ) {
+        return config.w;
+    }
+    else {
     LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundary is not available with non-linear kernel"));
-		return 0;
-	}
+        return 0;
+    }
 }
 
 int SVMClient::get_number_sv() {
@@ -187,22 +187,22 @@ SVMConfiguration &SVMClient::getConfiguration() {
 
 // Runners
 void SVMClient::run() {
-	SVMClient::createFlow();
-	for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
-			iter != SVMHandlers.end(); ++iter) {
-		(*iter)->processRequest(config);
-	}
+    SVMClient::createFlow();
+    for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
+            iter != SVMHandlers.end(); ++iter) {
+        (*iter)->processRequest(config);
+    }
 }
 
 void SVMClient::train() {
-	config.setPrediction(false);
-	run();
+    config.setPrediction(false);
+    run();
 }
 
 void SVMClient::predict( arma::mat problem ) {
     
     // Just like in requestPredict()
-	config.setData(problem);
+    config.setData(problem);
 
     predictFromConfig();
 
@@ -364,7 +364,7 @@ double SVMClient::kernel(size_t i, size_t j) {
 }
 
 void SVMClient::sparse_predict(
-	arma::uvec rowind,
+    arma::uvec rowind,
     arma::uvec colptr,
     arma::vec values,
     size_t n_rows,
@@ -373,91 +373,72 @@ void SVMClient::sparse_predict(
     LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".sparse_predict() Started.");
 
     config.setSparseData(
-	    rowind,
+        rowind,
         colptr,
         values,
         n_rows,
-        n_cols
+        n_cols,
+        true
     );
 
-    // TODO: Delete after libsvm refactor
-    /*
-    if (config.library == LIBSVM && SVMHandlers.size() > 0 ) {
-        config.sp_data = values;
-        config.row = arma::conv_to< arma::Col< int > >::from(rowind);
-        config.col = arma::conv_to< arma::Col< int > >::from(colptr);
-        config.dim = n_rows;
-        config.data_dim = n_cols;
-        config.sparse = true;
-        config.setPrediction(true);
-        for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
-                iter != SVMHandlers.end(); ++iter) {
-            LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".sparse_predict() processRequest()");
-            (*iter)->processRequest(config);
-        }
-    } else {
-    */
-    // NOTE: end of deletion
+    predictFromConfig();
 
-        predictFromConfig();
-
-    //}
     LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".sparse_predict() Done.");
 }
 
 void SVMClient::requestPredict( arma::mat problem ) {
     LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".requestPredict() Started.");
-	config.setData(problem);
-	if ( SVMHandlers.size() > 0 ) {
-		config.setPrediction(true);
-		for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
-				iter != SVMHandlers.end(); ++iter) {
-			(*iter)->processRequest(config);
-		}
-	}
+    config.setData(problem);
+    if ( SVMHandlers.size() > 0 ) {
+        config.setPrediction(true);
+        for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
+                iter != SVMHandlers.end(); ++iter) {
+            (*iter)->processRequest(config);
+        }
+    }
     LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".requestPredict() Done.");
 }
 
 void SVMClient::createFlow() {
     LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".createFlow() Started.");
-	SVMType svm_type = config.library;
-	Preprocess preprocess = config.preprocess;
-	std::vector<SVMHandler*> handlers;
+    SVMType svm_type = config.library;
+    Preprocess preprocess = config.preprocess;
+    std::vector<SVMHandler*> handlers;
 
 
-		switch (svm_type) {
-			case LIBSVM: {
-				LibSVMRunner *runner = new LibSVMRunner();
-				handlers.push_back(runner);
-				break;
-			}
-			case SVMLIGHT : {	
-        SVMLightRunner *runner = new SVMLightRunner();		// Wating for svm light runner implementation
-				handlers.push_back(runner);
-				break;
-			}
-			default: {
-				LibSVMRunner *runner = new LibSVMRunner();				// dafault will be libsvm
-				handlers.push_back(runner);
-				break;
-			}
-		}
+        switch (svm_type) {
+            case LIBSVM: {
+                LibSVMRunner *runner = new LibSVMRunner();
+                handlers.push_back(runner);
+                break;
+            }
+            case SVMLIGHT : {   
+        SVMLightRunner *runner = new SVMLightRunner();      // Wating for svm light runner implementation
+                handlers.push_back(runner);
+                break;
+            }
+            default: {
+                LibSVMRunner *runner = new LibSVMRunner();              // dafault will be libsvm
+                handlers.push_back(runner);
+                break;
+            }
+        }
 
-	switch (preprocess) {
-	  case TWOE :	{	
+    switch (preprocess) {
+      case TWOE :   {   
           TwoeSVMPostprocessor *post_runner = new TwoeSVMPostprocessor();
-	 				TwoeSVMPreprocessor *pre_runner = new TwoeSVMPreprocessor();
-	 				handlers.insert( handlers.begin(), pre_runner );
-	 				handlers.push_back( post_runner );
-	 				break;
-	  }
-	case NONE:
-		break; 
-	default:
-		break;
-	}
+                    TwoeSVMPreprocessor *pre_runner = new TwoeSVMPreprocessor();
+                    handlers.insert( handlers.begin(), pre_runner );
+                    handlers.push_back( post_runner );
+                    break;
+      }
+    case NONE:
+        break; 
+    default:
+        break;
+    }
 
-	this->SVMHandlers = handlers;
+    this->SVMHandlers = handlers;
     LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".createFlow() Done.");
 }
 

@@ -17,5 +17,15 @@ arma::vec helper_testing_target_01();
 
 arma::vec helper_testing_target_02();
 
+arma::uvec helper_sparse_matrix_csc_01_row_indices();
+
+arma::uvec helper_sparse_matrix_csc_01_column_pointers();
+
+arma::vec helper_sparse_matrix_csc_01_values();
+
+size_t helper_sparse_matrix_csc_01_nrow();
+
+size_t helper_sparse_matrix_csc_01_ncol();
+
 #endif
 

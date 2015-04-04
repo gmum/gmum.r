@@ -233,7 +233,7 @@ evalqOnLoad({
 
       # NEW (for arma::sp_mat)  
       x <- as.matrix.csc(x)
-      config$set_sparse_data(x@ja, x@ia, x@ra, nrow(x), ncol(x))
+      config$set_sparse_data(x@ja, x@ia, x@ra, nrow(x), ncol(x), TRUE)
     }
     else {
       config$sparse <- 0

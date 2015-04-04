@@ -4,26 +4,26 @@
 // SVM Configuration 
 // Constructors  
 SVMConfiguration::SVMConfiguration() {
-	this->prediction = false;
-	SVMConfiguration::setDefaultParams();
+    this->prediction = false;
+    SVMConfiguration::setDefaultParams();
 }
 
 int SVMConfiguration::getDataExamplesNumber() {
-	if(isSparse()) {
+    if(isSparse()) {
         // FIXME: change to sparse_data.n_rows after libsvm refactor
-		return this->dim;
-	} else {
-		return this->data.n_rows;
-	}
+        return this->dim;
+    } else {
+        return this->data.n_rows;
+    }
 }
 
 int SVMConfiguration::getDataDim() {
-	if(isSparse()) {
+    if(isSparse()) {
         // FIXME: change to sparse_data.n_cols after libsvm refactor
-		return this->data_dim;
-	} else {
-		return this->data.n_cols;
-	}
+        return this->data_dim;
+    } else {
+        return this->data.n_cols;
+    }
 }
 
 size_t SVMConfiguration::getSVCount() {
@@ -31,20 +31,31 @@ size_t SVMConfiguration::getSVCount() {
 }
 
 SVMConfiguration::SVMConfiguration(bool prediction) {
-	this->prediction = prediction;
+    this->prediction = prediction;
 }
 
 void SVMConfiguration::setSparse(bool sparse) {
-	this->sparse = sparse;
+    this->sparse = sparse;
 }
 
 void SVMConfiguration::setSparseData(
-	arma::uvec rowind,
+    arma::uvec rowind,
     arma::uvec colptr,
     arma::vec values,
     size_t nrow,
-    size_t ncol
+    size_t ncol,
+    bool one_indexed
 ) {
+    // rowind and colptr are one-indexed -- we are sad
+    if (one_indexed) {
+        for (size_t i=0; i < rowind.size(); ++i) {
+            rowind[i] -= 1;
+        }
+        for (size_t i=0; i < colptr.size(); ++i) {
+            colptr[i] -= 1;
+        }
+    }
+
     //this->sparse_data = arma::sp_mat(rowind, colptr, values, n_rows, n_cols);
     this->sparse_data = arma::sp_mat(nrow, ncol);
 
@@ -72,6 +83,7 @@ void SVMConfiguration::setSparseData(
     
     // set the number of non-zero elements
     arma::access::rw(this->sparse_data.n_nonzero) = values.size();
+
 }
 
 arma::sp_mat SVMConfiguration::getSparseData() {
@@ -79,92 +91,92 @@ arma::sp_mat SVMConfiguration::getSparseData() {
 }
 
 bool SVMConfiguration::isSparse() {
-	return this->sparse;
+    return this->sparse;
 }
 
 void SVMConfiguration::setFilename(std::string filename) {
-	this->filename = filename;
+    this->filename = filename;
 }
 
 std::string SVMConfiguration::getFilename() {
-	return this->filename;
+    return this->filename;
 }
 
 void SVMConfiguration::setModelFilename(std::string filename) {
-	this->model_filename = filename;
+    this->model_filename = filename;
 }
 
 std::string SVMConfiguration::getModelFilename() {
-	return this->model_filename;
+    return this->model_filename;
 }
 
 void SVMConfiguration::setData(arma::mat data) {
-	this->data = data;
+    this->data = data;
 }
 
 arma::mat SVMConfiguration::getData() {
-	return this->data;
+    return this->data;
 }
 
 void SVMConfiguration::setOutputFilename(std::string filename) {
-	this->output_filename = filename;
+    this->output_filename = filename;
 }
 std::string SVMConfiguration::getOutputFilename() {
-	return this->output_filename;
+    return this->output_filename;
 }
 
 bool SVMConfiguration::isPrediction() {
-	return this->prediction;
+    return this->prediction;
 }
 
 void SVMConfiguration::setPrediction(bool prediction) {
-	this->prediction = prediction;
+    this->prediction = prediction;
 }
 
 #ifdef RCPP_INTERFACE
 void SVMConfiguration::setWeights( Rcpp::NumericVector weights ) {
-	this->nr_weight = weights.size();
-	this->weight = new double[nr_weight];
+    this->nr_weight = weights.size();
+    this->weight = new double[nr_weight];
 
-	for (int i = 0; i < nr_weight; i++) {
-		weight[i] = weights(1);
-	}
+    for (int i = 0; i < nr_weight; i++) {
+        weight[i] = weights(1);
+    }
 }
 #endif
 
 void SVMConfiguration::setLibrary( std::string library ) {
-	if ( library == "libsvm" ) {
-		this->library = LIBSVM;
-		this->svm_type = C_SVC;
-	}
-	else if (library == "svmlight" ) {
+    if ( library == "libsvm" ) {
+        this->library = LIBSVM;
+        this->svm_type = C_SVC;
+    }
+    else if (library == "svmlight" ) {
     this->library = SVMLIGHT;
     this->svm_type = C_SVC;
-	}
+    }
 }
 
 void SVMConfiguration::setKernel( std::string kernel ) {
-	if ( kernel == "linear" ) {
-		this->kernel_type = _LINEAR;
-	}
-	else if ( kernel == "poly" ) {
-		this->kernel_type = _POLY;
-	}
-	else if ( kernel == "rbf" ) {
-		this->kernel_type = _RBF;
-	}
-	else if ( kernel == "sigmoid" ) {
-		this->kernel_type = _SIGMOID;
-	}
+    if ( kernel == "linear" ) {
+        this->kernel_type = _LINEAR;
+    }
+    else if ( kernel == "poly" ) {
+        this->kernel_type = _POLY;
+    }
+    else if ( kernel == "rbf" ) {
+        this->kernel_type = _RBF;
+    }
+    else if ( kernel == "sigmoid" ) {
+        this->kernel_type = _SIGMOID;
+    }
 }
 
 void SVMConfiguration::setPreprocess( std::string preprocess ) {
-	if ( preprocess ==  "2e" ) {
-		this->preprocess = TWOE;
-	}
-	else if ( preprocess == "none" ) {
-		this->preprocess = NONE;
-	}
+    if ( preprocess ==  "2e" ) {
+        this->preprocess = TWOE;
+    }
+    else if ( preprocess == "none" ) {
+        this->preprocess = NONE;
+    }
 }
 
 void SVMConfiguration::set_verbosity(int verbosity){
@@ -180,26 +192,26 @@ void SVMConfiguration::setB(double b) {
 }
 
 void SVMConfiguration::setDefaultParams() {
-	library = LIBSVM;
-	svm_type = C_SVC;
-	kernel_type = _LINEAR;
+    library = LIBSVM;
+    svm_type = C_SVC;
+    kernel_type = _LINEAR;
   preprocess = NONE;
-	degree = 3;
-	gamma = 0;	// 1/num_features
-	coef0 = 0;
-	cache_size = 100;
-	C = 1;
-	eps = 1e-3;
-	shrinking = 1;
-	probability = 0;
-	nr_weight = 0;
-	weight_label = NULL;
-	weight = NULL;
-	cov_eps_smoothing_start = 2.22e-16; //2^(-23)
-	//cov_eps_smoothing_start = 
-//	Probably not necessery
-	nu = 0.5;
-	p = 0.1;
+    degree = 3;
+    gamma = 0;  // 1/num_features
+    coef0 = 0;
+    cache_size = 100;
+    C = 1;
+    eps = 1e-3;
+    shrinking = 1;
+    probability = 0;
+    nr_weight = 0;
+    weight_label = NULL;
+    weight = NULL;
+    cov_eps_smoothing_start = 2.22e-16; //2^(-23)
+    //cov_eps_smoothing_start = 
+//  Probably not necessery
+    nu = 0.5;
+    p = 0.1;
     
     // Sparse data
     sparse = false;
