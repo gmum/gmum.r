@@ -29,6 +29,8 @@ using namespace Rcpp;
 using namespace arma;
 #endif
 
+static int gng_server_count=0;
+
 using namespace gmum;
 
 /** Holds together all logic and objects.*/
@@ -63,7 +65,7 @@ public:
 			double * probability, unsigned int count, unsigned int dim);
 
 
-
+    unsigned getDatasetSize() const;
 	unsigned getGNGErrorIndex() const;
 	bool isRunning() const;
 	vector<double> getMeanErrorStatistics();
@@ -80,15 +82,12 @@ public:
 	//Constructor needed for RCPPInterface
 	GNGServer(GNGConfiguration * configuration);
 
-	SEXP m_current_dataset_memory;//will be deleted in ~delete
-
 	///Moderately slow function returning node descriptors
 	Rcpp::List getNode(int index);
 
 	int Rpredict(Rcpp::NumericVector & r_ex);
 
 	Rcpp::NumericVector RgetClustering();
-
 
 	Rcpp::NumericVector RgetErrorStatistics();
 
@@ -107,7 +106,8 @@ public:
 #endif
 
 private:
-	bool m_current_dataset_memory_was_set;
+	int m_index;
+
 	bool m_running_thread_created;
 
 	gmum::gmum_thread * algorithm_thread;

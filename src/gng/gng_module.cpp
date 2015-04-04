@@ -26,6 +26,10 @@ GNGServer * loadFromFile(std::string filename){
 	return out;
 }
 
+ static void finalizer_GNGServer( GNGServer* ptr ){
+           delete ptr;
+ }
+
 RCPP_MODULE(gng_module){
 	//TODO: Rcpp doesn't accept dot starting name so no way to hide it easily
     Rcpp::function("fromFileGNG", &loadFromFile);
@@ -75,6 +79,7 @@ RCPP_MODULE(gng_module){
 			.method("nodeDistance", &GNGServer::nodeDistance)
 			.method("clustering", &GNGServer::RgetClustering)
 			.method("getConfiguration", &GNGServer::getConfiguration)
+			.method("getDatasetSize", &GNGServer::getDatasetSize)
 			.method("getNumberNodes", &GNGServer::getNumberNodes)
 			.method(".exportToGraphML", &GNGServer::exportToGraphML)
 			.method(".getGNGErrorIndex", &GNGServer::getGNGErrorIndex)
@@ -86,6 +91,7 @@ RCPP_MODULE(gng_module){
 
 			.method(".getLastNodeIndex", &GNGServer::_getLastNodeIndex)
 			.method(".updateClustering", &GNGServer::_updateClustering);
+//            .finalizer(&finalizer_GNGServer);
 }
 
 #include <RcppArmadillo.h>

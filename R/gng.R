@@ -762,7 +762,9 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   
   summary.gng <<- function(object){
     print("Growing Neural Gas")
-    print(object$call)
+    if(exists("object$call")){
+        print(object$call)
+    }
     if(object$hasStarted()){
         print(sprintf("%d nodes with mean error %f", 
                       object$getNumberNodes(), object$getMeanError()))

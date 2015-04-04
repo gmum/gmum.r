@@ -6,6 +6,7 @@
 #include <string>
 
 GNGServer::GNGServer(std::string filename) {
+
 	cerr << filename << endl;
 
 	std::ifstream input;
@@ -19,19 +20,23 @@ GNGServer::GNGServer(std::string filename) {
 
 GNGServer::GNGServer(GNGConfiguration configuration,
 		std::istream * input_graph) {
+
+
 	init(configuration, input_graph);
 }
 
 void GNGServer::init(GNGConfiguration configuration,
 		std::istream * input_graph) {
 
+	m_index = gng_server_count++;
+
+
 	algorithm_thread = 0;
-	m_current_dataset_memory_was_set = false;
 	m_running_thread_created = false;
 
 	m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity));
 
-	DBG(m_logger,10, "GNGServer()::constructing GNGServer");
+	LOG(m_logger,5, "GNGServer()::constructing GNGServer");
 
 	if (!configuration.check_correctness())
 		throw BasicException("Invalid configuration passed to GNGServer");
@@ -133,7 +138,7 @@ void GNGServer::run() {
 		DBG(m_logger,10, "GNGServer::runing collect_statistics thread");
 		m_running_thread_created = true;
 	}else{
-		gngAlgorithm->run();
+		gngAlgorithm->run(/*synchronized*/ true);
 	}
 }
 
@@ -397,15 +402,16 @@ void GNGServer::RinsertLabeledExamples(Rcpp::NumericMatrix & r_points,
 
 ///Pause algorithm
 void GNGServer::pause() {
-	gngAlgorithm->pause();
+	gngAlgorithm->pause(/* synchronized*/ true);
 }
 
 ///Terminate algorithm
 void GNGServer::terminate() {
-	getAlgorithm().terminate();
-	DBG(m_logger,20, "GNGServer::getAlgorithm terminated, joining algorithm thread");
-	if (algorithm_thread)
-		algorithm_thread->join();
+	if(gngAlgorithm.get()){
+		LOG(m_logger,5, "GNGServer::getAlgorithm terminating");
+		gngAlgorithm->terminate(/*synchronized*/true);
+		LOG(m_logger,5, "GNGServer::isRunning ="+ to_str(gngAlgorithm->isRunning()));
+	}
 }
 
 GNGAlgorithm & GNGServer::getAlgorithm() {
@@ -419,15 +425,27 @@ GNGDataset & GNGServer::getDatabase() {
 }
 
 GNGServer::~GNGServer() {
-	DBG(m_logger,10, "GNGServer::destructor called");
-#ifdef RCPP_INTERFACE
+	LOG(m_logger, 5, "GNGServer::destructor for "+to_str(m_index)+" called");
 
-	if(m_current_dataset_memory_was_set) {
-		R_ReleaseObject(m_current_dataset_memory);
-
+	if(gngAlgorithm.get()){
+	    terminate();
 	}
-	//R Matrix will be deleted from R level
-#endif
+
+	LOG(m_logger, 5, "GNGServer::joining to algorithm_thread");
+
+	if(algorithm_thread){
+		algorithm_thread->join();
+	}
+
+	LOG(m_logger, 5, "GNGServer::destructor for "+to_str(m_index)+" finished");
+
 }
 
-
+unsigned GNGServer::getDatasetSize() const{
+    if(gngDataset.get()){
+	    gmum::scoped_lock<GNGDataset> db_lock(*gngDataset.get());
+        return gngDataset->size();
+    }else{
+        return 0;
+    }
+}
