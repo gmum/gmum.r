@@ -409,8 +409,9 @@ void GNGServer::pause() {
 void GNGServer::terminate() {
 	if(gngAlgorithm.get()){
 		LOG(m_logger,5, "GNGServer::getAlgorithm terminating");
+		LOG(m_logger,10, "GNGServer::isRunning ="+ to_str(gngAlgorithm->isRunning()));
 		gngAlgorithm->terminate(/*synchronized*/true);
-		LOG(m_logger,5, "GNGServer::isRunning ="+ to_str(gngAlgorithm->isRunning()));
+		LOG(m_logger,10, "GNGServer::isRunning ="+ to_str(gngAlgorithm->isRunning()));
 	}
 }
 

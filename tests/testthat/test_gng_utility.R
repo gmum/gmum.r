@@ -4,7 +4,7 @@ library(testthat)
 max_nodes <- 500
 
 # Construct gng object
-gng <- GNG(max.nodes=max_nodes, training = gng.train.online(dim=3), verbosity=10, k=1.3)
+gng <- GNG(max.nodes=max_nodes, training = gng.train.online(dim=3), verbosity=3, k=1.3)
 
 
 # Construct examples, here we will use a sphere
@@ -39,7 +39,7 @@ g <- convertToGraph(gng)
 length(V(g))
 
 if("rgl" %in% rownames(installed.packages()) == TRUE) {
-  plot(gng, mode=gng.plot.rgl3d)
+  plot(gng, mode=gng.plot.3d)
 }
 
 

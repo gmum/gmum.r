@@ -574,7 +574,7 @@ evalqOnLoad({
         patience = initial_patience
 
         tryCatch({
-          while(iter < max_iter && server$isRunning()){
+          while(iter == 0 ||  (iter < max_iter && server$isRunning())){
             Sys.sleep(0.1)
             iter = server$getCurrentIteration()
             

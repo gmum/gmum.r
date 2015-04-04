@@ -612,6 +612,7 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 			this->status_change_condition.wait(this->status_change_mutex);
 		}
 		if (this->m_gng_status_request == GNG_TERMINATED){
+	        LOG(m_logger, 10, "GNGAlgorithm::terminate request"); 
 		    this->status_change_mutex.unlock();
 			break;
 		}
@@ -722,7 +723,7 @@ void GNGAlgorithm::run(bool synchronized) {
         //Algorithm should start. Run is synchronized. 
         //Terminated is also accepted state
         while(m_gng_status == GNG_PAUSED){
-            ;
+            gmum::sleep(10);
         }
     }
 }
@@ -740,7 +741,7 @@ void GNGAlgorithm::pause(bool synchronized) {
     if(this->g_db->size() > 2 && synchronized){
          //Terminated is also accepted state
          while(m_gng_status == GNG_RUNNING){
-            ;
+            gmum::sleep(10);        
          }
     }
 }
@@ -753,7 +754,7 @@ void GNGAlgorithm::terminate(bool synchronized) {
     }
     if(synchronized){
         while(m_gng_status == GNG_RUNNING){
-            ;
+            gmum::sleep(10);        
         }
     }
 }
