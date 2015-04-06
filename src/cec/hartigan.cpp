@@ -57,44 +57,44 @@ SingleResult Hartigan::single_loop(const arma::mat &points,
 				clusters_raw[source]->entropy(), clusters_raw[source]->size(),
 				npoints);
 
-		double source_entropy_change = calc_energy(
+		double source_energy_change = calc_energy(
 				clusters_raw[source]->entropy_after_remove_point(point),
 				clusters_raw[source]->size() - 1, npoints)
 				- before_source_energy;
 
-		double best_entropy_change = 0;
+		double best_energy_change = 0;
 		int best_cluster = -1;
 
 		for (unsigned int k = 0; k < clusters_raw.size(); k++) {
 			if (k != source) {
-				double whole_entropy_change;
+				double energy_change;
 				try {
 					double before_target_energy = calc_energy(
 							clusters_raw[k]->entropy(), clusters_raw[k]->size(),
 							npoints);
 
-					double target_entropy_change = calc_energy(
+					double target_energy_change = calc_energy(
 							clusters_raw[k]->entropy_after_add_point(point),
 							clusters_raw[k]->size() + 1, npoints)
 							- before_target_energy;
 
-					whole_entropy_change = target_entropy_change
-							+ source_entropy_change;
+					energy_change = target_energy_change
+							+ source_energy_change;
 				} catch (std::exception &e) {
-					LOG(m_logger, LogLevel::ERR, "entropy change calculation");
+					LOG(m_logger, LogLevel::ERR, "Energy change calculation");
 					LOG(m_logger, LogLevel::ERR, dimension);
 					throw(e);
 					//return SingleResult(switched, clusters.size(), 0);
 				}
 
-				if (isnan(best_entropy_change)) {
-					LOG(m_logger, LogLevel::ERR, "entropy change is NAN");
+				if (isnan(best_energy_change)) {
+					LOG(m_logger, LogLevel::ERR, "Energy change is NAN");
 
 				}
 
-				if (whole_entropy_change < best_entropy_change) { //newEntropy < oldEntropy
+				if (energy_change < best_energy_change) { //newEnergy < oldEnergy
 					best_cluster = k;
-					best_entropy_change = whole_entropy_change;
+					best_energy_change = energy_change;
 				}
 			}  //for iterates clusters
 		}  // for clusters
@@ -178,7 +178,7 @@ void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
 
 			}
 #ifdef DEBUG
-			assert(minEntropyChangeElementIndex > -1);
+			assert(min_energy_change_element_index > -1);
 #endif
 			//we are here adding and then removing
 			clusters[min_energy_change_element_index]->add_point(
