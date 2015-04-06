@@ -1,9 +1,11 @@
 #include <boost/smart_ptr/shared_ptr.hpp>
+#include <cstdlib>
+#include <iostream>
+#include <string>
+
 #include <gng_node.h>
 #include <gng_server.h>
 #include <logger.h>
-#include <iostream>
-#include <string>
 
 GNGServer::GNGServer(std::string filename) {
 
@@ -28,8 +30,11 @@ GNGServer::GNGServer(GNGConfiguration configuration,
 void GNGServer::init(GNGConfiguration configuration,
 		std::istream * input_graph) {
 
-	m_index = gng_server_count++;
+    if(configuration.seed != -1){
+        srand(configuration.seed);
+    }
 
+	m_index = gng_server_count++;
 
 	algorithm_thread = 0;
 	m_running_thread_created = false;

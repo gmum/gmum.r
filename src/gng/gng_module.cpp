@@ -60,6 +60,7 @@ RCPP_MODULE(gng_module){
 			"3: DatasetBaggingProbability - examples are sampled with probability equal to pos_dim+vertex_dim coordinate (last number in vector)")
 	.field("max_nodes", &GNGConfiguration::max_nodes)
 	.field("verbosity", &GNGConfiguration::verbosity)
+	.field("seed", &GNGConfiguration::seed)
 	.method(".check_correctness", &GNGConfiguration::check_correctness)
 	.method(".set_bounding_box", &GNGConfiguration::setBoundingBox);
 

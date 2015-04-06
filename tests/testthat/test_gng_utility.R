@@ -6,7 +6,6 @@ max_nodes <- 500
 # Construct gng object
 gng <- GNG(max.nodes=max_nodes, training = gng.train.online(dim=3), verbosity=3, k=1.3)
 
-
 # Construct examples, here we will use a sphere
 ex <- gng.preset.sphere(N=10000, prob=-1)
 labels <- round(runif(10000)*3)

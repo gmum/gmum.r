@@ -1,9 +1,8 @@
 library(igraph)
 
-  .gng.plot3d<-function(gngServer){
+  .gng.plot3d<-function(g, radius=NULL){
 	if("rgl" %in% rownames(installed.packages()) == TRUE){
-	    g <- convertToGraph(gngServer)
-	    .visualizeIGraphRGL(g, radius=0.3)
+	    .visualizeIGraphRGL(convertToGraph(g), radius=radius)
 	}else{
 	    warning("Please install rgl package to plot 3d graphs")
 	}
@@ -11,7 +10,8 @@ library(igraph)
   #' Draw igraph using rgl - assumes >=3 dimensions and draws 3 first
   .visualizeIGraphRGL<-function(g, radius=NULL){
     if("rgl" %in% rownames(installed.packages()) == TRUE){
-	    library(rgl)
+        # TODO: this code is so ugly I cannot believe it
+        library(rgl)
 	    library(igraph)
 	    
 	    if(length(V(g))==0) return
@@ -50,19 +50,13 @@ library(igraph)
 	      k = k + 2
 	    }  
 	    
-	    #if(is.null(radius)){
-	    #  radius <- 8.0*(0.3333* (abs(max(x) - min(x))+abs(max(y) - min(y))+abs(max(z) - min(z)))/(nodes+0.0))
-	    #}
+	    if(is.null(radius)){
+	      radius <- 8.0*(0.3333* (abs(max(x) - min(x))+abs(max(y) - min(y))+abs(max(z) - min(z)))/(nodes+0.0))
+	    }
 	    
-	    cx <- V(g)$error
-	    cx <- abs(cx)/max(abs(cx)) 
-	    cy <- c(1:(nodes))
-	    cz <- c(1:(nodes))
-	    
-	    cy <- 0.1
-	    cz <- 0.1
-	    print(cx)
-	    
+	    cx <- abs(V(g)$error)/max(abs(V(g)$error))
+	    cy <- rep(0.1, nodes)
+	    cz <- rep(0.1, nodes)
 	    
 	    ### Draw graph ###
 	    rgl.clear()
@@ -70,15 +64,14 @@ library(igraph)
 	    rgl.bg(color="white")
 	    axes3d(edges="bbox")
 	    
-	    
-	    rgl.spheres(x,y,z, 
-			radius = rep(radius, length(cx)), 
-			col=rgb(cx,cy, cz))
+        rgl.spheres(x,y,z, radius = rep(radius, length(cx)), 
+			col=rgb(cx,cy, cz)
+        )
 	    
 	    rgl.lines(x_lines[1:k-1],y_lines[1:k-1],z_lines[1:k-1],color="bisque")
 	}else{
-    		warning("Please install rgl package to plot 3d graph")
-    	}
+        warning("Please install rgl package to plot 3d graph")
+    }
   }
 .gng.plot2d.errors<-function(gngServer, vertex.color, layout){
   ig <- convertToGraph(gngServer)

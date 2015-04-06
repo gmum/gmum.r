@@ -10,6 +10,7 @@
 
 #ifdef RCPP_INTERFACE
 #include <RcppArmadillo.h>
+#include <stdexcept>  
 using namespace Rcpp;
 #endif
 
@@ -17,12 +18,8 @@ using namespace Rcpp;
 #include "gng_graph.h"
 #include <vector>
 
-/**
- *
- * Configuration of GNG algorithm/server
- */
-class GNGConfiguration {
-public:
+///Configuration of GNG algorithm/server
+struct GNGConfiguration {
 	enum GraphNodeStorage {
 		NoneGraphNodeStorage, SharedMemory, RAMMemory
 	} graph_storage;
@@ -34,6 +31,8 @@ public:
 	enum ExperimentalUtility {
 		UtilityOff, UtilityBasicOn
 	};
+
+    int seed;
 
 	/**Maximum number of nodes*/
 	int max_nodes; //=1000;
@@ -80,9 +79,8 @@ public:
 	///Utility option. Currently supported simples utility
 	int experimental_utility_option;
 
-public:
-
 	GNGConfiguration() {
+        seed = -1; //is equivalent to null
 
 		verbosity = 1;
 
@@ -226,53 +224,14 @@ public:
 		}
 	}
 
-	/** Get default configuration of GNG Server */
+	/// Get default configuration of GNG Server
 	static GNGConfiguration getDefaultConfiguration() {
 		GNGConfiguration default_configuration;
 		return default_configuration;
 	}
 
-	/**Validate server configuration. *Not working now**/
-	bool check_correctness() {
-		if (experimental_utility_option != UtilityOff
-				&& (uniformgrid_optimization || lazyheap_optimization)) {
-			cerr
-					<< "ERROR: please turn OFF optimization when using experimental utility option\n";
-
-			return false;
-		}
-
-		if (datasetType > 3 or datasetType <= 0) {
-			cerr << "ERROR: wrong database specified\n";
-
-			return false;
-		}
-		if (!(dim < 20 || !uniformgrid_optimization)) {
-
-			cerr
-					<< "WARNING: It might be too big dimensionality for OptimizedGNG."
-							"OptimizedGNG works best for smaller dimensionality dataset"
-							"Consider using PCA or other dim. reduction technique"
-							"\n";
-
-		}
-		if (!(distance_function == gmum::GNGGraph::Euclidean
-				|| !uniformgrid_optimization)) {
-
-			cerr
-					<< "ERROR: You can use only Euclidean distance function with uniformgrid optimization\n";
-			return false;
-		}
-		if (!(!uniformgrid_optimization
-				or (dim == axis.size() && dim == orig.size()))) {
-
-			cerr << "ERROR: dimensionality doesn't agree with axis and orig"
-					<< endl;
-			return false;
-		}
-
-		return true;
-	}
+	/// Validate server configuration
+    bool check_correctness();
 };
 #endif	/* GNGCONFIGURATION_H */
 

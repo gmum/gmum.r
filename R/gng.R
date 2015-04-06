@@ -24,8 +24,6 @@ gng.plot.2d.errors <- 3
 .gng.type.optimized = 0
 .gng.type.utility = 1
 .gng.type.default = 2
-.gng.train.online = 1
-.gng.train.offline = 0
 
 gng.type.default <- function(){
 	c(.gng.type.default)
@@ -39,18 +37,9 @@ gng.type.utility<- function(k=1.3){
   c(.gng.type.utility, k)
 }
 
-gng.train.online <- function(dim){
-  c(.gng.train.online,  dim)
-}
-
 .gng.dataset.bagging.prob <- 3
 .gng.dataset.bagging <- 2
 .gng.dataset.sequential <-1
-
-gng.train.offline <- function(max.iter = 100, min.improvement = 1e-3){
-  c(.gng.train.offline, max.iter , min.improvement)
-}
-
 
 .GNG <- NULL
 
@@ -319,14 +308,18 @@ errorStatistics.gng <- NULL
 #' 
 #' @param eps.w Default 0.05. How strongly adapt winning node
 #' 
-#' @param training Can be either gng.train.offline(max.iter, min.improvement), or gng.train.online()
-#' 
-#' @param value.range Default [0,1]. All example features should be in this range
+#' @param max.iter Default 200. Used for offline (default) training
+#'
+#' @param train.online Default FALSE. If used will run in online fashion
+#'
+#' @param min.improvement Used for offline (default) training. Controls stopping criterion, decrease if training stops too early. Default 1e-3.
+#'
+#' @param value.range Default [0,1]. All example features should be in this range, needed for optimized version of the algorithm
 #' @examples
 #' 
 #' # Train online optimizedGNG. All values in this dataset are in the range (-4.3, 4.3)
 #' data(wine, package="rattle")
-#' gng <- OptimizedGNG(training = gng.train.online(), value.range=c(min(scale(wine[-1])),max(scale(wine[-1]))), max.nodes=20)
+#' gng <- OptimizedGNG(train.online = TRUE), value.range=c(min(scale(wine[-1]),max(scale(wine[-1]))), max.nodes=20)
 #' insertExamples(gng, scale(wine[-1]))
 #' run(gng)
 #' Sys.sleep(10)
@@ -493,20 +486,20 @@ evalqOnLoad({
                    type = gng.type.default(),
                    training = gng.train.offline(),
                    lambda=200,
-                   verbosity=0
-                   
+                   verbosity=0,
+                   seed=-1
   ){
     
-
     
     config <- new(GNGConfiguration)
+
+    config$seed = seed
     
     # Fill in configuration
     if(training[1] == .gng.train.offline){
-      config$dim = ncol(x)
+       config$dim = ncol(x)
     }else{
-	  
-    config$dim = training[2]  
+        config$dim = training[2]  
 	}
 
     
@@ -533,7 +526,7 @@ evalqOnLoad({
     else{
       config$.experimental_utility_option = 0
     }
-    
+   
     
     config$.dataset_type=.gng.dataset.bagging
     config$beta = beta
@@ -651,15 +644,16 @@ evalqOnLoad({
                    training = gng.train.offline(),
                    lambda=200,
                    verbosity=0,
+                   seed=-1,
 					k=NULL
                   ){
     gng <- NULL
     call <- match.call(expand.dots = TRUE)
 		if(is.null(k)){
-					gng <- .GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
+					gng <- .GNG(x=x, seed=seed, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
 			eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.default(), training=training, lambda=lambda, verbosity=verbosity)
 		}else{
-				gng <- .GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
+				gng <- .GNG(x=x, labels=labels, seed=seed, beta=beta, alpha=alpha, max.nodes=max.nodes, 
 			eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.utility(k=k), training=training, lambda=lambda, verbosity=verbosity)		
 		}
 		assign("call", call, gng)
@@ -676,6 +670,7 @@ evalqOnLoad({
                    training = gng.train.offline(),
                    lambda=200,
                    verbosity=0,
+                   seed=-1,
 					value.range=c(0,1)
                   ){
 		if(value.range[1] >= value.range[2]){
@@ -683,7 +678,7 @@ evalqOnLoad({
 			return		
 		}
 		call <- match.call(expand.dots = TRUE)
-		gng <- .GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
+		gng <- .GNG(x=x, seed=seed, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
 eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min=value.range[1], max=value.range[2]), training=training, lambda=lambda, verbosity=verbosity)
     assign("call", call, gng)
     gng

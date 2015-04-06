@@ -90,7 +90,6 @@ public:
 			boost::shared_ptr<Logger> logger = boost::shared_ptr<Logger>()) :
 			mutex_(mutex), store_extra_(store_extra), dim_(dim), access_method_(
 					access_method), current_example_(0), logger_(logger) {
-		__init_rnd();
 	}
 
 	void lock() {
