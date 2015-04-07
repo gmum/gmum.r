@@ -17,15 +17,13 @@ gng.plot.layout.igraph.fruchterman.fast <- layout.fruchterman.reingold
 gng.plot.layout.igraph.auto <- layout.auto
 
 gng.plot.2d <- 1
-gng.plot.rgl3d <- 2
+gng.plot.3d <- 2
 gng.plot.2d.errors <- 3
 
 
 .gng.type.optimized = 0
 .gng.type.utility = 1
 .gng.type.default = 2
-.gng.train.online = 1
-.gng.train.offline = 0
 
 gng.type.default <- function(){
 	c(.gng.type.default)
@@ -39,18 +37,9 @@ gng.type.utility<- function(k=1.3){
   c(.gng.type.utility, k)
 }
 
-gng.train.online <- function(dim){
-  c(.gng.train.online,  dim)
-}
-
 .gng.dataset.bagging.prob <- 3
 .gng.dataset.bagging <- 2
 .gng.dataset.sequential <-1
-
-gng.train.offline <- function(max.iter = 100, min.improvement = 1e-3){
-  c(.gng.train.offline, max.iter , min.improvement)
-}
-
 
 .GNG <- NULL
 
@@ -71,7 +60,7 @@ gng.train.offline <- function(max.iter = 100, min.improvement = 1e-3){
 #' 
 #' @docType methods
 #'
-#' @param mode gng.plot.rgl3d (3d plot), gng.plot.2d (igraph plot) or
+#' @param mode gng.plot.3d (3d plot), gng.plot.2d (igraph plot) or
 #' gng.plot.2d.errors (igraph plot with mean error log plot)
 #' 
 #' @param layout layout to be used when plotting. Possible values: gng.plot.layour.igraph.v2d (first two dimensions),
@@ -89,7 +78,7 @@ gng.train.offline <- function(max.iter = 100, min.improvement = 1e-3){
 #' plot(gng, mode=gng.plot.2d.errors, layout=gng.plot.layout.v2d, vertex.color=gng.plot.color.cluster)
 #' 
 #' # Plot rgl (make sure you have installed rgl library)
-#' plot(gng, mode=gng.plot.rgl, layout=gng.plot.layout.v2d, vertex.color=gng.plot.color.cluster)
+#' plot(gng, mode=gng.plot.3d, layout=gng.plot.layout.v2d, vertex.color=gng.plot.color.cluster)
 #' 
 #' # For more possibilities see gng.plot.* constants
 #' 
@@ -97,55 +86,55 @@ plot.gng <- NULL
 
 #' Save model to binary format
 #'
-#' @title save.gng
+#' @title gngSave
 #' 
 #' @description Writes model to a disk space efficient binary format. 
 #' 
 #' @usage
-#' save.gng(gng)
+#' gngSave(gng)
 #' 
 #' @export
 #' 
 #' @param
 #' filename Dump destination
 #' 
-#' @rdname save.gng-methods
+#' @rdname gngSave-methods
 #' 
 #' @docType methods
 #'
 #' @examples
-#' save.gng(gng, 'graph.bin')
+#' gngSave(gng, 'graph.bin')
 #' 
-#' @aliases save.gng
+#' @aliases gngSave
 #'
-save.gng <- NULL
+gngSave <- NULL
 
 
 
 #' Load model from binary format
 #'
-#' @title load.gng
+#' @title gngLoad
 #' 
 #' @description Writes model to a disk space efficient binary format. 
 #' 
 #' @usage
-#' load.gng(gng)
+#' gngLoad(gng)
 #' 
 #' @export
 #' 
 #' @param
 #' filename Dump location
 #' 
-#' @rdname load.gng-methods
+#' @rdname gngLoad-methods
 #' 
 #' @docType methods
 #'
 #' @examples
-#' load.gng('model.bin')
+#' gngLoad('model.bin')
 #' 
-#' @aliases load.gng
+#' @aliases gngLoad
 #'
-load.gng <- NULL
+gngLoad <- NULL
 
 #' Get centroids
 #'
@@ -169,6 +158,36 @@ load.gng <- NULL
 #' @aliases centroids
 #'  
 centroids.gng <- NULL
+
+#' Find closest centroid
+#'
+#' @title node
+#' 
+#' @description Finds closest centroid from given list
+#' 
+#' @usage
+#' predictCentroid(gng, centroids(gng), c(1,1,1))
+#' 
+#' @export
+#' 
+#' @rdname node-methods
+#' 
+#' @docType methods
+#'
+#' @param centroids List of indexes of nodes in gng. 
+#' Will assign each point to one of indexes from centroids. 
+#' Can be found using centroids.gng function.
+#' 
+#' @param x Can be either vector or data.frame.
+#' 
+#' @examples
+#' # Find closest centroid to c(1,1,1)
+#' found.centroids <- centroids(gng)
+#' predictCentroid(gng, found.centroids, c(1,1,1))
+#' 
+#' @aliases node
+#' 
+predictCentroid <- NULL
 
 #' Get GNG node
 #'
@@ -319,14 +338,20 @@ errorStatistics.gng <- NULL
 #' 
 #' @param eps.w Default 0.05. How strongly adapt winning node
 #' 
-#' @param training Can be either gng.train.offline(max.iter, min.improvement), or gng.train.online()
-#' 
-#' @param value.range Default [0,1]. All example features should be in this range
+#' @param max.iter Default 200. If training offline will stop if exceedes max.iter iterations
+#'
+#' @param train.online Default FALSE. If used will run in online fashion
+#'
+#' @param min.improvement Used for offline (default) training. Controls stopping criterion, decrease if training stops too early. Default 1e-3.
+#'
+#' @param dim If training online specifies training example size
+#'
+#' @param value.range Default [0,1]. All example features should be in this range, needed for optimized version of the algorithm
 #' @examples
 #' 
 #' # Train online optimizedGNG. All values in this dataset are in the range (-4.3, 4.3)
 #' data(wine, package="rattle")
-#' gng <- OptimizedGNG(training = gng.train.online(), value.range=c(min(scale(wine[-1])),max(scale(wine[-1]))), max.nodes=20)
+#' gng <- OptimizedGNG(train.online = TRUE), value.range=c(min(scale(wine[-1]),max(scale(wine[-1]))), max.nodes=20)
 #' insertExamples(gng, scale(wine[-1]))
 #' run(gng)
 #' Sys.sleep(10)
@@ -392,8 +417,12 @@ errorStatistics.gng <- NULL
 #' 
 #' @param eps.w Default 0.05. How strongly adapt winning node
 #' 
-#' @param training Can be either gng.train.offline(max.iter, min.improvement), or gng.train.online()
-#' 
+#' @param max.iter Default 200. Used for offline (default) training
+#'
+#' @param train.online Default FALSE. If used will run in online fashion
+#'
+#' @param min.improvement Used for offline (default) training. Controls stopping criterion, decrease if training stops too early. Default 1e-3.
+#'
 #' @param k Utility constant, by default turned off. Good value is 1.3. Constant controlling speed of erasing obsolete nodes, see http://sund.de/netze/applets/gng/full/tex/DemoGNG/node20.html
 #' 
 #'
@@ -404,7 +433,7 @@ errorStatistics.gng <- NULL
 #' # Train in an offline manner
 #' gng <- GNG(scaled.wine, labels=wine$Type, max.nodes=20)
 #' # Plot
-#' plot(gng, mode=gng.plot.2d.cluster)
+#' plot(gng)
 #'
 #' # Train in an online manner with utility (erasing obsolete nodes)
 #' gng <- GNG(scaled.wine, labels=wine$Type, max.nodes=20, training=gng.train.online(), k=1.3)
@@ -413,7 +442,7 @@ errorStatistics.gng <- NULL
 #' Sys.sleep(10)
 #' terminate(gng)
 #' # Plot
-#' plot(gng, mode=gng.plot.2d.cluster)
+#' plot(gng)
 #'
 GNG <- NULL
 
@@ -491,22 +520,28 @@ evalqOnLoad({
                    eps.w= 0.05, 
                    max.edge.age = 200, 
                    type = gng.type.default(),
-                   training = gng.train.offline(),
+                   max.iter=200,
+                   train.online=FALSE,
+                   min.improvement=1e-3,
                    lambda=200,
-                   verbosity=0
-                   
+                   dim=0,
+                   verbosity=0,
+                   seed=-1
   ){
     
-
     
     config <- new(GNGConfiguration)
+
+    config$seed = seed
     
+    
+
     # Fill in configuration
-    if(training[1] == .gng.train.offline){
-      config$dim = ncol(x)
+    if(train.online){
+       config$dim = dim
     }else{
-	  
-    config$dim = training[2]  
+       config$dim = ncol(x)
+       config$max_iter = max.iter
 	}
 
     
@@ -515,7 +550,7 @@ evalqOnLoad({
       config$.lazyheap_optimization = TRUE  
       config$.set_bounding_box(type[2], type[3])
       
-      if(training[1] == .gng.train.offline){
+      if(!train.online){
         if(!max(x) <= type[3] && !min(x) >= type[2]){
           gmum.error(ERROR_BAD_PARAMS, "Passed incorrect parameters. The dataset is not in the defined range")
         }
@@ -533,7 +568,7 @@ evalqOnLoad({
     else{
       config$.experimental_utility_option = 0
     }
-    
+   
     
     config$.dataset_type=.gng.dataset.bagging
     config$beta = beta
@@ -554,7 +589,7 @@ evalqOnLoad({
     server = new(GNGServer, config)
     
     # Perform training on passed dataset
-    if(training[1] == .gng.train.offline){
+    if(!train.online){
       
       print("Training offline")
       if(is.null(x)){
@@ -563,9 +598,8 @@ evalqOnLoad({
         insertExamples(server, x, labels)
         run(server)
         
-        max_iter = training[2]
-        print(max_iter)
-        min_relative_dif = training[3]
+        max_iter = max.iter
+        min_relative_dif = min.improvement
         iter = 0
         previous_iter = -1
         best_so_far = 1e10
@@ -574,7 +608,8 @@ evalqOnLoad({
         patience = initial_patience
 
         tryCatch({
-          while(iter < max_iter && server$isRunning()){
+          # max_iter is checked in GNG
+          while(iter == 0 || server$isRunning()){
             Sys.sleep(0.1)
             iter = server$getCurrentIteration()
             
@@ -587,8 +622,8 @@ evalqOnLoad({
   
               best_previously = min(errors[(length(errors)-5):length(errors)])
               
-              #this is same as (best_so_far-best_previously)/best_so_far < min_relative_di
-              #we get minimum of window 5 and look at the history
+              # this is same as (best_so_far-best_previously)/best_so_far < min_relative_di
+              # we get minimum of window 5 and look at the history
               if( (error_index - server$.getGNGErrorIndex()) > 4 && 
                 (best_so_far - best_previously) < best_so_far*min_relative_dif){
                 patience = patience - 1
@@ -609,14 +644,17 @@ evalqOnLoad({
             }
           }
           
+          print(paste("Iteration", iter))
           previous_iter = iter
+         
           
+
           if(server$isRunning()){
             terminate(server)
           }
-          else{
-            gmum.error(ERROR, "Training failed")
-          }
+
+          server$.updateClustering()
+
         }, interrupt=
         function(interrupt){
           if(server$isRunning()){
@@ -626,6 +664,7 @@ evalqOnLoad({
         })
         
       }
+    }else{
     }
     
     
@@ -639,21 +678,25 @@ evalqOnLoad({
                    alpha=0.5, 
                    max.nodes=1000, 
                    eps.n=0.0006, 
-                   eps.w= 0.05, 
-                   max.edge.age = 200,
-                   training = gng.train.offline(),
+                   eps.w=0.05, 
+                   max.edge.age=200,
+                   train.online=FALSE,
+                   max.iter=200,
+                   dim=0,
+                   min.improvement=1e-3,
                    lambda=200,
                    verbosity=0,
+                   seed=-1,
 					k=NULL
                   ){
     gng <- NULL
     call <- match.call(expand.dots = TRUE)
 		if(is.null(k)){
 					gng <- .GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
-			eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.default(), training=training, lambda=lambda, verbosity=verbosity)
+			eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.default(), train.online=train.online, max.iter=max.iter, dim=dim, min.improvement=min.improvement, lambda=lambda, verbosity=verbosity, seed=seed)
 		}else{
 				gng <- .GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
-			eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.utility(k=k), training=training, lambda=lambda, verbosity=verbosity)		
+			eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.utility(k=k), train.online=train.online, max.iter=max.iter, dim=dim, min.improvement=min.improvement, lambda=lambda, verbosity=verbosity, seed=seed)		
 		}
 		assign("call", call, gng)
 		gng
@@ -666,18 +709,22 @@ evalqOnLoad({
                    eps.n=0.0006, 
                    eps.w= 0.05, 
                    max.edge.age = 200,
-                   training = gng.train.offline(),
+                   train.online=FALSE,
+                   max.iter=200,
+                   dim=0,
+                   min.improvement=1e-3,
                    lambda=200,
                    verbosity=0,
+                   seed=-1,
 					value.range=c(0,1)
                   ){
 		if(value.range[1] >= value.range[2]){
 			gmum.error(ERROR, "Incorrect range")
-			return		
+			return()
 		}
 		call <- match.call(expand.dots = TRUE)
 		gng <- .GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
-eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min=value.range[1], max=value.range[2]), training=training, lambda=lambda, verbosity=verbosity)
+eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min=value.range[1], max=value.range[2]), train.online=train.online, max.iter=max.iter, dim=dim, min.improvement=min.improvement, lambda=lambda, verbosity=verbosity, seed=seed)
     assign("call", call, gng)
     gng
 	}    
@@ -722,22 +769,22 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
                 function(object, ...) standardGeneric("numberNodes"))
      
   
-  plot.gng <<- function(x, vertex.color=gng.plot.color.cluster, layout=gng.plot.layout.v2d, mode){
+  plot.gng <<- function(x, vertex.color=gng.plot.color.cluster, layout=gng.plot.layout.v2d, mode=gng.plot.2d){
     
     if(x$getNumberNodes() > 4000){
       warning("Trying to plot very large graph (>4000 nodes). It might take a while.")
     }
     if(x$getNumberNodes() == 0){
       warning("Empty graph")
-      return
+      return()
     }
     
-    if(mode == gng.plot.rgl3d && !("rgl" %in% rownames(installed.packages()))){
+    if(mode == gng.plot.3d && !("rgl" %in% rownames(installed.packages()))){
       warning("Please install rgl and reload the package to plot 3d")
-      return
+      return()
     }
     
-    if(mode == gng.plot.rgl3d){
+    if(mode == gng.plot.3d){
       .gng.plot3d(x)
     }
     else if(mode == gng.plot.2d){
@@ -754,16 +801,23 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   }
   
   summary.gng <<- function(object){
-    print(sprintf("Growing Neural Gas, nodes %d with mean error %f", 
-                  object$getNumberNodes(), object$getMeanError()))
-    print(sprintf("Trained %d iterations", object$getCurrentIteration()))
-    print("Mean errors[s]: ")
-    errors = object$getErrorStatistics()
-    if(length(errors) > 10){
-      errors = errors[(length(errors)-10):length(errors)]
+    print("Growing Neural Gas")
+    if(exists("object$call")){
+        print(object$call)
     }
-    
-    print(errors)
+    if(object$hasStarted()){
+        print(sprintf("%d nodes with mean error %f", 
+                      object$getNumberNodes(), object$getMeanError()))
+        
+        print(sprintf("Trained %d iterations", object$getCurrentIteration()))
+        print("Mean errors[s]: ")
+        errors = object$getErrorStatistics()
+        if(length(errors) > 10){
+          errors = errors[(length(errors)-10):length(errors)]
+        }
+        
+        print(errors)
+    }
   }
 
 
@@ -823,24 +877,34 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     object$clustering()
   }  
 
-  save.gng <<- function(object, filename){
-    warning("Saving does not preserve currently training history")
+  gngSave <<- function(object, filename){
+    warning("Saving does not preserve training history")
     object$save(filename)
   }
   
-  load.gng <<- function(filename){
-    warning("Saving does not preserve currently training history")
+  gngLoad <<- function(filename){
+    warning("Saving does not preserve training history")
     fromFileGNG(filename)
   }
  
   
-  centroids.gng <<- function(object){
+  centroids.gng <<- function(object, community.detection.algorithm=spinglass.community){
     ig <- convertToGraph(object)
-    communities <- spinglass.community(ig)
+    
+    cl = clusters(ig)
+    components = lapply(levels(as.factor(cl$membership)), function(x) induced.subgraph(ig, cl$membership==as.numeric(x)))
+    
     centroids <- c()
-    for(i in 1:length(communities)){
-      ig_test <- induced.subgraph(ig, which(membership(communities)==i))
-      centroids<- c(centroids, (order(betweenness(ig_test))[1]))
+    for(cc in components){
+      communities <- community.detection.algorithm(cc)
+      for(i in 1:length(communities)){
+        #Get subcommunity
+        community_graph <- induced.subgraph(cc, which(membership(communities)==i))
+        #Get index of centroid (which is ordered by betwenness)
+        centroid_index = which(order(betweenness(community_graph))==1)
+        # Append
+        centroids<- c(centroids, V(community_graph)$index[centroid_index])
+      }
     }
     centroids
   }
@@ -862,8 +926,11 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   
   
     
-  convertToGraph.gng <- function(object){
-    pause(object)
+  convertToGraph.gng <- function(object, calculate.dist=TRUE){
+    was_running = object$isRunning()
+    if(was_running){
+        pause(object)
+    }
     
     if(object$getNumberNodes() == 0){
       return(graph.empty(n=0, directed=FALSE))
@@ -918,18 +985,25 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
         V(g)[igraph_index]$v2 <- node$pos[3]
         V(g)[igraph_index]$label <- node$label
         V(g)[igraph_index]$error <- node$error
+        V(g)[igraph_index]$index <- node$index
         if(!is.null(node$utility)){
           V(g)[igraph_index]$utility = node$utility
         }
       } 
     }
     
-    # Add distance information
-    dists <- apply(get.edges(g, E(g)), 1, function(x){ 
-      object$nodeDistance(indexesIGraphToGNG[x[1]], indexesIGraphToGNG[x[2]])
-    })
-    E(g)$dists = dists
+    if(calculate.dist){
+        # Add distance information
+        dists <- apply(get.edges(g, E(g)), 1, function(x){ 
+          object$nodeDistance(indexesIGraphToGNG[x[1]], indexesIGraphToGNG[x[2]])
+        })
+        E(g)$dists = dists
+    }
     
+    if(was_running){
+        run(object)
+    }
+
     g
   }
 
@@ -943,6 +1017,37 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   setMethod("clustering" ,
             "Rcpp_GNGServer",
             clustering.gng)
+
+
+  predictCentroid <<- function(object, centroids, x){
+    .predictCentroid <- function(object, centroids, x){
+        # Returns all dists from given pos to given nodes
+        get_all_dists <- function(pos, nodes, gng){
+          sapply(nodes, function(node_index) sqrt(sum((pos-node(gng, node_index)$pos)^2)))
+        }
+        
+        which.min(get_all_dists(x, centroids, object))
+    }
+    if( is.vector(x)){
+      .predictCentroid(object, centroids, x)
+    }else{
+      if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
+        gmum.error(ERROR_BAD_PARAMS, "Wrong target class, please provide data.frame, matrix or numeric vector")
+      }
+      
+      if (!is(x, "matrix")) {
+        x <- data.matrix(x)
+      }
+      
+      y <- rep(NA, nrow(x))
+      
+      for(i in 1:nrow(x)){
+        y[i] <- .predictCentroid(object, centroids, x[i,])
+      }
+      
+      y
+    }
+  }
 
   setMethod("predict" ,
             "Rcpp_GNGServer",
@@ -970,8 +1075,10 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   
   
   insertExamples.gng <<- function(object, examples, labels=c()){   
+   
+
 	  if(length(labels) == 0){
-      	object$insertExamples(examples, vector(mode="numeric", length=0))
+      	object$insertExamples(examples)
 	  }else if(typeof(labels) == "character"){
 		if(typeof(labels) == "list"){
 			if(is.null(examples$labels)){
@@ -979,15 +1086,14 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
 			}else{
 				label.column <- examples$labels
 				examples$labels <- NULL
-				object$insertExamples(examples, label.column)
+				object$insertLabeledExamples(examples, label.column)
 			}
 		}else{
 	  		gmum.error(ERROR_BAD_PARAMS, "Please pass data frame")
 		}
 	  }else{
-        object$insertExamples(examples, labels)
+        object$insertLabeledExamples(examples, labels)
 	  }    
-	
   }
   
 
@@ -1005,17 +1111,15 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
             insertExamples.gng)
   
 
-  methods = list()
-  for(name in names(GNGConfiguration@methods)){
-    methods[[name]] = eval(substitute(
-      function(...) .CppObject$WHAT(...), list(WHAT = as.name(name)))) 
-  }
-  
-  methods[["initialize"]] <- function(...){
-    
-  }
-  
-
+    methods = list()
+    for(name in names(GNGConfiguration@methods)){
+            methods[[name]] = eval(substitute(
+                                                    function(...) .CppObject$WHAT(...), list(WHAT = as.name(name)))) 
+      }
+      
+      methods[["initialize"]] <- function(...){
+              
+   }
+      
 
 })
-

@@ -1,9 +1,8 @@
 library(igraph)
 
-  .gng.plot3d<-function(gngServer){
+  .gng.plot3d<-function(g, radius=NULL){
 	if("rgl" %in% rownames(installed.packages()) == TRUE){
-	    g <- convertToGraph(gngServer)
-	    .visualizeIGraphRGL(g)
+	    .visualizeIGraphRGL(convertToGraph(g), radius=radius)
 	}else{
 	    warning("Please install rgl package to plot 3d graphs")
 	}
@@ -11,11 +10,14 @@ library(igraph)
   #' Draw igraph using rgl - assumes >=3 dimensions and draws 3 first
   .visualizeIGraphRGL<-function(g, radius=NULL){
     if("rgl" %in% rownames(installed.packages()) == TRUE){
-	    library(rgl)
+        # TODO: this code is so ugly I cannot believe it
+        library(rgl)
 	    library(igraph)
 	    
-	    if(length(V(g))==0) return
-	    
+	    if(length(V(g))==0){
+            return()
+	    }
+
 	    iteration<-0
 	    nodes <- length(V(g))
 	    
@@ -54,15 +56,9 @@ library(igraph)
 	      radius <- 8.0*(0.3333* (abs(max(x) - min(x))+abs(max(y) - min(y))+abs(max(z) - min(z)))/(nodes+0.0))
 	    }
 	    
-	    cx <- V(g)$error
-	    cx <- abs(cx)/max(abs(cx)) 
-	    cy <- c(1:(nodes))
-	    cz <- c(1:(nodes))
-	    
-	    cy <- 0.1
-	    cz <- 0.1
-	    print(cx)
-	    
+	    cx <- abs(V(g)$error)/max(abs(V(g)$error))
+	    cy <- rep(0.1, nodes)
+	    cz <- rep(0.1, nodes)
 	    
 	    ### Draw graph ###
 	    rgl.clear()
@@ -70,20 +66,21 @@ library(igraph)
 	    rgl.bg(color="white")
 	    axes3d(edges="bbox")
 	    
-	    
-	    rgl.spheres(x,y,z, 
-			radius = rep(radius, length(cx)), 
-			col=rgb(cx,cy, cz))
+        rgl.spheres(x,y,z, radius = rep(radius, length(cx)), 
+			col=rgb(cx,cy, cz)
+        )
 	    
 	    rgl.lines(x_lines[1:k-1],y_lines[1:k-1],z_lines[1:k-1],color="bisque")
 	}else{
-    		warning("Please install rgl package to plot 3d graph")
-    	}
+        warning("Please install rgl package to plot 3d graph")
+    }
   }
 .gng.plot2d.errors<-function(gngServer, vertex.color, layout){
   ig <- convertToGraph(gngServer)
   
-  if(length(V(ig))==0) return
+  if(length(V(ig))==0){
+    return()
+  }
   
   if(vertex.color == 'label'){
     vertex.color = c(1:length(V(ig)))
@@ -98,11 +95,11 @@ library(igraph)
 }
 
 .gng.plot2d<-function(gngServer, vertex.color, layout){
-  tmp_name <- paste("tmp",sample(1:1000, 1),".graphml", sep="")
-
   ig <- convertToGraph(gngServer)
   
-  if(length(V(ig))==0) return
+  if(length(V(ig))==0){
+      return()
+  }
 
   if(vertex.color == 'label'){
     vertex.color = c(1:length(V(ig)))
@@ -121,14 +118,13 @@ library(igraph)
 #' @note It is quite slow, works for graphs < 2000 nodes, and for graphs <400 when using layout
 .visualizeIGraph2d<-function(g, vertex.color, layout){
   L<-layout(g)
-  
   if(vertex.color == 'cluster'){   
     communities <- infomap.community(g)
     communities
     col <- rainbow(length(communities))
     vertex.color <- col[membership(communities)]
   }
-  if(vertex.color == 'fast_cluster'){
+  else if(vertex.color == 'fast_cluster'){
     l = fastgreedy.community(g)#as.undirected(g))
     col <- rainbow(length(l))
     print(membership(l))
