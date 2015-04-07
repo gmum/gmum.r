@@ -130,7 +130,9 @@ void GNGServer::init(GNGConfiguration configuration,
 					current_configuration.uniformgrid_optimization,
 					current_configuration.lazyheap_optimization,
 					current_configuration.experimental_utility_option,
-					current_configuration.experimental_utility_k, m_logger));
+					current_configuration.experimental_utility_k, 
+                    current_configuration.max_iter,
+                    m_logger));
 
 	DBG(m_logger,10, "GNGServer()::constructed algorithm object");
 
@@ -276,9 +278,9 @@ unsigned int GNGServer::_getLastNodeIndex() const {
 	return gngGraph->get_maximum_index() + 1;
 }
 
-//Constructor needed for RCPPInterface
+///Constructor needed for RCPPInterface
 GNGServer::GNGServer(GNGConfiguration * configuration) {
-	init(*configuration, 0 /*input_graph*/);
+    init(*configuration, 0 /*input_graph*/);
 }
 
 ///Moderately slow function returning node descriptors

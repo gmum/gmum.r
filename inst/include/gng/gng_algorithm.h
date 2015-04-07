@@ -23,6 +23,8 @@
 
 using namespace std;
 
+//TODO: shorten constructor
+
 namespace gmum {
 
 /**
@@ -35,9 +37,7 @@ namespace gmum {
  */
 class GNGAlgorithm {
 public:
-	/**Construct main algorithm object, that will hold mid-results
-	 * @param alg_memory_lock When locked algorithm is not running anything that is memory dangerous
-	 * @param g GNGGraph object implementing graph interface
+	/**Construct main algorithm object
 	 * @param db GNGDataset object
 	 * @param boundingbox_origin Starting point for reference system
 	 * @param boundingbox_axis Axis lengths for reference system
@@ -58,6 +58,7 @@ public:
 			int dim = 3, bool uniformgrid_optimization = true,
 			bool lazyheap_optimization = true, unsigned int utility_option =
 					GNGConfiguration::UtilityOff, double utility_k = -1,
+            int max_iter = -1,
 			boost::shared_ptr<Logger> logger = boost::shared_ptr<Logger>());
 
 	/** Run main loop of the algorithm*/
@@ -96,6 +97,8 @@ public:
 	int m_max_age, m_max_nodes, m_iteration;
 
 	bool m_toggle_uniformgrid, m_toggle_lazyheap;
+
+    int max_iter;
 
 	double m_utility_k;
 	int m_utility_option;

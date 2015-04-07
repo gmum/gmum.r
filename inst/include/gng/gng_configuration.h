@@ -62,6 +62,9 @@ struct GNGConfiguration {
 	/**Epsilion n*/
 	double eps_n; //=0.0006;
 
+    ///Maximum number of iterations
+    int max_iter; //=-1;
+
 	int verbosity;
 
 	/**Pseudodistance function used (might be non metric)*/
@@ -83,6 +86,8 @@ struct GNGConfiguration {
         seed = -1; //is equivalent to null
 
 		verbosity = 1;
+
+        max_iter = -1;
 
 		starting_nodes = 100;
 

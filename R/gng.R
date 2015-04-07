@@ -308,11 +308,13 @@ errorStatistics.gng <- NULL
 #' 
 #' @param eps.w Default 0.05. How strongly adapt winning node
 #' 
-#' @param max.iter Default 200. Used for offline (default) training
+#' @param max.iter Default 200. If training offline will stop if exceedes max.iter iterations
 #'
 #' @param train.online Default FALSE. If used will run in online fashion
 #'
 #' @param min.improvement Used for offline (default) training. Controls stopping criterion, decrease if training stops too early. Default 1e-3.
+#'
+#' @param dim If training online specifies training example size
 #'
 #' @param value.range Default [0,1]. All example features should be in this range, needed for optimized version of the algorithm
 #' @examples
@@ -385,8 +387,12 @@ errorStatistics.gng <- NULL
 #' 
 #' @param eps.w Default 0.05. How strongly adapt winning node
 #' 
-#' @param training Can be either gng.train.offline(max.iter, min.improvement), or gng.train.online()
-#' 
+#' @param max.iter Default 200. Used for offline (default) training
+#'
+#' @param train.online Default FALSE. If used will run in online fashion
+#'
+#' @param min.improvement Used for offline (default) training. Controls stopping criterion, decrease if training stops too early. Default 1e-3.
+#'
 #' @param k Utility constant, by default turned off. Good value is 1.3. Constant controlling speed of erasing obsolete nodes, see http://sund.de/netze/applets/gng/full/tex/DemoGNG/node20.html
 #' 
 #'
@@ -484,8 +490,11 @@ evalqOnLoad({
                    eps.w= 0.05, 
                    max.edge.age = 200, 
                    type = gng.type.default(),
-                   training = gng.train.offline(),
+                   max.iter=200,
+                   train.online=FALSE,
+                   min.improvement=1e-3,
                    lambda=200,
+                   dim=0,
                    verbosity=0,
                    seed=-1
   ){
@@ -495,11 +504,14 @@ evalqOnLoad({
 
     config$seed = seed
     
+    
+
     # Fill in configuration
-    if(training[1] == .gng.train.offline){
-       config$dim = ncol(x)
+    if(train.online){
+       config$dim = dim
     }else{
-        config$dim = training[2]  
+       config$dim = ncol(x)
+       config$max_iter = max.iter
 	}
 
     
@@ -508,7 +520,7 @@ evalqOnLoad({
       config$.lazyheap_optimization = TRUE  
       config$.set_bounding_box(type[2], type[3])
       
-      if(training[1] == .gng.train.offline){
+      if(!train.online){
         if(!max(x) <= type[3] && !min(x) >= type[2]){
           gmum.error(ERROR_BAD_PARAMS, "Passed incorrect parameters. The dataset is not in the defined range")
         }
@@ -547,7 +559,7 @@ evalqOnLoad({
     server = new(GNGServer, config)
     
     # Perform training on passed dataset
-    if(training[1] == .gng.train.offline){
+    if(!train.online){
       
       print("Training offline")
       if(is.null(x)){
@@ -556,9 +568,8 @@ evalqOnLoad({
         insertExamples(server, x, labels)
         run(server)
         
-        max_iter = training[2]
-        print(max_iter)
-        min_relative_dif = training[3]
+        max_iter = max.iter
+        min_relative_dif = min.improvement
         iter = 0
         previous_iter = -1
         best_so_far = 1e10
@@ -567,7 +578,8 @@ evalqOnLoad({
         patience = initial_patience
 
         tryCatch({
-          while(iter == 0 ||  (iter < max_iter && server$isRunning())){
+          # max_iter is checked in GNG
+          while(iter == 0 || server$isRunning()){
             Sys.sleep(0.1)
             iter = server$getCurrentIteration()
             
@@ -580,8 +592,8 @@ evalqOnLoad({
   
               best_previously = min(errors[(length(errors)-5):length(errors)])
               
-              #this is same as (best_so_far-best_previously)/best_so_far < min_relative_di
-              #we get minimum of window 5 and look at the history
+              # this is same as (best_so_far-best_previously)/best_so_far < min_relative_di
+              # we get minimum of window 5 and look at the history
               if( (error_index - server$.getGNGErrorIndex()) > 4 && 
                 (best_so_far - best_previously) < best_so_far*min_relative_dif){
                 patience = patience - 1
@@ -610,9 +622,6 @@ evalqOnLoad({
           if(server$isRunning()){
             terminate(server)
           }
-          else{
-            gmum.error(ERROR, "Training failed")
-          }
 
           server$.updateClustering()
 
@@ -639,9 +648,12 @@ evalqOnLoad({
                    alpha=0.5, 
                    max.nodes=1000, 
                    eps.n=0.0006, 
-                   eps.w= 0.05, 
-                   max.edge.age = 200,
-                   training = gng.train.offline(),
+                   eps.w=0.05, 
+                   max.edge.age=200,
+                   train.online=FALSE,
+                   max.iter=200,
+                   dim=0,
+                   min.improvement=1e-3,
                    lambda=200,
                    verbosity=0,
                    seed=-1,
@@ -650,11 +662,11 @@ evalqOnLoad({
     gng <- NULL
     call <- match.call(expand.dots = TRUE)
 		if(is.null(k)){
-					gng <- .GNG(x=x, seed=seed, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
-			eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.default(), training=training, lambda=lambda, verbosity=verbosity)
+					gng <- .GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
+			eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.default(), train.online=train.online, max.iter=max.iter, dim=dim, min.improvement=min.improvement, lambda=lambda, verbosity=verbosity, seed=seed)
 		}else{
-				gng <- .GNG(x=x, labels=labels, seed=seed, beta=beta, alpha=alpha, max.nodes=max.nodes, 
-			eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.utility(k=k), training=training, lambda=lambda, verbosity=verbosity)		
+				gng <- .GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
+			eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.utility(k=k), train.online=train.online, max.iter=max.iter, dim=dim, min.improvement=min.improvement, lambda=lambda, verbosity=verbosity, seed=seed)		
 		}
 		assign("call", call, gng)
 		gng
@@ -667,7 +679,10 @@ evalqOnLoad({
                    eps.n=0.0006, 
                    eps.w= 0.05, 
                    max.edge.age = 200,
-                   training = gng.train.offline(),
+                   train.online=FALSE,
+                   max.iter=200,
+                   dim=0,
+                   min.improvement=1e-3,
                    lambda=200,
                    verbosity=0,
                    seed=-1,
@@ -678,8 +693,8 @@ evalqOnLoad({
 			return		
 		}
 		call <- match.call(expand.dots = TRUE)
-		gng <- .GNG(x=x, seed=seed, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
-eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min=value.range[1], max=value.range[2]), training=training, lambda=lambda, verbosity=verbosity)
+		gng <- .GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
+eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min=value.range[1], max=value.range[2]), train.online=train.online, max.iter=max.iter, dim=dim, min.improvement=min.improvement, lambda=lambda, verbosity=verbosity, seed=seed)
     assign("call", call, gng)
     gng
 	}    

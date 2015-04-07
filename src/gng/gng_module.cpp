@@ -61,6 +61,7 @@ RCPP_MODULE(gng_module){
 	.field("max_nodes", &GNGConfiguration::max_nodes)
 	.field("verbosity", &GNGConfiguration::verbosity)
 	.field("seed", &GNGConfiguration::seed)
+	.field("max_iter", &GNGConfiguration::max_iter)
 	.method(".check_correctness", &GNGConfiguration::check_correctness)
 	.method(".set_bounding_box", &GNGConfiguration::setBoundingBox);
 
