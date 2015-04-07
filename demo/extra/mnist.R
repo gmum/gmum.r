@@ -59,7 +59,7 @@ Y.test = data$test[,785]
 
 ### Train Optimized GNG ###
 gng <- OptimizedGNG(max.nodes=max.nodes, x=X, value.range=c(0,1),
-                    labels=Y, training = gng.train.offline(max.iter, 1e-2))
+                    labels=Y, max.iter=max.iter, min.improvement=1e-2)
 
 
 ### Print some variables and save ###
