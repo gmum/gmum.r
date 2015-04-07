@@ -99,24 +99,48 @@ loadModule('svm_wrapper', TRUE)
 
 evalqOnLoad({
 
-  SVM <<- function(formula     = NULL, 
-                   x, 
-                   y           = NULL,
-                   lib         = "libsvm",             
-                   kernel      = "linear",
-                   prep        = "none",
-                   mclass      = "none",
-                   C           = 1,
-                   gamma       = 0.01,
-                   coef0       = 0,
-                   degree      = 3,
-                   shrinking   = TRUE,
-                   probability = FALSE,
-                   cweights    = NULL,
-                   example_weights    = NULL,
-                   cache_size  = 200,
-                   tol         = 1e-3,
-                   verbosity   = 4) {
+  SVM <- function(x, ...)
+    UseMethod("SVM")
+  
+  SVM.formula <- function(formula, data, ...) {
+    call <- match.call(expand.dots = TRUE)
+    
+    if (!inherits(formula, "formula")) stop("Please provide valid formula for this method.")
+    if (inherits(data, "data.frame")) data <- as.data.matrix(data)
+    
+    labels <- all.vars(update(formula, .~0))
+    y <- x[, labels]
+    
+    # better way?
+    if (formula[3] == ".()") {
+      x <- x[, names(data) != labels]
+    }
+    else {
+      columns = all.vars(update(formula, 0~.))
+      x <- x[, columns]
+    } 
+    
+  }
+  
+  SVM.default <<- 
+  function(x, 
+           y,
+           lib         = "libsvm",             
+           kernel      = "linear",
+           prep        = "none",
+           mclass      = "none",
+           C           = 1,
+           gamma       = 0.01,
+           coef0       = 0,
+           degree      = 3,
+           shrinking   = TRUE,
+           probability = FALSE,
+           cweights    = NULL,
+           example_weights    = NULL,
+           cache_size  = 200,
+           tol         = 1e-3,
+           verbosity   = 4) {
+    
     call <- match.call(expand.dots = TRUE)
 
     # check for errors
@@ -159,33 +183,7 @@ evalqOnLoad({
       stop("Please provide either data and formula or data and lables")
     }
         
-    if (is(x, "data.frame") && !is.null(formula)) {
-      labels <- all.vars(update(formula, .~0))
-      y <- data.matrix( x[, labels] )
-      
-      # I'm pretty sure this should bo done differently, and equally so I can't find how
-      if (formula[3] == ".()") {
-        x <- data.matrix( x[,names(x) != labels]  )
-      }
-      else {
-        columns = all.vars(update(formula, 0~.))
-        x <- data.matrix( x[, columns] )
-      } 
-    }
-    else if (is(x, "matrix") && !is.null(formula)) {
-      labels <- all.vars(update(formula, .~0))
-      y <- x[, labels]
-      
-      # I'm pretty sure this should bo done differently, and equally so I can't find how
-      if (formula[3] == ".()") {
-        x <- x[, names(data) != labels]
-      }
-      else {
-        columns = all.vars(update(formula, 0~.))
-        x <- x[, columns]
-      } 
-    }
-    else if(inherits(x, "Matrix")) {
+    if(inherits(x, "Matrix")) {
       library("SparseM")
       library("Matrix")
       x <- as(x, "matrix.csr")
