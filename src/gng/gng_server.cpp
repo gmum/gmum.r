@@ -304,7 +304,7 @@ Rcpp::List GNGServer::getNode(int index) {
 
 	List ret;
 	ret["pos"] = pos;
-    ret["index"] = gng_index; //useful for graph processing
+    ret["index"] = index; //useful for graph processing
 	ret["error"] = n.error;
 	ret["label"] = n.extra_data;
 

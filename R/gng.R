@@ -159,6 +159,36 @@ load.gng <- NULL
 #'  
 centroids.gng <- NULL
 
+#' Find closest centroid
+#'
+#' @title node
+#' 
+#' @description Finds closest centroid from given list
+#' 
+#' @usage
+#' predictCentroid(gng, centroids(gng), c(1,1,1))
+#' 
+#' @export
+#' 
+#' @rdname node-methods
+#' 
+#' @docType methods
+#'
+#' @param centroids List of indexes of nodes in gng. 
+#' Will assign each point to one of indexes from centroids. 
+#' Can be found using centroids.gng function.
+#' 
+#' @param x Can be either vector or data.frame.
+#' 
+#' @examples
+#' # Find closest centroid to c(1,1,1)
+#' found.centroids <- centroids(gng)
+#' predictCentroid(gng, found.centroids, c(1,1,1))
+#' 
+#' @aliases node
+#' 
+predictCentroid <- NULL
+
 #' Get GNG node
 #'
 #' @title node
@@ -858,19 +888,23 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   }
  
   
-  centroids.gng <<- function(object){
+  centroids.gng <<- function(object, community.detection.algorithm=spinglass.community){
     ig <- convertToGraph(object)
     
     cl = clusters(ig)
     components = lapply(levels(as.factor(cl$membership)), function(x) induced.subgraph(ig, cl$membership==as.numeric(x)))
-
+    
     centroids <- c()
     for(cc in components){
-        communities <- spinglass.community(cc)
-        for(i in 1:length(communities)){
-          ig_test <- induced.subgraph(cc, which(membership(communities)==i))
-          centroids<- c(centroids, (order(betweenness(ig_test))[1]))
-        }
+      communities <- community.detection.algorithm(cc)
+      for(i in 1:length(communities)){
+        #Get subcommunity
+        community_graph <- induced.subgraph(cc, which(membership(communities)==i))
+        #Get index of centroid (which is ordered by betwenness)
+        centroid_index = which(order(betweenness(community_graph))==1)
+        # Append
+        centroids<- c(centroids, V(community_graph)$index[centroid_index])
+      }
     }
     centroids
   }
@@ -983,6 +1017,37 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   setMethod("clustering" ,
             "Rcpp_GNGServer",
             clustering.gng)
+
+
+  predictCentroid <<- function(object, centroids, x){
+    .predictCentroid <- function(object, centroids, x){
+        # Returns all dists from given pos to given nodes
+        get_all_dists <- function(pos, nodes, gng){
+          sapply(nodes, function(node_index) sqrt(sum((pos-node(gng, node_index)$pos)^2)))
+        }
+        
+        which.min(get_all_dists(x, centroids, object))
+    }
+    if( is.vector(x)){
+      .predictCentroid(object, centroids, x)
+    }else{
+      if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
+        gmum.error(ERROR_BAD_PARAMS, "Wrong target class, please provide data.frame, matrix or numeric vector")
+      }
+      
+      if (!is(x, "matrix")) {
+        x <- data.matrix(x)
+      }
+      
+      y <- rep(NA, nrow(x))
+      
+      for(i in 1:nrow(x)){
+        y[i] <- .predictCentroid(object, centroids, x[i,])
+      }
+      
+      y
+    }
+  }
 
   setMethod("predict" ,
             "Rcpp_GNGServer",
