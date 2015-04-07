@@ -848,23 +848,29 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   }  
 
   save.gng <<- function(object, filename){
-    warning("Saving does not preserve currently training history")
+    warning("Saving does not preserve training history")
     object$save(filename)
   }
   
   load.gng <<- function(filename){
-    warning("Saving does not preserve currently training history")
+    warning("Saving does not preserve training history")
     fromFileGNG(filename)
   }
  
   
   centroids.gng <<- function(object){
     ig <- convertToGraph(object)
-    communities <- spinglass.community(ig)
+    
+    cl = clusters(ig)
+    components = lapply(levels(as.factor(cl$membership)), function(x) induced.subgraph(ig, cl$membership==as.numeric(x)))
+
     centroids <- c()
-    for(i in 1:length(communities)){
-      ig_test <- induced.subgraph(ig, which(membership(communities)==i))
-      centroids<- c(centroids, (order(betweenness(ig_test))[1]))
+    for(cc in components){
+        communities <- spinglass.community(cc)
+        for(i in 1:length(communities)){
+          ig_test <- induced.subgraph(cc, which(membership(communities)==i))
+          centroids<- c(centroids, (order(betweenness(ig_test))[1]))
+        }
     }
     centroids
   }
@@ -886,7 +892,7 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   
   
     
-  convertToGraph.gng <- function(object){
+  convertToGraph.gng <- function(object, calculate.dist=TRUE){
     was_running = object$isRunning()
     if(was_running){
         pause(object)
@@ -945,17 +951,20 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
         V(g)[igraph_index]$v2 <- node$pos[3]
         V(g)[igraph_index]$label <- node$label
         V(g)[igraph_index]$error <- node$error
+        V(g)[igraph_index]$index <- node$index
         if(!is.null(node$utility)){
           V(g)[igraph_index]$utility = node$utility
         }
       } 
     }
     
-    # Add distance information
-    dists <- apply(get.edges(g, E(g)), 1, function(x){ 
-      object$nodeDistance(indexesIGraphToGNG[x[1]], indexesIGraphToGNG[x[2]])
-    })
-    E(g)$dists = dists
+    if(calculate.dist){
+        # Add distance information
+        dists <- apply(get.edges(g, E(g)), 1, function(x){ 
+          object$nodeDistance(indexesIGraphToGNG[x[1]], indexesIGraphToGNG[x[2]])
+        })
+        E(g)$dists = dists
+    }
     
     if(was_running){
         run(g)

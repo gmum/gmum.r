@@ -116,110 +116,11 @@ struct GNGConfiguration {
 
 	}
 
-	void deserialize(std::istream & in) {
-		///Utility constant
-		in >> experimental_utility_k;
+	void deserialize(std::istream & in);
 
-		///Utility option. Currently supported simples utility
-		in >> experimental_utility_option;
+	void serialize(std::ostream & out) const;
 
-		/**Maximum number of nodes*/
-		in >> max_nodes; //=1000;
-		/**Uniform grid optimization*/
-		in >> uniformgrid_optimization; //=true,lazyheap=true;
-		/**Lazy heap optimization*/
-		in >> lazyheap_optimization;
-		/**Bounding box specification*/
-
-		/**Dimensionality of examples*/
-		in >> dim;
-        
-        if(uniformgird_optimization){
-            orig = vector<double>(dim, 0);
-            axis = vector<double>(dim, 0);
-
-            for (size_t i = 0; i < dim; ++i) {
-                in >> axis[i] >> orig[i];
-            }
-        }
-		/**Max edge age*/
-		in >> max_age; //=200;
-		/**Alpha coefficient*/
-		in >> alpha; //=0.95;
-		/**Beta coefficient*/
-		in >> beta; //=0.9995;
-		/**Lambda coefficient*/
-		in >> lambda; //=200;
-		/**Epsilion v. How strongly move winning node*/
-		in >> eps_w; //=0.05;
-		/**Memory bound*/
-		in >> graph_memory_bound;
-		/**Epsilion n*/
-		in >> eps_n; //=0.0006;
-
-		in >> verbosity;
-
-		/**Pseudodistance function used (might be non metric)*/
-		in >> distance_function;
-
-		/**Type of used database, unsgined int for compabititlity with Rcpp**/
-		in >> datasetType;
-
-		/**Initial reserve memory for nodes */
-		in >> starting_nodes;
-	}
-
-	void serialize(std::ostream & out) {
-		///Utility constant
-		out << experimental_utility_k << endl;
-
-		///Utility option. Currently supported simples utility
-		out << experimental_utility_option << endl;
-
-		/**Maximum number of nodes*/
-		out << max_nodes << endl; //=1000;
-		/**Uniform grid optimization*/
-		out << uniformgrid_optimization << endl; //=true,lazyheap=true;
-		/**Lazy heap optimization*/
-		out << lazyheap_optimization << endl;
-		/**Bounding box specification*/
-
-		/**Dimensionality of examples*/
-		out << dim << endl;
-
-        if(uniformgrid_optimization){
-            for (size_t i = 0; i < dim; ++i) {
-                out << axis[i] << endl << orig[i] << endl;
-            }
-        }
-		/**Max edge age*/
-		out << max_age << endl; //=200;
-		/**Alpha coefficient*/
-		out << alpha << endl; //=0.95;
-		/**Beta coefficient*/
-		out << beta << endl; //=0.9995;
-		/**Lambda coefficient*/
-		out << lambda << endl; //=200;
-		/**Epsilion v. How strongly move winning node*/
-		out << eps_w << endl; //=0.05;
-		/**Memory bound*/
-		out << graph_memory_bound << endl;
-		/**Epsilion n*/
-		out << eps_n << endl; //=0.0006;
-
-		out << verbosity << endl;
-
-		/**Pseudodistance function used (might be non metric)*/
-		out << distance_function << endl;
-
-		/**Type of used database, unsgined int for compabititlity with Rcpp**/
-		out << datasetType << endl;
-
-		/**Initial reserve memory for nodes */
-		out << starting_nodes; //imporant not to add endl for binary correctness
-	}
-
-	//This is a simplification - we assume square box
+    //This is a simplification - we assume square box
 	void setBoundingBox(double min, double max) {
 		orig = vector<double>();
 		axis = vector<double>();
@@ -234,6 +135,17 @@ struct GNGConfiguration {
 		GNGConfiguration default_configuration;
 		return default_configuration;
 	}
+
+    friend ostream & operator<<(ostream & out, const GNGConfiguration & conf){
+        conf.serialize(out);
+        return out;
+    }
+
+    #ifdef RCPP_INTERFACE
+    void show() const{
+        serialize(cerr);
+    }
+    #endif
 
 	/// Validate server configuration
     bool check_correctness();

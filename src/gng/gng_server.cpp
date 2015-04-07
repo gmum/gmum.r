@@ -44,15 +44,16 @@ void GNGServer::init(GNGConfiguration configuration,
 
 	LOG(m_logger,5, "GNGServer()::constructing GNGServer");
 
-	if (!configuration.check_correctness())
-		throw BasicException("Invalid configuration passed to GNGServer");
+	if (!configuration.check_correctness()){
+		throw invalid_argument("Invalid configuration passed to GNGServer");
+    }
 
 	this->current_configuration = configuration; //assign configuration
 
 	if (current_configuration.graph_storage == GNGConfiguration::RAMMemory) {
 		//Nothing to do here
 	} else {
-		throw BasicException("Not supported GNGConfiguration type");
+		throw invalid_argument("Not supported GNGConfiguration type");
 	}
 
 	/** Construct database **/
@@ -175,7 +176,6 @@ double GNGServer::nodeDistance(int id1, int id2) const {
 }
 
 void GNGServer::save(std::string filename) {
-
 	std::ofstream output;
 	output.open(filename.c_str(), ios::out | ios::binary);
 
@@ -304,6 +304,7 @@ Rcpp::List GNGServer::getNode(int index) {
 
 	List ret;
 	ret["pos"] = pos;
+    ret["index"] = gng_index; //useful for graph processing
 	ret["error"] = n.error;
 	ret["label"] = n.extra_data;
 
