@@ -5,7 +5,8 @@ This directory contains R code tests.
 
 ## Dependencies
 
-* klaR package (and svmlight binaries in path, download from http://svmlight.joachims.org/)
+* klaR package (and svmlight binaries in path, download from http://svmlight.joachims.org/. For Windows
+make sure you add appropriate path to PATH variable or drop them into root folder of package)
 * e1071 package
 
 ### Testthat

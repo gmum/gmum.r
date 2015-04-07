@@ -236,10 +236,20 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     learn_parm->svm_iter_to_shrink=-9999;
     learn_parm->maxiter=100000;
     learn_parm->kernel_cache_size=40;
+<<<<<<< HEAD
     learn_parm->svm_c=0;
     learn_parm->eps=0.1;
     learn_parm->transduction_posratio=-1.0;
     learn_parm->svm_costratio=config.C;
+=======
+    /* upper bound C on alphas */
+    learn_parm->svm_c=0.0;
+    learn_parm->eps=0.1;
+    learn_parm->transduction_posratio=-1.0;
+    /* factor to multiply C for positive examples */
+    learn_parm->svm_costratio=config.C;
+    /* FIXME: Find what this one does */
+>>>>>>> svm-wrapper
     learn_parm->svm_costratio_unlab=1.0;
     learn_parm->svm_unlabbound=1E-5;
     learn_parm->epsilon_crit=0.001;

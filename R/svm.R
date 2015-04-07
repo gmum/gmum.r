@@ -77,7 +77,6 @@ print.svm <- NULL
 #' 
 #' @rdname plot-dataset-methods
 #' 
-#' @docType plot
 plot.svm <- NULL
 
 #' @title summary
@@ -92,7 +91,6 @@ plot.svm <- NULL
 #' 
 #' @rdname svm-summary-method
 #' 
-#' @docType plot
 summary.svm <- NULL
 
 loadModule('svm_wrapper', TRUE)
@@ -106,6 +104,9 @@ evalqOnLoad({
     call <- match.call(expand.dots = TRUE)
     
     if (!inherits(formula, "formula")) stop("Please provide valid formula for this method.")
+    if(inherits(data, "Matrix") || inherits(x, "simple_triplet_matrix") || inherits(x, "matrix.csr")) 
+      stop("Please provide dense data for this method")
+    
     if (inherits(data, "data.frame")) data <- as.data.matrix(data)
     
     labels <- all.vars(update(formula, .~0))
@@ -120,69 +121,43 @@ evalqOnLoad({
       x <- x[, columns]
     } 
     
+    ret <- SVM.default(x, y, ...)
+    ret$call <- call
+    
+    return(ret)
   }
   
-  SVM.default <<- 
-  function(x, 
-           y,
-           lib         = "libsvm",             
-           kernel      = "linear",
-           prep        = "none",
-           mclass      = "none",
-           C           = 1,
-           gamma       = 0.01,
-           coef0       = 0,
-           degree      = 3,
-           shrinking   = TRUE,
-           probability = FALSE,
-           cweights    = NULL,
-           example_weights    = NULL,
-           cache_size  = 200,
-           tol         = 1e-3,
-           verbosity   = 4) {
-    
+  SVM.default 
+  <<- function(x,
+               y,
+               lib         = "libsvm",             
+               kernel      = "linear",
+               prep        = "none",
+               mclass      = "none",
+               C           = 1,
+               gamma       = if (is.vector(x)) 1 else 1 / ncol(x),
+               coef0       = 0,
+               degree      = 3,
+               shrinking   = TRUE,
+               probability = FALSE,
+               cweights    = NULL,
+               example_weights    = NULL,
+               cache_size  = 200,
+               tol         = 1e-3,
+               verbosity   = 4) {
+
     call <- match.call(expand.dots = TRUE)
 
     # check for errors
-    if ( lib != "libsvm" && lib != "svmlight") { 
-      stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" )) 
-      # log error No such library, available are: libsvm, svmlight
-    }
-    
-    if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") {
-      stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
-      # log error: No such kernel type. available are: linear, poly, rbf, sigmoid
-    }
-    
-    if (prep != "2e" && prep != "none") {
-      stop(paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
-      # log erro No such preprocess type, available are: 2e, none
-    }
-    
-    if (mclass != "none") {
-      stop(paste(GMUM_NOT_SUPPORTED, ": multiclass" ))
-      # log error: Sorry, multiclass is not yet supported
-    }
-    
-    if (C < 0 || gamma < 0 || degree < 1) {
-      stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
-      # log error: bad paramters
-    }
-    
-    if (kernel=="linear" && degree != 1) {
-      warning("Degree parameter is not used with linear kernel")
-    }
-    if (kernel=="linear" && gamma != 0.01) {
-      warning("Gamma parameter is not used with linear kernel")
-    }
-    if (verbosity < 0 || verbosity > 6) {
-      stop("Wrong verbosity level, should be from 0 to 6")
-    }
-    
-    if (is.null(formula) && is.null(y)) {
-      stop("Please provide either data and formula or data and lables")
-    }
-        
+    if ( lib != "libsvm" && lib != "svmlight") stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" ))  
+    if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
+    if (prep != "2e" && prep != "none") stop(paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
+    if (mclass != "none") stop(paste(GMUM_NOT_SUPPORTED, ": multiclass" ))
+    if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
+    if (C < 0 || gamma < 0 || degree < 1) stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
+    if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
+  
+    # check data
     if(inherits(x, "Matrix")) {
       library("SparseM")
       library("Matrix")
