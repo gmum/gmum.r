@@ -9,6 +9,8 @@ Package includes three subpackages:
 * Cross Entropy Clustering (CEC) clustering algorithm
 * Growing Neural Gas clustering algorithm
 
+For installation see [https://github.com/gmum/gmum.r/tree/dev/src/README.md](https://github.com/gmum/gmum.r/tree/dev/src/README.md)
+
 ## SVM
 
 SVM Wrapper is a part of the gmum.R project which provides a popular Support Vector Machine inplementations wrapped in the R package.

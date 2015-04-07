@@ -77,7 +77,6 @@ print.svm <- NULL
 #' 
 #' @rdname plot-dataset-methods
 #' 
-#' @docType plot
 plot.svm <- NULL
 
 #' @title summary
@@ -92,7 +91,6 @@ plot.svm <- NULL
 #' 
 #' @rdname svm-summary-method
 #' 
-#' @docType plot
 summary.svm <- NULL
 
 loadModule('svm_wrapper', TRUE)
