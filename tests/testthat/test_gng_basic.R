@@ -1,5 +1,6 @@
 library(testthat)
 
+#TODO: add test for checking GNGConfiguration serialization
 
 test_that("GNG converges on simple cases", {
 
@@ -40,17 +41,17 @@ test_that("GNG converges on simple cases", {
 
     max_nodes <- 600
     ex <- gng.preset.sphere(N=90000)
-    gng <- GNG(max.nodes=max_nodes, training=gng.train.online(dim=3), verbosity=3)
+    gng <- GNG(max.nodes=max_nodes, train.online=TRUE, dim=3, verbosity=3) 
     insertExamples(gng, ex)
     run(gng)
     online_converged(gng)
     sanity_check(gng) 
 
-    gng <- GNG(ex, max.nodes=max_nodes, training=gng.train.offline(max.iter=1000), verbosity=3)
+    gng <- GNG(ex, max.nodes=max_nodes, train.online=TRUE, dim=3, verbosity=3)
     sanity_check(gng) 
 
 
-    gng <- OptimizedGNG(max.nodes=max_nodes, training=gng.train.online(dim=3), verbosity=3, value.range=c(-2,2))    
+    gng <- OptimizedGNG(max.nodes=max_nodes, train.online=TRUE, dim=3, verbosity=3, value.range=c(-2,2))    
     insertExamples(gng, ex)
     run(gng)
     online_converged(gng)
@@ -80,7 +81,7 @@ test_that("GNG synchronization looks ok", {
         gng$.updateClustering()
         sum_1 = (sum( gng$clustering() != predict(gng, dataset)))
 
-        gng <- GNG(train=gng.train.online(dim=2), verbosity=3, max.nodes=20)
+        gng <- GNG(train.online=TRUE, dim=2, verbosity=3, max.nodes=20)
         gng$insertExamples(dataset) 
         gng$pause()
         gng$.updateClustering()

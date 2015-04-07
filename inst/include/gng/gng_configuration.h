@@ -133,15 +133,15 @@ struct GNGConfiguration {
 
 		/**Dimensionality of examples*/
 		in >> dim;
+        
+        if(uniformgird_optimization){
+            orig = vector<double>(dim, 0);
+            axis = vector<double>(dim, 0);
 
-		REPORT(dim);
-
-		orig = vector<double>(dim, 0);
-		axis = vector<double>(dim, 0);
-
-		for (size_t i = 0; i < dim; ++i) {
-			in >> axis[i] >> orig[i];
-		}
+            for (size_t i = 0; i < dim; ++i) {
+                in >> axis[i] >> orig[i];
+            }
+        }
 		/**Max edge age*/
 		in >> max_age; //=200;
 		/**Alpha coefficient*/
@@ -187,11 +187,11 @@ struct GNGConfiguration {
 		/**Dimensionality of examples*/
 		out << dim << endl;
 
-		REPORT(dim);
-
-		for (size_t i = 0; i < dim; ++i) {
-			out << axis[i] << endl << orig[i] << endl;
-		}
+        if(uniformgrid_optimization){
+            for (size_t i = 0; i < dim; ++i) {
+                out << axis[i] << endl << orig[i] << endl;
+            }
+        }
 		/**Max edge age*/
 		out << max_age << endl; //=200;
 		/**Alpha coefficient*/

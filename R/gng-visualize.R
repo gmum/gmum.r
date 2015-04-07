@@ -14,8 +14,10 @@ library(igraph)
         library(rgl)
 	    library(igraph)
 	    
-	    if(length(V(g))==0) return
-	    
+	    if(length(V(g))==0){
+            return()
+	    }
+
 	    iteration<-0
 	    nodes <- length(V(g))
 	    
@@ -76,7 +78,9 @@ library(igraph)
 .gng.plot2d.errors<-function(gngServer, vertex.color, layout){
   ig <- convertToGraph(gngServer)
   
-  if(length(V(ig))==0) return
+  if(length(V(ig))==0){
+    return()
+  }
   
   if(vertex.color == 'label'){
     vertex.color = c(1:length(V(ig)))
@@ -91,11 +95,11 @@ library(igraph)
 }
 
 .gng.plot2d<-function(gngServer, vertex.color, layout){
-  tmp_name <- paste("tmp",sample(1:1000, 1),".graphml", sep="")
-
   ig <- convertToGraph(gngServer)
   
-  if(length(V(ig))==0) return
+  if(length(V(ig))==0){
+      return()
+  }
 
   if(vertex.color == 'label'){
     vertex.color = c(1:length(V(ig)))

@@ -1,5 +1,6 @@
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <cstdlib>
+#include <stdexcept>
 #include <iostream>
 #include <string>
 
@@ -225,9 +226,7 @@ void GNGServer::insertExamples(double * positions, double * extra,
 		DBG(m_logger,10, "Wrong dimensionality is "+gmum::to_string(count*dim)+" expected "+
 				gmum::to_string(count*gngDataset->getDataDim()) +
 				" data dim " + gmum::to_string(gngDataset->size()));
-		throw BasicException("Wrong dimensionality. "
-				"Check if you have added all field to "
-				"position (for instance probability)");
+		throw invalid_argument("Wrong dimensionality");
 	}
 
 	gngDataset->insertExamples(positions, extra, probability, count);

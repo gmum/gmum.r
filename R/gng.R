@@ -690,7 +690,7 @@ evalqOnLoad({
                   ){
 		if(value.range[1] >= value.range[2]){
 			gmum.error(ERROR, "Incorrect range")
-			return		
+			return()
 		}
 		call <- match.call(expand.dots = TRUE)
 		gng <- .GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
@@ -746,12 +746,12 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     }
     if(x$getNumberNodes() == 0){
       warning("Empty graph")
-      return
+      return()
     }
     
     if(mode == gng.plot.3d && !("rgl" %in% rownames(installed.packages()))){
       warning("Please install rgl and reload the package to plot 3d")
-      return
+      return()
     }
     
     if(mode == gng.plot.3d){
@@ -887,7 +887,10 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   
     
   convertToGraph.gng <- function(object){
-    pause(object)
+    was_running = object$isRunning()
+    if(was_running){
+        pause(object)
+    }
     
     if(object$getNumberNodes() == 0){
       return(graph.empty(n=0, directed=FALSE))
@@ -954,6 +957,10 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     })
     E(g)$dists = dists
     
+    if(was_running){
+        run(g)
+    }
+
     g
   }
 
