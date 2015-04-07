@@ -2,12 +2,75 @@ library(testthat)
 
 #TODO: add test for checking GNGConfiguration serialization
 
+test_that("Basic saving/loading works", {
+  g <- GNG(train.online=TRUE, dim=3, verbosity=5); 
+  insertExamples(g, gng.preset.sphere(300))
+  
+  gngSave(g, file='mygraph.bin')
+  
+  g2 <- gngLoad("mygraph.bin")
+  
+  # Check basic deserialization
+  expect_that(g2$.getConfiguration()$alpha == g$.getConfiguration()$alpha &&
+                g2$.getConfiguration()$eps_n == g$.getConfiguration()$eps_n, is_true())
+
+  # Check basic equivalency (TODO: check something deeper)
+  for(i in 1:10){
+    point = runif(3)
+    expect_that(g$predict(point) == g2$predict(point), is_true())
+  }
+  
+  file.remove("mygraph.bin")
+})
+
+test_that("predictCluster returns sensible results", {
+  data(cec_mouse_1_spherical)
+  g <- GNG(input, max.nodes=50)
+  mouse_centr <- centroids(g)
+  
+  m = as.data.frame(input)
+  colnames(m) = c("x", "y")
+  
+  x_col <- input[,1]
+  y_col <- input[,2]
+  
+  x_max <- max(x_col)
+  x_min <- min(x_col) 
+  y_max <- max(y_col)
+  y_min <- min(y_col)
+  
+  x_axis <- seq(from=x_min, to=x_max, length.out=30)
+  y_axis <- seq(from=y_min, to=y_max, length.out=30)
+  grid <- data.frame(x_axis,y_axis)
+  grid <- expand.grid(x=x_axis,y=y_axis)
+  target <- predictCentroid(g, centroids=mouse_centr, x=grid)
+  target_loopy <- apply(grid, 1, function(x) predictCentroid(g, centroids=mouse_centr, x=x))
+  
+  grid["target"] <- target
+  library(ggplot2)
+  
+  pl <- ggplot()+ 
+    geom_tile(data=grid, aes(x=x,y=y, fill=factor(target))) + theme(legend.position="none") +
+    geom_point(data=m, aes(x,y), color='white') + scale_size_continuous(range = c(3, 6))
+  plot(pl)
+  
+  # Equivalent
+  expect_that(all(target==target_loopy), is_true())
+  
+  # More or less balanced (if fails - might be needed to change threshold)
+  expect_that(all(sapply(table(target), function(x) x>40)), is_true())
+  
+  # At least catches most important clusters
+  expect_that(length(centroids(g)) > 3, is_true())
+  
+})
+
 test_that("GNG converges on simple cases", {
 
     online_converged <- function(gng){
         n <- 0
         print("Waiting to converge")
-        while(numberNodes(gng) != gng$getConfiguration()$max_nodes && n < 100) {
+        while(numberNodes(gng) != gng$.getConfiguration()$max_nodes && n < 100) {
           Sys.sleep(1.0)
           n <- n + 1
         }
@@ -35,7 +98,7 @@ test_that("GNG converges on simple cases", {
       
       # Test memory
       terminate(gng)
-      save.gng(gng, "graph.bin")
+      gngSave(gng, "graph.bin")
     }
 
 

@@ -86,55 +86,55 @@ plot.gng <- NULL
 
 #' Save model to binary format
 #'
-#' @title save.gng
+#' @title gngSave
 #' 
 #' @description Writes model to a disk space efficient binary format. 
 #' 
 #' @usage
-#' save.gng(gng)
+#' gngSave(gng)
 #' 
 #' @export
 #' 
 #' @param
 #' filename Dump destination
 #' 
-#' @rdname save.gng-methods
+#' @rdname gngSave-methods
 #' 
 #' @docType methods
 #'
 #' @examples
-#' save.gng(gng, 'graph.bin')
+#' gngSave(gng, 'graph.bin')
 #' 
-#' @aliases save.gng
+#' @aliases gngSave
 #'
-save.gng <- NULL
+gngSave <- NULL
 
 
 
 #' Load model from binary format
 #'
-#' @title load.gng
+#' @title gngLoad
 #' 
 #' @description Writes model to a disk space efficient binary format. 
 #' 
 #' @usage
-#' load.gng(gng)
+#' gngLoad(gng)
 #' 
 #' @export
 #' 
 #' @param
 #' filename Dump location
 #' 
-#' @rdname load.gng-methods
+#' @rdname gngLoad-methods
 #' 
 #' @docType methods
 #'
 #' @examples
-#' load.gng('model.bin')
+#' gngLoad('model.bin')
 #' 
-#' @aliases load.gng
+#' @aliases gngLoad
 #'
-load.gng <- NULL
+gngLoad <- NULL
 
 #' Get centroids
 #'
@@ -877,12 +877,12 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     object$clustering()
   }  
 
-  save.gng <<- function(object, filename){
+  gngSave <<- function(object, filename){
     warning("Saving does not preserve training history")
     object$save(filename)
   }
   
-  load.gng <<- function(filename){
+  gngLoad <<- function(filename){
     warning("Saving does not preserve training history")
     fromFileGNG(filename)
   }
