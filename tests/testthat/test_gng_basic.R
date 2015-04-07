@@ -5,6 +5,7 @@ library(testthat)
 test_that("Basic saving/loading works", {
   g <- GNG(train.online=TRUE, dim=3, verbosity=5); 
   insertExamples(g, gng.preset.sphere(300))
+  pause(g)
   
   gngSave(g, file='mygraph.bin')
   
@@ -15,8 +16,8 @@ test_that("Basic saving/loading works", {
                 g2$.getConfiguration()$eps_n == g$.getConfiguration()$eps_n, is_true())
 
   # Check basic equivalency (TODO: check something deeper)
-  for(i in 1:10){
-    point = runif(3)
+  for(i in 1:100){
+    point <- runif(3)
     expect_that(g$predict(point) == g2$predict(point), is_true())
   }
   

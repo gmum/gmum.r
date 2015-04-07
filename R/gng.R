@@ -1001,7 +1001,7 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     }
     
     if(was_running){
-        run(g)
+        run(object)
     }
 
     g
