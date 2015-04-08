@@ -161,7 +161,7 @@ centroids.gng <- NULL
 
 #' Find closest centroid
 #'
-#' @title node
+#' @title predictCentroid
 #' 
 #' @description Finds closest centroid from given list
 #' 
@@ -170,7 +170,7 @@ centroids.gng <- NULL
 #' 
 #' @export
 #' 
-#' @rdname node-methods
+#' @rdname predictCentroid-methods
 #' 
 #' @docType methods
 #'
@@ -185,9 +185,34 @@ centroids.gng <- NULL
 #' found.centroids <- centroids(gng)
 #' predictCentroid(gng, found.centroids, c(1,1,1))
 #' 
-#' @aliases node
+#' @aliases predictCentroid
 #' 
 predictCentroid <- NULL
+
+
+#' Find closest component
+#'
+#' @title predictComponent
+#' 
+#' @description Finds connected component closest to given vector(s).
+#' 
+#' @usage
+#' predictComponent(gng, c(1,1,1))
+#' 
+#' @export
+#' 
+#' @rdname predictComponent-methods
+#' 
+#' @docType methods
+#'
+#' @param x Can be either vector or data.frame.
+#' 
+#' @examples
+#' # Find closest component to c(1,1,1)
+#' predictComponent(gng,  c(1,1,1))
+#' 
+#' @aliases predictComponent
+predictComponent <- NULL
 
 #' Get GNG node
 #'
@@ -769,7 +794,15 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
      setGeneric("numberNodes", 
                 function(object, ...) standardGeneric("numberNodes"))
      
-  
+  predictComponent <<- function(object, x){
+    tryCatch(if(is.null(object$components.membership)){
+      assign("components.membership", clusters(convertToGraph(object))$membership, object)
+    }, error=function(...) 
+      assign("components.membership", clusters(convertToGraph(object))$membership, object))
+    
+    object$components.membership[predict(object, x)]
+  }
+
   plot.gng <<- function(x, vertex.color=gng.plot.color.cluster, layout=gng.plot.layout.v2d, mode=gng.plot.2d){
     
     if(x$getNumberNodes() > 4000){
@@ -845,6 +878,8 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   }
   
   run.gng <<- function(object){
+    # Invalidate components
+    assign("components.membership", NULL, object)
     object$run()
   }
   
@@ -888,7 +923,8 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     fromFileGNG(filename)
   }
  
-  
+    
+
   centroids.gng <<- function(object, community.detection.algorithm=spinglass.community){
     ig <- convertToGraph(object)
     
