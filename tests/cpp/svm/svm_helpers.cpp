@@ -86,3 +86,28 @@ size_t helper_sparse_matrix_csc_01_ncol() {
     return 6;
 }
 
+arma::mat helper_sparse_matrix_csc_01_mat() {
+    arma::mat matrix;
+    matrix
+        << 10 << 0 << 0 << 0 << -2 << 0 << arma::endr
+        << 3  << 9 << 0 << 0 << 0  << 3 << arma::endr
+        << 0  << 7 << 8 << 7 << 0  << 0 << arma::endr
+        << 3  << 0 << 8 << 7 << 5  << 0 << arma::endr
+        << 0  << 8 << 0 << 9 << 9 << 13 << arma::endr
+        << 0  << 4 << 0 << 0 << 2 << -1 << arma::endr;
+    return matrix;
+}
+
+arma::sp_mat helper_sparse_matrix_csc_01_sp_mat() {
+    arma::sp_mat matrix(helper_sparse_matrix_csc_01_mat());
+    return matrix;
+}
+
+arma::vec helper_sparse_matrix_csc_01_learning_target() {
+    arma::vec vector;
+    // If there is a 8 in the third column
+    vector
+        << 1 << 1 << -1 << -1 << 1 << 1;
+    return vector;
+}
+

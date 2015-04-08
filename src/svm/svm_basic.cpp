@@ -10,8 +10,7 @@ SVMConfiguration::SVMConfiguration() {
 
 int SVMConfiguration::getDataExamplesNumber() {
     if(isSparse()) {
-        // FIXME: change to sparse_data.n_rows after libsvm refactor
-        return this->dim;
+        return this->sparse_data.n_rows;
     } else {
         return this->data.n_rows;
     }
@@ -19,8 +18,7 @@ int SVMConfiguration::getDataExamplesNumber() {
 
 int SVMConfiguration::getDataDim() {
     if(isSparse()) {
-        // FIXME: change to sparse_data.n_cols after libsvm refactor
-        return this->data_dim;
+        return this->sparse_data.n_cols;
     } else {
         return this->data.n_cols;
     }

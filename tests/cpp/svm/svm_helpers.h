@@ -27,5 +27,11 @@ size_t helper_sparse_matrix_csc_01_nrow();
 
 size_t helper_sparse_matrix_csc_01_ncol();
 
+arma::mat helper_sparse_matrix_csc_01_mat();
+
+arma::sp_mat helper_sparse_matrix_csc_01_sp_mat();
+
+arma::vec helper_sparse_matrix_csc_01_learning_target();
+
 #endif
 
