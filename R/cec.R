@@ -321,6 +321,10 @@ evalqOnLoad({
         x = data.matrix(x)
       }
       
+      if(dim(object$x())[2] != dim(x)[2]){
+        stop("Incompatible dimension!")
+      }
+      
       apply(x, 1, function(row) {
         object$predict(row)
       })
