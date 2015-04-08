@@ -515,7 +515,7 @@ evalqOnLoad({
   .GNG <<- function(x=NULL, labels=c(),
                    beta=0.99, 
                    alpha=0.5, 
-                   max.nodes=1000, 
+                   max.nodes=100, 
                    eps.n=0.0006, 
                    eps.w= 0.05, 
                    max.edge.age = 200, 
@@ -539,6 +539,7 @@ evalqOnLoad({
     # Fill in configuration
     if(train.online){
        config$dim = dim
+       config$max_iter = -1
     }else{
        config$dim = ncol(x)
        config$max_iter = max.iter
