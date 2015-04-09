@@ -237,10 +237,20 @@ unsigned int CecModel::iters() const {
 }
 
 std::list<unsigned int> CecModel::get_nclusters() const {
+    Params& params = m_config->get_params();
+    if(!params.log_nclusters)
+    {
+        GMUM_ERROR("log.nclusters is available only if you turn log.ncluster=TRUE");
+    }
 	return m_result.nclusters;
 }
 
 std::list<double> CecModel::get_energy_history() const {
+    Params& params = m_config->get_params();
+    if(!params.log_energy)
+    {
+        GMUM_ERROR("log.energy is available only if you turn log.energy=TRUE");
+    }
 	return m_result.energy_history;
 }
 

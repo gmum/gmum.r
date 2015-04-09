@@ -26,7 +26,7 @@ test_that("EllipseGauss centroid assignment is correct", {
     c3 <- CEC(k=centers_len, x=dataset_points, method.init='centroids', params.centroids=centers)
     expect_that(c2$energy(), equals(c3$energy(), tolerance = 0))
     actual_energy = c2$energy()
-    correct_percentage <- correctness(dataset_clusters, c2$y(), npoints, centers_len)
+    correct_percentage <- correctness(dataset_clusters, c2$clustering(), npoints, centers_len)
     if(isTRUE(all.equal(current = actual_energy, target=expected_energy, tolerance=0.2)) | (correct_percentage >= 0.9) ) {
       accepted <- accepted + 1
     }

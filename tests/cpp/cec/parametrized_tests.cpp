@@ -52,6 +52,19 @@ TEST_P(TestsFixture, IsCoverageCorrect)
     EXPECT_GT(number_of_times_acceptable , t / 2.0);
 }
 
+TEST_P(TestsFixture, IsControlEpsBoundaryCaseCorrect)
+{
+    CecConfiguration conf;
+    params.kill_threshold = (params.dataset.n_rows - 1) / static_cast<double>(params.dataset.n_rows);
+    params.log_nclusters = true;
+    conf.set_params(params);
+    conf.set_algorithm("hartigan");
+    CecModel cec(&conf);
+    cec.loop();
+    int final_nclusters = cec.get_nclusters().back();
+    EXPECT_EQ(final_nclusters, 1);
+}
+
 INSTANTIATE_TEST_CASE_P(CEC, TestsFixture, ::testing::Values(
     TestsFixtureParam(ClusterReader("mouse_1_spherical", 2), boost::make_shared<DefaultGmumParams>(3, ksphere)),
     TestsFixtureParam(ClusterReader("mouse_1", 2), boost::make_shared<DefaultGmumParams>(3, ksphere)),
