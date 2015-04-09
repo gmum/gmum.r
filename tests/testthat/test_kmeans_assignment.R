@@ -33,7 +33,7 @@ test_that("mouse_1_spherical kmeans coverage is correct", {
   {
     c <- CEC(k=3, x=dataset_points, control.nstart=1, method.type='sphere', method.init='kmeans++')
     plot(c)
-    correct_percentage <- correctness(dataset_clusters, c$y(), npoints, nclusters)
+    correct_percentage <- correctness(dataset_clusters, c$clustering(), npoints, nclusters)
     if(correct_percentage == 1) {
       accepted <- accepted + 1
     }
