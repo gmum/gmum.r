@@ -154,7 +154,7 @@ void GNGConfiguration::deserialize(std::istream & in)  {
 
 
 
-        if (experimental_utility_option == UtilityOff){
+        if (experimental_utility_option != UtilityOff){
             if(uniformgrid_optimization || lazyheap_optimization) {
 			    cerr << "ERROR: please turn OFF optimization when using experimental utility option\n";
 			    return false;
