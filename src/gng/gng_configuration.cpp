@@ -102,7 +102,9 @@ void GNGConfiguration::deserialize(std::istream & in)  {
 		out << datasetType << endl;
 
 		/**Initial reserve memory for nodes */
-		out << starting_nodes; //imporant not to add endl for binary correctness
+		out << starting_nodes << endl; //imporant not to add endl for binary correctness
+
+        out << max_iter;
 	}
 
 
@@ -135,7 +137,9 @@ void GNGConfiguration::deserialize(std::istream & in)  {
 
         if((max_iter <= 2 && max_iter != -1) || max_nodes <= 2){
             cerr << "ERROR: max_iter and max_nodes  should be in range [2,+inf]\n";
+            cerr<<max_iter<< " "<<max_nodes<<endl;
             return false;        
+
         }
 
         if(dim <= 0){
@@ -150,7 +154,7 @@ void GNGConfiguration::deserialize(std::istream & in)  {
 
 
 
-        if (experimental_utility_option == UtilityOff){
+        if (experimental_utility_option != UtilityOff){
             if(uniformgrid_optimization || lazyheap_optimization) {
 			    cerr << "ERROR: please turn OFF optimization when using experimental utility option\n";
 			    return false;
