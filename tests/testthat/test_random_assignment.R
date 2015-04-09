@@ -33,9 +33,9 @@ test_that("EllipseGauss random assignment is correct", {
   for(i in 1:t)
   {
     c <- CEC(k=nclusters, x=dataset_points, method.init='random')
-    correct_percentage <- correctness(dataset_clusters, c$clustering(), npoints, nclusters)
-    energy_diff = abs(c$energy() - expected_energy)
-    if( (energy_diff <= 1e-5) | (correct_percentage >= 0.9) ) {
+    plot(c)
+    correct_percentage <- correctness(dataset_clusters, c$y(), npoints, nclusters)
+    if(isTRUE(all.equal(current = c$energy(), target=expected_energy, tolerance=0.25)) | (correct_percentage >= 0.9) ) {
       accepted <- accepted + 1
     }
   }
@@ -58,12 +58,10 @@ test_that("mouse_1 random assignment is correct", {
   npoints <- dim(dataset_points)[1]
   for(i in 1:t)
   {
-    #CEC(k=nclusters, x=dataset_points, method.init='random')
-    c <- CEC(k=nclusters, x=dataset_points, method.init='random', method.type='sphere')
-    
-    correct_percentage <- correctness(dataset_clusters, c$clustering(), npoints, nclusters)
-    energy_diff = abs(c$energy() - expected_energy)
-    if( (energy_diff <= 1e-5) | (correct_percentage >= 0.9) ) {
+     c <-CEC(k=nclusters, x=dataset_points, method.init='random')
+    plot(c)
+    correct_percentage <- correctness(dataset_clusters, c$y(), npoints, nclusters)
+    if(isTRUE(all.equal(current = c$energy(), target=expected_energy, tolerance=0.2)) | (correct_percentage >= 0.9) ) {
       accepted <- accepted + 1
     }
   }
@@ -87,9 +85,9 @@ test_that("mouse_1_spherical random assignment is correct", {
   for(i in 1:t)
   {
     c <- CEC(k=nclusters, x=dataset_points, method.type='sphere', method.init='random')
-    correct_percentage <- correctness(dataset_clusters, c$clustering(), npoints, nclusters)
-    energy_diff = abs(c$energy() - expected_energy)
-    if( (energy_diff <= 1e-5) | (correct_percentage >= 0.9) ) {
+    plot(c)
+    correct_percentage <- correctness(dataset_clusters, c$y(), npoints, nclusters)
+    if(isTRUE(all.equal(current = c$energy(), target=expected_energy, tolerance=0.2))  | (correct_percentage >= 0.9) ) {
       accepted <- accepted + 1
     }
   }
