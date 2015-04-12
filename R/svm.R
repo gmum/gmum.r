@@ -93,60 +93,66 @@ plot.svm <- NULL
 #' 
 summary.svm <- NULL
 
+SVM.formula <- NULL
+SVM.default <- NULL
+
 loadModule('svm_wrapper', TRUE)
 
 evalqOnLoad({
 
-  SVM <- function(x, ...)
+  SVM <<- function(x, ...)
     UseMethod("SVM")
   
-  SVM.formula <- function(formula, data, ...) {
+  SVM.formula <<- function(formula, data, ...) {
+    
     call <- match.call(expand.dots = TRUE)
     
     if (!inherits(formula, "formula")) stop("Please provide valid formula for this method.")
     if(inherits(data, "Matrix") || inherits(x, "simple_triplet_matrix") || inherits(x, "matrix.csr")) 
       stop("Please provide dense data for this method")
     
-    if (inherits(data, "data.frame")) data <- as.data.matrix(data)
+    if (is.data.frame(data)) data <- data.matrix(data)
     
     labels <- all.vars(update(formula, .~0))
-    y <- x[, labels]
+    y <- data[, labels]
     
     # better way?
     if (formula[3] == ".()") {
-      x <- x[, names(data) != labels]
+      x <- data[, colnames(data) != labels]
     }
     else {
       columns = all.vars(update(formula, 0~.))
-      x <- x[, columns]
+      x <- data[, columns]
     } 
-    
+
     ret <- SVM.default(x, y, ...)
-    ret$call <- call
+    call[[1]] <- as.name("SVM")
+    assign("call", call, ret)
     
     return(ret)
   }
   
-  SVM.default 
-  <<- function(x,
-               y,
-               lib         = "libsvm",             
-               kernel      = "linear",
-               prep        = "none",
-               mclass      = "none",
-               C           = 1,
-               gamma       = if (is.vector(x)) 1 else 1 / ncol(x),
-               coef0       = 0,
-               degree      = 3,
-               shrinking   = TRUE,
-               probability = FALSE,
-               cweights    = NULL,
-               example_weights    = NULL,
-               cache_size  = 200,
-               tol         = 1e-3,
-               verbosity   = 4) {
+  SVM.default <<- 
+  function(x,
+           y,
+           lib         = "libsvm",             
+           kernel      = "linear",
+           prep        = "none",
+           mclass      = "none",
+           C           = 1,
+           gamma       = if (is.vector(x)) 1 else 1 / ncol(x),
+           coef0       = 0,
+           degree      = 3,
+           shrinking   = TRUE,
+           probability = FALSE,
+           cweights    = NULL,
+           example_weights    = NULL,
+           cache_size  = 200,
+           tol         = 1e-3,
+           verbosity   = 4) {
 
     call <- match.call(expand.dots = TRUE)
+    call[[1]] <- as.name("SVM")
 
     # check for errors
     if ( lib != "libsvm" && lib != "svmlight") stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" ))  
@@ -156,7 +162,7 @@ evalqOnLoad({
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
     if (C < 0 || gamma < 0 || degree < 1) stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
-  
+      
     # check data
     if(inherits(x, "Matrix")) {
       library("SparseM")
@@ -175,7 +181,10 @@ evalqOnLoad({
     else if(inherits(x, "matrix.csr")) {
       library("SparseM")
     }
-    else {
+    else if(is.data.frame(x)) {
+      x <- data.matrix(x)
+    }
+    else if (!is.matrix(x)){
       stop("data is of a wrong class, please provide supported format: 
            matrix or data.frame for dense; 
            Matrix, simple_triplet_matrix or matrix.csr for sparse")
@@ -226,11 +235,11 @@ evalqOnLoad({
     config$eps <- tol
     config$cache_size <- cache_size
     
-    if (!is.null(cweights)) {
+    if (!is.null(cweights) && !is.logical(cweights)) {
       config$setWeights(cweights)
     }
     
-    if (!is.null(example_weights)) {
+    if (!is.null(example_weights) && !is.logical(example_weights)) {
       config$use_example_weights <- 1
       config$example_weights <- example_weights
     }
