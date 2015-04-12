@@ -2,7 +2,6 @@
 #define SVM_BASIC_H
 
 #include <string>
-#include <armadillo>
 
 #ifdef RCPP_INTERFACE
 #include <R.h>
@@ -58,7 +57,6 @@ public:
 
 	int nr_class; /* number of classes, = 2 in regression/one class svm */
 
-
 	//libsvm model parameters
 	//TODO: delete those variables
 	int *label; /* label of each class (label[k]) */
@@ -79,6 +77,7 @@ public:
     char *kernel_parm_custom;   // Custom kernel parameter(s)
     arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
     arma::mat support_vectors;	// sacherus: number of support vectors x data_dim
+    arma::sp_mat sparse_support_vectors;
     // User-defined classification mode labels
     //TODO: delete it; we are using pos_target, and neg_target;
     int label_negative; 
@@ -88,7 +87,19 @@ public:
 	arma::vec target;
 	arma::vec result;
 
-    bool use_cost;              // currently only LIBSVM-implemented
+    // sparse data
+	bool sparse;
+    arma::sp_mat sparse_data;
+
+	// sparse matrix things
+	arma::vec sp_data; 
+	arma::Col<int> row;
+	arma::Col<int> col;
+	int dim;
+	int data_dim;
+
+    // Data cost
+    bool use_cost;              // currently only svmligth-implemented
     arma::vec data_cost;
 
 	Logger log;
@@ -137,6 +148,26 @@ public:
 	void setB(double b);
 	// logger
 	void set_verbosity( int );
+
+	void setSparse(bool sparse);
+
+    /**
+     * Sets sparse data from CSC sparse matrix format
+     */
+    void setSparseData(
+        arma::uvec rowind,
+        arma::uvec colptr,
+        arma::vec values,
+        size_t n_rows,
+        size_t n_cols
+    );
+
+    arma::sp_mat getSparseData();
+
+	bool isSparse();
+	int getDataDim();
+	int getDataExamplesNumber();
+    size_t getSVCount();
 };
 
 #endif

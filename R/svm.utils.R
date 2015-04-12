@@ -1,3 +1,6 @@
+svm.data.root <- system.file("data_sets", "svm", package="gmum.r")
+svm.colon_cancer.path <- file.path(svm.data.root, "colon-cancer")
+
 svm.lib.libsvm <- "libsvm"
 svm.lib.svmlight <- "svmlight"
 
@@ -15,6 +18,11 @@ svm.plot.pca <- "pca"
 svm.dataset.breast_cancer <- function() {
   data(svm_breast_cancer_dataset)
   return (svm.breastcancer.dataset)
+}
+
+svm.dataset.colon_cancer <- function() {
+  bc <- read.libsvm(svm.colon_cancer.path, 2000)
+  return(bc)
 }
 
 svm.dataset.2e <- function() {
@@ -82,5 +90,18 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
+scale.data.frame <-
+  function(x, center = TRUE, scale = TRUE)
+  {
+    i <- sapply(x, is.numeric)
+    if (ncol(x[, i, drop = FALSE])) {
+      x[, i] <- tmp <- scale.default(x[, i, drop = FALSE], na.omit(center), na.omit(scale))
+      if(center || !is.logical(center))
+        attr(x, "scaled:center")[i] <- attr(tmp, "scaled:center")
+      if(scale || !is.logical(scale))
+        attr(x, "scaled:scale")[i]  <- attr(tmp, "scaled:scale")
+    }
+    x
+  }
 
 

@@ -59,7 +59,7 @@ public:
 	}
 
 	//TODO: resize ret matrix
-	static void libToArma(svm_node** svm_nodes, int nr_sv, int dim, arma::mat ret) {
+	static void libToArma(svm_node** svm_nodes, int nr_sv, int dim, arma::mat& ret) {
 		//TODO: resize ret matrix
 		// arma::mat ret(nr_sv, dim);
 
