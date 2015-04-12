@@ -243,7 +243,7 @@ TEST_F(SVMLightRunnerTest, integration_svmclient_predict) {
     svm_config.data = learning_data_01;
     svm_config.target = learning_target_01;
     svm_config.setPrediction(false);
-    // We must do it that way becouse we are testing SVMLightRunner here :)
+    // We must do it that way because we are testing SVMLightRunner here :)
     svmlr.processRequest(svm_config);
 
     std::cout << "Testing SVMClient prediction..." << std::endl << std::flush;
@@ -261,7 +261,8 @@ TEST_F(SVMLightRunnerTest, integration_svmclient_predict) {
 
 TEST_F(SVMLightRunnerTest, integration_svmclient_sparse_predict) {
     std::cout << "Testing learning..." << std::endl << std::flush;
-    svm_config.sparse_data = sparse_matrix_csc_01_sp_mat;
+    // Sparse matrix is currently being held as transposed
+    svm_config.sparse_data = sparse_matrix_csc_01_sp_mat.t();
     svm_config.target = sparse_matrix_csc_01_learning_target;
     svm_config.setPrediction(false);
     svm_config.setSparse(true);

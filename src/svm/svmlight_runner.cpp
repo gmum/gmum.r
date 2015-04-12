@@ -961,11 +961,11 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     }
 
     // Matrix type handling
-    if (config.sparse) {
-        for (long int i = 1; i <= config.sparse_data.n_cols; ++i) {
-            if (config.sparse_data(line_num, i-1) != 0) {
+    if (config.isSparse()) {
+        for (long int i = 1; i <= config.getSparseData().n_rows; ++i) {
+            if (config.getSparseData()(i - 1, line_num) != 0) {
                 ss << ' ' << i << ':' << std::setprecision(8);
-                ss << config.sparse_data(line_num, i-1);
+                ss << config.getSparseData()(i - 1, line_num);
             }
         }
     } else {

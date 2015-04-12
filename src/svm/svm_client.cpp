@@ -120,7 +120,7 @@ bool SVMClient::isProbability(){
 }
 
 bool SVMClient::isSparse() {
-    return (bool)config.sparse;
+    return (bool)config.isSparse();
 }
 
 arma::vec SVMClient::getExampleWeights(){
@@ -272,8 +272,8 @@ double SVMClient::kernel(size_t i, size_t j) {
             // svmlight: kernel(b, a) = a*b
             if (isSparse()) {
                 result = arma::dot(
-                    config.sparse_data.row(i),
-                    config.support_vectors.row(j)
+                    config.getSparseData().col(i),
+                    config.support_vectors.row(j).t()
                 );
             } else {
                 result = arma::dot(
@@ -288,8 +288,8 @@ double SVMClient::kernel(size_t i, size_t j) {
             // svmlight: kernel(b, a) = (s a*b+c)^d
             if (isSparse()) {
                 result = arma::dot(
-                    config.sparse_data.row(i),
-                    config.support_vectors.row(j)
+                    config.getSparseData().col(i),
+                    config.support_vectors.row(j).t()
                 );
             } else {
                 result = arma::dot(
@@ -312,8 +312,8 @@ double SVMClient::kernel(size_t i, size_t j) {
             double norm = 0;
             if (isSparse()) {
                 norm = arma::norm(
-                    config.sparse_data.row(i)
-                    - config.sparse_support_vectors.row(j),
+                    config.getSparseData().col(i)
+                    - config.sparse_support_vectors.row(j).t(),
                     2
                 );
             } else {
@@ -337,8 +337,8 @@ double SVMClient::kernel(size_t i, size_t j) {
             double tanh_arg = 0;
             if (isSparse()) {
                 tanh_arg = arma::dot(
-                    config.sparse_data.row(i),
-                    config.support_vectors.row(j)
+                    config.getSparseData().col(i),
+                    config.support_vectors.row(j).t()
                 );
             } else {
                 tanh_arg = arma::dot(

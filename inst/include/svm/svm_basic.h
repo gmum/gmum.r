@@ -165,7 +165,7 @@ public:
         bool one_indexed=false
     );
 
-    arma::sp_mat getSparseData();
+    arma::sp_mat &getSparseData();
 
     bool isSparse();
     int getDataDim();

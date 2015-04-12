@@ -10,7 +10,7 @@ SVMConfiguration::SVMConfiguration() {
 
 int SVMConfiguration::getDataExamplesNumber() {
     if(isSparse()) {
-        return this->sparse_data.n_rows;
+        return this->sparse_data.n_cols;
     } else {
         return this->data.n_rows;
     }
@@ -18,7 +18,7 @@ int SVMConfiguration::getDataExamplesNumber() {
 
 int SVMConfiguration::getDataDim() {
     if(isSparse()) {
-        return this->sparse_data.n_cols;
+        return this->sparse_data.n_rows;
     } else {
         return this->data.n_cols;
     }
@@ -82,9 +82,11 @@ void SVMConfiguration::setSparseData(
     // set the number of non-zero elements
     arma::access::rw(this->sparse_data.n_nonzero) = values.size();
 
+    this->sparse_data = this->sparse_data.t();
+
 }
 
-arma::sp_mat SVMConfiguration::getSparseData() {
+arma::sp_mat &SVMConfiguration::getSparseData() {
     return this->sparse_data;
 }
 
