@@ -145,8 +145,8 @@ evalqOnLoad({
            degree      = 3,
            shrinking   = TRUE,
            probability = FALSE,
-           cweights    = NULL,
-           example_weights    = NULL,
+           class.weights    = NULL,
+           example.weights    = NULL,
            cache_size  = 200,
            tol         = 1e-3,
            verbosity   = 4) {
@@ -243,13 +243,13 @@ evalqOnLoad({
     config$eps <- tol
     config$cache_size <- cache_size
     
-    if (!is.null(cweights) && !is.logical(cweights)) {
-      config$setWeights(cweights)
+    if (!is.null(class.weights) && !is.logical(class.weights)) {
+      config$setWeights(class.weights)
     }
     
-    if (!is.null(example_weights) && !is.logical(example_weights)) {
+    if (!is.null(example.weights) && !is.logical(example.weights)) {
       config$use_example_weights <- 1
-      config$example_weights <- example_weights
+      config$example_weights <- example.weights
     }
     
     if (shrinking) {
