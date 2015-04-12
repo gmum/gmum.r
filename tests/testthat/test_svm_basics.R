@@ -49,7 +49,7 @@ test_that("SVM both constructor works", {
   data(svm_breast_cancer_dataset)
   ds <- svm.breastcancer.dataset
   x <- subset(ds, select = -X1)
-  y <- as.matrix(ds['X1'])
+  y <- as.vector(unlist(ds['X1']))
   f <- X1 ~ .
   
   svm1 <- SVM(x,y)
@@ -65,16 +65,18 @@ print("test::SVM both constructors work")
 
 test_that("svm accepts and deals properly with factors", {
   
-  library(caret)
   library(mlbench)
-  
   data(Sonar)
+  library(caret)
   set.seed(998)
+  
   inTraining <- createDataPartition(Sonar$Class, p = .75, list = FALSE)
   training <- Sonar[ inTraining,]
-  SVM(Class ~ ., training)
+  svm <- SVM(Class ~ ., training)
+  pred <- predict(svm, training[, 1:60])
   
-  # WIP
+  expect_is(pred, "factor")
+  
 })
 
 

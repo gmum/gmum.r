@@ -110,9 +110,7 @@ evalqOnLoad({
     if (!inherits(formula, "formula")) stop("Please provide valid formula for this method.")
     if(inherits(data, "Matrix") || inherits(x, "simple_triplet_matrix") || inherits(x, "matrix.csr")) 
       stop("Please provide dense data for this method")
-    
-    if (is.data.frame(data)) data <- data.matrix(data)
-    
+  
     labels <- all.vars(update(formula, .~0))
     y <- data[, labels]
     
@@ -121,9 +119,11 @@ evalqOnLoad({
       x <- data[, colnames(data) != labels]
     }
     else {
-      columns = all.vars(update(formula, 0~.))
+      columns <- all.vars(update(formula, 0~.))
       x <- data[, columns]
     } 
+    
+    if (is.data.frame(x)) x <- data.matrix(x)
 
     ret <- SVM.default(x, y, ...)
     call[[1]] <- as.name("SVM")
@@ -150,7 +150,7 @@ evalqOnLoad({
            cache_size  = 200,
            tol         = 1e-3,
            verbosity   = 4) {
-
+    
     call <- match.call(expand.dots = TRUE)
     call[[1]] <- as.name("SVM")
 
@@ -197,6 +197,14 @@ evalqOnLoad({
       if (is.null(y)) {
         stop("Please provide label vector y for sparse matrix classification")
       }
+    }
+    
+    if (!is.vector(y) && !is.factor(y)) stop("y is of a wrong class, please provide vector or factor")
+    
+    levels <- NULL
+    if (is.factor(y)){
+      levels <- levels(y)
+      y <- as.integer(y)
     }
     
     config <- new(SVMConfiguration)
@@ -260,6 +268,7 @@ evalqOnLoad({
     client$train()
 
     assign("call", call, client)
+    assign("levels", levels, client)
     client 
   } 
 
@@ -385,6 +394,11 @@ evalqOnLoad({
       object$sparse_predict(x@ja, x@ia, x@ra, nrow(x), ncol(x))
     }
     prediction <- object$getPrediction()
+    
+    if(!is.null(object$levels)){
+      prediction <- factor(object$levels[prediction], levels = object$levels)
+    }
+    
     prediction
   }
 
