@@ -1,7 +1,6 @@
 #ifndef CLUSTERCUSTOMFUNCTION_HPP
 #define CLUSTERCUSTOMFUNCTION_HPP
 
-#include <armadillo>
 #include <cmath>
 #include <string>
 #include <vector>
@@ -12,8 +11,6 @@
 #ifdef RCPP_INTERFACE
 #include <RcppArmadillo.h>
 #endif
-
-
 
 #ifdef RCPP_INTERFACE
 namespace gmum {

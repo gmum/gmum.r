@@ -2,7 +2,6 @@
 #define SVM_BASIC_H
 
 #include <string>
-#include <armadillo>
 
 #ifdef RCPP_INTERFACE
 #include <R.h>

@@ -34,7 +34,7 @@ read.matrix.csr <- function(file, fac = TRUE, ncol = NULL) {
 
 test_that("sparse matrices work", {
   x <- read.matrix.csr(system.file("inst", "data_sets", "svm", "dexter_train.data", mustWork=TRUE, package="gmum.r"))
-  y <- read.table(system.file("inst", "data_sets", "svm", "dexter_train.labels", mustWork=TRUE, package="gmum.r"))
+  y <- as.vector(unlist(read.table(system.file("inst", "data_sets", "svm", "dexter_train.labels", mustWork=TRUE, package="gmum.r"))))
 
   liblist <- c("svmlight", "libsvm")
 
