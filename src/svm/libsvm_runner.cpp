@@ -339,3 +339,20 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 	free(ret);
 }
 
+svm_node **LibSVMRunner::ArmaSpMatToSvmNode(arma::sp_mat A) {
+    int max_cols = A.n_cols + 1;
+    svm_node **sn = new svm_node*[A.n_rows];
+    svm_node tmp_row[max_cols];
+    for (unsigned int row = 0; row < A.n_rows; row++) {
+        int current_row_counter = 0;
+        for (arma::sp_mat::row_iterator i=A.begin_row(row); i != A.end_row(row); ++i) {
+            tmp_row[current_row_counter].value = *i;
+            tmp_row[current_row_counter++].index = i.col();
+        }
+        sn[row] = new svm_node[current_row_counter+1];
+        memcpy(sn[row], tmp_row, current_row_counter * sizeof(svm_node));
+        sn[row][current_row_counter].index = -1.0;
+    }
+    return sn;
+}
+
