@@ -243,6 +243,7 @@ TEST_F(SVMLightRunnerTest, integration_svmclient_predict) {
     svm_config.data = learning_data_01;
     svm_config.target = learning_target_01;
     svm_config.setPrediction(false);
+    // We must do it that way becouse we are testing SVMLightRunner here :)
     svmlr.processRequest(svm_config);
 
     std::cout << "Testing SVMClient prediction..." << std::endl << std::flush;
