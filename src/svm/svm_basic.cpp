@@ -8,13 +8,84 @@ SVMConfiguration::SVMConfiguration() {
 	SVMConfiguration::setDefaultParams();
 }
 
+int SVMConfiguration::getDataExamplesNumber() {
+	if(isSparse()) {
+        // FIXME: change to sparse_data.n_rows after libsvm refactor
+		return this->dim;
+	} else {
+		return this->data.n_rows;
+	}
+}
+
+int SVMConfiguration::getDataDim() {
+	if(isSparse()) {
+        // FIXME: change to sparse_data.n_cols after libsvm refactor
+		return this->data_dim;
+	} else {
+		return this->data.n_cols;
+	}
+}
+
+size_t SVMConfiguration::getSVCount() {
+    return this->support_vectors.n_rows;
+}
+
 SVMConfiguration::SVMConfiguration(bool prediction) {
 	this->prediction = prediction;
+}
+
+void SVMConfiguration::setSparse(bool sparse) {
+	this->sparse = sparse;
+}
+
+void SVMConfiguration::setSparseData(
+	arma::uvec rowind,
+    arma::uvec colptr,
+    arma::vec values,
+    size_t nrow,
+    size_t ncol
+) {
+    //this->sparse_data = arma::sp_mat(rowind, colptr, values, n_rows, n_cols);
+    this->sparse_data = arma::sp_mat(nrow, ncol);
+
+    // create space for values, and copy
+    arma::access::rw(this->sparse_data.values)
+        = arma::memory::acquire_chunked<double>(values.size() + 1);
+    arma::arrayops::copy(
+        arma::access::rwp(this->sparse_data.values), values.begin(), values.size() + 1);
+
+    // create space for row_indices, and copy
+    arma::access::rw(this->sparse_data.row_indices)
+        = arma::memory::acquire_chunked<arma::uword>(rowind.size() + 1);
+    arma::arrayops::copy(
+        arma::access::rwp(this->sparse_data.row_indices), rowind.begin(), rowind.size() + 1);
+    
+    // create space for col_ptrs, and copy 
+    arma::access::rw(this->sparse_data.col_ptrs)
+        = arma::memory::acquire<arma::uword>(colptr.size() + 2);
+    arma::arrayops::copy(
+        arma::access::rwp(this->sparse_data.col_ptrs), colptr.begin(), colptr.size() + 1);
+
+    // important: set the sentinel as well
+    arma::access::rwp(this->sparse_data.col_ptrs)[colptr.size()+1]
+        = std::numeric_limits<arma::uword>::max();
+    
+    // set the number of non-zero elements
+    arma::access::rw(this->sparse_data.n_nonzero) = values.size();
+}
+
+arma::sp_mat SVMConfiguration::getSparseData() {
+    return this->sparse_data;
+}
+
+bool SVMConfiguration::isSparse() {
+	return this->sparse;
 }
 
 void SVMConfiguration::setFilename(std::string filename) {
 	this->filename = filename;
 }
+
 std::string SVMConfiguration::getFilename() {
 	return this->filename;
 }
@@ -22,6 +93,7 @@ std::string SVMConfiguration::getFilename() {
 void SVMConfiguration::setModelFilename(std::string filename) {
 	this->model_filename = filename;
 }
+
 std::string SVMConfiguration::getModelFilename() {
 	return this->model_filename;
 }
@@ -128,6 +200,9 @@ void SVMConfiguration::setDefaultParams() {
 //	Probably not necessery
 	nu = 0.5;
 	p = 0.1;
+    
+    // Sparse data
+    sparse = false;
 
     // Additional features
     use_cost = false;

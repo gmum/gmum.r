@@ -30,12 +30,21 @@ RCPP_MODULE(svm_wrapper) {
       .field("example_weights", &SVMConfiguration::data_cost)
       .field("use_example_weights", &SVMConfiguration::use_cost)
 
+			.field("sparse", &SVMConfiguration::sparse)
+			.field("sp_x", &SVMConfiguration::sp_data)
+			.field("sp_row", &SVMConfiguration::row)
+			.field("sp_col", &SVMConfiguration::col)
+			.field("dim", &SVMConfiguration::dim)
+			.field("data_dim", &SVMConfiguration::data_dim)
+
+			.method("set_sparse_data", &SVMConfiguration::setSparseData)
+
 			.method("setPrediction", &SVMConfiguration::setPrediction)
 			.method("setWeights", &SVMConfiguration::setWeights)
 			.method("setLibrary", &SVMConfiguration::setLibrary)
 			.method("setKernel", &SVMConfiguration::setKernel)
 			.method("setPreprocess", &SVMConfiguration::setPreprocess)
-      .method("set_verbosity", &SVMConfiguration::set_verbosity)
+      		.method("set_verbosity", &SVMConfiguration::set_verbosity)
 			;
 	class_<SVMClient>("SVMClient")
 			.constructor<SVMConfiguration*>()
@@ -54,7 +63,7 @@ RCPP_MODULE(svm_wrapper) {
 			.method("setEps",&SVMClient::setEps)
 			.method("setShrinking",&SVMClient::setShrinking)
 			.method("setProbability",&SVMClient::setProbability)
-      .method("setBias", &SVMClient::setBias)
+      		.method("setBias", &SVMClient::setBias)
 
 			.method("getX", &SVMClient::getX)
 			.method("getY", &SVMClient::getY)
@@ -71,18 +80,19 @@ RCPP_MODULE(svm_wrapper) {
 			.method("getEps", &SVMClient::getEps)
 			.method("isShrinking", &SVMClient::isShrinking)
 			.method("isProbability", &SVMClient::isProbability)
+			.method("isSparse", &SVMClient::isSparse)
       		.method("getExampleWeights", &SVMClient::getExampleWeights)
       		.method("areExamplesWeighted", &SVMClient::areExamplesWeighted)
-
 			.method("getAlpha", &SVMClient::getAlpha)
 			.method("getBias", &SVMClient::getBias)
 			.method("getW", &SVMClient::getW)
-      .method("get_number_sv", &SVMClient::get_number_sv)
-      .method("get_number_class", &SVMClient::get_number_class)
-      .method("get_SV", &SVMClient::getSV)
+	      	.method("get_number_sv", &SVMClient::get_number_sv)
+	      	.method("get_number_class", &SVMClient::get_number_class)
+	      	.method("get_SV", &SVMClient::getSV)
 
 			.method("train", &SVMClient::train)
 			.method("predict", &SVMClient::predict)
+			.method("sparse_predict", &SVMClient::sparse_predict)
 			;
 
 }
