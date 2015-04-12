@@ -1062,7 +1062,7 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
       for (v = model->supvec[i]->fvec; v; v=v->next) {
         config.alpha_y(i - 1) = model->alpha[i]*v->factor;
         for (j = 0; (v->words[j]).wnum; j++) {
-            k = (v->words[j]).wnum - 1
+            k = (v->words[j]).wnum - 1;
             config.support_vectors(i - 1, k) = v->words[j].weight;
         }
       }
