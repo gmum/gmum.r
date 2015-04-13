@@ -33,7 +33,6 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 	if (!config.isPrediction()) {
 		svm_node** node;
 		if(config.isSparse()) {
-			//node = SparseToSVMNode(config.sp_data, config.dim, config.row, config.col);
             node = ArmaSpMatToSvmNode(config.sparse_data);
 		} else {
 			node = armatlib(config.data);
@@ -315,7 +314,6 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 
 //	TODO: READ MODEL FROM PARAMETERS
 	if(config.isSparse()) {
-		//train= SparseToSVMNode(config.sp_data, config.dim, config.row, config.col);
         train = ArmaSpMatToSvmNode(config.sparse_data);
 	} else {
 		train = armatlib(config.data);

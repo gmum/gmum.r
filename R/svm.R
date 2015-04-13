@@ -224,13 +224,6 @@ evalqOnLoad({
     if (sparse) {
       config$sparse <- 1
       
-      # OLD (for our conversion) TODO: Delete after rewrite in LibSVMRunner
-      config$sp_x <- x@ra
-      config$sp_row <- x@ia
-      config$sp_col <- x@ja
-      config$dim <- nrow(x)
-      config$data_dim <- ncol(x)
-
       # NEW (for arma::sp_mat)  
       x <- as.matrix.csc(x)
       config$set_sparse_data(x@ja, x@ia, x@ra, nrow(x), ncol(x), TRUE)
