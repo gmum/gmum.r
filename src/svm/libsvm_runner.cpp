@@ -33,7 +33,7 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 	if (!config.isPrediction()) {
 		svm_node** node;
 		if(config.isSparse()) {
-			node = SparseToSVMNode(config.sp_data, config.dim, config.row, config.col);
+            node = ArmaSpMatToSvmNode(config.sparse_data);
 		} else {
 			node = armatlib(config.data);
 		}
@@ -314,7 +314,7 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 
 //	TODO: READ MODEL FROM PARAMETERS
 	if(config.isSparse()) {
-		train= SparseToSVMNode(config.sp_data, config.dim, config.row, config.col);
+        train = ArmaSpMatToSvmNode(config.sparse_data);
 	} else {
 		train = armatlib(config.data);
 	}
@@ -337,5 +337,31 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 //	svm_free_and_destroy_model(&m);
 	svm_destroy_param(params,config.log);
 	free(ret);
+}
+
+svm_node **LibSVMRunner::ArmaSpMatToSvmNode(arma::sp_mat sparse_data) {
+    int max_rows = sparse_data.n_rows + 1;
+    svm_node **sn = new svm_node*[sparse_data.n_cols];
+    svm_node tmp_col[max_rows];
+    long int current_col_counter;
+    long int row;
+    for (unsigned int col = 0; col < sparse_data.n_cols; ++col) {
+        current_col_counter = 0;
+        row = -1;
+
+        for (
+            arma::sp_mat::iterator it = sparse_data.begin_col(col);
+            it.row() > row; ++it
+        ) {
+            row = it.row();
+            tmp_col[current_col_counter].value = sparse_data(row, col);
+            tmp_col[current_col_counter++].index = row + 1;
+        }
+        
+        sn[col] = new svm_node[current_col_counter + 1];
+        memcpy(sn[col], tmp_col, current_col_counter * sizeof(svm_node));
+        sn[col][current_col_counter].index = -1.0;
+    }
+    return sn;
 }
 

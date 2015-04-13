@@ -961,12 +961,15 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     }
 
     // Matrix type handling
-    if (config.sparse) {
-        for (long int i = 1; i <= config.sparse_data.n_cols; ++i) {
-            if (config.sparse_data(line_num, i-1) != 0) {
-                ss << ' ' << i << ':' << std::setprecision(8);
-                ss << config.sparse_data(line_num, i-1);
-            }
+    if (config.isSparse()) {
+        long int row = -1;
+        for (
+            arma::sp_mat::iterator it = config.getSparseData().begin_col(line_num);
+            it.row() > row; ++it
+        ) {
+            row = it.row();
+            ss << ' ' << row + 1 << ':' << std::setprecision(8);
+            ss << *it;
         }
     } else {
         for (long int i = 1; i <= config.data.n_cols; ++i) {
@@ -1031,7 +1034,7 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
         __debug_prefix__ + ".SVMLightModelToSVMConfiguration() Started."
     );
 
-    long i, j;
+    long i, j, k;
     SVECTOR *v;
 
     /* 0=linear, 1=poly, 2=rbf, 3=sigmoid, 4=custom -- same as GMUM.R! */
@@ -1058,13 +1061,13 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
 
     config.alpha_y = arma::randu<arma::vec>(config.l);
     config.support_vectors = arma::randu<arma::mat>(config.l, model->totwords);
-    for(i=1;i<model->sv_num;i++) {
-      for(v=model->supvec[i]->fvec;v;v=v->next) {
-        config.alpha_y(i-1) = model->alpha[i]*v->factor;
-        for (j=0; (v->words[j]).wnum; j++) {
-            config.support_vectors(i-1,j) = v->words[j].weight;
+    for (i = 1; i < model->sv_num; i++) {
+      for (v = model->supvec[i]->fvec; v; v=v->next) {
+        config.alpha_y(i - 1) = model->alpha[i]*v->factor;
+        for (j = 0; (v->words[j]).wnum; j++) {
+            k = (v->words[j]).wnum - 1;
+            config.support_vectors(i - 1, k) = v->words[j].weight;
         }
-        //printf("#%s\n",v->userdefined);
       }
     }
     config.w = (config.alpha_y.t() * config.support_vectors).t();

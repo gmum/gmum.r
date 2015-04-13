@@ -31,11 +31,6 @@ RCPP_MODULE(svm_wrapper) {
       .field("use_example_weights", &SVMConfiguration::use_cost)
 
 			.field("sparse", &SVMConfiguration::sparse)
-			.field("sp_x", &SVMConfiguration::sp_data)
-			.field("sp_row", &SVMConfiguration::row)
-			.field("sp_col", &SVMConfiguration::col)
-			.field("dim", &SVMConfiguration::dim)
-			.field("data_dim", &SVMConfiguration::data_dim)
 
 			.method("set_sparse_data", &SVMConfiguration::setSparseData)
 
