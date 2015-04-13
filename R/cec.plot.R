@@ -1,5 +1,3 @@
-loadModule("cec", TRUE)
-
 #' Plot CEC
 #' 
 #' @title plot
@@ -9,8 +7,6 @@ loadModule("cec", TRUE)
 #' @export
 #' 
 #' @usage plot(cec)
-#'
-#' @docType plot
 #'
 #' @param x CEC model object.
 #' @param slice List of dimentions chosen for display since plot is 2D.
@@ -32,10 +28,10 @@ evalqOnLoad({
     }
     
     if (length(slice)==2) {
-      plot(d[,slice], col = (x$y() + 1))
+      plot(d[,slice], col = (x$clustering() + 1))
     }
     else{
-      pairs(d[,slice], col = (x$y()+1))
+      pairs(d[,slice], col = (x$clustering()+1))
     }
     
     if (ellipses || centers) {
@@ -43,13 +39,11 @@ evalqOnLoad({
       n = length(cen)
       if (ellipses && length(slice) <= 2){
         #library("car")
-        cov = x$covMatrix()
-        
+        cov = x$covMatrix()        
         for (i in 1:n) {
           data = unlist(cov[i])
           covMat = matrix(data,ncol=sqrt(length(data)))[slice,slice]
           m = unlist(cen[i][slice])
-          print(covMat)
           eigenValuesAndVectors = eigen(covMat)
           veE <- eigenValuesAndVectors$vectors
           l <- eigenValuesAndVectors$values
@@ -63,7 +57,7 @@ evalqOnLoad({
           lineAll = rbind(line1)
           ddd <- (lineAll%*%t(veE)) + meansMultiply
           points(ddd,col = "black", type = "l", lwd = 2)
-          #dataEllipse(d[x$y() == (i-1),],plot.points=FALSE,add = TRUE, levels = c(0.9))
+          #dataEllipse(d[x$clustering() == (i-1),], plot.points=FALSE, add = TRUE, levels = c(0.9))
         }        
       }
       
@@ -73,6 +67,5 @@ evalqOnLoad({
       }
     }
   }
-    setMethod("plot", signature(x="Rcpp_CecModel"), plot.cec)
-  
+    setMethod("plot", "Rcpp_CecModel", plot.cec)  
 })

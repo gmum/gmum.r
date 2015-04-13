@@ -11,13 +11,13 @@
 #include <vector>
 
 using namespace gmum;
-class Mouse1Test: public ::testing::Test {
+class CEC_Mouse1Test: public ::testing::Test {
 protected:
-    Mouse1Test() {
+    CEC_Mouse1Test() {
         clustering.reset(new std::vector<unsigned int>());
         ClusterReader cluster_reader("mouse_1", 2);
         cluster_reader.get_clustering(*clustering);
-        points.reset(new arma::mat(cluster_reader.get_points_in_matrix()));
+        points = arma::mat(cluster_reader.get_points_in_matrix());
         energy = cluster_reader.get_energy();
         int min = *(std::min_element(clustering->begin(), clustering->end()));
         for (std::vector<unsigned int>::iterator it = clustering->begin();
@@ -33,12 +33,12 @@ protected:
         // std::cout << "initialized data" << std::endl;
     }
     boost::shared_ptr<std::vector<unsigned int> > clustering;
-    boost::shared_ptr<arma::mat> points;
+    arma::mat points;
     double energy;
     Params params;
 };
 
-TEST_F(Mouse1Test,IsEnergyCorrect) {
+TEST_F(CEC_Mouse1Test,IsEnergyCorrect) {
     BestPermutationComparator comparator;
     int t = 20;
     int number_of_times_acceptable = 0;
@@ -47,6 +47,7 @@ TEST_F(Mouse1Test,IsEnergyCorrect) {
         CecConfiguration conf;
         conf.set_params(params);
         conf.set_method_init("random");
+        conf.set_algorithm("hartigan");
         CecModel cec(&conf);
         cec.loop();
         std::vector<unsigned int> assignment = cec.get_assignment();

@@ -41,8 +41,11 @@
 #' @usage CEC(k=2, x=dataset, method.type='sphere', method.init='centroids', params.centroids=list(c(-0.5,0.5),c(0,0)))
 #' @usage CEC(k=5, x=dataset, method.type='fsphere', params.r=0.01, control.nstart=10, control.eps=0.07)
 #' @usage CEC(k=5, x=dataset, method.type='full', params.cov=matrix(c(0.03,0,0,0.01),2), control.nstart=10, control.eps=0.06)
-#' @usage CEC(k=1, x=dataset_points, method.type='func', params.function='name_of_my_own_function')
-#' 
+#' @usage CEC(k=1, x=dataset, method.type='func', params.function='name_of_my_own_function')
+#' @usage  fsphere_cluster_param = list(method.type = 'fsphere', params.r = 0.001)
+#' full_cluster_param = list(method.type = 'full', params.cov=matrix(c(0.05, 0, 0, 0.001), 2))
+#' CEC(x = dataset, k = 5, params.mix = list(full_cluster_param, fsphere_cluster_param, fsphere_cluster_param, fsphere_cluster_param, fsphere_cluster_param), control.nstart = 10)
+
 CEC <- NULL
 
 #' @title runAll
@@ -75,7 +78,7 @@ runOneIteration.cec <- NULL
 #' 
 energy.cec <- NULL
 
-#' @title y
+#' @title clustering
 #' 
 #' @description Print labels assigned
 #' 
@@ -83,7 +86,7 @@ energy.cec <- NULL
 #'
 #' @param c CEC model object.
 #' 
-y.cec <- NULL
+clustering.cec <- NULL
 
 #' @title x
 #' 
@@ -185,11 +188,11 @@ evalqOnLoad({
                    params.centroids = NULL,
                    params.mix = NULL,
                    params.function = NULL,
-                   control.nstart = 1,
+                   control.nstart = 10,
                    control.eps = 0.05,
                    control.itmax = 25,
-                   log.energy = FALSE,
-                   log.ncluster= FALSE){
+                   log.energy = TRUE,
+                   log.ncluster= TRUE){
     
     # check for errors
     call <- match.call(expand.dots = TRUE)
@@ -207,11 +210,12 @@ evalqOnLoad({
     if (control.nstart <= 0)
       stop("Number of starts should be a positive integer!");
     
-    if (control.eps > 1.0 / k)
-      stop("killThreshold = ", control.eps, " is too high!");  
+    npoints <- dim(x)[1]
+    if ( (control.eps < 0) || (control.eps > ((npoints - 1) / npoints)) )
+      stop("control.eps = ", control.eps, " should be in range [0, (N-1)/N]!");  
     
-    if (control.itmax <= 0)
-      stop("Maximum number of iterations should be a positive integer!");
+    if (control.itmax < 0)
+      stop("Maximum number of iterations should be a natural number!");
     
     if(is(params.cov, "data.frame")){
      params.cov = data.matrix(params.cov);
@@ -231,12 +235,14 @@ evalqOnLoad({
     config$setLogCluster(log.ncluster)      
     config$setNstart(control.nstart)
     config$setCentroids(params.centroids)
-    config$setMethodType(method.type)
-    config$setMethodInit(method.init)              
+    config$setMethodType(method.type)             
     config$setCov(params.cov)
     config$setR(params.r)
+    config$setMethodInit(method.init) 
     config$setItmax(control.itmax)
-     model <- new(CecModel, config)
+    config$setAlgorithm('hartigan')
+    
+    model <- new(CecModel, config)
 
     assign("call", call, model)
     model
@@ -254,8 +260,8 @@ evalqOnLoad({
     c$energy()
   }
   
-  y.cec <<- function(c) {
-    c$y()
+  clustering.cec <<- function(c) {
+    c$clustering()
   }
   
   x.cec <<- function(c) {
@@ -285,7 +291,7 @@ evalqOnLoad({
     setGeneric("runAll", function(c) standardGeneric("runAll"))
     setGeneric("runOneIteration", function(c) standardGeneric("runOneIteration"))
     setGeneric("energy", function(c) standardGeneric("energy"))
-    setGeneric("y", function(c) standardGeneric("y"))
+    setGeneric("clustering", function(c) standardGeneric("clustering"))
     setGeneric("x", function(c) standardGeneric("x"))
     setGeneric("centers", function(c) standardGeneric("centers"))
     setGeneric("covMatrix", function(c) standardGeneric("covMatrix"))
@@ -296,7 +302,7 @@ evalqOnLoad({
     setMethod("runAll", "Rcpp_CecModel", runAll.cec)
     setMethod("runOneIteration", "Rcpp_CecModel", runOneIteration.cec)
     setMethod("energy", "Rcpp_CecModel", energy.cec)
-    setMethod("y", "Rcpp_CecModel", y.cec)
+    setMethod("clustering", "Rcpp_CecModel", clustering.cec)
     setMethod("x", "Rcpp_CecModel", x.cec)
     setMethod("centers", "Rcpp_CecModel", centers.cec)
     setMethod("covMatrix", "Rcpp_CecModel", covMatrix.cec)
@@ -314,6 +320,10 @@ evalqOnLoad({
       }
       else if (!is(x, "matrix")) {
         x = data.matrix(x)
+      }
+      
+      if(dim(object$x())[2] != dim(x)[2]){
+        stop("Incompatible dimension!")
       }
       
       apply(x, 1, function(row) {

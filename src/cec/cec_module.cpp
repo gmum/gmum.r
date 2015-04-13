@@ -30,15 +30,15 @@ RCPP_MODULE(cec) {
 	.method("setCov", &CecConfiguration::set_cov)
 	.method("setR", &CecConfiguration::set_r)
 	.method("setFunction", &CecConfiguration::set_function)
-	.method("setItmax", &CecConfiguration::set_it_max);
+    .method("setItmax", &CecConfiguration::set_it_max)
+    .method("setAlgorithm", &CecConfiguration::set_algorithm);
 
 	class_<CecModel>("CecModel")
 	.constructor<CecConfiguration*>()
 	.method("runAll", &CecModel::loop)
 	.method("runOneIteration", &CecModel::single_loop)
-	.method(".entropy", &CecModel::entropy)
 	.method("energy", &CecModel::get_energy)
-	.method("y", &CecModel::get_assignment)
+	.method("clustering", &CecModel::get_assignment)
 	.method("centers", &CecModel::centers)
 	.method("covMatrix", &CecModel::cov)
 	.method("predict", &CecModel::predict)
