@@ -54,7 +54,7 @@ combinations <- function(n, r, v = 1:n, set = TRUE, repeats.allowed=FALSE)
 ##
 
 
-permutations <- function(n, r, v = 1:n, set = TRUE, repeats.allowed=FALSE)
+gtools_permutations <- function(n, r, v = 1:n, set = TRUE, repeats.allowed=FALSE)
 {
   if(mode(n) != "numeric" || length(n) != 1 
      || n < 1 || (n %% 1) != 0) stop("bad value of n") 
@@ -101,7 +101,7 @@ permutations <- function(n, r, v = 1:n, set = TRUE, repeats.allowed=FALSE)
 
 correctness <- function(correct_assignment, my_assignment, npoints, nclusters)
 {
-  perms <- permutations(v=0:(nclusters-1), n=nclusters, r=nclusters, repeats.allowed=F)
+  perms <- gtools_permutations(v=0:(nclusters-1), n=nclusters, r=nclusters, repeats.allowed=F)
   nperms <- dim(perms)[1]
   best_percentage <- 0
   
