@@ -340,28 +340,27 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 }
 
 svm_node **LibSVMRunner::ArmaSpMatToSvmNode(arma::sp_mat sparse_data) {
-    arma::sp_mat A = sparse_data.t();
-    int max_cols = A.n_cols + 1;
-    svm_node **sn = new svm_node*[A.n_rows];
-    svm_node tmp_row[max_cols];
-    for (unsigned int row = 0; row < A.n_rows; ++row) {
-        int current_row_counter = 0;
-        // XXX: This one is inefficient. No idea why (-:
-        /*
-        for (arma::sp_mat::row_iterator i=A.begin_row(row); i != A.end_row(row); ++i) {
-            tmp_row[current_row_counter].value = *i;
-            tmp_row[current_row_counter++].index = i.col();
+    int max_rows = sparse_data.n_rows + 1;
+    svm_node **sn = new svm_node*[sparse_data.n_cols];
+    svm_node tmp_col[max_rows];
+    long int current_col_counter;
+    long int row;
+    for (unsigned int col = 0; col < sparse_data.n_cols; ++col) {
+        current_col_counter = 0;
+        row = -1;
+
+        for (
+            arma::sp_mat::iterator it = sparse_data.begin_col(col);
+            it.row() > row; ++it
+        ) {
+            row = it.row();
+            tmp_col[current_col_counter].value = sparse_data(row, col);
+            tmp_col[current_col_counter++].index = row + 1;
         }
-        */
-        for (unsigned int col = 0; col < A.n_cols; ++col) {
-            if (A(row, col) != 0) {
-                tmp_row[current_row_counter].value = A(row, col);
-                tmp_row[current_row_counter++].index = col+1;
-            }
-        }
-        sn[row] = new svm_node[current_row_counter+1];
-        memcpy(sn[row], tmp_row, current_row_counter * sizeof(svm_node));
-        sn[row][current_row_counter].index = -1.0;
+        
+        sn[col] = new svm_node[current_col_counter + 1];
+        memcpy(sn[col], tmp_col, current_col_counter * sizeof(svm_node));
+        sn[col][current_col_counter].index = -1.0;
     }
     return sn;
 }

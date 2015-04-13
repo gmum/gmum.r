@@ -962,11 +962,14 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
 
     // Matrix type handling
     if (config.isSparse()) {
-        for (long int i = 1; i <= config.getSparseData().n_rows; ++i) {
-            if (config.getSparseData()(i - 1, line_num) != 0) {
-                ss << ' ' << i << ':' << std::setprecision(8);
-                ss << config.getSparseData()(i - 1, line_num);
-            }
+        long int row = -1;
+        for (
+            arma::sp_mat::iterator it = config.getSparseData().begin_col(line_num);
+            it.row() > row; ++it
+        ) {
+            row = it.row();
+            ss << ' ' << row + 1 << ':' << std::setprecision(8);
+            ss << *it;
         }
     } else {
         for (long int i = 1; i <= config.data.n_cols; ++i) {

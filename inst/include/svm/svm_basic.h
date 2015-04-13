@@ -78,7 +78,6 @@ public:
     char *kernel_parm_custom;   // Custom kernel parameter(s)
     arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
     arma::mat support_vectors;  // sacherus: number of support vectors x data_dim
-    arma::sp_mat sparse_support_vectors;
     // User-defined classification mode labels
     //TODO: delete it; we are using pos_target, and neg_target;
     int label_negative; 

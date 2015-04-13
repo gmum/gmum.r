@@ -222,8 +222,6 @@ void SVMClient::predictFromConfig() {
     size_t n_docs = config.getDataExamplesNumber();
     config.result = arma::randu<arma::vec>(n_docs);
 
-    config.sparse_support_vectors = arma::sp_mat(config.support_vectors);
-
     LOG(config.log, LogLevel::DEBUG,
         __debug_prefix__ + ".predictFromConfig() Calculating prediction...");
     // Prediction itself
@@ -278,7 +276,7 @@ double SVMClient::kernel(size_t i, size_t j) {
             } else {
                 result = arma::dot(
                     config.data.row(i),
-                    config.sparse_support_vectors.row(j)
+                    config.support_vectors.row(j)
                 );
             }
             break;
@@ -294,7 +292,7 @@ double SVMClient::kernel(size_t i, size_t j) {
             } else {
                 result = arma::dot(
                     config.data.row(i),
-                    config.sparse_support_vectors.row(j)
+                    config.support_vectors.row(j)
                 );
             }
             result *= config.gamma;
@@ -313,7 +311,7 @@ double SVMClient::kernel(size_t i, size_t j) {
             if (isSparse()) {
                 norm = arma::norm(
                     config.getSparseData().col(i)
-                    - config.sparse_support_vectors.row(j).t(),
+                    - config.support_vectors.row(j).t(),
                     2
                 );
             } else {
@@ -343,7 +341,7 @@ double SVMClient::kernel(size_t i, size_t j) {
             } else {
                 tanh_arg = arma::dot(
                     config.data.row(i),
-                    config.sparse_support_vectors.row(j)
+                    config.support_vectors.row(j)
                 );
             }
             tanh_arg *= config.gamma;
