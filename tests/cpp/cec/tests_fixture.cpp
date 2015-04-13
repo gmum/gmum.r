@@ -16,8 +16,8 @@ MixTypeParamsThreeSpheres::MixTypeParamsThreeSpheres(int it_max)
     gmum_params.clusters.push_back(boost::make_shared<gmum::ClusterParams>(gmum::ksphere));
 }
 
-TestsFixtureParam::TestsFixtureParam(ClusterReader _reader, boost::shared_ptr<DefaultGmumParams> _params)
-    :   reader(_reader), default_params(_params)
+TestsFixtureParam::TestsFixtureParam(ClusterReader _reader, boost::shared_ptr<DefaultGmumParams> _params, unsigned int _times)
+    :   reader(_reader), default_params(_params), times(_times)
 { }
 
 TestsFixture::TestsFixture()
@@ -28,10 +28,29 @@ TestsFixture::TestsFixture()
     params = p.default_params->gmum_params;
     params.dataset = p.reader.get_points_in_matrix();
     params.nstart = 3;
+    times = p.times;
 }
 
 TestsFixture::~TestsFixture() { }
 
+BigDataTestsFixtureParam::BigDataTestsFixtureParam(ClusterReader _reader, boost::shared_ptr<DefaultGmumParams> _params, unsigned int _iterations_limit, unsigned int _times)
+    :   TestsFixtureParam(_reader, _params, _times), iterations_limit(_iterations_limit)
+{
+    gmum::Params& params = default_params->gmum_params;
+    params.it_max = _iterations_limit + 10;
+}
 
+BigDataTestsFixture::BigDataTestsFixture()
+{
+    BigDataTestsFixtureParam p(GetParam());
+    params = p.default_params->gmum_params;
+    params.dataset = p.reader.get_points_in_matrix();
+    params.nstart = 1;
+    iterations_limit = p.iterations_limit;
+    times = p.times;
+}
 
+BigDataTestsFixture::~BigDataTestsFixture()
+{
 
+}

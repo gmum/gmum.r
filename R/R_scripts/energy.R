@@ -45,7 +45,7 @@ CECEnergy<-function(dataSet,label,kind){
     list(means=means,covariances=covariances,energyArray=energyArray,energy=energy)
 }
 
-dataPath = file.path("..","..","test","data")
+dataPath = file.path("..","..","inst","data_sets","cec")
 simplePath = file.path(dataPath,"simple_1")
 mousePath = file.path(dataPath,"mouse_1")
 mousePathS = file.path(dataPath,"mouse_1_spherical")
@@ -55,20 +55,18 @@ dataSetPath = file.path(rpath,"input.txt")
 labelPathPrzemek = file.path(rpath,"cluster.txt")
 labelPathMy = file.path(rpath,"our_clusters.txt")
 
-
-
 dataSet <- matrix(as.numeric(as.matrix(read.table(dataSetPath),skipNul=TRUE)),ncol=2);
 
 labelPrzemek <- as.matrix(read.table(labelPathPrzemek));
 print(min(labelPrzemek))
 labelPrzemek<- labelPrzemek + (1 - min(labelPrzemek))
-labelMy <- as.matrix(read.table(labelPathMy));
-print (min(labelMy))
-labelMy<- labelMy + (1 - min(labelMy))
+#labelMy <- as.matrix(read.table(labelPathMy));
+#print (min(labelMy))
+#labelMy<- labelMy + (1 - min(labelMy))
 
 
 print(CECEnergy(dataSet,labelPrzemek,1))
-print(CECEnergy(dataSet,labelMy,1))
+#print(CECEnergy(dataSet,labelMy,1))
   
   
 #file.path("gmum.r\\test\\data\\simple_1\\input.txt", fsep = .Platform$file.sep)

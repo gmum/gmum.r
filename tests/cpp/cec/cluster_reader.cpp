@@ -1,4 +1,5 @@
 #include "cluster_reader.hpp"
+#include <stdexcept>
 
 ClusterReader::ClusterReader(const char * name, unsigned int dim) {
     m_energy = -1;
@@ -63,7 +64,7 @@ void ClusterReader::read_points() {
         file.close();
     } else {
         std::cerr << "Failed to open " << input_path() << std::endl;
-        throw input_path() + "Failed to open ";
+        throw std::runtime_error(input_path() + "Failed to open ");
     }
     // std::cout << "Finish reading opening. Read " << m_points.size() << std::endl;
 }
@@ -86,7 +87,7 @@ void ClusterReader::read_clustering() {
         normalize_clustering();
     } else {
         std::cerr << "Failed to open " << cluster_path() << std::endl;
-        throw cluster_path() + "Failed to open ";
+        throw std::runtime_error(cluster_path() + "Failed to open ");
     }
     // std::cout << "Finished reading clusters. Read " << m_clustering.size() << std::endl;
 }
@@ -98,7 +99,7 @@ void ClusterReader::read_energy() {
         file.close();
     } else {
         std::cerr << "Failed to open " << energy_path() << std::endl;
-        throw energy_path() + "Failed to open ";
+        throw std::runtime_error(energy_path() + "Failed to open ");
     }
 }
 
@@ -109,7 +110,7 @@ void ClusterReader::read_dimension() {
         file.close();
     } else {
         std::cerr << "Failed to open " << dimension_path() << std::endl;
-        throw dimension_path() + "Failed to open ";
+        throw std::runtime_error(dimension_path() + "Failed to open ");
     }
 }
 void ClusterReader::get_points(std::vector<std::vector<double> > & out) {
