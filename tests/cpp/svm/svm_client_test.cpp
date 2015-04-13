@@ -80,6 +80,7 @@ TEST_F(SVMClientTest, DISABLED_sparse_data_test) {
     svm_config.target = sparse_matrix_csc_01_learning_target;
     svm_config.setLibrary("libsvm");
     SVMClient *svm_client = new SVMClient(&svm_config);
+    // XXX: Why access violation here?
     svm_client->train();
 
     std::cout << "Testing prediction..." << std::endl << std::flush;

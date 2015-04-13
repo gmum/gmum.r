@@ -33,6 +33,7 @@ private:
 	void arma_prediction(SVMConfiguration&);
 	svm_parameter* configuration_to_problem(SVMConfiguration&);
 	svm_node** SparseToSVMNode(arma::vec& x, int r, arma::Col<int>& rowindex, arma::Col<int>& colindex);
+    svm_node **ArmaSpMatToSvmNode(arma::sp_mat);
 
 	struct svm_model *model;
 	struct svm_problem prob;

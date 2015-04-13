@@ -73,9 +73,10 @@ TEST_F(SVMConfigurationTest, setSparseData) {
         sparse_matrix_csc_01_ncol,
         true
     );
-    for (size_t i = 0; i < svm_config.sparse_data.n_rows; ++i) {
-        for (size_t j = 0; j < svm_config.sparse_data.n_cols; ++ j) {
-            ASSERT_EQ(svm_config.sparse_data(i, j), sparse_matrix_csc_01_sp_mat(i, j));
+    for (size_t i = 0; i < svm_config.sparse_data.n_cols; ++i) {
+        for (size_t j = 0; j < svm_config.sparse_data.n_rows; ++ j) {
+            // Sparse matrix is currently being held as transposed
+            ASSERT_EQ(svm_config.sparse_data(i, j), sparse_matrix_csc_01_sp_mat(j, i));
         }
     }
 }

@@ -33,7 +33,7 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 	if (!config.isPrediction()) {
 		svm_node** node;
 		if(config.isSparse()) {
-			node = SparseToSVMNode(config.sp_data, config.dim, config.row, config.col);
+            node = ArmaSpMatToSvmNode(config.sparse_data);
 		} else {
 			node = armatlib(config.data);
 		}
@@ -314,7 +314,7 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 
 //	TODO: READ MODEL FROM PARAMETERS
 	if(config.isSparse()) {
-		train= SparseToSVMNode(config.sp_data, config.dim, config.row, config.col);
+        train = ArmaSpMatToSvmNode(config.sparse_data);
 	} else {
 		train = armatlib(config.data);
 	}
@@ -337,5 +337,32 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 //	svm_free_and_destroy_model(&m);
 	svm_destroy_param(params,config.log);
 	free(ret);
+}
+
+svm_node **LibSVMRunner::ArmaSpMatToSvmNode(arma::sp_mat sparse_data) {
+    arma::sp_mat A = sparse_data.t();
+    int max_cols = A.n_cols + 1;
+    svm_node **sn = new svm_node*[A.n_rows];
+    svm_node tmp_row[max_cols];
+    for (unsigned int row = 0; row < A.n_rows; ++row) {
+        int current_row_counter = 0;
+        // XXX: This one is inefficient. No idea why (-:
+        /*
+        for (arma::sp_mat::row_iterator i=A.begin_row(row); i != A.end_row(row); ++i) {
+            tmp_row[current_row_counter].value = *i;
+            tmp_row[current_row_counter++].index = i.col();
+        }
+        */
+        for (unsigned int col = 0; col < A.n_cols; ++col) {
+            if (A(row, col) != 0) {
+                tmp_row[current_row_counter].value = A(row, col);
+                tmp_row[current_row_counter++].index = col+1;
+            }
+        }
+        sn[row] = new svm_node[current_row_counter+1];
+        memcpy(sn[row], tmp_row, current_row_counter * sizeof(svm_node));
+        sn[row][current_row_counter].index = -1.0;
+    }
+    return sn;
 }
 

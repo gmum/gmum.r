@@ -92,14 +92,6 @@ public:
     bool sparse;
     arma::sp_mat sparse_data;
 
-    // sparse matrix things
-    // TODO: methods
-    arma::vec sp_data; 
-    arma::Col<int> row;
-    arma::Col<int> col;
-    int dim;
-    int data_dim;
-
     // Data cost
     bool use_cost;              // currently only svmligth-implemented
     arma::vec data_cost;
@@ -165,7 +157,7 @@ public:
         bool one_indexed=false
     );
 
-    arma::sp_mat getSparseData();
+    arma::sp_mat &getSparseData();
 
     bool isSparse();
     int getDataDim();
