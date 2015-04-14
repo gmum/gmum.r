@@ -23,8 +23,7 @@ protected:
     double m_energy;
     unsigned int m_dim;
 public:
-    ClusterReader(const char * name, unsigned int dim);
-    ClusterReader(const char * name);
+    ClusterReader(const char * name, unsigned int dim = 0);
     void read_points();
     void read_clustering();
     void read_dimension();

@@ -7,12 +7,6 @@ ClusterReader::ClusterReader(const char * name, unsigned int dim) {
     m_dim = dim;
 }
 
-ClusterReader::ClusterReader(const char * name) {
-    m_energy = -1;
-    m_folder_name = std::string(name);
-    read_dimension();
-}
-
 std::string ClusterReader::prefix() {
 	//TODO: fix path to ../../inst
     return std::string("../../inst/data_sets/cec/") + m_folder_name + "/";
@@ -45,6 +39,11 @@ void ClusterReader::normalize_clustering()
 
 void ClusterReader::read_points() {
     // std::cout << " read points " << std::endl;
+    if(m_dim == 0)
+    {
+        read_dimension();
+    }
+
     std::ifstream file(input_path().c_str());
     if (file.is_open()) {
         std::string line;
