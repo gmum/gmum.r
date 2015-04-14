@@ -26,14 +26,14 @@ test_that("Basic saving/loading works", {
 
 test_that("predictCluster returns sensible results", {
   data(cec_mouse_1_spherical)
-  g <- GNG(input, max.nodes=50)
+  g <- GNG(cec_mouse_1_spherical.input, max.nodes=50)
   mouse_centr <- centroids(g)
   
-  m = as.data.frame(input)
+  m = as.data.frame(cec_mouse_1_spherical.input)
   colnames(m) = c("x", "y")
   
-  x_col <- input[,1]
-  y_col <- input[,2]
+  x_col <- cec_mouse_1_spherical.input[,1]
+  y_col <- cec_mouse_1_spherical.input[,2]
   
   x_max <- max(x_col)
   x_min <- min(x_col) 
@@ -124,7 +124,7 @@ test_that("GNG converges on simple cases", {
 
 test_that("GNG is working on mouse dataset", {
     data(cec_mouse_1_spherical)
-    dataset = input
+    dataset = cec_mouse_1_spherical.input
     gng <- GNG(dataset)
   expect_that(gng$getMeanError() < 0.1, is_true())
   expect_that(all(gng$clustering() == predict(gng,dataset)), is_true())
@@ -140,7 +140,7 @@ test_that("GNG synchronization looks ok", {
     synchronization_test <- function(){
 
         data(cec_mouse_1_spherical)
-        dataset = input
+        dataset = cec_mouse_1_spherical.input
         gng <- GNG(dataset, verbosity=3, max.nodes=20)
         gng$.updateClustering()
         sum_1 = (sum( gng$clustering() != predict(gng, dataset)))

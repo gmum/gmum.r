@@ -5,8 +5,8 @@ source("cec_function.R")
 
 data(cec_simple_1)
 
-expected_energy <- energy_value
-dataset_points <- input
+expected_energy <- cec_simple_1.energy
+dataset_points <- cec_simple_1.input
 
 test_that("Entropy is correct", {  
   c1 <- CEC(k=1, x=dataset_points, method.type='func', params.function=f_standard)

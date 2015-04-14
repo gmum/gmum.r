@@ -5,8 +5,8 @@ source('combinations.R')
 test_that("correctness works", {
   data(cec_ellipse_gauss)
   
-  dataset_clusters <- cluster[,1]
-  dataset_points <- input
+  dataset_clusters <- cec_ellipse_gauss.cluster[,1]
+  dataset_points <- cec_ellipse_gauss.input
   
   nclusters <- 4
   npoints <- dim(dataset_points)[1]
@@ -19,9 +19,9 @@ test_that("correctness works", {
 test_that("mouse_1_spherical kmeans coverage is correct", {
   data(cec_mouse_1_spherical)
   
-  expected_energy <- energy_value
-  dataset_clusters <- cluster[,1]
-  dataset_points <- input
+  expected_energy <- cec_mouse_1_spherical.energy
+  dataset_clusters <- cec_mouse_1_spherical.cluster[,1]
+  dataset_points <- cec_mouse_1_spherical.input
   
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
   
@@ -45,9 +45,9 @@ test_that("mouse_1_spherical kmeans coverage is correct", {
 test_that("mouse_1_spherical kmeans energy is correct", {
     data(cec_mouse_1_spherical)
     
-    expected_energy <- energy_value
-    dataset_clusters <- cluster[,1]
-    dataset_points <- input
+    expected_energy <- cec_mouse_1_spherical.energy
+    dataset_clusters <- cec_mouse_1_spherical.cluster[,1]
+    dataset_points <- cec_mouse_1_spherical.input
     
     dataset_clusters <- dataset_clusters - min(dataset_clusters)
     
