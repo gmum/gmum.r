@@ -1,5 +1,14 @@
 library(gmum.r)
 
+verbose <- FALSE # set true for local testing
+
+x_file <- system.file("inst", "data_sets", "svm", "mushrooms.x", mustWork=TRUE, package="gmum.r")
+y_file <- system.file("inst", "data_sets", "svm", "mushrooms.y", mustWork=TRUE, package="gmum.r")
+
+if (!file.exists(x_file) || !file.exists(y_file)) {
+  stop("Use script 'download_mushrooms/sh' to get the dataset")
+}
+
 x <- read.matrix.csr(system.file("inst", "data_sets", "svm", "mushrooms.x", mustWork=TRUE, package="gmum.r"))
 y <- read.table(system.file("inst", "data_sets", "svm", "mushrooms.y", mustWork=TRUE, package="gmum.r"))
 y <- as.vector(unlist(y))
@@ -31,19 +40,21 @@ for (lib_i in libs) {
     
     e_acc <- svm.accuracy(e_pred, y)
     
-    print(sprintf("gmum.r %s %s acc: %.3f", lib_i, kernel_i, gmum_acc))
-    print(sprintf("e1071 %s acc: %.3f", kernel_i, e_acc))
-    print("---")
-    print(sprintf("gmum.r %s %s train time: %.2f", lib_i, kernel_i, gmum_train_time))
-    print(sprintf("e1071 %s train time: %.2f", kernel_i, e_train_time))
-    print("---")
-    print(sprintf("gmum.r %s %s test time: %.2f", lib_i, kernel_i, gmum_test_time))
-    print(sprintf("e1071 %s test time: %.2f", kernel_i, e_test_time))
-    print("---")
-    print(sprintf("gmum.r %s %s nSV: %i", lib_i, kernel_i, svm$get_number_sv()))
-    print(sprintf("e1071 %s nSV: %i", kernel_i, nrow(e_svm$SV)))
-    print("---")
-    print("======================================")
-    
+    if (verbose) {
+      print(sprintf("gmum.r %s %s acc: %.3f", lib_i, kernel_i, gmum_acc))
+      print(sprintf("e1071 %s acc: %.3f", kernel_i, e_acc))
+      print("---")
+      print(sprintf("gmum.r %s %s train time: %.2f", lib_i, kernel_i, gmum_train_time))
+      print(sprintf("e1071 %s train time: %.2f", kernel_i, e_train_time))
+      print("---")
+      print(sprintf("gmum.r %s %s test time: %.2f", lib_i, kernel_i, gmum_test_time))
+      print(sprintf("e1071 %s test time: %.2f", kernel_i, e_test_time))
+      print("---")
+      print(sprintf("gmum.r %s %s nSV: %i", lib_i, kernel_i, svm$get_number_sv()))
+      print(sprintf("e1071 %s nSV: %i", kernel_i, nrow(e_svm$SV)))
+      print("---")
+      print("======================================")
+    }
+  
   }
 }
