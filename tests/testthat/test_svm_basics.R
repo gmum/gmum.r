@@ -15,10 +15,7 @@ test_that('SVM fucntions is fool proof', {
   expect_error( SVM(f, ds, C = -1), paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
   expect_error( SVM(f, ds, gamma = -1), paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
   expect_error( SVM(f, ds, degree = 0), paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
-  
-  expect_warning( SVM(f, ds, kernel="linear", gamma=1), "Gamma parameter is not used with linear kernel" )
-  expect_warning( SVM(f, ds, kernel="linear", degree=3), "Degree parameter is not used with linear kernel" )
-  
+    
 })
 print("test::SVM throws user errors")
 
@@ -46,6 +43,41 @@ test_that('formulas and data storing works', {
   
 })
 print("test::SVM formula and dataset")
+
+test_that("SVM both constructor works", {
+  
+  data(svm_breast_cancer_dataset)
+  ds <- svm.breastcancer.dataset
+  x <- subset(ds, select = -X1)
+  y <- as.vector(unlist(ds['X1']))
+  f <- X1 ~ .
+  
+  svm1 <- SVM(x,y)
+  svm2 <- SVM(f, ds)
+  
+  pred1 <- predict(svm1, x)
+  pred2 <- predict(svm2, x)
+  
+  expect_that(all.equal(pred1, pred2), is_true())
+})
+print("test::SVM both constructors work")
+
+
+test_that("svm accepts and deals properly with factors", {
+  
+  library(mlbench)
+  data(Sonar)
+  library(caret)
+  set.seed(998)
+  
+  inTraining <- createDataPartition(Sonar$Class, p = .75, list = FALSE)
+  training <- Sonar[ inTraining,]
+  svm <- SVM(Class ~ ., training)
+  pred <- predict(svm, training[, 1:60])
+  
+  expect_is(pred, "factor")
+  
+})
 
 
 
