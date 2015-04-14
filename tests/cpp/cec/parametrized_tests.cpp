@@ -72,7 +72,7 @@ TEST_P(TestsFixture, IsControlEpsBoundaryCaseCorrect)
     EXPECT_EQ(final_nclusters, 1);
 }
 
-/*
+
 INSTANTIATE_TEST_CASE_P(CEC_NumericTest, BigDataTestsFixture, ::testing::Values(
     BigDataTestsFixtureParam(ClusterReader("bigData_1"), boost::make_shared<DefaultGmumParams>(3, kstandard), 25),
     BigDataTestsFixtureParam(ClusterReader("bigData_1"), boost::make_shared<DefaultGmumParams>(3, ksphere), 25),
@@ -83,11 +83,20 @@ INSTANTIATE_TEST_CASE_P(CEC_NumericTest, BigDataTestsFixture, ::testing::Values(
     BigDataTestsFixtureParam(ClusterReader("bigData_4"), boost::make_shared<DefaultGmumParams>(3, kstandard), 25),
     BigDataTestsFixtureParam(ClusterReader("bigData_4"), boost::make_shared<DefaultGmumParams>(3, ksphere), 25)
 ));
-*/
 
 INSTANTIATE_TEST_CASE_P(CEC, TestsFixture, ::testing::Values(
-    TestsFixtureParam(ClusterReader("mouse_1_spherical", 2), boost::make_shared<DefaultGmumParams>(3, ksphere), 20),
-    TestsFixtureParam(ClusterReader("mouse_1", 2), boost::make_shared<DefaultGmumParams>(3, ksphere), 20),
-    TestsFixtureParam(ClusterReader("EllipseGauss", 2), boost::make_shared<DefaultGmumParams>(4, kstandard), 20),
-    TestsFixtureParam(ClusterReader("mouse_1_spherical", 2), boost::make_shared<MixTypeParamsThreeSpheres>(), 20)
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, ksphere, kkmeanspp), 20),
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, ksphere, krandom), 20),
+
+    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, ksphere, kkmeanspp), 20),
+    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, ksphere, krandom), 20),
+
+    TestsFixtureParam(ClusterReader("EllipseGauss"), boost::make_shared<DefaultGmumParams>(4, kstandard, kkmeanspp), 20),
+    TestsFixtureParam(ClusterReader("EllipseGauss"), boost::make_shared<DefaultGmumParams>(4, kstandard, krandom), 20),
+
+    TestsFixtureParam(ClusterReader("simple_1"), boost::make_shared<DefaultGmumParams>(1, kstandard, krandom), 20),
+    TestsFixtureParam(ClusterReader("simple_1"), boost::make_shared<DefaultGmumParams>(1, kstandard, kkmeanspp), 20),
+
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<MixTypeParamsThreeSpheres>(kkmeanspp), 20),
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<MixTypeParamsThreeSpheres>(krandom), 20)
 ));

@@ -1,15 +1,16 @@
 #include "tests_fixture.hpp"
 #include "cluster_params.hpp"
 
-DefaultGmumParams::DefaultGmumParams(unsigned int nclusters, gmum::ClusterType cluster_type, int it_max)
+DefaultGmumParams::DefaultGmumParams(unsigned int nclusters, gmum::ClusterType cluster_type, gmum::AssignmentType assignment_type, int it_max)
 {
     gmum_params.nclusters = nclusters;
     gmum_params.cluster_type = cluster_type;
+    gmum_params.assignment_type = assignment_type;
     gmum_params.it_max = it_max;
 }
 
-MixTypeParamsThreeSpheres::MixTypeParamsThreeSpheres(int it_max)
-    :   DefaultGmumParams(3, gmum::kmix, it_max)
+MixTypeParamsThreeSpheres::MixTypeParamsThreeSpheres(gmum::AssignmentType assignment_type, int it_max)
+    :   DefaultGmumParams(3, gmum::kmix, assignment_type, it_max)
 {
     gmum_params.clusters.push_back(boost::make_shared<gmum::ClusterParams>(gmum::ksphere));
     gmum_params.clusters.push_back(boost::make_shared<gmum::ClusterParams>(gmum::ksphere));
@@ -21,6 +22,9 @@ TestsFixtureParam::TestsFixtureParam(ClusterReader _reader, boost::shared_ptr<De
 { }
 
 TestsFixture::TestsFixture()
+{ }
+
+void TestsFixture::SetUp()
 {
     TestsFixtureParam p(GetParam());
     p.reader.get_clustering(expected_clustering);
@@ -41,6 +45,9 @@ BigDataTestsFixtureParam::BigDataTestsFixtureParam(ClusterReader _reader, boost:
 }
 
 BigDataTestsFixture::BigDataTestsFixture()
+{ }
+
+void BigDataTestsFixture::SetUp()
 {
     BigDataTestsFixtureParam p(GetParam());
     params = p.default_params->gmum_params;
@@ -51,6 +58,4 @@ BigDataTestsFixture::BigDataTestsFixture()
 }
 
 BigDataTestsFixture::~BigDataTestsFixture()
-{
-
-}
+{ }

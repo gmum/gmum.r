@@ -10,6 +10,7 @@ struct DefaultGmumParams
 {
     DefaultGmumParams(unsigned int nclusters,
                   gmum::ClusterType cluster_type,
+                  gmum::AssignmentType assignment_type = gmum::kkmeanspp,
                   int it_max = -1);
 
     gmum::Params gmum_params;
@@ -17,7 +18,7 @@ struct DefaultGmumParams
 
 struct MixTypeParamsThreeSpheres : public DefaultGmumParams
 {
-    MixTypeParamsThreeSpheres(int it_max = -1);
+    MixTypeParamsThreeSpheres(gmum::AssignmentType assignment_type, int it_max = -1);
 };
 
 struct TestsFixtureParam
@@ -34,7 +35,7 @@ class TestsFixture : public ::testing::TestWithParam< TestsFixtureParam >
 public:
     TestsFixture();
     virtual ~TestsFixture();
-
+    virtual void SetUp();
 protected:
     std::vector<unsigned int> expected_clustering;
     double expected_energy;
@@ -54,6 +55,7 @@ class BigDataTestsFixture : public ::testing::TestWithParam< BigDataTestsFixture
 public:
     BigDataTestsFixture();
     virtual ~BigDataTestsFixture();
+    virtual void SetUp();
 protected:
     gmum::Params params;
     unsigned int iterations_limit;
