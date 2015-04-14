@@ -1,21 +1,14 @@
 library(e1071)
 library(Sparse)
 library(caret)
+library(SparseM)
 library(mlbench)
+source("caret.svm.models.R")
 
 # Tested: cv time, final model time, accuracy, #sv, cv scores similarity
 
 # Read binary datasets
 datasets = lapply(list.files(path="data_local"), function(x){ ds=read.matrix.csr(paste("data_local",x,sep="/")); ds$name=x; ds})
-
-source("caret.svm.models.R")
-
-data(Sonar)
-ds <- Sonar
-cls <- ds$Class
-
-
-
 
 get.results <- function(data, class.column.name, params, model, seed=777){
   set.seed(seed)
@@ -37,7 +30,7 @@ get.results <- function(data, class.column.name, params, model, seed=777){
   
   
   
-  model <- train(Class ~ ., data = training,
+  model <- train(formula(paste(class.column.name,"~ .", sep=" ")), data = training,
                  method = model,
                  preProc = c("center", "scale"),
                  tuneLength = 8,
@@ -56,17 +49,30 @@ get.results <- function(data, class.column.name, params, model, seed=777){
                  finalModelTime=as.numeric(model$times$final[1]))
 }
 
+# Coarse CV grid
 C <- 10^(-7:11)
-Gamma <- 10^(-10:10)
-params <- expand.grid(C=C, gamma=Gamma)
-models <- data.frame(name=list("gmum.r::svm.radial", "gmum.r::svm.linear", "gmum.r::svm.poly",
-                               "kernlab::svm.radial", "kernlab::svm.linear", "kernlab.svm.poly"),
-                     model=list(gmum.r.svm.radial, gmum.r.svm.linear, gmum.r.svm.poly,
-                                "svmRadial", "svm", "svmPoly"))
-                               
-get.results(Sonar, "Class", params, gmum.r.svm.radial)
+Gamma <- 10^(-9:9)
+degree <- c(2,3)
+model.names=list("gmum.r::svm.radial", "gmum.r::svm.linear", "gmum.r::svm.poly", 
+                 "kernLab::svm.radial", "kernLab::svm.linear", "kernLab::svm.poly")
+model.calls=list(gmum.r.svm.radial, gmum.r.svm.linear, gmum.r.svm.poly,
+                                "svmRadial", "svm", "svmPoly")
+model.tuneGrids = list(expand.grid(C=C, gamma=Gamma), expand.grid(C=C), 
+                       expand.grid(C=C, gamma=Gamma, degree=degree),
+                       expand.grid(C=C, sigma=Gamma), expand.grid(C=C), 
+                       expand.grid(C=C, scale=Gamma,  degree=degree))
 
 
-params <- expand.grid(C=C, sigma=Gamma)
-get.results(Sonar, "Class", params, "svmRadial")
+
+ds <- datasets[[2]]
+df <- as.data.frame(as.matrix(ds$x))
+df$y = ds$y
+
+model.results <- list()
+for(model.index in 1:length(model.names)){
+    append(model.results,
+           get.results(df, "y", model.tuneGrids[[model.index]], model.calls[[model.index]])
+           )
+}
+
 
