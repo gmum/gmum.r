@@ -483,28 +483,29 @@ evalqOnLoad({
                                sort = function(x) x[order(x[,1]),]
   )
   
-  caret.gmumSvmLinear <<- copy(caret.gmumSvmRadial)
-  caret.gmumSvmPoly <<- copy(caret.gmumSvmRadial)
+  caret.gmumSvmLinear.loc <- copy(caret.gmumSvmRadial)
+  caret.gmumSvmPoly.loc <- copy(caret.gmumSvmRadial)
   
   
-  caret.gmumSvmLinear $parameters <- data.frame(parameter = gmum.r.svm.linear.params,
+  caret.gmumSvmLinear.loc$parameters <- data.frame(parameter = gmum.r.svm.linear.params,
                                                 class = gmum.r.svm.linear.params.classes,
                                                 label = gmum.r.svm.linear.params)
   
-  caret.gmumSvmLinear $grid <- function(x, y, len = NULL) {
+  caret.gmumSvmLinear.loc$grid <- function(x, y, len = NULL) {
     expand.grid(C=10^(-7:11))
   }
   
-  caret.gmumSvmPoly$grid <- function(x, y, len = NULL) {
+  caret.gmumSvmPoly.loc$grid <- function(x, y, len = NULL) {
     expand.grid(C=10^(-7:11), gamma= 10^(-10:10), coef0=c(0,1,10), degree=c(2,3,4) )
   }
   
   
-  caret.gmumSvmPoly$parameters <- data.frame(parameter = gmum.r.svm.poly.params,
+  caret.gmumSvmPoly.loc$parameters <- data.frame(parameter = gmum.r.svm.poly.params,
                                              class = gmum.r.svm.poly.params.classes,
                                              label = gmum.r.svm.poly.params)
   
-  
+  caret.gmumSvmPoly <<- caret.gmumSvmPoly.loc
+  caret.gmumSvmLinear <<- caret.gmumSvmLinear.loc
   
 })
 
