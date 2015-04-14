@@ -10,8 +10,6 @@ loadModule("cec", TRUE)
 #' 
 #' @usage plot(cec)
 #'
-#' @docType plot
-#'
 #' @param x CEC model object.
 #' @param slice List of dimentions chosen for display since plot is 2D.
 #' @param ellipses Outline clusters.

@@ -104,7 +104,7 @@ if (verbose) {
   print("For weighted examples only svmlight is available")
 }
 
-weights_svm_rbf <- SVM(formula=y~., data=df, lib="svmlight", kernel="rbf", C=1.0, gamma=0.5, example_weights=weights)
+weights_svm_rbf <- SVM(formula=y~., data=df, lib="svmlight", kernel="rbf", C=1.0, gamma=0.5, example.weights=weights)
 weights_SV_rbf <- weights_svm_rbf$get_SV()
 
 if (verbose) {
@@ -128,7 +128,7 @@ if (verbose) {
 }
 # -------------------------------------------------------
 
-weights_svm_linear <- SVM(formula=y~., data=df, lib="svmlight", kernel="linear", C=1.0, example_weights=weights)
+weights_svm_linear <- SVM(formula=y~., data=df, lib="svmlight", kernel="linear", C=1.0, example.weights=weights)
 weights_SV_linear <- weights_svm_linear$get_SV()
 
 if (verbose) {
@@ -157,5 +157,6 @@ if (verbose) {
 }
 
 test_that("weighted exaples in svmlight work like in sklearn SVC", {
-  expect_that(diff, is_less_than(1e-2))
+  expect_that(diff < 1e-2, is_true())
 })
+print("test::SVM weighted exaples in svmlight work like in sklearn SVC")

@@ -1,5 +1,4 @@
 #include <cmath>
-#include <armadillo>
 #include "two_e_svm_pre.h"
 
 #include "svm_handler.h"
