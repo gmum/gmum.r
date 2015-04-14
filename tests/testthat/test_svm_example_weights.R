@@ -157,6 +157,6 @@ if (verbose) {
 }
 
 test_that("weighted exaples in svmlight work like in sklearn SVC", {
-  expect_that(diff, is_less_than(1e-2))
+  expect_that(diff < 1e-2, is_true())
 })
 print("test::SVM weighted exaples in svmlight work like in sklearn SVC")
