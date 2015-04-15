@@ -223,5 +223,7 @@ void SVMConfiguration::setDefaultParams() {
     // (will be filled during data processing)
     neg_target = 0;
     pos_target = 0;
+
+    debug_library_predict = false;
 }
 

@@ -88,7 +88,7 @@ public:
     );
 
     /// Process a request of prediction with a SVMHandlers implementations
-    void requestPredict(arma::mat);
+    void requestPredict();
     void train();
 
 };

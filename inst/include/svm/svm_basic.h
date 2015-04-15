@@ -108,6 +108,9 @@ public:
     arma::mat tmp_data;
     arma::mat tmp_target;
 
+    // debug
+    bool debug_library_predict;
+
 
     // constructors
     SVMConfiguration();

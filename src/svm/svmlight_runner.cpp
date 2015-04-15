@@ -1062,8 +1062,13 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     // NOTE: see libraryReadModel()
     config.threshold_b = - model->b;
 
-    config.alpha_y = arma::randu<arma::vec>(config.l);
-    config.support_vectors = arma::randu<arma::mat>(config.l, model->totwords);
+    // XXX: pudSVM
+    //config.alpha_y = arma::randu<arma::vec>(config.l);
+    //config.support_vectors = arma::randu<arma::mat>(config.l, model->totwords);
+
+    config.alpha_y = arma::vec(config.l);
+    config.support_vectors = arma::mat(config.l, model->totwords);
+
     for (i = 1; i < model->sv_num; i++) {
       for (v = model->supvec[i]->fvec; v; v=v->next) {
         config.alpha_y(i - 1) = model->alpha[i]*v->factor;

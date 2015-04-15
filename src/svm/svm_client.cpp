@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "svm_client.h"
 #include "libsvm_runner.h"
 #include "svmlight_runner.h"
@@ -214,7 +216,7 @@ void SVMClient::predictFromConfig() {
     // FIXME: Calculate TwoE prediction in this method
     if (config.preprocess == TWOE) {
         // Request prediction from handlers when not globally supported
-        requestPredict(config.data);
+        requestPredict();
         return;
     }
 
@@ -321,12 +323,7 @@ double SVMClient::kernel(size_t i, size_t j) {
                     2
                 );
             }
-            result = arma::exp(
-                arma::mat(&neg_gamma, 1, 1) *
-                arma::pow(
-                    arma::mat(&norm, 1, 1), 2
-                )
-            )[0];
+            result = exp(neg_gamma * norm * norm);
             break;
         }
         case _SIGMOID: {
@@ -379,14 +376,18 @@ void SVMClient::sparse_predict(
         true
     );
 
-    predictFromConfig();
+    if (config.debug_library_predict) {
+        config.setPrediction(true);
+        requestPredict();
+    } else {
+        predictFromConfig();
+    }
 
     LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".sparse_predict() Done.");
 }
 
-void SVMClient::requestPredict( arma::mat problem ) {
+void SVMClient::requestPredict() {
     LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".requestPredict() Started.");
-    config.setData(problem);
     if ( SVMHandlers.size() > 0 ) {
         config.setPrediction(true);
         for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
