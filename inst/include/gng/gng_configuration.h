@@ -10,6 +10,7 @@
 
 #ifdef RCPP_INTERFACE
 #include <RcppArmadillo.h>
+#include <stdexcept>  
 using namespace Rcpp;
 #endif
 
@@ -17,12 +18,8 @@ using namespace Rcpp;
 #include "gng_graph.h"
 #include <vector>
 
-/**
- *
- * Configuration of GNG algorithm/server
- */
-class GNGConfiguration {
-public:
+///Configuration of GNG algorithm/server
+struct GNGConfiguration {
 	enum GraphNodeStorage {
 		NoneGraphNodeStorage, SharedMemory, RAMMemory
 	} graph_storage;
@@ -34,6 +31,8 @@ public:
 	enum ExperimentalUtility {
 		UtilityOff, UtilityBasicOn
 	};
+
+    int seed;
 
 	/**Maximum number of nodes*/
 	int max_nodes; //=1000;
@@ -63,6 +62,9 @@ public:
 	/**Epsilion n*/
 	double eps_n; //=0.0006;
 
+    ///Maximum number of iterations
+    int max_iter; //=-1;
+
 	int verbosity;
 
 	/**Pseudodistance function used (might be non metric)*/
@@ -80,11 +82,12 @@ public:
 	///Utility option. Currently supported simples utility
 	int experimental_utility_option;
 
-public:
-
 	GNGConfiguration() {
+        seed = -1; //is equivalent to null
 
-		verbosity = 10;
+		verbosity = 1;
+
+        max_iter = -1;
 
 		starting_nodes = 100;
 
@@ -113,110 +116,11 @@ public:
 
 	}
 
-	void deserialize(std::istream & in) {
-		///Utility constant
-		in >> experimental_utility_k;
+	void deserialize(std::istream & in);
 
-		///Utility option. Currently supported simples utility
-		in >> experimental_utility_option;
+	void serialize(std::ostream & out) const;
 
-		/**Maximum number of nodes*/
-		in >> max_nodes; //=1000;
-		/**Uniform grid optimization*/
-		in >> uniformgrid_optimization; //=true,lazyheap=true;
-		/**Lazy heap optimization*/
-		in >> lazyheap_optimization;
-		/**Bounding box specification*/
-
-		/**Dimensionality of examples*/
-		in >> dim;
-
-		REPORT(dim);
-
-		orig = vector<double>(dim, 0);
-		axis = vector<double>(dim, 0);
-
-		for (size_t i = 0; i < dim; ++i) {
-			in >> axis[i] >> orig[i];
-		}
-		/**Max edge age*/
-		in >> max_age; //=200;
-		/**Alpha coefficient*/
-		in >> alpha; //=0.95;
-		/**Beta coefficient*/
-		in >> beta; //=0.9995;
-		/**Lambda coefficient*/
-		in >> lambda; //=200;
-		/**Epsilion v. How strongly move winning node*/
-		in >> eps_w; //=0.05;
-		/**Memory bound*/
-		in >> graph_memory_bound;
-		/**Epsilion n*/
-		in >> eps_n; //=0.0006;
-
-		in >> verbosity;
-
-		/**Pseudodistance function used (might be non metric)*/
-		in >> distance_function;
-
-		/**Type of used database, unsgined int for compabititlity with Rcpp**/
-		in >> datasetType;
-
-		/**Initial reserve memory for nodes */
-		in >> starting_nodes;
-	}
-
-	void serialize(std::ostream & out) {
-		///Utility constant
-		out << experimental_utility_k << endl;
-
-		///Utility option. Currently supported simples utility
-		out << experimental_utility_option << endl;
-
-		/**Maximum number of nodes*/
-		out << max_nodes << endl; //=1000;
-		/**Uniform grid optimization*/
-		out << uniformgrid_optimization << endl; //=true,lazyheap=true;
-		/**Lazy heap optimization*/
-		out << lazyheap_optimization << endl;
-		/**Bounding box specification*/
-
-		/**Dimensionality of examples*/
-		out << dim << endl;
-
-		REPORT(dim);
-
-		for (size_t i = 0; i < dim; ++i) {
-			out << axis[i] << endl << orig[i] << endl;
-		}
-		/**Max edge age*/
-		out << max_age << endl; //=200;
-		/**Alpha coefficient*/
-		out << alpha << endl; //=0.95;
-		/**Beta coefficient*/
-		out << beta << endl; //=0.9995;
-		/**Lambda coefficient*/
-		out << lambda << endl; //=200;
-		/**Epsilion v. How strongly move winning node*/
-		out << eps_w << endl; //=0.05;
-		/**Memory bound*/
-		out << graph_memory_bound << endl;
-		/**Epsilion n*/
-		out << eps_n << endl; //=0.0006;
-
-		out << verbosity << endl;
-
-		/**Pseudodistance function used (might be non metric)*/
-		out << distance_function << endl;
-
-		/**Type of used database, unsgined int for compabititlity with Rcpp**/
-		out << datasetType << endl;
-
-		/**Initial reserve memory for nodes */
-		out << starting_nodes; //imporant not to add endl for binary correctness
-	}
-
-	//This is a simplification - we assume square box
+    //This is a simplification - we assume square box
 	void setBoundingBox(double min, double max) {
 		orig = vector<double>();
 		axis = vector<double>();
@@ -226,53 +130,25 @@ public:
 		}
 	}
 
-	/** Get default configuration of GNG Server */
+	/// Get default configuration of GNG Server
 	static GNGConfiguration getDefaultConfiguration() {
 		GNGConfiguration default_configuration;
 		return default_configuration;
 	}
 
-	/**Validate server configuration. *Not working now**/
-	bool check_correctness() {
-		if (experimental_utility_option != UtilityOff
-				&& (uniformgrid_optimization || lazyheap_optimization)) {
-			cerr
-					<< "ERROR: please turn OFF optimization when using experimental utility option\n";
+    friend ostream & operator<<(ostream & out, const GNGConfiguration & conf){
+        conf.serialize(out);
+        return out;
+    }
 
-			return false;
-		}
+    #ifdef RCPP_INTERFACE
+    void show() const{
+        serialize(cerr);
+    }
+    #endif
 
-		if (datasetType > 3 or datasetType <= 0) {
-			cerr << "ERROR: wrong database specified\n";
-
-			return false;
-		}
-		if (!(dim < 20 || !uniformgrid_optimization)) {
-
-			cerr
-					<< "WARNING: It might be too big dimensionality for OptimizedGNG."
-							"OptimizedGNG works best for smaller dimensionality dataset"
-							"Consider using PCA or other dim. reduction technique"
-							"\n";
-
-		}
-		if (!(distance_function == gmum::GNGGraph::Euclidean
-				|| !uniformgrid_optimization)) {
-
-			cerr
-					<< "ERROR: You can use only Euclidean distance function with uniformgrid optimization\n";
-			return false;
-		}
-		if (!(!uniformgrid_optimization
-				or (dim == axis.size() && dim == orig.size()))) {
-
-			cerr << "ERROR: dimensionality doesn't agree with axis and orig"
-					<< endl;
-			return false;
-		}
-
-		return true;
-	}
+	/// Validate server configuration
+    bool check_correctness();
 };
 #endif	/* GNGCONFIGURATION_H */
 
