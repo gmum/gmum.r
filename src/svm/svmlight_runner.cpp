@@ -428,7 +428,7 @@ int SVMLightRunner::librarySVMClassifyMain(
     } else {
         max_docs = config.target.n_rows;
         max_words_doc = config.getDataDim();
-        config.result = arma::randu<arma::vec>(max_docs);
+        config.result = arma::zeros<arma::vec>(max_docs);
         // Prevent writing to the file
         pred_format = -1;
         // lld used only for file reading
@@ -926,17 +926,11 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     }
 
     // Matrix type handling
-    //
-
-
     if (config.isSparse()) {
-        long row = -1;
-        for (
-            arma::sp_mat::iterator it = config.getSparseData().begin_col(line_num);
-            it != config.getSparseData().end_col(line_num); ++it
-        ) {
-            row = it.row();
-            ss << ' ' << row + 1 << ':' << std::setprecision(8);
+        arma::sp_mat::iterator begin = config.getSparseData().begin_col(line_num);
+        arma::sp_mat::iterator end = config.getSparseData().end_col(line_num);
+        for (arma::sp_mat::iterator it = begin; it != end; ++it) {
+            ss << ' ' << it.row() + 1 << ':' << std::setprecision(8);
             ss << *it;
         }
     } else {
@@ -948,8 +942,6 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
 
     ss << std::endl;
     line_string = ss.str();
-    
-    std::cout << line_string << std::flush;
 
     return line_string;
 }
@@ -1032,8 +1024,8 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     //config.alpha_y = arma::randu<arma::vec>(config.l);
     //config.support_vectors = arma::randu<arma::mat>(config.l, model->totwords);
 
-    config.alpha_y = arma::vec(config.l);
-    config.support_vectors = arma::mat(config.l, model->totwords);
+    config.alpha_y = arma::zeros<arma::vec>(config.l);
+    config.support_vectors = arma::zeros<arma::mat>(config.l, model->totwords);
 
     for (i = 1; i < model->sv_num; i++) {
       for (v = model->supvec[i]->fvec; v; v=v->next) {

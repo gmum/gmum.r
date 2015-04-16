@@ -222,7 +222,7 @@ void SVMClient::predictFromConfig() {
 
     // Number of docs is a number of rows in data matrix
     size_t n_docs = config.getDataExamplesNumber();
-    config.result = arma::randu<arma::vec>(n_docs);
+    config.result = arma::zeros<arma::vec>(n_docs);
 
     LOG(config.log, LogLevel::DEBUG,
         __debug_prefix__ + ".predictFromConfig() Calculating prediction...");
