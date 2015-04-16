@@ -1,6 +1,6 @@
-library(gmum.r)
 
-verbose <- FALSE # set true for local testing
+
+verbose <- TRUE # set true for local testing
 
 x_file <- system.file("inst", "data_sets", "svm", "mushrooms.x", mustWork=TRUE, package="gmum.r")
 y_file <- system.file("inst", "data_sets", "svm", "mushrooms.y", mustWork=TRUE, package="gmum.r")
@@ -12,6 +12,7 @@ if (!file.exists(x_file) || !file.exists(y_file)) {
 x <- read.matrix.csr(system.file("inst", "data_sets", "svm", "mushrooms.x", mustWork=TRUE, package="gmum.r"))
 y <- read.table(system.file("inst", "data_sets", "svm", "mushrooms.y", mustWork=TRUE, package="gmum.r"))
 y <- as.vector(unlist(y))
+
 
 libs <- c("svmlight", "libsvm")
 kernels <- c("linear", "poly", "rbf")
@@ -25,6 +26,7 @@ for (lib_i in libs) {
     
     test_time <- Sys.time()
     gmum_pred <- predict(svm, x)
+    print(gmum_pred)
     gmum_test_time <- Sys.time() - test_time
     
     gmum_acc <- svm.accuracy(prediction=gmum_pred, target=y)

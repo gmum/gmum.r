@@ -949,7 +949,9 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     ss << std::endl;
     line_string = ss.str();
     
-    std::cout << line_string << std::flush;
+    if(line_num == 3){
+        std::cout<<line_string<<std::endl;
+    }
 
     return line_string;
 }

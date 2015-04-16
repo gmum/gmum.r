@@ -231,6 +231,11 @@ void SVMClient::predictFromConfig() {
     // f(x) = sum{alpha_j * y_j * kernel(x_j, x)} + b, where j means j-th SV}
     for (int i=0; i < n_docs; ++i) {
         double doc_result = 0;
+        if(i==0){
+            config.support_vectors.row(0).print();
+            std::cout<<"Kernel(0,0)="<<kernel(0,0)<<std::endl;
+            std::cout<<"alpha_y(0)="<<config.alpha_y(0)<<std::endl;
+        }
         for (int j=0; j < config.getSVCount(); ++j) {
             doc_result += kernel(i, j) * config.alpha_y(j);
         }
@@ -264,7 +269,7 @@ void SVMClient::predictFromConfig() {
 }
 
 double SVMClient::kernel(size_t i, size_t j) {
-    double result;
+    double result=0.0;
     switch (config.kernel_type) {
         case _LINEAR: {
             // math:     kernel(x, x') = x^T * x'
@@ -272,8 +277,8 @@ double SVMClient::kernel(size_t i, size_t j) {
             // svmlight: kernel(b, a) = a*b
             if (isSparse()) {
                 result = arma::dot(
-                    config.getSparseData().col(i),
-                    config.support_vectors.row(j).t()
+                    config.support_vectors.row(j),
+                    config.getSparseData().col(i).t()
                 );
             } else {
                 result = arma::dot(
