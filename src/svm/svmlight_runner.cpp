@@ -237,11 +237,11 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     learn_parm->maxiter=100000;
     learn_parm->kernel_cache_size=40;
     /* upper bound C on alphas */
-    learn_parm->svm_c=0.0;
+    learn_parm->svm_c=config.C;
     learn_parm->eps=0.1;
     learn_parm->transduction_posratio=-1.0;
     /* factor to multiply C for positive examples */
-    learn_parm->svm_costratio=config.C;
+    learn_parm->svm_costratio=1.0;
     /* FIXME: Find what this one does */
     learn_parm->svm_costratio_unlab=1.0;
     learn_parm->svm_unlabbound=1E-5;
@@ -276,44 +276,6 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     if (config.coef0)
         kernel_parm->coef_const = config.coef0;
     // GMUM.R changes }
-
-    for(i=1;(i<argc) && ((argv[i])[0] == '-');i++) {
-      switch ((argv[i])[1]) 
-        { 
-        case '?': libraryPrintHelp(); exit(0);
-        case 'z': i++; strcpy(type,argv[i]); break;
-        case 'v': i++; (*verbosity)=atol(argv[i]); break;
-        case 'b': i++; learn_parm->biased_hyperplane=atol(argv[i]); break;
-        case 'i': i++; learn_parm->remove_inconsistent=atol(argv[i]); break;
-        case 'f': i++; learn_parm->skip_final_opt_check=!atol(argv[i]); break;
-        case 'q': i++; learn_parm->svm_maxqpsize=atol(argv[i]); break;
-        case 'n': i++; learn_parm->svm_newvarsinqp=atol(argv[i]); break;
-        case '#': i++; learn_parm->maxiter=atol(argv[i]); break;
-        case 'h': i++; learn_parm->svm_iter_to_shrink=atol(argv[i]); break;
-        case 'm': i++; learn_parm->kernel_cache_size=atol(argv[i]); break;
-        case 'c': i++; learn_parm->svm_c=atof(argv[i]); break;
-        case 'w': i++; learn_parm->eps=atof(argv[i]); break;
-        case 'p': i++; learn_parm->transduction_posratio=atof(argv[i]); break;
-        case 'j': i++; learn_parm->svm_costratio=atof(argv[i]); break;
-        case 'e': i++; learn_parm->epsilon_crit=atof(argv[i]); break;
-        case 'o': i++; learn_parm->rho=atof(argv[i]); break;
-        case 'k': i++; learn_parm->xa_depth=atol(argv[i]); break;
-        case 'x': i++; learn_parm->compute_loo=atol(argv[i]); break;
-        case 't': i++; kernel_parm->kernel_type=atol(argv[i]); break;
-        case 'd': i++; kernel_parm->poly_degree=atol(argv[i]); break;
-        case 'g': i++; kernel_parm->rbf_gamma=atof(argv[i]); break;
-        case 's': i++; kernel_parm->coef_lin=atof(argv[i]); break;
-        case 'r': i++; kernel_parm->coef_const=atof(argv[i]); break;
-        case 'u': i++; strcpy(kernel_parm->custom,argv[i]); break;
-        case 'l': i++; strcpy(learn_parm->predfile,argv[i]); break;
-        case 'a': i++; strcpy(learn_parm->alphafile,argv[i]); break;
-        case 'y': i++; strcpy(restartfile,argv[i]); break;
-        default: printf("\nUnrecognized option %s!\n\n",argv[i]);
-	         libraryPrintHelp();
-	         exit(0);
-        }
-    }
-
     if(!use_gmumr) {
         if(i>=argc) {
             printf("\nNot enough input parameters!\n\n");
@@ -964,11 +926,14 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     }
 
     // Matrix type handling
+    //
+
+
     if (config.isSparse()) {
-        long int row = -1;
+        long row = -1;
         for (
             arma::sp_mat::iterator it = config.getSparseData().begin_col(line_num);
-            it.row() > row; ++it
+            it != config.getSparseData().end_col(line_num); ++it
         ) {
             row = it.row();
             ss << ' ' << row + 1 << ':' << std::setprecision(8);
@@ -983,7 +948,8 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
 
     ss << std::endl;
     line_string = ss.str();
-    //std::cout << line_string << std::flush;
+    
+    std::cout << line_string << std::flush;
 
     return line_string;
 }
