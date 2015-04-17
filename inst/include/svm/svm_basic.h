@@ -4,7 +4,6 @@
 #include <string>
 
 #ifdef RCPP_INTERFACE
-#include <R.h>
 #include <RcppArmadillo.h>
 #endif
 

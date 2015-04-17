@@ -45,7 +45,7 @@ public:
 
 	//convert sparse matrix to armadillo matrix
 	static arma::mat libtoarma(svm_node** svm_nodes, int nr_sv, int dim) {
-		arma::mat ret(nr_sv, dim);
+		arma::mat ret(nr_sv, dim, arma::fill::zeros);
 		
 		for (int row = 0; row < nr_sv; row++) {
 			svm_node* tmp_row = svm_nodes[row];
