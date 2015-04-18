@@ -123,12 +123,12 @@ void SVMConfiguration::setPrediction(bool prediction) {
 
 #ifdef RCPP_INTERFACE
 void SVMConfiguration::setWeights( Rcpp::NumericVector weights ) {
-	this->nr_weight = weights.size();
-	this->weight = new double[nr_weight];
+    this->nr_weight = weights.size();
+    this->weight = new double[nr_weight];
 
-	for (int i = 0; i < nr_weight; i++) {
-		weight[i] = weights(1);
-	}
+    for (int i = 0; i < nr_weight; i++) {
+        weight[i] = weights(1);
+    }
 }
 #endif
 
@@ -211,5 +211,6 @@ void SVMConfiguration::setDefaultParams() {
     // (will be filled during data processing)
     neg_target = 0;
     pos_target = 0;
+
 }
 

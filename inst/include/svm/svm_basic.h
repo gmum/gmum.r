@@ -138,9 +138,8 @@ public:
 	void setPrediction(bool);
 	bool isPrediction();
 
-#ifdef RCPP_INTERFACE
-	void setWeights( Rcpp::NumericVector );
-#endif
+	void setWeights( Rcpp::NumericVector weights );
+
 	void setLibrary( std::string );
 	void setKernel( std::string );
 	void setPreprocess( std::string );

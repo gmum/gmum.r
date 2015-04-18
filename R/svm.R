@@ -170,6 +170,7 @@ evalqOnLoad({
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
       
     # check data
+    if(nrow(x) != length(y)) stop("x and y have different lengths")
     if(inherits(x, "Matrix")) {
       library("SparseM")
       library("Matrix")
@@ -249,8 +250,17 @@ evalqOnLoad({
     config$eps <- tol
     config$cache_size <- cache_size
     
-    if (!is.null(class.weights) && !is.logical(class.weights)) {
-      config$setWeights(class.weights)
+    
+    if(!is.null(class.weights) && !is.logical(class.weights)) {
+      if (is.character(class.weights) && class.weights == "auto") {
+        counts <- hist(y, breaks=2, plot=FALSE)$counts
+        inv_freq <- 1 / counts
+        weights <- inv_freq / mean(inv_freq)
+        config$setWeights(weights)
+      }
+      else {
+        config$setWeights(class.weights)
+      }
     }
     
     if (!is.null(example.weights) && !is.logical(example.weights)) {
