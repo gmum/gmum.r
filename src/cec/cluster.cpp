@@ -1,4 +1,5 @@
 #include "cluster.hpp"
+//#include "../../inst/include/cec/cluster.hpp"
 
 namespace gmum {
 
@@ -214,6 +215,11 @@ ClusterStandard::ClusterStandard(unsigned int id,
 	m_entropy = calculate_entropy(m_n, m_cov_mat);
 }
 
+    arma::mat ClusterStandard::get_cov_mat(unsigned int id,
+                                            const std::vector<unsigned int> &assignment, const arma::mat &points) {
+        return m_cov_mat;
+    }
+
 ClusterCovMat::ClusterCovMat(const arma::mat & sigma, unsigned int id,
 		const std::vector<unsigned int> &assignment, const arma::mat &points) :
 		ClusterUseCovMat(id, assignment, points) {
@@ -234,6 +240,11 @@ double ClusterCovMat::calculate_entropy(int n, const arma::mat &cov_mat) {
 			+ log(m_sigma_det) / 2;
 }
 
+    arma::mat ClusterCovMat::get_cov_mat(unsigned int id,
+                                           const std::vector<unsigned int> &assignment, const arma::mat &points) {
+        return m_inv_sigma;
+    }
+
 ClusterConstRadius::ClusterConstRadius(double r, unsigned int id,
 		const std::vector<unsigned int> &assignment, const arma::mat &points) :
 		ClusterOnlyTrace(id, assignment, points), m_r(r) {
@@ -249,6 +260,13 @@ ClusterConstRadius::ClusterConstRadius(double r, int count,
 double ClusterConstRadius::calculate_entropy(double cov_mat_trace, int n) {
 	return n * log(2 * M_PI) / 2 + cov_mat_trace / (2 * m_r) + n * log(m_r) / 2;
 }
+
+    arma::mat ClusterConstRadius::get_cov_mat(unsigned int id,
+                                  const std::vector<unsigned int> &assignment,
+                                  const arma::mat &points){
+		arma::mat cov = arma::diagmat(ClusterOnlyTrace::get_cov_mat(id, assignment, points));
+        return cov * m_r;
+    }
 
 ClusterSpherical::ClusterSpherical(unsigned int id,
 		const std::vector<unsigned int> &assignment, const arma::mat &points) :
@@ -266,6 +284,14 @@ double ClusterSpherical::calculate_entropy(double cov_mat_trace, int n) {
 	return n * log(2 * M_PI * M_E / n) / 2 + n * log(cov_mat_trace) / 2;
 }
 
+	arma::mat ClusterSpherical::get_cov_mat(unsigned int id,
+											  const std::vector<unsigned int> &assignment,
+											  const arma::mat &points){
+		arma::mat cov = ClusterOnlyTrace::get_cov_mat(id, assignment, points);
+		cov = arma::eye(cov.n_cols, cov.n_cols) * arma::trace(cov) / cov.n_cols;
+		return cov;
+	}
+
 ClusterDiagonal::ClusterDiagonal(unsigned int id,
 		const std::vector<unsigned int> &assignment, const arma::mat &points) :
 		ClusterUseCovMat(id, assignment, points) {
@@ -282,6 +308,13 @@ double ClusterDiagonal::calculate_entropy(int n, const arma::mat &cov_mat) {
 	return n * log(2 * M_PI * M_E) / 2
 			+ log(arma::det(arma::diagmat(cov_mat))) / 2;
 }
+
+	arma::mat ClusterDiagonal::get_cov_mat(unsigned int id,
+								  const std::vector<unsigned int> &assignment,
+						  					  const arma::mat &points){
+		m_cov_mat = arma::diagmat(m_cov_mat);
+		return m_cov_mat;
+	}
 
 ClusterCovMat* ClusterCovMat::clone() {
 	return new ClusterCovMat(m_inv_sigma, m_sigma_det, m_count, m_mean,

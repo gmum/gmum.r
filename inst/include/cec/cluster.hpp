@@ -67,7 +67,7 @@ public:
 	double entropy_after_add_point(const arma::rowvec &point);
 	double entropy_after_remove_point(const arma::rowvec &point);
 
-	arma::mat get_cov_mat(unsigned int id,
+	virtual arma::mat get_cov_mat(unsigned int id,
 			const std::vector<unsigned int> &assignment,
 			const arma::mat &points);
     virtual ~ClusterUseCovMat() { }
@@ -116,6 +116,10 @@ public:
 	virtual ClusterStandard* clone();
 
     virtual ~ClusterStandard() { }
+
+    virtual arma::mat get_cov_mat(unsigned int id,
+                                  const std::vector<unsigned int> &assignment,
+                                  const arma::mat &points);
 };
 
 class ClusterCovMat: public ClusterUseCovMat {
@@ -132,6 +136,10 @@ public:
 			const arma::mat &points);
 	virtual ClusterCovMat* clone();
     virtual ~ClusterCovMat() { }
+
+    virtual arma::mat get_cov_mat(unsigned int id,
+                                  const std::vector<unsigned int> &assignment,
+                                  const arma::mat &points);
 };
 
 class ClusterConstRadius: public ClusterOnlyTrace {
@@ -147,6 +155,10 @@ public:
 	virtual ClusterConstRadius* clone();
 
     virtual ~ClusterConstRadius() { }
+
+    virtual arma::mat get_cov_mat(unsigned int id,
+                                  const std::vector<unsigned int> &assignment,
+                                  const arma::mat &points);
 };
 
 class ClusterSpherical: public ClusterOnlyTrace {
@@ -161,6 +173,10 @@ public:
 	virtual ClusterSpherical* clone();
 
     virtual ~ClusterSpherical() { }
+
+    virtual arma::mat get_cov_mat(unsigned int id,
+                                  const std::vector<unsigned int> &assignment,
+                                  const arma::mat &points);
 };
 
 class ClusterDiagonal: public ClusterUseCovMat {
@@ -175,6 +191,10 @@ public:
 	virtual ClusterDiagonal* clone();
 
     virtual ~ClusterDiagonal() { }
+
+    virtual arma::mat get_cov_mat(unsigned int id,
+                                  const std::vector<unsigned int> &assignment,
+                                  const arma::mat &points);
 };
 
 }
