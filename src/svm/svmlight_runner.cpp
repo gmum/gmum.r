@@ -856,7 +856,6 @@ void SVMLightRunner::libraryReadDocuments (
         (*totwords)=(words[wpos-2]).wnum;
       if((*totwords) > MAXFEATNUM) {
         printf("\nMaximum feature number exceeds limit defined in MAXFEATNUM!\n");
-        printf("LINE: %s\n",line);
         exit(1);
       }
       (*docs)[dnum] = create_example(dnum,queryid,slackid,costfactor,

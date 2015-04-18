@@ -231,11 +231,6 @@ void SVMClient::predictFromConfig() {
     // f(x) = sum{alpha_j * y_j * kernel(x_j, x)} + b, where j means j-th SV}
     for (int i=0; i < n_docs; ++i) {
         double doc_result = 0;
-        if(i==0){
-            config.support_vectors.row(0).print();
-            std::cout<<"Kernel(0,0)="<<kernel(0,0)<<std::endl;
-            std::cout<<"alpha_y(0)="<<config.alpha_y(0)<<std::endl;
-        }
         for (int j=0; j < config.getSVCount(); ++j) {
             doc_result += kernel(i, j) * config.alpha_y(j);
         }
