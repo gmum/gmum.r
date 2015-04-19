@@ -1,8 +1,6 @@
 source('common.R')
 library(phyclust)
 library(nlme)
-library(gmum.r)
-library(CEC)
 
 data_path <- '../../../../../inst/data_sets/cec'
 plots_path <- file.path('.', 'plots')
@@ -55,6 +53,8 @@ for(name in names(test_data)) {
                 gmum_clustering_df <- data.frame(gmum_result$clustering, item$clustering)
                 colnames(gmum_clustering_df) <- c('gmum', 'correct')
                 gmum_rand_index <- RRand(prcl = gmum_result$clustering, trcl = item$clustering)$Rand
+                gmum_energy = gmum_calculate_energy(points = dataset, centers = gmum_result$centers, method_type = method_types$gmum[j])
+                cran_energy = cran_calculate_energy(points = dataset, centers = gmum_result$centers, method_type = method_types$cran[j])
                 if(gmum_rand_index < 0) {
                     print('rand index < 0!')
                     print('gmum clustering')
@@ -65,6 +65,8 @@ for(name in names(test_data)) {
                 gmum_bic <- BIC(lm(gmum ~ correct, data=gmum_clustering_df))
                 list(
                     energy = gmum_result$energy,
+                    cran_energy = cran_energy,
+                    gmum_energy = gmum_energy,
                     iters = gmum_result$iters,
                     time = gmum_result$time,
                     final_nclusters = gmum_result$final_nclusters,
@@ -87,6 +89,8 @@ for(name in names(test_data)) {
                 cran_clustering_df <- data.frame(cran_result$clustering, item$clustering)
                 colnames(cran_clustering_df) <- c('cran', 'correct')
                 cran_rand_index <- RRand(prcl = cran_result$clustering, trcl = item$clustering)$Rand   
+                gmum_energy = gmum_calculate_energy(points = dataset, centers = cran_result$centers, method_type = method_types$gmum[j])
+                cran_energy = cran_calculate_energy(points = dataset, centers = cran_result$centers, method_type = method_types$cran[j])                
                 if(cran_rand_index < 0) {
                     print('rand index < 0!')
                     print('cran clustering')
@@ -97,6 +101,8 @@ for(name in names(test_data)) {
                 cran_bic <- BIC(lm(cran ~ correct, data=cran_clustering_df))            
                 list(
                     energy = cran_result$energy,
+                    cran_energy = cran_energy,
+                    gmum_energy = gmum_energy,
                     iters = cran_result$iters,
                     time = cran_result$time,
                     final_nclusters = cran_result$final_nclusters,
@@ -116,6 +122,8 @@ for(name in names(test_data)) {
             
             table_data <- matrix(
                 c(gmum$energy, cran$energy,
+                  gmum$gmum_energy, cran$gmum_energy,
+                  gmum$cran_energy, cran$cran_energy,
                   gmum$iters, cran$iters,
                   gmum$time, cran$time,
                   gmum$final_nclusters, cran$final_nclusters,
@@ -128,7 +136,7 @@ for(name in names(test_data)) {
             cat('method type: ', method_types$gmum[j], '\n')
             table_data <- as.table(table_data)
             colnames(table_data) <- c('gmum', 'cran')
-            rownames(table_data) <- c('energy', 'iters', 'time', 'clusters', 'rand index', 'BIC')            
+            rownames(table_data) <- c('energy','gmum energy f','cran energy f' ,'iters', 'time', 'clusters', 'rand index', 'BIC')            
             print(table_data)
             cat('\n')
         }

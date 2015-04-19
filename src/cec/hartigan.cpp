@@ -12,8 +12,8 @@ Hartigan::Hartigan(bool log_nclusters, bool log_energy, int max_iter) :
 }
 
 TotalResult Hartigan::loop(const arma::mat &points,
-                           std::vector<unsigned int> &assignment, double kill_threshold,
-                           std::vector<Cluster*> &clusters) {
+                        std::vector<unsigned int> &assignment, double kill_threshold,
+                        std::vector<Cluster*> &clusters) {
     TotalResult result;
     SingleResult sr;
     do {
@@ -29,7 +29,7 @@ TotalResult Hartigan::loop(const arma::mat &points,
 }
 
 double Hartigan::calc_energy(double cross_entropy, int points_in_cluster,
-                             int npoints) {
+                            int npoints) {
     double p = 1.0 * points_in_cluster / npoints;
     return p * (cross_entropy - log(p));
 }
@@ -42,8 +42,8 @@ double Hartigan::calc_energy_change(const Cluster& a, const Cluster &b,
 }
 
 SingleResult Hartigan::single_loop(const arma::mat &points,
-                                   std::vector<unsigned int> &assignment, double kill_threshold,
-                                   std::vector<Cluster *> &clusters_raw) {
+                                std::vector<unsigned int> &assignment, double kill_threshold,
+                                std::vector<Cluster *> &clusters_raw) {
 
     int switched = 0;  //number of point which has been moved to another cluster
     int dimension = points.n_cols;
@@ -59,43 +59,43 @@ SingleResult Hartigan::single_loop(const arma::mat &points,
                     clusters_raw[source]->entropy(), clusters_raw[source]->size(),
                     npoints);
 
-		double source_energy_change = calc_energy(
+        double source_energy_change = calc_energy(
                     clusters_raw[source]->entropy_after_remove_point(point),
                     clusters_raw[source]->size() - 1, npoints)
-                - before_source_energy;
+                    - before_source_energy;
 
-		double best_energy_change = 0;
+        double best_energy_change = 0;
         int best_cluster = -1;
 
         for (unsigned int k = 0; k < clusters_raw.size(); k++) {
             if (k != source) {
-				double energy_change;
+                double energy_change;
                 try {
                     double before_target_energy = calc_energy(
                                 clusters_raw[k]->entropy(), clusters_raw[k]->size(),
                                 npoints);
 
-					double target_energy_change = calc_energy(
+                    double target_energy_change = calc_energy(
                                 clusters_raw[k]->entropy_after_add_point(point),
                                 clusters_raw[k]->size() + 1, npoints)
                             - before_target_energy;
 
-					energy_change = target_energy_change
-							+ source_energy_change;
+                    energy_change = target_energy_change
+                            + source_energy_change;
                 } catch (std::exception &e) {
-					LOG(m_logger, LogLevel::ERR, "Energy change calculation");
+                    LOG(m_logger, LogLevel::ERR, "Energy change calculation");
                     LOG(m_logger, LogLevel::ERR, dimension);
                     throw(e);
                     //return SingleResult(switched, clusters.size(), 0);
                 }
 
-                if (!std::isnormal(whole_entropy_change)) {
+                if (!std::isnormal(energy_change)) {
                     continue; // ignore this cluster, it will be removed later
                 }
 
-				if (energy_change < best_energy_change) { //newEnergy < oldEnergy
+                if (energy_change < best_energy_change) { //newEnergy < oldEnergy
                     best_cluster = k;
-					best_energy_change = energy_change;
+                    best_energy_change = energy_change;
                 }
             }  //for iterates clusters
         }  // for clusters
@@ -164,8 +164,8 @@ SingleResult Hartigan::single_loop(const arma::mat &points,
 }
 
 void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
-                              std::vector<unsigned int> &assignment,
-                              std::vector<Cluster *> &clusters) {
+                            std::vector<unsigned int> &assignment,
+                            std::vector<Cluster *> &clusters) {
     //delete cluster
     std::vector<Cluster *>::iterator it = clusters.begin() + source;
     if(it != clusters.end())
@@ -203,14 +203,14 @@ void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
             for (unsigned int k = 0; k < clusters.size(); k++) {
 
                 double before_energy = calc_energy(clusters[k]->entropy(),
-                                                   clusters[k]->size(), npoints);
+                                                clusters[k]->size(), npoints);
 
                 clusters[k]->add_point(point_to_assign);
 
                 //std::cerr<<clusters[k]->entropy()<<std::endl;
 
                 double energy_change = calc_energy(clusters[k]->entropy(),
-                                                   clusters[k]->size(), npoints) - before_energy;
+                                                clusters[k]->size(), npoints) - before_energy;
 
                 clusters[k]->remove_point(point_to_assign);
 
@@ -223,7 +223,7 @@ void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
 
             }
 #ifdef DEBUG
-			assert(min_energy_change_element_index > -1);
+            assert(min_energy_change_element_index > -1);
 #endif
             if(min_energy_change_element_index == -1)
             {
@@ -253,7 +253,7 @@ void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
     }
 }
 double Hartigan::entropy(boost::shared_ptr<Cluster> ptr_to_cluster,
-                         int npoints) {
+                        int npoints) {
     double p = (1.0 * ptr_to_cluster->size()) / npoints;
     return p * ptr_to_cluster->entropy() + p * log(-p);
 }

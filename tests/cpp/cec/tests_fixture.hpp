@@ -33,8 +33,6 @@ struct TestsFixtureParam
 class TestsFixture : public ::testing::TestWithParam< TestsFixtureParam >
 {
 public:
-    TestsFixture();
-    virtual ~TestsFixture();
     virtual void SetUp();
 protected:
     gmum::Params params;
@@ -42,12 +40,9 @@ protected:
 };
 
 class EnergyTests : public TestsFixture
-struct BigDataTestsFixtureParam : public TestsFixtureParam
-{
 {
 public:
-    EnergyTests();
-    virtual ~EnergyTests();
+    virtual void SetUp();
 protected:
     double expected_energy;
 };
@@ -55,32 +50,25 @@ protected:
 class CoverageTests : public TestsFixture
 {
 public:
-    CoverageTests();
-    virtual ~CoverageTests();
+    virtual void SetUp();
 protected:
     std::vector<unsigned int> expected_clustering;
 };
-    BigDataTestsFixtureParam(ClusterReader _reader, boost::shared_ptr<DefaultGmumParams> _params, unsigned int _iterations_limit, unsigned int _times = 1);
 
+struct BigDataTestsFixtureParam : public TestsFixtureParam
+{
+    BigDataTestsFixtureParam(ClusterReader _reader, boost::shared_ptr<DefaultGmumParams> _params, unsigned int _iterations_limit, unsigned int _times = 1);
     unsigned int iterations_limit;
 };
 
 class BigDataTestsFixture : public ::testing::TestWithParam< BigDataTestsFixtureParam >
 {
 public:
-    BigDataTestsFixture();
-    virtual ~BigDataTestsFixture();
     virtual void SetUp();
 protected:
     gmum::Params params;
     unsigned int iterations_limit;
     unsigned int times;
-
-class BigDataTests : public TestsFixture
-{
-public:
-    BigDataTests();
-    virtual ~BigDataTests();
 };
 
 #endif // TESTS_FIXTURE_H

@@ -21,8 +21,12 @@ TestsFixtureParam::TestsFixtureParam(ClusterReader _reader, boost::shared_ptr<De
     :   reader(_reader), default_params(_params), times(_times)
 { }
 
-TestsFixture::TestsFixture()
-{ }
+BigDataTestsFixtureParam::BigDataTestsFixtureParam(ClusterReader _reader, boost::shared_ptr<DefaultGmumParams> _params, unsigned int _iterations_limit, unsigned int _times)
+    :   TestsFixtureParam(_reader, _params, _times), iterations_limit(_iterations_limit)
+{
+    gmum::Params& params = default_params->gmum_params;
+    params.it_max = _iterations_limit + 10;
+}
 
 void TestsFixture::SetUp()
 {
@@ -32,37 +36,6 @@ void TestsFixture::SetUp()
     params.nstart = 3;
     times = p.times;
 }
-
-TestsFixture::~TestsFixture() { }
-
-BigDataTestsFixtureParam::BigDataTestsFixtureParam(ClusterReader _reader, boost::shared_ptr<DefaultGmumParams> _params, unsigned int _iterations_limit, unsigned int _times)
-    :   TestsFixtureParam(_reader, _params, _times), iterations_limit(_iterations_limit)
-{
-    gmum::Params& params = default_params->gmum_params;
-    params.it_max = _iterations_limit + 10;
-}
-EnergyTests::EnergyTests()
-{
-    TestsFixtureParam p(GetParam());
-    expected_energy = p.reader.get_energy();
-}
-
-EnergyTests::~EnergyTests()
-{
-
-}
-
-
-CoverageTests::CoverageTests()
-{
-    TestsFixtureParam p(GetParam());
-    p.reader.get_clustering(expected_clustering);
-}
-
-CoverageTests::~CoverageTests()
-{ }
-BigDataTestsFixture::BigDataTestsFixture()
-{ }
 
 void BigDataTestsFixture::SetUp()
 {
@@ -74,16 +47,16 @@ void BigDataTestsFixture::SetUp()
     times = p.times;
 }
 
-BigDataTestsFixture::~BigDataTestsFixture()
-{ }
-
-BigDataTests::BigDataTests()
+void CoverageTests::SetUp()
 {
-   params.nstart = 10;
-   params.it_max = 200;
+    TestsFixture::SetUp();
+    TestsFixtureParam p(GetParam());
+    p.reader.get_clustering(expected_clustering);
 }
 
-BigDataTests::~BigDataTests()
+void EnergyTests::SetUp()
 {
-
+    TestsFixture::SetUp();
+    TestsFixtureParam p(GetParam());
+    expected_energy = p.reader.get_energy();
 }

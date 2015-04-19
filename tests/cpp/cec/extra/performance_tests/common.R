@@ -1,3 +1,6 @@
+library(gmum.r)
+library(CEC)
+
 method_types = list(gmum=c('standard', 'sphere', 'diagonal'), cran=c('all', 'spherical', 'diagonal'))
 nmethod_types = length(method_types$gmum)
 
@@ -22,6 +25,22 @@ load_dataset <- function(data_path) {
 
 normalize_clustering <- function(clustering) {
     return( (clustering - min(clustering)) + 1 )
+}
+
+cran_calculate_energy <- function(points, centers, method_type) {
+    if( is.list(centers) ) {
+        centers = do.call(rbind, centers)
+    }
+    c <- cec(x=points, centers=centers, type=method_type, iter.max=200, nstart=1)
+    return(c$final.cost)
+}
+
+gmum_calculate_energy <- function(points, centers, method_type) {
+    if( !is.list(centers) ) {
+        centers = as.list(data.frame(t(centers)))
+    }
+    c <- CEC(k=length(centers), x=points, method.init='centroids', params.centroids=centers, method.type=method_type, control.itmax=200, control.nstart=1)
+    return(c$energy())
 }
 
 gmum_cec <- function(nclusters, nstart, points, init_type, method_type, max_iterations, eps, output_plot_path = NULL) {        
@@ -60,7 +79,7 @@ cran_cec <- function(nclusters, nstart, points, init_type, method_type, max_iter
     return (list(
         time=t, 
         iters=c$iterations,
-        energy=tail(c$cost, n=1),
+        energy=c$final.cost,
         clustering=normalize_clustering(c$cluster),
         centers=c$centers,
         final_nclusters=c$final.nclusters))

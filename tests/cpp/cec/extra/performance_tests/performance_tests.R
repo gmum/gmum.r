@@ -1,8 +1,6 @@
 source('common.R')
 source('plot_generator.R')
 source('../../../../../R/R_scripts/mouseGaussGenerator.R')
-library(gmum.r)
-library(CEC)
 
 run_tests <- function(npoints_start, ndatasets, npoints_step, averaging, gmum_cec_function, cran_cec_function) {
     results = list(
