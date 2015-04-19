@@ -210,8 +210,9 @@ evalqOnLoad({
     if (control.nstart <= 0)
       stop("Number of starts should be a positive integer!");
     
-    if (control.eps <= 0)
-      stop("control.eps = ", control.eps, " should be greater than 0!");  
+    npoints <- dim(x)[1]
+    if ( (control.eps < 0) || (control.eps > ((npoints - 1) / npoints)) )
+      stop("control.eps = ", control.eps, " should be in range [0, (N-1)/N]!");  
     
     if (control.itmax < 0)
       stop("Maximum number of iterations should be a natural number!");
@@ -319,6 +320,10 @@ evalqOnLoad({
       }
       else if (!is(x, "matrix")) {
         x = data.matrix(x)
+      }
+      
+      if(dim(object$x())[2] != dim(x)[2]){
+        stop("Incompatible dimension!")
       }
       
       apply(x, 1, function(row) {

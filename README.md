@@ -76,8 +76,7 @@ predict(gng, c(1,1,1))
 meanError(gng)
 
 # Plot with first 2 coordinates as position
-plot(gng, mode=gng.plot.2d.errors, vertex.color=gng.plot.color.cluster, 
-     layout=gng.plot.layout.igraph.fruchterman)
+plot(gng, vertex.color=gng.plot.color.cluster)
 ```
 
 ## Cross Entropy Clustering

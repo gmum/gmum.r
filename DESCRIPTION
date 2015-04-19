@@ -18,3 +18,4 @@ LinkingTo: Rcpp, RcppArmadillo, BH
 NeedsCompilation: yes
 Suggests:
     testthat
+LazyData: yes

@@ -1,113 +1,115 @@
+rm(list=ls())
+
 #EllipseGauss
-energy_value <- as.numeric(read.table(system.file("data_sets", "cec", "EllipseGauss","energy.txt", package="gmum.r")));
-input <- as.matrix(read.table(system.file("data_sets", "cec", "EllipseGauss","input.txt", package="gmum.r")));
-cluster <- as.vector(read.table(system.file("data_sets", "cec", "EllipseGauss","cluster.txt", package="gmum.r")));
+cec_ellipse_gauss.energy <- as.numeric(read.table(system.file("data_sets", "cec", "EllipseGauss","energy.txt", package="gmum.r")));
+cec_ellipse_gauss.input <- as.matrix(read.table(system.file("data_sets", "cec", "EllipseGauss","input.txt", package="gmum.r")));
+cec_ellipse_gauss.cluster <- as.vector(read.table(system.file("data_sets", "cec", "EllipseGauss","cluster.txt", package="gmum.r")));
 
-typeof(energy_value);
-typeof(input);
-typeof(cluster);
+typeof(cec_ellipse_gauss.energy);
+typeof(cec_ellipse_gauss.input);
+typeof(cec_ellipse_gauss.cluster);
 
-save.image("~/Documents/gmum.r/data/cec_ellipse_gauss.RData");
+save.image("cec_ellipse_gauss.RData");
 
 env <- c(ls())
 rm(env, list = env)
 
 #mouse_1
-energy_value <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1","energy.txt", package="gmum.r")));
-input <- as.matrix(read.table(system.file("data_sets", "cec", "mouse_1","input.txt", package="gmum.r")));
-cluster <- as.vector(read.table(system.file("data_sets", "cec", "mouse_1","cluster.txt", package="gmum.r")));
+cec_mouse_1.energy <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1","energy.txt", package="gmum.r")));
+cec_mouse_1.input <- as.matrix(read.table(system.file("data_sets", "cec", "mouse_1","input.txt", package="gmum.r")));
+cec_mouse_1.cluster <- as.vector(read.table(system.file("data_sets", "cec", "mouse_1","cluster.txt", package="gmum.r")));
 
-typeof(energy_value);
-typeof(input);
-typeof(cluster);
+typeof(cec_mouse_1.energy);
+typeof(cec_mouse_1.input);
+typeof(cec_mouse_1.cluster);
 
-save.image("~/Documents/gmum.r/data/cec_mouse_1.RData");
+save.image("cec_mouse_1.RData");
 
 env <- c(ls())
 rm(env, list = env)
 
 #mouse_1_classic
-energy_value <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1_classic","energy.txt", package="gmum.r")));
-input <- as.matrix(read.table(system.file("data_sets", "cec", "mouse_1_classic","input.txt", package="gmum.r")));
-cluster <- as.vector(read.table(system.file("data_sets", "cec", "mouse_1_classic","cluster.txt", package="gmum.r")));
+cec_mouse_1_classic.energy <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1_classic","energy.txt", package="gmum.r")));
+cec_mouse_1_classic.input <- as.matrix(read.table(system.file("data_sets", "cec", "mouse_1_classic","input.txt", package="gmum.r")));
+cec_mouse_1_classic.cluster <- as.vector(read.table(system.file("data_sets", "cec", "mouse_1_classic","cluster.txt", package="gmum.r")));
 
-aproximation <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1_classic","aproximation.txt", package="gmum.r")));
-dimension <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1_classic","dimension.txt", package="gmum.r")));
-iteration <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1_classic","iteration.txt", package="gmum.r")));
-type <- read.table(system.file("data_sets", "cec", "mouse_1_classic","type.txt", package="gmum.r"));
+cec_mouse_1_classic.aproximation <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1_classic","aproximation.txt", package="gmum.r")));
+cec_mouse_1_classic.dimension <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1_classic","dimension.txt", package="gmum.r")));
+cec_mouse_1_classic.iteration <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1_classic","iteration.txt", package="gmum.r")));
+cec_mouse_1_classic.type <- read.table(system.file("data_sets", "cec", "mouse_1_classic","type.txt", package="gmum.r"));
 
-typeof(energy_value);
-typeof(input);
-typeof(cluster);
+typeof(cec_mouse_1_classic.energy);
+typeof(cec_mouse_1_classic.input);
+typeof(cec_mouse_1_classic.cluster);
 
-typeof(aproximation);
-typeof(dimension);
-typeof(iteration);
-typeof(type);
+typeof(cec_mouse_1_classic.aproximation);
+typeof(cec_mouse_1_classic.dimension);
+typeof(cec_mouse_1_classic.iteration);
+typeof(cec_mouse_1_classic.type);
 
-save.image("~/Documents/gmum.r/data/cec_mouse_1_classic.RData");
+save.image("cec_mouse_1_classic.RData");
 
 env <- c(ls())
 rm(env, list = env)
 
 #mouse_1_spherical
-energy_value <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1_spherical","energy.txt", package="gmum.r")));
-input <- as.matrix(read.table(system.file("data_sets", "cec", "mouse_1_spherical","input.txt", package="gmum.r")));
-cluster <- as.vector(read.table(system.file("data_sets", "cec", "mouse_1_spherical","cluster.txt", package="gmum.r")));
+cec_mouse_1_spherical.energy <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1_spherical","energy.txt", package="gmum.r")));
+cec_mouse_1_spherical.input <- as.matrix(read.table(system.file("data_sets", "cec", "mouse_1_spherical","input.txt", package="gmum.r")));
+cec_mouse_1_spherical.cluster <- as.vector(read.table(system.file("data_sets", "cec", "mouse_1_spherical","cluster.txt", package="gmum.r")));
 
-aproximation <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1_spherical","aproximation.txt", package="gmum.r")));
-dimension <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1_spherical","dimension.txt", package="gmum.r")));
-iteration <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1_spherical","iteration.txt", package="gmum.r")));
-type <- read.table(system.file("data_sets", "cec", "mouse_1_spherical","type.txt", package="gmum.r"));
+cec_mouse_1_spherical.aproximation <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1_spherical","aproximation.txt", package="gmum.r")));
+cec_mouse_1_spherical.dimension <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1_spherical","dimension.txt", package="gmum.r")));
+cec_mouse_1_spherical.iteration <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_1_spherical","iteration.txt", package="gmum.r")));
+cec_mouse_1_spherical.type <- read.table(system.file("data_sets", "cec", "mouse_1_spherical","type.txt", package="gmum.r"));
 
-typeof(energy_value);
-typeof(input);
-typeof(cluster);
+typeof(cec_mouse_1_spherical.energy);
+typeof(cec_mouse_1_spherical.input);
+typeof(cec_mouse_1_spherical.cluster);
 
-typeof(aproximation);
-typeof(dimension);
-typeof(iteration);
-typeof(type);
+typeof(cec_mouse_1_spherical.aproximation);
+typeof(cec_mouse_1_spherical.dimension);
+typeof(cec_mouse_1_spherical.iteration);
+typeof(cec_mouse_1_spherical.type);
 
-save.image("~/Documents/gmum.r/data/cec_mouse_1_spherical.RData");
+save.image("cec_mouse_1_spherical.RData");
 
 env <- c(ls())
 rm(env, list = env)
 
 #mouse_2_spherical
-energy_value <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_2_spherical","energy.txt", package="gmum.r")));
-input <- as.matrix(read.table(system.file("data_sets", "cec", "mouse_2_spherical","input.txt", package="gmum.r")));
-cluster <- as.vector(read.table(system.file("data_sets", "cec", "mouse_2_spherical","cluster.txt", package="gmum.r")));
+cec_mouse_2_spherical.energy <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_2_spherical","energy.txt", package="gmum.r")));
+cec_mouse_2_spherical.input <- as.matrix(read.table(system.file("data_sets", "cec", "mouse_2_spherical","input.txt", package="gmum.r")));
+cec_mouse_2_spherical.cluster <- as.vector(read.table(system.file("data_sets", "cec", "mouse_2_spherical","cluster.txt", package="gmum.r")));
 
-aproximation <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_2_spherical","aproximation.txt", package="gmum.r")));
-dimension <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_2_spherical","dimension.txt", package="gmum.r")));
-iteration <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_2_spherical","iteration.txt", package="gmum.r")));
-type <- read.table(system.file("data_sets", "cec", "mouse_2_spherical","type.txt", package="gmum.r"));
+cec_mouse_2_spherical.aproximation <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_2_spherical","aproximation.txt", package="gmum.r")));
+cec_mouse_2_spherical.dimension <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_2_spherical","dimension.txt", package="gmum.r")));
+cec_mouse_2_spherical.iteration <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_2_spherical","iteration.txt", package="gmum.r")));
+cec_mouse_2_spherical.type <- read.table(system.file("data_sets", "cec", "mouse_2_spherical","type.txt", package="gmum.r"));
 
-typeof(energy_value);
-typeof(input);
-typeof(cluster);
+typeof(cec_mouse_2_spherical.energy);
+typeof(cec_mouse_2_spherical.input);
+typeof(cec_mouse_2_spherical.cluster);
 
-typeof(aproximation);
-typeof(dimension);
-typeof(iteration);
-typeof(type);
+typeof(cec_mouse_2_spherical.aproximation);
+typeof(cec_mouse_2_spherical.dimension);
+typeof(cec_mouse_2_spherical.iteration);
+typeof(cec_mouse_2_spherical.type);
 
-save.image("~/Documents/gmum.r/data/cec_mouse_2_spherical.RData");
+save.image("cec_mouse_2_spherical.RData");
 
 env <- c(ls())
 rm(env, list = env)
 
 #simple_1
-energy_value <- as.numeric(read.table(system.file("data_sets", "cec", "simple_1","energy.txt", package="gmum.r")));
-input <- as.matrix(read.table(system.file("data_sets", "cec", "simple_1","input.txt", package="gmum.r")));
-cluster <- as.vector(read.table(system.file("data_sets", "cec", "simple_1","cluster.txt", package="gmum.r")));
+cec_simple_1.energy <- as.numeric(read.table(system.file("data_sets", "cec", "simple_1","energy.txt", package="gmum.r")));
+cec_simple_1.input <- as.matrix(read.table(system.file("data_sets", "cec", "simple_1","input.txt", package="gmum.r")));
+cec_simple_1.cluster <- as.vector(read.table(system.file("data_sets", "cec", "simple_1","cluster.txt", package="gmum.r")));
 
-typeof(energy_value);
-typeof(input);
-typeof(cluster);
+typeof(cec_simple_1.energy);
+typeof(cec_simple_1.input);
+typeof(cec_simple_1.cluster);
 
-save.image("~/Documents/gmum.r/data/cec_simple_1.RData");
+save.image("cec_simple_1.RData");
 
 env <- c(ls())
 rm(env, list = env)

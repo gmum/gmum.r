@@ -7,9 +7,9 @@ test_that("EllipseGauss centroid assignment is correct", {
   
   data(cec_ellipse_gauss)
   
-  expected_energy <- energy_value
-  dataset_clusters <- cluster[,1]
-  dataset_points <- input
+  expected_energy <- cec_ellipse_gauss.energy
+  dataset_clusters <- cec_ellipse_gauss.cluster[,1]
+  dataset_points <- cec_ellipse_gauss.input
   
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
   
