@@ -5,15 +5,16 @@ data(svm_breast_cancer_dataset)
 
 test_that('accuracy is calculated', {
   
+  data(svm_breast_cancer_dataset)
   ds <- svm.breastcancer.dataset
+  x <- subset(ds, select = -X1)
+  y <- as.matrix(ds['X1'])
   formula <- X1 ~ .
-  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", C=10);
-
-  x <- svm$getX()
-  target <- svm$getY()
   
+  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", C=10); 
   pred <- predict(svm, x)
-  acc <- svm.accuracy(prediction=pred, target=target)
+  
+  acc <- svm.accuracy(prediction=pred, target=y)
   print(acc)
   
   expect_that(acc, is_a("numeric"))
