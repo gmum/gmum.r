@@ -142,6 +142,9 @@ SingleResult Hartigan::single_loop(const arma::mat &points,
                 end_cleaning = false;
                 break;
             }
+            if(!end_cleaning) {
+                break;
+            }
         }
     } while(!end_cleaning);
 
