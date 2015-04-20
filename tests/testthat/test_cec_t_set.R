@@ -45,15 +45,15 @@ test_that("covariance works", {
   print("test_t_set: covariance works")
 })
 
-test_that("mix works", {
-  data(cec_t_set)
-  fsphere_cluster_param = list(method.type = 'fsphere', params.r = 0.001)
-  full_cluster_param = list(method.type = 'full', params.cov=matrix(c(0.05, 0, 0, 0.001), 2))
-  c <- CEC(x = Tset, k = 5, params.mix = list(full_cluster_param, fsphere_cluster_param, fsphere_cluster_param, fsphere_cluster_param, fsphere_cluster_param), control.nstart = 10)
-  plot(c, ellipses = TRUE, centers = TRUE)
-  
-  expected_energy = 0.6424162
-  
-  expect_that(all.equal(current = c$energy(), target = expected_energy, tolerance = 0.2), is_true())
-  print("test_t_set: mix works")
-})
+#test_that("mix works", {
+#  data(cec_t_set)
+#  fsphere_cluster_param = list(method.type = 'fsphere', params.r = 0.001)
+#  full_cluster_param = list(method.type = 'full', params.cov=matrix(c(0.05, 0, 0, 0.001), 2))
+#  c <- CEC(x = Tset, k = 5, params.mix = list(full_cluster_param, fsphere_cluster_param, fsphere_cluster_param, fsphere_cluster_param, fsphere_cluster_param), control.nstart = 10)
+#  plot(c, ellipses = TRUE, centers = TRUE)
+#  
+#  expected_energy = 0.6424162
+#  
+#  expect_that(all.equal(current = c$energy(), target = expected_energy, tolerance = 0.2), is_true())
+#  print("test_t_set: mix works")
+#})

@@ -15,7 +15,7 @@ protected:
     std::string cluster_path();
     std::string energy_path();
     std::string dimension_path();
-    void normalize_clustering();
+    void normalize_clustering(std::vector<int>& clusters);
 
     std::string m_folder_name;
     std::vector<std::vector<double> > m_points;
