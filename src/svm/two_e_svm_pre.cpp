@@ -54,8 +54,9 @@ void TwoeSVMPreprocessor::processRequest(SVMConfiguration& data) {
   	data.neg_target = targets[0] > targets[1] ? targets[1] : targets[0];
 		mat pos = SvmUtils::matrixByValue(data.data, data.target, data.pos_target);
 		mat neg = SvmUtils::matrixByValue(data.data, data.target, data.neg_target);
-    mat cov0 = cov(pos) + cov(neg) + data.cov_eps_smoothing * arma::eye(data.data.n_cols, data.data.n_cols);
-		SvmUtils::sqrtInvMat(cov0, cov0InvSqrt);
+    mat cov0 = cov(pos) + cov(neg);
+    cov0 +=  data.cov_eps_smoothing_start * arma::eye(data.data.n_cols, data.data.n_cols);
+		SvmUtils::sqrtInvMat(cov0, cov0InvSqrt, data.cov_eps_smoothing_start);
     data.inv_of_sqrt_of_cov = cov0InvSqrt;
 		mat X_dash_plus = cov0InvSqrt * pos.t();
 		mat X_dash_minus = cov0InvSqrt * neg.t();

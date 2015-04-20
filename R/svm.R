@@ -93,100 +93,150 @@ plot.svm <- NULL
 #' 
 summary.svm <- NULL
 
+# Support for caret
+caret.gmumSvmRadial <- NULL
+caret.gmumSvmLinear <- NULL
+caret.gmumSvmPoly <- NULL
+
+
+SVM.formula <- NULL
+SVM.default <- NULL
+
 loadModule('svm_wrapper', TRUE)
 
 evalqOnLoad({
 
-  SVM <<- function(formula, 
-                   data, 
-                   lib         = "libsvm",             
-                   kernel      = "linear",
-                   prep        = "none",
-                   mclass      = "none",
-                   C           = 1,
-                   gamma       = 0.01,
-                   coef0       = 0,
-                   degree      = 1,
-                   shrinking   = TRUE,
-                   probability = FALSE,
-                   cweights    = NULL,
-                   example_weights    = NULL,
-                   cache_size  = 200,
-                   tol         = 1e-3,
-                   verbosity   = 4) {
+  SVM <<- function(x, ...)
+    UseMethod("SVM")
+  
+  SVM.formula <<- function(formula, data, ...) {
+    
     call <- match.call(expand.dots = TRUE)
-
-    # check for errors
-    if ( lib != "libsvm" && lib != "svmlight") { 
-      stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" )) 
-      # log error No such library, available are: libsvm, svmlight
-    }
     
-    if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") {
-      stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
-      # log error: No such kernel type. available are: linear, poly, rbf, sigmoid
-    }
+    if (!inherits(formula, "formula")) stop("Please provide valid formula for this method.")
+    if(inherits(data, "Matrix") || inherits(x, "simple_triplet_matrix") || inherits(x, "matrix.csr")) 
+      stop("Please provide dense data for this method")
+  
+    labels <- all.vars(update(formula, .~0))
+    y <- data[, labels]
     
-    if (prep != "2e" && prep != "none") {
-      stop(paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
-      # log erro No such preprocess type, available are: 2e, none
-    }
-    
-    if (mclass != "none") {
-      stop(paste(GMUM_NOT_SUPPORTED, ": multiclass" ))
-      # log error: Sorry, multiclass is not yet supported
-    }
-    
-    if (C < 0 || gamma < 0 || degree < 1) {
-      stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
-      # log error: bad paramters
-    }
-    
-    if (kernel=="linear" && degree != 1) {
-      warning("Degree parameter is not used with linear kernel")
-    }
-    if (kernel=="linear" && gamma != 0.01) {
-      warning("Gamma parameter is not used with linear kernel")
-    }
-    if (verbosity < 0 || verbosity > 6) {
-      stop("Wrong verbosity level, should be from 0 to 6")
-    }
-    
-    labels = all.vars(update(formula, .~0))
-    x <- NULL
-    y <- NULL
-    
-    if (is(data, "data.frame")) {
-      y <- data.matrix( data[, labels] )
-      
-      # I'm pretty sure this should bo done differently, and equally so I can't find how
-      if (formula[3] == ".()") {
-        x <- data.matrix( data[,names(data) != labels]  )
-      }
-      else {
-        columns = all.vars(update(formula, 0~.))
-        x <- data.matrix( data[, columns] )
-      } 
-    }
-    else if (is(data, "matrix")) {
-      y <- data[, labels]
-      
-      # I'm pretty sure this should bo done differently, and equally so I can't find how
-      if (formula[3] == ".()") {
-        x <- data[, names(data) != labels]
-      }
-      else {
-        columns = all.vars(update(formula, 0~.))
-        x <- data[, columns]
-      } 
+    # better way?
+    if (formula[3] == ".()") {
+      x <- data[, colnames(data) != labels]
     }
     else {
-      stop("data is of a wrong class, please provide data.frame or matrix")
+      columns <- all.vars(update(formula, 0~.))
+      x <- data[, columns]
+    } 
+    
+    if (is.data.frame(x)) x <- data.matrix(x)
+
+    ret <- SVM.default(x, y, ...)
+    call[[1]] <- as.name("SVM")
+    assign("call", call, ret)
+    
+    return(ret)
+  }
+  
+  SVM.default <<- 
+  function(x,
+           y,
+           lib         = "libsvm",             
+           kernel      = "linear",
+           prep        = "none",
+           mclass      = "none",
+           C           = 1,
+           gamma       = if (is.vector(x)) 1 else 1 / ncol(x),
+           coef0       = 0,
+           degree      = 3,
+           shrinking   = TRUE,
+           probability = FALSE,
+           class.weights    = NULL,
+           example.weights    = NULL,
+           cache_size  = 200,
+           tol         = 1e-3,
+           verbosity   = 4) {
+    
+    call <- match.call(expand.dots = TRUE)
+    call[[1]] <- as.name("SVM")
+
+    # check for errors
+    if ( lib != "libsvm" && lib != "svmlight") stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" ))  
+    if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
+    if (prep != "2e" && prep != "none") stop(paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
+    if (mclass != "none") stop(paste(GMUM_NOT_SUPPORTED, ": multiclass" ))
+    if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
+    if (C < 0 || gamma < 0 || degree < 1) stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
+    if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
+      
+    # check data
+    if(nrow(x) != length(y)) stop("x and y have different lengths")
+    if(inherits(x, "Matrix")) {
+      library("SparseM")
+      library("Matrix")
+      x <- as(x, "matrix.csr")
+    }
+    else if(inherits(x, "simple_triplet_matrix")) {
+      library("SparseM")
+      ind <- order(data$i, data$j)
+      x <- new("matrix.csr",
+               ra = x$v[ind],
+               ja = x$j[ind],
+               ia = as.integer(cumsum(c(1, tabulate(x$i[ind])))),
+               dimension = c(x$nrow, data$ncol))
+    }
+    else if(inherits(x, "matrix.csr")) {
+      library("SparseM")
+    }
+    else if(is.data.frame(x)) {
+      x <- data.matrix(x)
+    }
+    else if (!is.matrix(x)){
+      stop("data is of a wrong class, please provide supported format: 
+           matrix or data.frame for dense; 
+           Matrix, simple_triplet_matrix or matrix.csr for sparse")
     }
 
+    sparse <- inherits(x, "matrix.csr")
+    
+    if (sparse) {
+      library("SparseM")
+      if (is.null(y)) {
+        stop("Please provide label vector y for sparse matrix classification")
+      }
+    }
+    
+    if (!is.vector(y) && !is.factor(y)) stop("y is of a wrong class, please provide vector or factor")
+    
+    levels <- NULL
+    if (is.factor(y)){
+      levels <- levels(y)
+      y <- as.integer(y)
+    }
+    
     config <- new(SVMConfiguration)
-    config$x <- x
-    config$y <- y
+    config$y <- data.matrix(y)
+    
+    # sparse 
+    if (sparse) {
+      config$sparse <- 1
+      
+      # OLD (for our conversion) TODO: Delete after rewrite in LibSVMRunner
+      config$sp_x <- x@ra
+      config$sp_row <- x@ia
+      config$sp_col <- x@ja
+      config$dim <- nrow(x)
+      config$data_dim <- ncol(x)
+
+      # NEW (for arma::sp_mat)  
+      x <- as.matrix.csc(x)
+      config$set_sparse_data(x@ja, x@ia, x@ra, nrow(x), ncol(x))
+    }
+    else {
+      config$sparse <- 0
+      config$x <- x
+    }
+    
     
     config$setLibrary(lib)
     config$setKernel(kernel)
@@ -200,13 +250,22 @@ evalqOnLoad({
     config$eps <- tol
     config$cache_size <- cache_size
     
-    if (!is.null(cweights)) {
-      config$setWeights(cweights)
+    
+    if(!is.null(class.weights) && !is.logical(class.weights)) {
+      if (is.character(class.weights) && class.weights == "auto") {
+        counts <- hist(y, breaks=2, plot=FALSE)$counts
+        inv_freq <- 1 / counts
+        weights <- inv_freq / mean(inv_freq)
+        config$setWeights(weights)
+      }
+      else {
+        config$setWeights(class.weights)
+      }
     }
     
-    if (!is.null(example_weights)) {
+    if (!is.null(example.weights) && !is.logical(example.weights)) {
       config$use_example_weights <- 1
-      config$example_weights <- example_weights
+      config$example_weights <- example.weights
     }
     
     if (shrinking) {
@@ -225,6 +284,7 @@ evalqOnLoad({
     client$train()
 
     assign("call", call, client)
+    assign("levels", levels, client)
     client 
   } 
 
@@ -250,6 +310,9 @@ evalqOnLoad({
   }
   
   plot.svm <<- function(x, mode="normal", dim1 = 1, dim2 = 2, log="") {
+    if (x$isSparse()) {
+      stop("Data is sparse")
+    }
     if (mode != "pca" && mode != "normal" && mode != "contour" ) {
       stop("Wrong mode!") 
     }
@@ -327,24 +390,133 @@ evalqOnLoad({
   }
   
   predict.svm.gmum <<- function(object, x) {
-    if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
+    if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric") && !is(x,"matrix.csr") ) {
       stop("Wrong target class, please provide data.frame, matrix or numeric vector")
     }
-    
-    if (!is(x, "matrix")) {
-      x <- data.matrix(x)
+    if (!object$isSparse()) {
+      if (!is(x, "matrix") && !is(x, "data.frame")) {
+        stop("Please provide matrix or data.frame")
+      }
+      if (!is(x, "matrix")) {
+        x <- data.matrix(x)
+      }
+      object$predict(x)
     }
-    object$predict(x)
+    else {
+      if (!is(x, "matrix.csr")) {
+        stop("Please provide sparse matrix")
+      }
+      x <- as.matrix.csc(x)
+      object$sparse_predict(x@ja, x@ia, x@ra, nrow(x), ncol(x))
+    }
     prediction <- object$getPrediction()
+    
+    if(!is.null(object$levels)){
+      prediction <- factor(object$levels[prediction], levels = object$levels)
+    }
+    
     prediction
   }
 
   setMethod("print", "Rcpp_SVMClient", print.svm)
-  setMethod("predict", signature("Rcpp_SVMClient"), predict.svm.gmum)
+  setMethod("predict", "Rcpp_SVMClient", predict.svm.gmum)
   setMethod("plot", "Rcpp_SVMClient",  plot.svm)
   setMethod("summary", "Rcpp_SVMClient", summary.svm)
   setMethod("show", "Rcpp_SVMClient", summary.svm)
 
+  # Add (very basic) support for caret
+  
+  copy <- function(x) x
+  
+  gmum.r.svm.radial.params=c("C", "gamma")
+  gmum.r.svm.radial.params.classes=c("double", "double")
+  
+  gmum.r.svm.linear.params=c("C")
+  gmum.r.svm.linear.params.classes=c("double")
+  
+  gmum.r.svm.poly.params=c("C", "gamma", "degree", "coef0")
+  gmum.r.svm.poly.params.classes=c("double", "double", "double", "double")
+  
+  caret.gmumSvmRadial <<- list(label = "gmum.r.svmRadial",
+                               library = c("gmum.r"),
+                               type = "Classification",
+                               parameters = data.frame(parameter = gmum.r.svm.radial.params,
+                                                       class = gmum.r.svm.radial.params.classes,
+                                                       label = gmum.r.svm.radial.params),
+                               grid = function(x, y, len = NULL) {
+                                 # We pass tuning grid manually. 
+                                 expand.grid(C=10^(-7:11),
+                                             gamma=10^(-10:10))
+                               },
+                               fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
+                                 ## First fti the pls model, generate the training set scores,
+                                 ## then attach what is needed to the random forest object to 
+                                 ## be used late
+                                 x.df = as.data.frame(x)
+                                 x.df$y = as.numeric(y)
+                                 param$kernel = 'linear'
+                                 
+                                 if(is.null(param$gamma)){
+                                   param$gamma = 1
+                                 }else{
+                                   param$kernel = 'rbf'
+                                 }
+                                 if(is.null(param$degree)){
+                                   param$degree = 3
+                                 }else{
+                                   param$kernel = 'poly'
+                                 }
+                                 if(is.null(param$coef0)){
+                                   param$coef0 = 0
+                                 }
+                                 
+                                 return(gmum.r::SVM(
+                                   x,
+                                   y,
+                                   C = param$C,
+                                   gamma = param$gamma,
+                                   degree = param$degree,
+                                   coef0 = param$coef0,
+                                   probability = classProbs,
+                                   kernel = param$kernel,
+                                   ...
+                                 ))
+                               },
+                               predict = function(modelFit, newdata, submodels = NULL) {  
+                                 as.factor(predict(modelFit, newdata))
+                               },
+                               prob = function(modelFit, newdata, submodels = NULL) {  
+                                 predict(modelFit, newdata)
+                               },
+                               varImp = NULL,
+                               levels = function(x) {levels(x$getY())},
+                               sort = function(x) x[order(x[,1]),]
+  )
+  
+  caret.gmumSvmLinear.loc <- copy(caret.gmumSvmRadial)
+  caret.gmumSvmPoly.loc <- copy(caret.gmumSvmRadial)
+  
+  
+  caret.gmumSvmLinear.loc$parameters <- data.frame(parameter = gmum.r.svm.linear.params,
+                                                class = gmum.r.svm.linear.params.classes,
+                                                label = gmum.r.svm.linear.params)
+  
+  caret.gmumSvmLinear.loc$grid <- function(x, y, len = NULL) {
+    expand.grid(C=10^(-7:11))
+  }
+  
+  caret.gmumSvmPoly.loc$grid <- function(x, y, len = NULL) {
+    expand.grid(C=10^(-7:11), gamma= 10^(-10:10), coef0=c(0,1,10), degree=c(2,3,4) )
+  }
+  
+  
+  caret.gmumSvmPoly.loc$parameters <- data.frame(parameter = gmum.r.svm.poly.params,
+                                             class = gmum.r.svm.poly.params.classes,
+                                             label = gmum.r.svm.poly.params)
+  
+  caret.gmumSvmPoly <<- caret.gmumSvmPoly.loc
+  caret.gmumSvmLinear <<- caret.gmumSvmLinear.loc
+  
 })
 
 

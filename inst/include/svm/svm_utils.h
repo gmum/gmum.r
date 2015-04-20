@@ -1,7 +1,6 @@
 #ifndef SVC_UTILS_H_
 #define SVC_UTILS_H_
 #include <svm.h>
-//#include <RcppArmadillo.h>
 #include <armadillo>
 
 #ifndef DEBUG
@@ -25,14 +24,23 @@ private:
 	virtual ~SvmUtils();
 public:
 
-	static void sqrtInvMat(const arma::mat &matrix, arma::mat &finalMat) {
+	static double sqrtInvMat(arma::mat &matrix, arma::mat &finalMat, double cov_eps_smoothing_start = 0) {
 		arma::vec eigenValue;
 		arma::mat eigenVector;
 		arma::mat diagonalMat;
-		// Throws runtime decomposition error
-		arma::mat inverse = arma::inv(matrix);
+		arma::mat inverse;
+		double mu = arma::trace(matrix) / matrix.n_rows;
+		double cov_eps_smoothing_end = cov_eps_smoothing_start;
+		bool not_singular = false;
+		while(!not_singular) {
+			not_singular = inv_sympd(inverse,matrix);
+			matrix = (1-cov_eps_smoothing_end) * matrix +
+			mu * cov_eps_smoothing_end * arma::eye(matrix.n_cols, matrix.n_cols);
+			cov_eps_smoothing_end *= 2;
+		}
 		arma::eig_sym(eigenValue, eigenVector,inverse);
 		finalMat = eigenVector * arma::sqrt(arma::diagmat(eigenValue))	* eigenVector.t();
+		return cov_eps_smoothing_end;
 	}
 
 	//convert sparse matrix to armadillo matrix
@@ -51,7 +59,7 @@ public:
 	}
 
 	//TODO: resize ret matrix
-	static void libToArma(svm_node** svm_nodes, int nr_sv, int dim, arma::mat ret) {
+	static void libToArma(svm_node** svm_nodes, int nr_sv, int dim, arma::mat& ret) {
 		//TODO: resize ret matrix
 		// arma::mat ret(nr_sv, dim);
 
