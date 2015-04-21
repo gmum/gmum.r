@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <string>
 #include <vector>
+#include <cassert>
 
 #include "svmlight_runner.h"
 #include "svm/log.h"
@@ -242,6 +243,7 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     learn_parm->transduction_posratio=-1.0;
     /* factor to multiply C for positive examples */
     learn_parm->svm_costratio=1.0;
+
     /* FIXME: Find what this one does */
     learn_parm->svm_costratio_unlab=1.0;
     learn_parm->svm_unlabbound=1E-5;
@@ -267,14 +269,20 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     }
 
     /* set userdefined */
-    if (config.degree)
+    if (config.degree){
         kernel_parm->poly_degree = config.degree;
-    if (config.gamma)
+    }
+    if (config.gamma){
         kernel_parm->rbf_gamma = config.gamma;
-    if (config.gamma)
+    }
+    if (config.gamma){
         kernel_parm->coef_lin = config.gamma;
-    if (config.coef0)
+    }
+    if (config.coef0){
         kernel_parm->coef_const = config.coef0;
+    }
+
+
     // GMUM.R changes }
     if(!use_gmumr) {
         if(i>=argc) {
@@ -921,7 +929,14 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
 
     // Optional feature: cost :)
     if (config.use_example_weights) {
-        ss << " cost:" << std::setprecision(8) << config.example_weights[line_num];
+    	//0 is transductive
+        if(config.use_class_weights && target_value){
+        	ss << " cost:" << std::setprecision(8) <<
+        			(target_value == config.pos_target? config.class_weights[0] : config.class_weights[1])*
+					config.example_weights[line_num];
+        }else{
+        	ss << " cost:" << std::setprecision(8) << config.example_weights[line_num];
+        }
     }
 
     // Matrix type handling
@@ -941,10 +956,6 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
 
     ss << std::endl;
     line_string = ss.str();
-    
-    if(line_num == 3){
-        std::cout<<line_string<<std::endl;
-    }
 
     return line_string;
 }

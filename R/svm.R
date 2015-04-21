@@ -212,8 +212,11 @@ evalqOnLoad({
       levels <- levels(y)
       y <- as.integer(y)
     }else{
+      # Standarizing, easier for library
       y <- as.factor(y)
-      warning("Passed y as vector, transformed into factor")
+      levels <- levels(y)
+      y <- as.integer(y)
+      warning("It is recommended to pass y as factor")
     }
     
     config <- new(SVMConfiguration)
@@ -252,12 +255,14 @@ evalqOnLoad({
       }
       # Maps name -> index that is feed into SVM
       # Note: factor is transformed such that class -> index in levels of factor
-      print(names(class.weights))
-      print(levels(y))
-      class.labels.indexes <- sapply(names(class.weights), function(cls){ which(levels(y) == cls)[1] })
-      names(class.labels.indexes) <- NULL
-      print(class.labels.indexes)
-      config$setClassWeights(class.weights, class.labels.indexes )
+      class.labels.indexes <- sapply(names(class.weights), function(cls){ which(levels== cls)[1] })
+      # Standarize for all libraries (so if passed list("2"=1, "1"=3) it is reversed)
+      class.weights <- class.weights[order(class.labels.indexes)] 
+      # We always pass numeric, so it will work if it is the case
+      if(!is.numeric(y)){
+        stop("[DEV] breaking change, please fix")
+      }
+      config$setClassWeights(as.numeric(class.weights), 1:length(levels))
     }
     
     if (!is.null(example.weights) && !is.logical(example.weights)) {

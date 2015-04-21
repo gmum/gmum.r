@@ -65,6 +65,7 @@ test_that('xor dataset works', {
   
   pred <- predict(svm, x) 
   diff <- length(pred) - length(target)
+  pred
   
   expect_that(diff == 0, is_true())
 })

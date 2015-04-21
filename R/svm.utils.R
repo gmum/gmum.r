@@ -47,10 +47,9 @@ svm.accuracy <- function(prediction, target) {
     if ( length(target) != length(prediction)) {
       stop("Prediction's and target's length don't match!")
     }
-    len <- length(target)
-    
-    diff = target-prediction
-    acc <- sum(diff == 0) / len
+
+    diff = as.numeric(target) - as.numeric(prediction)
+    acc <- sum(diff == 0) / length(target)
     return(acc) 
 }
 
