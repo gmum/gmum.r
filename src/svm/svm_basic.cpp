@@ -18,8 +18,8 @@ int SVMConfiguration::getDataExamplesNumber() {
 
 void SVMConfiguration::setClassWeights(arma::vec class_weights, arma::vec class_weights_labels){
 	this->class_weights = class_weights;
-	this->class_weights_labels = class_weights_labels;
-    class_weight_length = class_weights.size();
+    this->use_class_weights = true;
+	class_weight_length = class_weights.size();
 
     if(libsvm_class_weights){
     	delete[] libsvm_class_weights;
@@ -229,6 +229,7 @@ void SVMConfiguration::setDefaultParams() {
 
     // Additional features
     use_example_weights = false;
+    use_class_weights = false;
 
     // User-defined classification mode labels
     // (will be filled during data processing)

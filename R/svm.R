@@ -211,6 +211,9 @@ evalqOnLoad({
     if (is.factor(y)){
       levels <- levels(y)
       y <- as.integer(y)
+    }else{
+      y <- as.factor(y)
+      warning("Passed y as vector, transformed into factor")
     }
     
     config <- new(SVMConfiguration)
@@ -243,10 +246,18 @@ evalqOnLoad({
     config$cache_size <- cache_size
     
     if (!is.null(class.weights) && !is.logical(class.weights)) {
-      classes <- as.numeric(levels(as.factor(y)))
-      class.labels.indexes <- sort(sapply(classes, function(cls){ which(y == cls)[1] }))
-      class.weights.labels <- sapply(class.labels.indexes, function(cls.index){ y[cls.index]})
-      config$setClassWeights(class.weights, class.weights.labels)
+      
+      if(is.null(names(class.weights))){
+          stop("Please provide class.weights as named (by classes) list or vector")
+      }
+      # Maps name -> index that is feed into SVM
+      # Note: factor is transformed such that class -> index in levels of factor
+      print(names(class.weights))
+      print(levels(y))
+      class.labels.indexes <- sapply(names(class.weights), function(cls){ which(levels(y) == cls)[1] })
+      names(class.labels.indexes) <- NULL
+      print(class.labels.indexes)
+      config$setClassWeights(class.weights, class.labels.indexes )
     }
     
     if (!is.null(example.weights) && !is.logical(example.weights)) {

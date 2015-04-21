@@ -95,7 +95,7 @@ public:
 
     // Class weights
     arma::vec class_weights;
-    arma::vec class_weights_labels;
+    bool use_class_weights;
 
     // Example weights (used by svmlight)
     bool use_example_weights;
