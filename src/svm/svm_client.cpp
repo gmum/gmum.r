@@ -126,12 +126,18 @@ bool SVMClient::isSparse() {
 }
 
 arma::vec SVMClient::getExampleWeights(){
-    return config.data_cost;
+    return config.example_weights;
 }
+
+arma::vec SVMClient::getClassWeights(){
+    return config.class_weights;
+}
+
+
 
 bool 
 SVMClient::areExamplesWeighted() {
-    return (bool)config.use_cost;
+    return (bool)config.use_example_weights;
 }
 // model getters
 arma::vec SVMClient::getAlpha() {

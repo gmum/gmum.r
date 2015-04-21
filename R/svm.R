@@ -243,7 +243,10 @@ evalqOnLoad({
     config$cache_size <- cache_size
     
     if (!is.null(class.weights) && !is.logical(class.weights)) {
-      config$setWeights(class.weights)
+      classes <- as.numeric(levels(as.factor(y)))
+      class.labels.indexes <- sort(sapply(classes, function(cls){ which(y == cls)[1] }))
+      class.weights.labels <- sapply(class.labels.indexes, function(cls.index){ y[cls.index]})
+      config$setClassWeights(class.weights, class.weights.labels)
     }
     
     if (!is.null(example.weights) && !is.logical(example.weights)) {

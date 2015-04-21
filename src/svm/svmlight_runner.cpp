@@ -920,8 +920,8 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     }
 
     // Optional feature: cost :)
-    if (config.use_cost) {
-        ss << " cost:" << std::setprecision(8) << config.data_cost[line_num];
+    if (config.use_example_weights) {
+        ss << " cost:" << std::setprecision(8) << config.example_weights[line_num];
     }
 
     // Matrix type handling

@@ -3,6 +3,9 @@
 
 #include <string>
 
+//TODO: erase this line
+#define RCPP_INTERFACE
+
 #ifdef RCPP_INTERFACE
 #include <RcppArmadillo.h>
 #endif
@@ -48,9 +51,10 @@ public:
     double cache_size;  // in MB
     double eps;         // stopping criteria
     double C;           // for C_SVC, EPSILON_SVR and NU_SVR
-    int nr_weight;      // for C_SVC
-    int *weight_label;  // for C_SVC
-    double* weight;     // for C_SVC
+    double* libsvm_class_weights;     // for C_SVC
+    //which weight is for which class
+    int* libsvm_class_weights_labels;     // for C_SVC
+    int class_weight_length;      // for C_SVC
     int shrinking;      // use the shrinking heuristics
     int probability;    // do probability estimates
 
@@ -89,9 +93,13 @@ public:
     bool sparse;
     arma::sp_mat sparse_data;
 
-    // Data cost
-    bool use_cost;              // currently only svmligth-implemented
-    arma::vec data_cost;
+    // Class weights
+    arma::vec class_weights;
+    arma::vec class_weights_labels;
+
+    // Example weights (used by svmlight)
+    bool use_example_weights;
+    arma::vec example_weights;
 
     Logger log;
 
@@ -132,9 +140,7 @@ public:
     void setPrediction(bool);
     bool isPrediction();
 
-#ifdef RCPP_INTERFACE
-    void setWeights( Rcpp::NumericVector );
-#endif
+
     void setLibrary( std::string );
     void setKernel( std::string );
     void setPreprocess( std::string );
@@ -156,6 +162,9 @@ public:
         size_t n_cols,
         bool one_indexed=false
     );
+
+    //@param class_weights_labels - needed for libsvm
+    void setClassWeights(arma::vec, arma::vec);
 
     arma::sp_mat &getSparseData();
 

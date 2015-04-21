@@ -61,6 +61,8 @@ public:
     bool isSparse();
     bool areExamplesWeighted();
     arma::vec getExampleWeights();
+    arma::vec getClassWeights();
+
 
     // model getters
     // double** getSV(); // double**, std::vector, arma:mat ?
