@@ -29,6 +29,7 @@ RCPP_MODULE(svm_wrapper) {
 			.field("probability", &SVMConfiguration::probability)
 			.field("example_weights", &SVMConfiguration::data_cost)
 			.field("use_example_weights", &SVMConfiguration::use_cost)
+			.field("max_iter", &SVMConfiguration::max_iter)
 
 			.field("sparse", &SVMConfiguration::sparse)
 			.field("sp_x", &SVMConfiguration::sp_data)
