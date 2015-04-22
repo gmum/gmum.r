@@ -3,9 +3,6 @@
 
 #include <string>
 
-//TODO: erase this line
-#define RCPP_INTERFACE
-
 #ifdef RCPP_INTERFACE
 #include <RcppArmadillo.h>
 #endif

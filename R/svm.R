@@ -413,7 +413,13 @@ evalqOnLoad({
     }
     prediction <- object$getPrediction()
     
+    if(any(prediction == 0) || any(prediction > length(object$levels))){
+       stop("Failed prediction, target not in range 1:length(levels).")
+    }
+    
     if(!is.null(object$levels)){
+      # This line works because we do as.numeric() which transforms into 1 and 2
+      # And we expect SVM to return same labels as passed
       prediction <- factor(object$levels[prediction], levels = object$levels)
     }
     

@@ -928,15 +928,18 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     }
 
     // Optional feature: cost :)
-    if (config.use_example_weights) {
-    	//0 is transductive
-        if(config.use_class_weights && target_value){
-        	ss << " cost:" << std::setprecision(8) <<
-        			(target_value == config.pos_target? config.class_weights[0] : config.class_weights[1])*
-					config.example_weights[line_num];
-        }else{
-        	ss << " cost:" << std::setprecision(8) << config.example_weights[line_num];
-        }
+
+    if (config.use_example_weights || (config.use_class_weights && target_value)) {
+    	double weight = 1.0;
+    	if(config.use_example_weights){
+    		weight *= config.example_weights[line_num];
+    	}
+    	if(config.use_class_weights){
+    		weight *= (target_value == config.pos_target? config.class_weights[1] : config.class_weights[0]);
+    	}
+
+        ss << " cost:" << std::setprecision(8) << weight;
+
     }
 
     // Matrix type handling
