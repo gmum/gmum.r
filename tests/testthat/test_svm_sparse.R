@@ -2,8 +2,8 @@ library(testthat)
 library(gmum.r)
 
 test_that("sparse matrices work", {
-  x <- read.matrix.csr(system.file("inst", "data_sets", "svm", "dexter_train.data", mustWork=TRUE, package="gmum.r"))
-  y <- as.vector(unlist(read.table(system.file("inst", "data_sets", "svm", "dexter_train.labels", mustWork=TRUE, package="gmum.r"))))
+  x <- read.matrix.csr(system.file("data_sets", "svm", "dexter_train.data", mustWork=TRUE, package="gmum.r"))
+  y <- as.vector(unlist(read.table(system.file("data_sets", "svm", "dexter_train.labels", mustWork=TRUE, package="gmum.r"))))
 
     libs <- c("svmlight", "libsvm")
     kernels <- c("linear", "poly", "rbf", "sigmoid")

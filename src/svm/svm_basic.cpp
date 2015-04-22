@@ -3,7 +3,7 @@
 
 // SVM Configuration 
 // Constructors  
-SVMConfiguration::SVMConfiguration() {
+SVMConfiguration::SVMConfiguration(): label(0), nSV(0),  libsvm_class_weights(0) {
     this->prediction = false;
     SVMConfiguration::setDefaultParams();
 }
@@ -13,6 +13,25 @@ int SVMConfiguration::getDataExamplesNumber() {
         return this->sparse_data.n_cols;
     } else {
         return this->data.n_rows;
+    }
+}
+
+void SVMConfiguration::setClassWeights(arma::vec class_weights, arma::vec class_weights_labels){
+	this->class_weights = class_weights;
+    this->use_class_weights = true;
+	class_weight_length = class_weights.size();
+
+    if(libsvm_class_weights){
+    	delete[] libsvm_class_weights;
+    }
+    if(libsvm_class_weights_labels){
+    	delete[] libsvm_class_weights_labels;
+    }
+    libsvm_class_weights = new double[class_weight_length];
+    libsvm_class_weights_labels = new int[class_weight_length];
+    for(size_t i=0; i<class_weight_length; ++i){
+    	libsvm_class_weights[i] = class_weights(i);
+    	libsvm_class_weights_labels[i] = (int)class_weights_labels(i);
     }
 }
 
@@ -133,16 +152,7 @@ void SVMConfiguration::setPrediction(bool prediction) {
     this->prediction = prediction;
 }
 
-#ifdef RCPP_INTERFACE
-void SVMConfiguration::setWeights( Rcpp::NumericVector weights ) {
-    this->nr_weight = weights.size();
-    this->weight = new double[nr_weight];
 
-    for (int i = 0; i < nr_weight; i++) {
-        weight[i] = weights(1);
-    }
-}
-#endif
 
 void SVMConfiguration::setLibrary( std::string library ) {
     if ( library == "libsvm" ) {
@@ -150,8 +160,8 @@ void SVMConfiguration::setLibrary( std::string library ) {
         this->svm_type = C_SVC;
     }
     else if (library == "svmlight" ) {
-    this->library = SVMLIGHT;
-    this->svm_type = C_SVC;
+		this->library = SVMLIGHT;
+		this->svm_type = C_SVC;
     }
 }
 
@@ -195,7 +205,7 @@ void SVMConfiguration::setDefaultParams() {
     library = LIBSVM;
     svm_type = C_SVC;
     kernel_type = _LINEAR;
-  preprocess = NONE;
+    preprocess = NONE;
     degree = 3;
     gamma = 0;  // 1/num_features
     coef0 = 0;
@@ -204,12 +214,13 @@ void SVMConfiguration::setDefaultParams() {
     eps = 1e-3;
     shrinking = 1;
     probability = 0;
-    nr_weight = 0;
-    weight_label = NULL;
-    weight = NULL;
+    class_weight_length = 0;
+    libsvm_class_weights_labels = NULL;
+    libsvm_class_weights = NULL;
     cov_eps_smoothing_start = 2.22e-16; //2^(-23)
     //cov_eps_smoothing_start = 
-//  Probably not necessery
+
+    //TODO: Probably not necessery
     nu = 0.5;
     p = 0.1;
     
@@ -217,7 +228,8 @@ void SVMConfiguration::setDefaultParams() {
     sparse = false;
 
     // Additional features
-    use_cost = false;
+    use_example_weights = false;
+    use_class_weights = false;
 
     // User-defined classification mode labels
     // (will be filled during data processing)

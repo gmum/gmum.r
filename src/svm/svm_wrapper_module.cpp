@@ -27,19 +27,20 @@ RCPP_MODULE(svm_wrapper) {
 			.field("cache_size", &SVMConfiguration::cache_size)
 			.field("shrinking", &SVMConfiguration::shrinking)
 			.field("probability", &SVMConfiguration::probability)
-			.field("example_weights", &SVMConfiguration::data_cost)
-			.field("use_example_weights", &SVMConfiguration::use_cost)
+			.field("example_weights", &SVMConfiguration::example_weights)
+			.field("use_example_weights", &SVMConfiguration::use_example_weights)
 
 			.field("sparse", &SVMConfiguration::sparse)
 
 			.method("set_sparse_data", &SVMConfiguration::setSparseData)
 
 			.method("setPrediction", &SVMConfiguration::setPrediction)
-			.method("setWeights", &SVMConfiguration::setWeights)
 			.method("setLibrary", &SVMConfiguration::setLibrary)
 			.method("setKernel", &SVMConfiguration::setKernel)
 			.method("setPreprocess", &SVMConfiguration::setPreprocess)
       		.method("set_verbosity", &SVMConfiguration::set_verbosity)
+			.method("setClassWeights", &SVMConfiguration::setClassWeights)
+
 			;
 	class_<SVMClient>("SVMClient")
 			.constructor<SVMConfiguration*>()
@@ -78,7 +79,8 @@ RCPP_MODULE(svm_wrapper) {
 			.method("isSparse", &SVMClient::isSparse)
       		.method("getExampleWeights", &SVMClient::getExampleWeights)
       		.method("areExamplesWeighted", &SVMClient::areExamplesWeighted)
-			.method("getAlpha", &SVMClient::getAlpha)
+      		.method("getClassWeights", &SVMClient::getClassWeights)
+      		.method("getAlpha", &SVMClient::getAlpha)
 			.method("getBias", &SVMClient::getBias)
 			.method("getW", &SVMClient::getW)
 	      	.method("get_number_sv", &SVMClient::get_number_sv)
