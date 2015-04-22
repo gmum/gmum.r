@@ -715,7 +715,7 @@ MODEL * SVMLightRunner::libraryReadModel(
          * In svm_common.c:57 in double classify_example_linear():
          *     return(sum-model->b);
          */
-        model->b = - config.threshold_b;
+        model->b = - config.b;
 
         LOG(
             config.log,
@@ -1035,11 +1035,7 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     config.l = model->sv_num - 1;
     // Threshold b (has opposite sign than SVMClient::predict()
     // NOTE: see libraryReadModel()
-    config.threshold_b = - model->b;
-
-    // XXX: pudSVM
-    //config.alpha_y = arma::randu<arma::vec>(config.l);
-    //config.support_vectors = arma::randu<arma::mat>(config.l, model->totwords);
+    config.b = - model->b;
 
     config.alpha_y = arma::zeros<arma::vec>(config.l);
     config.support_vectors = arma::zeros<arma::mat>(config.l, model->totwords);

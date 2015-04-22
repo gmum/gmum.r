@@ -240,16 +240,35 @@ void SVMClient::predictFromConfig() {
         __debug_prefix__ + ".predictFromConfig() Calculating prediction onto "
         		+svm_to_str(config.pos_target) + " "+svm_to_str(config.neg_target)+
         		"..");
+
+    if(config.kernel_type == ::_LINEAR){
+        LOG(config.log, LogLevel::TRACE,
+            __debug_prefix__ + ".predictFromConfig() using linear prediction");
+    }
+
     // Prediction itself
     // math:
     // f(x) = sum{alpha_j * y_j * kernel(x_j, x)} + b, where j means j-th SV}
     for (int i=0; i < n_docs; ++i) {
-        double doc_result = 0;
-        for (int j=0; j < config.getSVCount(); ++j) {
-            doc_result += kernel(i, j) * config.alpha_y(j);
+    	double doc_result = 0;
+        if(config.kernel_type == ::_LINEAR){
+            if (isSparse()) {
+            	doc_result = arma::dot(
+                    config.w.t(),
+                    config.getSparseData().col(i).t()
+                );
+            } else {
+            	doc_result = arma::dot(
+                    config.data.row(i),
+                    config.w.t()
+                );
+            }
+        }else{
+        	for (int j=0; j < config.getSVCount(); ++j) {
+        		doc_result += kernel(i, j) * config.alpha_y(j);
+        	}
         }
-        doc_result += config.threshold_b;
-        config.result[i] = doc_result;
+        config.result[i] = doc_result + config.b;
 //        LOG(config.log, 5, "Decision function "+svm_to_str(doc_result));
     }
 
