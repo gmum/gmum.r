@@ -12,7 +12,7 @@ test_that("our models have not too differents results than other models", {
   data(svm_breast_cancer_dataset)
   ds <- svm.breastcancer.dataset
   x <- subset(ds, select = -X1)
-  y <- as.matrix(ds['X1'])
+  y <- as.matrix(ds[,'X1'])
   formula <- X1 ~ .
   
   tryCatch({
@@ -37,15 +37,16 @@ test_that("our models have not too differents results than other models", {
   
   print("0. linear kernel:")
   
+  y.factor <- as.factor(y)
   e_acc <- svm.accuracy(e_pred, y)
   print(sprintf("e1071 acc: %f", e_acc))
-  glib_acc <- svm.accuracy(glib_pred, y)
+  glib_acc <- svm.accuracy(glib_pred, y.factor)
   print(sprintf("gmum libsvm acc: %f", glib_acc))
-  klar_acc <- svm.accuracy(klar_svmlight_pred, y)
+  klar_acc <- svm.accuracy(klar_svmlight_pred,  y)
   print(sprintf("klaR svmlight acc: %f", klar_acc))
-  glight_acc <- svm.accuracy(glight_pred, y)
+  glight_acc <- svm.accuracy(glight_pred,  y.factor)
   print(sprintf("gmum svmlight acc: %f", glight_acc))
-  acc <- svm.accuracy(glib_epred, y)
+  acc <- svm.accuracy(glib_epred,  y.factor)
   print(sprintf("gmum libsvm 2e acc: %f", acc))
   
   expect_that( abs(e_acc-glib_acc) < eps, is_true())
@@ -65,16 +66,17 @@ test_that("our models have not too differents results than other models", {
   
   print ("1. poly kernel:")
   
+  y.factor <- as.factor(y)
   e_acc <- svm.accuracy(e_pred, y)
   print(sprintf("e1071 acc: %f", e_acc))
-  glib_acc <- svm.accuracy(glib_pred, y)
+  glib_acc <- svm.accuracy(glib_pred, y.factor)
   print(sprintf("gmum libsvm acc: %f", glib_acc))
   klar_acc <- svm.accuracy(klar_svmlight_pred, y)
   print(sprintf("klaR svmlight acc: %f", klar_acc))
-  glight_acc <- svm.accuracy(glight_pred, y)
+  glight_acc <- svm.accuracy(glight_pred, y.factor)
   print(sprintf("gmum svmlight acc: %f", glight_acc))
   
-  expect_that( abs(e_acc-glib_acc) < eps, is_true())
+  expect_that( e_acc-glib_acc < eps, is_true())
   expect_that( abs(klar_acc-glight_acc) < eps, is_true())
   
   # RBF kernel
@@ -89,17 +91,17 @@ test_that("our models have not too differents results than other models", {
   glight_pred <- predict(glight_svm, x)
   klar_svmlight_pred <- as.numeric(as.matrix(predict(klar_svmlight, x)$class))
   
+
   print ("2. rbf kernel:")
-  
+  y.factor <- as.factor(y)
   e_acc <- svm.accuracy(e_pred, y)
   print(sprintf("e1071 acc: %f", e_acc))
-  glib_acc <- svm.accuracy(glib_pred, y)
+  glib_acc <- svm.accuracy(glib_pred, y.factor)
   print(sprintf("gmum libsvm acc: %f", glib_acc))
   klar_acc <- svm.accuracy(klar_svmlight_pred, y)
   print(sprintf("klaR svmlight acc: %f", klar_acc))
-  glight_acc <- svm.accuracy(glight_pred, y)
+  glight_acc <- svm.accuracy(glight_pred,y.factor)
   print(sprintf("gmum svmlight acc: %f", glight_acc))
-  
   expect_that( abs(e_acc-glib_acc) < eps, is_true())
   expect_that( abs(klar_acc-glight_acc) < eps, is_true())
   
@@ -117,14 +119,14 @@ test_that("our models have not too differents results than other models", {
   klar_svmlight_pred <- as.numeric(as.matrix(predict(klar_svmlight, x)$class))
   
   print ("3. sigmoid kernel:")
-  
+  y.factor <- as.factor(y)
   e_acc <- svm.accuracy(e_pred, y)
   print(sprintf("e1071 acc: %f", e_acc))
-  glib_acc <- svm.accuracy(glib_pred, y)
+  glib_acc <- svm.accuracy(glib_pred, y.factor)
   print(sprintf("gmum libsvm acc: %f", glib_acc))
   klar_acc <- svm.accuracy(klar_svmlight_pred, y)
   print(sprintf("klaR svmlight acc: %f", klar_acc))
-  glight_acc <- svm.accuracy(glight_pred, y)
+  glight_acc <- svm.accuracy(glight_pred, y.factor)
   print(sprintf("gmum svmlight acc: %f", glight_acc))
   
   expect_that( abs(e_acc-glib_acc) < eps || glib_acc > e_acc, is_true())

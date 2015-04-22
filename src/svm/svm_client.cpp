@@ -7,6 +7,7 @@
 #include "two_e_svm_post.h"
 #include "svm_utils.h"
 
+
 const std::string __file__ = "svm_client.cpp";
 const std::string __client_class__ = "SVMClient";
 const std::string __debug_prefix__ = __file__ + "." + __client_class__;
@@ -126,12 +127,18 @@ bool SVMClient::isSparse() {
 }
 
 arma::vec SVMClient::getExampleWeights(){
-    return config.data_cost;
+    return config.example_weights;
 }
+
+arma::vec SVMClient::getClassWeights(){
+    return config.class_weights;
+}
+
+
 
 bool 
 SVMClient::areExamplesWeighted() {
-    return (bool)config.use_cost;
+    return (bool)config.use_example_weights;
 }
 // model getters
 arma::vec SVMClient::getAlpha() {
@@ -166,7 +173,7 @@ arma::vec SVMClient::getW() {
         return config.w;
     }
     else {
-    LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundary is not available with non-linear kernel"));
+    	LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundary is not available with non-linear kernel"));
         return 0;
     }
 }
@@ -224,8 +231,15 @@ void SVMClient::predictFromConfig() {
     size_t n_docs = config.getDataExamplesNumber();
     config.result = arma::zeros<arma::vec>(n_docs);
 
+
     LOG(config.log, LogLevel::DEBUG,
-        __debug_prefix__ + ".predictFromConfig() Calculating prediction...");
+        __debug_prefix__ + ".predictFromConfig() Calculating prediction on " +
+		svm_to_str(n_docs) + " documents...");
+
+    LOG(config.log, LogLevel::TRACE,
+        __debug_prefix__ + ".predictFromConfig() Calculating prediction onto "
+        		+svm_to_str(config.pos_target) + " "+svm_to_str(config.neg_target)+
+        		"..");
     // Prediction itself
     // math:
     // f(x) = sum{alpha_j * y_j * kernel(x_j, x)} + b, where j means j-th SV}
@@ -236,10 +250,16 @@ void SVMClient::predictFromConfig() {
         }
         doc_result += config.threshold_b;
         config.result[i] = doc_result;
+//        LOG(config.log, 5, "Decision function "+svm_to_str(doc_result));
     }
 
-    LOG(config.log, LogLevel::DEBUG,
-        __debug_prefix__ + ".predictFromConfig() Coverting to labels...");
+    if(n_docs){
+		LOG(config.log, LogLevel::DEBUG,
+			__debug_prefix__ + ".predictFromConfig() Coverting to labels, first"
+					"result is " + svm_to_str(config.result[0])+
+					"...");
+
+    }
     // Convert results to userdefined labels
     n_docs = config.result.n_rows;
     double doc_result = 0;
@@ -247,12 +267,10 @@ void SVMClient::predictFromConfig() {
         doc_result = config.result[i];
 
         // Store user-defined label
-        if (doc_result < 0) {
-            config.result[i] = config.neg_target;
-        } else if (doc_result > 0) {
+        if (doc_result > 0) {
             config.result[i] = config.pos_target;
         } else {
-            config.result[i] = 0;
+            config.result[i] = config.neg_target;
         }
     }
 

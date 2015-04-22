@@ -2,6 +2,7 @@
 #define SVC_UTILS_H_
 #include <svm.h>
 #include <armadillo>
+#include <sstream>
 
 #ifndef DEBUG
 #define ASSERT(x)
@@ -17,6 +18,15 @@
 
 
 using namespace std;
+
+//TODO: clean after consolidating svm_utils.h
+//and log.h with utils/log.hpp and utils/utils.h
+template<class T>
+std::string svm_to_str(const T& x) {
+	stringstream ss;
+	ss << x;
+	return ss.str();
+}
 
 class SvmUtils {
 private:

@@ -53,7 +53,7 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 }
 
 bool LibSVMRunner::canHandle(SVMConfiguration& config) {
-    if (config.use_cost) {
+    if (config.use_example_weights) {
         return false;
     }
 	return config.library == LIBSVM;
@@ -195,9 +195,9 @@ svm_parameter* LibSVMRunner::configuration_to_problem(
 	param->p = config.p;
 	param->shrinking = config.shrinking;
 	param->probability = config.probability;
-	param->nr_weight = config.nr_weight;
-	param->weight_label = config.weight_label;
-	param->weight = config.weight;
+	param->nr_weight = config.class_weight_length;
+	param->weight_label = config.libsvm_class_weights_labels;
+	param->weight = config.libsvm_class_weights;
 
 	if ( config.kernel_type == _LINEAR ) {
 			param->kernel_type = LINEAR;
