@@ -1,5 +1,9 @@
 # Error codes
 
+gmum.error <- function(code, message){
+    stop(paste(code, ": ", message, sep=""))
+}
+
 GMUM_WRONG_LIBRARY = "Error 20"
 GMUM_WRONG_KERNEL = "Error 21"
 GMUM_BAD_PREPROCESS = "Error 22"

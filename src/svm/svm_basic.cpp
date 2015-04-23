@@ -152,8 +152,6 @@ void SVMConfiguration::setPrediction(bool prediction) {
     this->prediction = prediction;
 }
 
-
-
 void SVMConfiguration::setLibrary( std::string library ) {
     if ( library == "libsvm" ) {
         this->library = LIBSVM;

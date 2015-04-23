@@ -35,13 +35,7 @@ typedef vector<int> VI;
 
 #include <utils/logger.h>
 
-#ifdef DEBUG
-	#define DBG_2(logger, level, text) logger->log(level, text);
-	#define REPORT_2(x) cerr<<#x<<"="<<(x)<<endl<<std::flush;
-#else
-	#define DBG_2(verbosity, level, text)
-	#define REPORT_2(x)
-#endif
+#define LOG(logger, level, text) logger->log(level, text);
 
 #ifdef DEBUG
 	#define DBG(logger, level, text) logger->log(level, text);
@@ -50,8 +44,6 @@ typedef vector<int> VI;
 	#define DBG(verbosity, level, text)
 	#define REPORT(x)
 #endif
-
-#define REPORT_PRODUCTION(x) cout<<#x<<"="<<(x)<<endl<<std::flush;
 
 
 template<class T>
@@ -119,10 +111,6 @@ const int __one__ = 1;
 const bool isCpuLittleEndian = 1 == *(char*) (&__one__); // CPU endianness
 const bool isFileLittleEndian = false;  // output endianness - you choose :)
 
-
-static void __init_rnd() {
-	srand(time(NULL));
-}
 
 static int __rnd(int min, int max) {
 	return (rand() % (max - min + 1) + min);
