@@ -1,4 +1,5 @@
-library("gmum.r")
+library(gmum.r)
+library(e1071)
 
 if(!file.exists(svm.colon_cancer.path)) {
 	print(svm.colon_cancer.path)
@@ -8,7 +9,7 @@ if(!file.exists(svm.colon_cancer.path)) {
 
 	 
 	  ds = svm.dataset.colon_cancer()
-	 formula = X1 ~ .
+	  formula = X1 ~ .
 	  
 
 	  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "none", C=10);

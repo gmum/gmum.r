@@ -949,12 +949,20 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
 
     // Matrix type handling
     if (config.isSparse()) {
+    	int current_row = 0;
         arma::sp_mat::iterator begin = config.getSparseData().begin_col(line_num);
         arma::sp_mat::iterator end = config.getSparseData().end_col(line_num);
         for (arma::sp_mat::iterator it = begin; it != end; ++it) {
             ss << ' ' << it.row() + 1 << ':' << std::setprecision(8);
+            current_row = it.row();
             ss << *it;
         }
+        //Always output last row
+        if(current_row != config.getSparseData().n_rows-1){
+        	ss << ' ' << config.getSparseData().n_rows << ':' << std::setprecision(8);
+        	ss << config.getSparseData()(config.getSparseData().n_rows, line_num);
+        }
+
     } else {
         for (long int i = 1; i <= config.data.n_cols; ++i) {
             ss << ' ' << i << ':' << std::setprecision(8);

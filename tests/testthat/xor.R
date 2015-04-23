@@ -9,11 +9,11 @@ svm <- SVM(xs,y, lib="svmlight", kernel="linear", gamma=1)
 print("")
 print("svmlight sparse: Alphas, SVs")
 print(svm$getAlpha())
-print(svm$get_SV())
+print(svm$getSV())
 
 svm2 <- SVM(x,y, lib="svmlight", kernel="linear", gamma=1)
 print("")
 print("svmlight dense: Alphas, SVs")
 print(svm2$getAlpha())
-print(svm2$get_SV())
+print(svm2$getSV())
 
