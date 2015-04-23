@@ -221,24 +221,48 @@ evalqOnLoad({
     }
     
     # Binary classification or 2 classes + unlabeled (for transductive learning)
-    if(length(levels) != 2 || (length(levels)==3 && transductive.learning && "TR" %in% levels)){
-      stop("Please pass correct (binary) number of classes or 3 with TR for transductive")
+    if( (length(levels) != 2 && !transductive.learning) || 
+         (length(levels) != 3 && transductive.learning)){
+      stop("Please pass correct (binary) number of classes or 3 for transductive")
     }
 
+    # Decide what label is used for unlabeled examples
+    unlabeled.level = "TR"
+    if(transductive.learning){
+      if(! ("TR" %in% levels || "0" %in% levels ) ){
+        stop("Please include TR or 0 factor in levels for transductive learning")
+      }
+      if("TR" %in% levels && "0" %in% levels ){
+        stop("Couldn't deduce which label to use for transductive learning")
+      }
+      
+      if("TR" %in% levels){
+        unlabeled.level <- "TR"
+      }else{
+        unlabeled.level <- "0"
+      }
+    }
+    
     # This ugly block of code ensures -1, 1 and 0 classes.
     # Contribution to simplifying this are welcome :)
-    levels = levels[levels != 'TR'] # Erasing TR from levels. We will never return it
-    indexes.unlabeled <- y == 'TR'
+    if(transductive.learning){
+      levels = levels[levels != unlabeled.level] # Erasing TR from levels. We will never return it
+      indexes.unlabeled <- y == unlabeled.level
+    }
+    
     indexes.negative <- y == levels[1]
     indexes.positive <- y == levels[2]
     y <- as.integer(y)
-    y[indexes.negative] <- 1 # Standarization
-    y[indexes.positive] <- 2
-    y[indexes.unlabeled] <- 0
+    y[indexes.negative] <- -1 # Standarization
+    y[indexes.positive] <- 1
+    
+    if(transductive.learning){
+      y[indexes.unlabeled] <- 0
+    }
+    
     
     config <- new(SVMConfiguration)
     config$y <- data.matrix(y)
-    
     
     config$use_transductive_learning = transductive.learning
     config$transductive_posratio = transductive.posratio
@@ -283,7 +307,7 @@ evalqOnLoad({
       if(!is.numeric(y)){
         stop("[DEV] breaking change, please fix")
       }
-      config$setClassWeights(as.numeric(class.weights), 1:length(levels))
+      config$setClassWeights(as.numeric(class.weights), c(-1,1))
     }
     
     if (!is.null(example.weights) && !is.logical(example.weights)) {
@@ -434,14 +458,21 @@ evalqOnLoad({
     }
     prediction <- object$getPrediction()
     
-    if(any(prediction == 0) || any(prediction > length(object$levels))){
-       stop("Failed prediction, target not in range 1:length(levels).")
+    if(any(prediction == 0) || length(unique(prediction)) > length(object$levels)){
+       stop("Failed prediction, returned too many unique labels from library.")
     }
+    
     
     if(!is.null(object$levels)){
       # This line works because we do as.numeric() which transforms into 1 and 2
       # And we expect SVM to return same labels as passed
-      prediction <- factor(object$levels[prediction], levels = object$levels)
+      if(length(object$levels) == 2){
+         # Binary case
+         prediction <- factor(object$levels[(prediction+1)/2 + 1], levels = object$levels)
+      }else{
+         prediction <- factor(object$levels[prediction], levels = object$levels)
+      }
+     
     }
     
     prediction

@@ -40,8 +40,33 @@ void SVMLightRunner::processRequest(SVMConfiguration &config) {
     char **argv;
 
     arma::mat unique_labels = arma::unique(config.target);
-    config.neg_target = unique_labels[0];
-    config.pos_target = unique_labels[1];
+
+
+    if(unique_labels.size() !=2 && !config.use_transductive_learning){
+    	printf("Passed 3 labels to svmlight without use_transductive_learning\n");
+    	exit(1);
+    }
+    if((unique_labels.size() <2 || unique_labels.size() > 3)  && config.use_transductive_learning){
+    	printf("Passed incorred # of labels to svmlight (<2 || >3) for transductive learning\n");
+    	exit(1);
+    }
+    if(unique_labels.size() == 2){
+    	if(unique_labels[0] != -1 && unique_labels[1] != 1){
+    		printf("Please pass negative class as -1 and positive as 1");
+    		exit(1);
+    	}
+    }
+    if(unique_labels.size() == 3){
+    	if(unique_labels[0] != 0 && unique_labels[1] != -1
+    			&& unique_labels[2] != 1
+    	){
+    		printf("Please pass negative class as -1 and positive as 1");
+    		exit(1);
+    	}
+    }
+
+    config.neg_target = -1;
+    config.pos_target = 1;
 
     if (!config.isPrediction()) {
         // Learning
@@ -859,7 +884,14 @@ void SVMLightRunner::libraryReadDocuments (
       /* printf("docnum=%ld: Class=%f ",dnum,doc_label); */
       if(doc_label > 0) dpos++;
       if (doc_label < 0) dneg++;
-      if (doc_label == 0) dunlab++;
+      if (doc_label == 0) {
+    	  if(config.use_transductive_learning){
+    		  dunlab++;
+    	  }else{
+    		  printf("Please for transductive learning pass use_transductive_learning\n");
+    		  exit(1);
+    	  }
+      }
       if((wpos>1) && ((words[wpos-2]).wnum>(*totwords))) 
         (*totwords)=(words[wpos-2]).wnum;
       if((*totwords) > MAXFEATNUM) {
@@ -872,7 +904,7 @@ void SVMLightRunner::libraryReadDocuments (
       dnum++;  
       if(verbosity>=1) {
         if((dnum % 100) == 0) {
-      printf("%ld..",dnum); fflush(stdout);
+        	printf("%ld..",dnum); fflush(stdout);
         }
       }
       // GMUM.R changes {
@@ -918,6 +950,7 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     double target_value = config.target[line_num];
 
 
+
     // Handle user-defined labels
     if (target_value == config.neg_target) {
         ss << -1;
@@ -925,6 +958,9 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
         ss << 1;
     } else if (!target_value) {
         ss << 0;
+    }else{
+    	printf("Unrecognized class label %d\n", target_value);
+    	exit(1);
     }
 
     // Optional feature: cost :)
