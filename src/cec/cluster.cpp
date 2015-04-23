@@ -264,8 +264,9 @@ double ClusterConstRadius::calculate_entropy(double cov_mat_trace, int n) {
     arma::mat ClusterConstRadius::get_cov_mat(unsigned int id,
                                   const std::vector<unsigned int> &assignment,
                                   const arma::mat &points){
-		arma::mat cov = arma::diagmat(ClusterOnlyTrace::get_cov_mat(id, assignment, points));
-        return cov * m_r;
+		arma::mat cov = ClusterOnlyTrace::get_cov_mat(id, assignment, points);
+		cov = arma::eye(cov.n_cols, cov.n_cols) * arma::trace(cov) / cov.n_cols;
+		return cov * m_r;
     }
 
 ClusterSpherical::ClusterSpherical(unsigned int id,
