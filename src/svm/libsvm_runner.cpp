@@ -104,7 +104,8 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 
 	int dim = config.getDataDim();
 	ASSERT(dim > 0);
-	config.support_vectors = SvmUtils::libtoarma(model->SV, nr_support_vectors, dim);
+	//config.support_vectors = SvmUtils::libtoarma(model->SV, nr_support_vectors, dim);
+	config.support_vectors = SvmUtils::SvmNodeToArmaSpMat(model->SV, nr_support_vectors, dim);
 
 	// config.SV = (svm_node **) malloc(config.l * sizeof(svm_node*));
 	// for (int i = 0; i < config.l; i++) {
@@ -151,7 +152,8 @@ svm_model* LibSVMRunner::load_model_from_config(SVMConfiguration& config,
 		std::copy(config.alpha_y.begin(), config.alpha_y.end(), model->sv_coef[i *  config.support_vectors.n_rows]);
 	}
 
-	model->SV = armatlib(config.support_vectors);
+    //model->SV = armatlib(config.support_vectors);
+	model->SV = ArmaSpMatToSvmNode(config.support_vectors);
 
 	model->rho = (double *) malloc(
 			config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));

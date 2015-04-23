@@ -56,7 +56,7 @@ public:
 	//convert sparse matrix to armadillo matrix
 	static arma::mat libtoarma(svm_node** svm_nodes, int nr_sv, int dim) {
 		arma::mat ret(nr_sv, dim, arma::fill::zeros);
-		
+
 		for (int row = 0; row < nr_sv; row++) {
 			svm_node* tmp_row = svm_nodes[row];
 			for (int j = 0; tmp_row[j].index != -1; j++) {
@@ -69,12 +69,13 @@ public:
 	}
 
 	//TODO: resize ret matrix
+    // FIXME: Deprecated?
 	static void libToArma(svm_node** svm_nodes, int nr_sv, int dim, arma::mat& ret) {
 		//TODO: resize ret matrix
 		// arma::mat ret(nr_sv, dim);
 
 		for (int row = 0; row < nr_sv; row++) {
-			
+
 			svm_node* tmp_row = svm_nodes[row];
 			for (int j = 0; tmp_row[j].index != -1; j++) {
 				// cout << "Row, j, index, value" << row << " " << j << " " <<
@@ -82,6 +83,22 @@ public:
 				ret(row, tmp_row[j].index - 1) = tmp_row[j].value;
 			}
 		}
+	}
+
+	static arma::sp_mat SvmNodeToArmaSpMat(
+        svm_node** svm_nodes, int nr_sv, int dim
+    ) {
+		arma::sp_mat ret(nr_sv, dim);
+
+		for (int row = 0; row < nr_sv; row++) {
+			svm_node* tmp_row = svm_nodes[row];
+			for (int j = 0; tmp_row[j].index != -1; j++) {
+				// cout << "Row, j, index, value" << row << " " << j << " " <<
+				// tmp_row[j].index << " " << tmp_row[j].value << endl;
+				ret(row, tmp_row[j].index - 1) = tmp_row[j].value;
+			}
+		}
+		return ret;
 	}
 
 	static arma::vec arrtoarmavec(double* arr, int size) {

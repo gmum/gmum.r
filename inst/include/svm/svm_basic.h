@@ -73,7 +73,7 @@ public:
 
     /* Global "stuff" */
     arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
-    arma::mat support_vectors;  // sacherus: number of support vectors x data_dim
+    arma::sp_mat support_vectors;  // sacherus: number of support vectors x data_dim
     arma::mat data;     // armadillo matrix and vector (double)
     arma::vec target;
     arma::vec result;

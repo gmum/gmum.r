@@ -186,7 +186,7 @@ int SVMClient::get_number_class() {
   return config.nr_class;
 }
 
-arma::mat SVMClient::getSV(){
+arma::sp_mat SVMClient::getSV(){
   return config.support_vectors;
 }
 
