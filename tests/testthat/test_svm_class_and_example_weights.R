@@ -24,14 +24,14 @@ sk_ex_SV <- cbind(c(0.86443619886, 2.26975462399, 1.53277921436, 0.154947425697,
                   c(-0.742165020406, -1.4543656746, 1.4693587699, 0.378162519602, 1.20237984878, 
                     1.41059850194, 2.45427350696, 1.12167501649, 1.33367432737, 0.145904260698))
 
-cl_weights <- c(1, 10)
+cl_weights <- c("1"=1, "-1"=10)
 df <- data.frame(x, y)
 
 ex_weights_svm <- SVM(formula=y~., data=df, lib="svmlight", kernel="linear", C=1.0, example.weights=ex_weights)
 cl_weights_svm <- SVM(formula=y~., data=df, lib="svmlight", kernel="linear", C=1.0, class.weights=cl_weights)
 ex_cl_weights_svm <- SVM(formula=y~., data=df, lib="svmlight", kernel="linear", C=1.0, class.weights=cl_weights, example.weights=ex_weights)
 
-ex_SV <- ex_weights_svm$get_SV()
+ex_SV <- ex_weights_svm$getSV()
 
 print(length(ex_SV))
 print(length(sk_ex_SV))
