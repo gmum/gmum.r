@@ -1,3 +1,5 @@
+rm(list=ls())
+
 #EllipseGauss
 energy_value <- as.numeric(read.table(system.file("data_sets", "cec", "EllipseGauss","energy.txt", package="gmum.r")));
 input <- as.matrix(read.table(system.file("data_sets", "cec", "EllipseGauss","input.txt", package="gmum.r")));
@@ -7,7 +9,7 @@ typeof(energy_value);
 typeof(input);
 typeof(cluster);
 
-save.image("~/Documents/gmum.r/data/cec_ellipse_gauss.RData");
+save.image("cec_ellipse_gauss.RData");
 
 env <- c(ls())
 rm(env, list = env)
@@ -21,7 +23,7 @@ typeof(energy_value);
 typeof(input);
 typeof(cluster);
 
-save.image("~/Documents/gmum.r/data/cec_mouse_1.RData");
+save.image("cec_mouse_1.RData");
 
 env <- c(ls())
 rm(env, list = env)
@@ -45,7 +47,7 @@ typeof(dimension);
 typeof(iteration);
 typeof(type);
 
-save.image("~/Documents/gmum.r/data/cec_mouse_1_classic.RData");
+save.image("cec_mouse_1_classic.RData");
 
 env <- c(ls())
 rm(env, list = env)
@@ -69,7 +71,7 @@ typeof(dimension);
 typeof(iteration);
 typeof(type);
 
-save.image("~/Documents/gmum.r/data/cec_mouse_1_spherical.RData");
+save.image("cec_mouse_1_spherical.RData");
 
 env <- c(ls())
 rm(env, list = env)
@@ -93,7 +95,7 @@ typeof(dimension);
 typeof(iteration);
 typeof(type);
 
-save.image("~/Documents/gmum.r/data/cec_mouse_2_spherical.RData");
+save.image("cec_mouse_2_spherical.RData");
 
 env <- c(ls())
 rm(env, list = env)
@@ -107,7 +109,7 @@ typeof(energy_value);
 typeof(input);
 typeof(cluster);
 
-save.image("~/Documents/gmum.r/data/cec_simple_1.RData");
+save.image("cec_simple_1.RData");
 
 env <- c(ls())
 rm(env, list = env)

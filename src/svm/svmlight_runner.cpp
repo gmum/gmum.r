@@ -5,6 +5,7 @@
  * @copyright   GPLv3
  */
 
+
 #include <string.h>
 #include <iostream>
 #include <iomanip>
@@ -306,6 +307,10 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     if (config.coef0){
         kernel_parm->coef_const = config.coef0;
     }
+
+    //This is tricky - both LIBSVM and SVMLIGHT have same default eps.
+    //However in general we should do things like that
+    learn_parm->epsilon_crit=config.eps;
 
 
     // GMUM.R changes }
@@ -980,12 +985,20 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
 
     // Matrix type handling
     if (config.isSparse()) {
+    	int current_row = 0;
         arma::sp_mat::iterator begin = config.getSparseData().begin_col(line_num);
         arma::sp_mat::iterator end = config.getSparseData().end_col(line_num);
         for (arma::sp_mat::iterator it = begin; it != end; ++it) {
             ss << ' ' << it.row() + 1 << ':' << std::setprecision(8);
+            current_row = it.row();
             ss << *it;
         }
+        //Always output last row
+        if(current_row != config.getSparseData().n_rows-1){
+        	ss << ' ' << config.getSparseData().n_rows << ':' << std::setprecision(8);
+        	ss << config.getSparseData()(config.getSparseData().n_rows-1, line_num);
+        }
+
     } else {
         for (long int i = 1; i <= config.data.n_cols; ++i) {
             ss << ' ' << i << ':' << std::setprecision(8);
@@ -1013,8 +1026,8 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
 
     std::ostringstream ss;
     ss << std::setprecision(32) << config.alpha_y[line_num];
-    for (long int i = 1; i <= config.support_vectors.n_cols; ++i) {
-        ss << ' ' << i << ':' << std::setprecision(8) << config.support_vectors(line_num, i-1);
+    for (long int i = 1; i <= config.support_vectors.n_rows; ++i) {
+        ss << ' ' << i << ':' << std::setprecision(8) << config.support_vectors(i-1, line_num);
     }
     ss << " #" << std::endl;
     line_string = ss.str();
@@ -1074,7 +1087,8 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     config.b = - model->b;
 
     config.alpha_y = arma::zeros<arma::vec>(config.l);
-    config.support_vectors = arma::zeros<arma::mat>(config.l, model->totwords);
+    config.support_vectors = \
+        arma::zeros<arma::sp_mat>(config.l, model->totwords);
 
     for (i = 1; i < model->sv_num; i++) {
       for (v = model->supvec[i]->fvec; v; v=v->next) {
@@ -1085,7 +1099,8 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
         }
       }
     }
-    config.w = (config.alpha_y.t() * config.support_vectors).t();
+    config.support_vectors = config.support_vectors.t();
+    config.w = (config.alpha_y.t() * config.support_vectors.t()).t();
     LOG(
         config.log,
         LogLevel::DEBUG,

@@ -16,7 +16,7 @@ int SVMConfiguration::getDataExamplesNumber() {
     }
 }
 
-void SVMConfiguration::setClassWeights(arma::vec class_weights, arma::vec class_weights_labels){
+void SVMConfiguration::setClassWeights(arma::vec class_weights){
 	this->class_weights = class_weights;
     this->use_class_weights = true;
 	class_weight_length = class_weights.size();
@@ -31,7 +31,7 @@ void SVMConfiguration::setClassWeights(arma::vec class_weights, arma::vec class_
     libsvm_class_weights_labels = new int[class_weight_length];
     for(size_t i=0; i<class_weight_length; ++i){
     	libsvm_class_weights[i] = class_weights(i);
-    	libsvm_class_weights_labels[i] = (int)class_weights_labels(i);
+    	libsvm_class_weights_labels[i] = i+1; // this requires (1,2) class labels 
     }
 }
 
@@ -44,7 +44,7 @@ int SVMConfiguration::getDataDim() {
 }
 
 size_t SVMConfiguration::getSVCount() {
-    return this->support_vectors.n_rows;
+    return this->support_vectors.n_cols;
 }
 
 SVMConfiguration::SVMConfiguration(bool prediction) {
@@ -152,8 +152,6 @@ void SVMConfiguration::setPrediction(bool prediction) {
     this->prediction = prediction;
 }
 
-
-
 void SVMConfiguration::setLibrary( std::string library ) {
     if ( library == "libsvm" ) {
         this->library = LIBSVM;
@@ -195,6 +193,11 @@ void SVMConfiguration::set_verbosity(int verbosity){
 
 double SVMConfiguration::getB() {
   return b;
+}
+
+void SVMConfiguration::setSeed(int seed){
+	srand(seed);
+	this->seed = seed;
 }
 
 void SVMConfiguration::setB(double b) {

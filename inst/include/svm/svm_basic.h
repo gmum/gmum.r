@@ -2,6 +2,7 @@
 #define SVM_BASIC_H
 
 #include <string>
+#include <cstdlib>
 
 #ifdef RCPP_INTERFACE
 #include <RcppArmadillo.h>
@@ -27,6 +28,7 @@ enum Preprocess {
 class SVMConfiguration {
 
 public:
+	int seed;
 
     std::string filename; //filename with data
     std::string model_filename;
@@ -76,14 +78,14 @@ public:
 
     /* Global "stuff" */
     arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
-    arma::mat support_vectors;  // sacherus: number of support vectors x data_dim
+    arma::sp_mat support_vectors;   ///< Vectors are transposed (column vectors)
     arma::mat data;     // armadillo matrix and vector (double)
     arma::vec target;
     arma::vec result;
 
     // Sparse data
     bool sparse;
-    arma::sp_mat sparse_data;
+    arma::sp_mat sparse_data;   ///< Data is transposed (one example for one column)
 
     // Class weights
     arma::vec class_weights;
@@ -141,6 +143,8 @@ public:
     // logger
     void set_verbosity( int );
 
+    void setSeed(int);
+
     void setSparse(bool sparse);
 
     /**
@@ -156,7 +160,7 @@ public:
     );
 
     //@param class_weights_labels - needed for libsvm
-    void setClassWeights(arma::vec, arma::vec);
+    void setClassWeights(arma::vec);
 
     arma::sp_mat &getSparseData();
 

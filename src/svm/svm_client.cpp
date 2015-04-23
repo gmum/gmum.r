@@ -64,6 +64,26 @@ void SVMClient::setConfiguration(SVMConfiguration *config) {
     this->config = current_config;
 }
 
+void SVMClient::setW(arma::vec new_w){
+    if (config.kernel_type != _LINEAR) {
+        LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundary is not available with non-linear kernel"));
+    }
+    else if (new_w.n_elem != config.w.n_elem) {
+        LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Vectors are of different length"));
+    }
+    else 
+        config.w = new_w;
+}
+
+void  SVMClient::setAlpha(arma::vec new_alpha){
+    if (new_alpha.n_elem != config.alpha_y.n_elem){
+        LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Vectors are of different length"));
+    }
+    else {
+        config.alpha_y = new_alpha;
+    }
+}
+
 // Getters
 arma::mat SVMClient::getX(){
     return config.data;
@@ -179,7 +199,7 @@ arma::vec SVMClient::getW() {
 }
 
 int SVMClient::get_number_sv() {
-  return config.support_vectors.n_rows;
+  return config.getSVCount();
 }
 
 int SVMClient::get_number_class() {
@@ -187,7 +207,8 @@ int SVMClient::get_number_class() {
 }
 
 arma::mat SVMClient::getSV(){
-  return config.support_vectors;
+    // FIXME: Workaround for R interface
+    return arma::mat(config.support_vectors.t());
 }
 
 SVMConfiguration &SVMClient::getConfiguration() {
@@ -251,11 +272,12 @@ void SVMClient::predictFromConfig() {
     // f(x) = sum{alpha_j * y_j * kernel(x_j, x)} + b, where j means j-th SV}
     for (int i=0; i < n_docs; ++i) {
     	double doc_result = 0;
+        // For linear kernel it is possible to speed up
         if(config.kernel_type == ::_LINEAR){
             if (isSparse()) {
             	doc_result = arma::dot(
-                    config.w.t(),
-                    config.getSparseData().col(i).t()
+                    config.getSparseData().col(i).t(),
+                    config.w.t()
                 );
             } else {
             	doc_result = arma::dot(
@@ -263,7 +285,7 @@ void SVMClient::predictFromConfig() {
                     config.w.t()
                 );
             }
-        }else{
+        } else {
         	for (int j=0; j < config.getSVCount(); ++j) {
         		doc_result += kernel(i, j) * config.alpha_y(j);
         	}
@@ -309,13 +331,13 @@ double SVMClient::kernel(size_t i, size_t j) {
             // svmlight: kernel(b, a) = a*b
             if (isSparse()) {
                 result = arma::dot(
-                    config.support_vectors.row(j),
-                    config.getSparseData().col(i).t()
+                    config.getSparseData().col(i),
+                    config.support_vectors.col(j)
                 );
             } else {
                 result = arma::dot(
                     config.data.row(i),
-                    config.support_vectors.row(j)
+                    config.support_vectors.col(j).t()
                 );
             }
             break;
@@ -326,21 +348,16 @@ double SVMClient::kernel(size_t i, size_t j) {
             if (isSparse()) {
                 result = arma::dot(
                     config.getSparseData().col(i),
-                    config.support_vectors.row(j).t()
+                    config.support_vectors.col(j)
                 );
             } else {
                 result = arma::dot(
                     config.data.row(i),
-                    config.support_vectors.row(j)
+                    config.support_vectors.col(j).t()
                 );
             }
-            result *= config.gamma;
-            result += config.coef0;
-            result = arma::pow(
-                arma::mat(&result, 1, 1),
-                config.degree
-            )[0];
-            break;
+
+            return pow(result * config.gamma + config.coef0, config.degree);
         }
         case _RBF: {
             // libsvm:   kernel(v, u') = exp(-gamma*|u-v|^2)
@@ -350,18 +367,17 @@ double SVMClient::kernel(size_t i, size_t j) {
             if (isSparse()) {
                 norm = arma::norm(
                     config.getSparseData().col(i)
-                    - config.support_vectors.row(j).t(),
+                    - config.support_vectors.col(j),
                     2
                 );
             } else {
                 norm = arma::norm(
-                    config.data.row(i)
-                    - config.support_vectors.row(j),
+                    config.data.row(i).t()
+                    - config.support_vectors.col(j),
                     2
                 );
             }
-            result = exp(neg_gamma * norm * norm);
-            break;
+            return exp(neg_gamma * norm * norm);
         }
         case _SIGMOID: {
             // libsvm:   kernel(v, u') = tanh(gamma*u'*v + coef0)
@@ -370,18 +386,15 @@ double SVMClient::kernel(size_t i, size_t j) {
             if (isSparse()) {
                 tanh_arg = arma::dot(
                     config.getSparseData().col(i),
-                    config.support_vectors.row(j).t()
+                    config.support_vectors.col(j)
                 );
             } else {
                 tanh_arg = arma::dot(
                     config.data.row(i),
-                    config.support_vectors.row(j)
+                    config.support_vectors.col(j).t()
                 );
             }
-            tanh_arg *= config.gamma;
-            tanh_arg += config.coef0;
-            result = arma::tanh(arma::mat(&tanh_arg, 1, 1))[0];
-            break;
+            return tanh(tanh_arg * config.gamma + config.coef0);
         }
         default: {
             LOG(

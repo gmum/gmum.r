@@ -35,7 +35,8 @@ public:
     void setShrinking(int);
     void setProbability(int);
     void setBias(double);
-    // void setAlpha(double*);
+    void setW(arma::vec);
+    void setAlpha(arma::vec);
 
     // additional setters
     void setConfiguration(SVMConfiguration *);
