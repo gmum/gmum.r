@@ -70,6 +70,9 @@ public:
 
     /* SVMLight parameters */
     char *kernel_parm_custom;   // Custom kernel parameter(s)
+    // Transductive learning is supported only by svmlight
+    bool use_transductive_learning;
+    double transductive_posratio;
 
     /* Global "stuff" */
     arma::vec alpha_y;          // SVMLight's alpha*y values for SV's

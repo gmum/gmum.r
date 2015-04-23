@@ -145,6 +145,8 @@ evalqOnLoad({
            kernel      = "linear",
            prep        = "none",
            mclass      = "none",
+           transductive.learning = FALSE,
+           transductive.posratio = -1.,
            C           = 1,
            gamma       = if (is.vector(x)) 1 else 1 / ncol(x),
            coef0       = 0,
@@ -162,6 +164,7 @@ evalqOnLoad({
 
     # check for errors
     if ( lib != "libsvm" && lib != "svmlight") stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" ))  
+    if ( lib != "svmlight" && transductive.learning) stop(paste(GMUM_WRONG_LIBRARY, ": bad library, transductive learning is supported only by svmlight" ))  
     if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
     if (prep != "2e" && prep != "none") stop(paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
     if (mclass != "none") stop(paste(GMUM_NOT_SUPPORTED, ": multiclass" ))
@@ -210,17 +213,35 @@ evalqOnLoad({
     levels <- NULL
     if (is.factor(y)){
       levels <- levels(y)
-      y <- as.integer(y)
     }else{
       # Standarizing, easier for library
       y <- as.factor(y)
       levels <- levels(y)
-      y <- as.integer(y)
       warning("It is recommended to pass y as factor")
     }
     
+    # Binary classification or 2 classes + unlabeled (for transductive learning)
+    if(length(levels) != 2 || (length(levels)==3 && transductive.learning && "TR" %in% levels)){
+      stop("Please pass correct (binary) number of classes or 3 with TR for transductive")
+    }
+
+    # This ugly block of code ensures -1, 1 and 0 classes.
+    # Contribution to simplifying this are welcome :)
+    levels = levels[levels != 'TR'] # Erasing TR from levels. We will never return it
+    indexes.unlabeled <- y == 'TR'
+    indexes.negative <- y == levels[1]
+    indexes.positive <- y == levels[2]
+    y <- as.integer(y)
+    y[indexes.negative] <- 1 # Standarization
+    y[indexes.positive] <- 2
+    y[indexes.unlabeled] <- 0
+    
     config <- new(SVMConfiguration)
     config$y <- data.matrix(y)
+    
+    
+    config$use_transductive_learning = transductive.learning
+    config$transductive_posratio = transductive.posratio
     
     # sparse 
     if (sparse) {
