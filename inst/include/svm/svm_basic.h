@@ -153,7 +153,7 @@ public:
     );
 
     //@param class_weights_labels - needed for libsvm
-    void setClassWeights(arma::vec, arma::vec);
+    void setClassWeights(arma::vec);
 
     arma::sp_mat &getSparseData();
 

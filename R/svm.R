@@ -251,19 +251,29 @@ evalqOnLoad({
     
     if (!is.null(class.weights) && !is.logical(class.weights)) {
       
-      if(is.null(names(class.weights))){
-          stop("Please provide class.weights as named (by classes) list or vector")
+      if(is.null(names(class.weights)) && class.weights != 'auto'){
+          stop("Please provide class.weights as named (by classes) list or vector or 'auto'")
       }
-      # Maps name -> index that is feed into SVM
-      # Note: factor is transformed such that class -> index in levels of factor
-      class.labels.indexes <- sapply(names(class.weights), function(cls){ which(levels== cls)[1] })
-      # Standarize for all libraries (so if passed list("2"=1, "1"=3) it is reversed)
-      class.weights <- class.weights[order(class.labels.indexes)] 
-      # We always pass numeric, so it will work if it is the case
-      if(!is.numeric(y)){
-        stop("[DEV] breaking change, please fix")
+      
+      if (is.character(class.weights) && class.weights == "auto") {
+        # sklearns heuristic automatic class weighting
+        counts <- hist(y, breaks=2, plot=FALSE)$counts
+        inv_freq <- 1 / counts
+        weights <- inv_freq / mean(inv_freq)
+        config$setClassWeights(weights)
       }
-      config$setClassWeights(as.numeric(class.weights), 1:length(levels))
+      else {
+        # Maps name -> index that is feed into SVM
+        # Note: factor is transformed such that class -> index in levels of factor
+        class.labels.indexes <- sapply(names(class.weights), function(cls){ which(levels== cls)[1] })
+        # Standarize for all libraries (so if passed list("2"=1, "1"=3) it is reversed)
+        class.weights <- class.weights[order(class.labels.indexes)] 
+        # We always pass numeric, so it will work if it is the case
+        if(!is.numeric(y)){
+          stop("[DEV] breaking change, please fix")
+        }
+        config$setClassWeights(as.numeric(class.weights))
+      }
     }
     
     if (!is.null(example.weights) && !is.logical(example.weights)) {
