@@ -72,7 +72,7 @@ public:
     arma::vec getAlpha();
     double getBias();
     arma::vec getW();
-    arma::sp_mat getSV();
+    arma::mat getSV();
 
     // additional getters
     SVMConfiguration &getConfiguration();
