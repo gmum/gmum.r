@@ -37,7 +37,7 @@ void TestsFixture::SetUp()
     times = p.times;
 }
 
-void BigDataTestsFixture::SetUp()
+void BigDataTests::SetUp()
 {
     BigDataTestsFixtureParam p(GetParam());
     params = p.default_params->gmum_params;
@@ -60,3 +60,13 @@ void EnergyTests::SetUp()
     TestsFixtureParam p(GetParam());
     expected_energy = p.reader.get_energy();
 }
+
+void ControlEpsTests::SetUp()
+{
+    TestsFixture::SetUp();
+    params.kill_threshold = (params.dataset.n_rows - 1) / static_cast<double>(params.dataset.n_rows);
+    params.log_nclusters = true;
+}
+
+
+
