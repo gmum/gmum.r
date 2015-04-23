@@ -54,7 +54,7 @@ df <- data.frame(x, y)
 # -------------------------------------------------------
 
 no_weights_svm_rbf <- SVM(formula=y~., data=df, lib=lib, kernel="rbf", C=1.0, gamma=0.5)
-SV_rbf <- no_weights_svm_rbf$get_SV()
+SV_rbf <- no_weights_svm_rbf$getSV()
 
 if (verbose) {
 
@@ -78,7 +78,7 @@ if (verbose) {
 # -------------------------------------------------------
 
 no_weights_svm_linear <- SVM(formula=y~., data=df, lib=lib, kernel="linear", C=1.0)
-SV_linear <- no_weights_svm_linear$get_SV()
+SV_linear <- no_weights_svm_linear$getSV()
 
 if (verbose) {
 
@@ -105,7 +105,7 @@ if (verbose) {
 }
 
 weights_svm_rbf <- SVM(formula=y~., data=df, lib="svmlight", kernel="rbf", C=1.0, gamma=0.5, example.weights=weights)
-weights_SV_rbf <- weights_svm_rbf$get_SV()
+weights_SV_rbf <- weights_svm_rbf$getSV()
 
 if (verbose) {
 
@@ -129,7 +129,7 @@ if (verbose) {
 # -------------------------------------------------------
 
 weights_svm_linear <- SVM(formula=y~., data=df, lib="svmlight", kernel="linear", C=1.0, example.weights=weights)
-weights_SV_linear <- weights_svm_linear$get_SV()
+weights_SV_linear <- weights_svm_linear$getSV()
 
 if (verbose) {
     
