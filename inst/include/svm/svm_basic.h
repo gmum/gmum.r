@@ -2,25 +2,25 @@
 #define SVM_BASIC_H
 
 #include <string>
+#include <cstdlib>
 
 #ifdef RCPP_INTERFACE
-#include <R.h>
 #include <RcppArmadillo.h>
 #endif
 
 #include "log.h"
 
 enum KernelType {
-	_LINEAR, _POLY, _RBF, _SIGMOID // _PRECOMPUTED
+    _LINEAR, _POLY, _RBF, _SIGMOID // _PRECOMPUTED
 };
 
 
 enum SVMType {
-	LIBSVM, SVMLIGHT
+    LIBSVM, SVMLIGHT
 };
 
 enum Preprocess {
-	TWOE, NONE
+    TWOE, NONE
 };
 // NORM is solely for test purposes
 
@@ -28,128 +28,121 @@ enum Preprocess {
 class SVMConfiguration {
 
 public:
+	int seed;
 
-	std::string filename; //filename with data
-	std::string model_filename;
-	std::string output_filename;
-	bool prediction;
+    std::string filename; //filename with data
+    std::string model_filename;
+    std::string output_filename;
+    bool prediction;
 
-	std::string error_msg; //if something went wrong, there is msg with error
+    std::string error_msg; //if something went wrong, there is msg with error
 
-	SVMType library;
-	int svm_type;
-	KernelType kernel_type;
-	Preprocess preprocess;
+    SVMType library;
+    int svm_type;
+    KernelType kernel_type;
+    Preprocess preprocess;
 
-	int degree;		// for poly
-	double gamma;	// for poly/rbf/sigmoid
-	double coef0;	// for poly/sigmoid
+    int degree;     // for poly
+    double gamma;   // for poly/rbf/sigmoid
+    double coef0;   // for poly/sigmoid
 
-	//these are for training only
-	double cache_size; 	// in MB
-	double eps;			// stopping criteria
-	double C;			// for C_SVC, EPSILON_SVR and NU_SVR
-	int nr_weight;		// for C_SVC
-	int *weight_label;	// for C_SVC
-	double* weight;		// for C_SVC
-	int shrinking;		// use the shrinking heuristics
-	int probability; 	// do probability estimates
+    //these are for training only
+    double cache_size;  // in MB
+    double eps;         // stopping criteria
+    double C;           // for C_SVC, EPSILON_SVR and NU_SVR
+    double* libsvm_class_weights;     // for C_SVC
+    //which weight is for which class
+    int* libsvm_class_weights_labels;     // for C_SVC
+    int class_weight_length;      // for C_SVC
+    int shrinking;      // use the shrinking heuristics
+    int probability;    // do probability estimates
 
-	int nr_class; /* number of classes, = 2 in regression/one class svm */
+    int nr_class; /* number of classes, = 2 in regression/one class svm */
 
-	//libsvm model parameters
-	//TODO: delete those variables
-	int *label; /* label of each class (label[k]) */
-	int *nSV; /* number of SVs for each class (nSV[k]) */
-	/* nSV[0] + nSV[1] + ... + nSV[k-1] = l */
+    //libsvm model parameters
+    //TODO: delete those variables
+    int *label; /* label of each class (label[k]) */
+    int *nSV; /* number of SVs for each class (nSV[k]) */
+    /* nSV[0] + nSV[1] + ... + nSV[k-1] = l */
 
-	/*TODO: neccessery? check what are they doing */
-	double nu; /* for NU_SVC, ONE_CLASS, and NU_SVR */
-	double p; /* for EPSILON_SVR */
-
-	//	libsvm Model parameters
-	int l; //TODO: remove it in svm_ligth
-	//libsvm model parameters
-
+    /*TODO: neccessery? check what are they doing */
+    double nu; /* for NU_SVC, ONE_CLASS, and NU_SVR */
+    double p; /* for EPSILON_SVR */
+    int l; //TODO: remove it in svm_ligth
 
     /* SVMLight parameters */
-    double threshold_b;
     char *kernel_parm_custom;   // Custom kernel parameter(s)
+
+    /* Global "stuff" */
     arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
-    arma::mat support_vectors;	// sacherus: number of support vectors x data_dim
-    arma::sp_mat sparse_support_vectors;
-    // User-defined classification mode labels
-    //TODO: delete it; we are using pos_target, and neg_target;
-    int label_negative; 
-    int label_positive;
+    arma::sp_mat support_vectors;   ///< Vectors are transposed (column vectors)
+    arma::mat data;     // armadillo matrix and vector (double)
+    arma::vec target;
+    arma::vec result;
 
-	arma::mat data;		// armadillo matrix and vector (double)
-	arma::vec target;
-	arma::vec result;
+    // Sparse data
+    bool sparse;
+    arma::sp_mat sparse_data;   ///< Data is transposed (one example for one column)
 
-    // sparse data
-	bool sparse;
-    arma::sp_mat sparse_data;
+    // Class weights
+    arma::vec class_weights;
+    bool use_class_weights;
 
-	// sparse matrix things
-	arma::vec sp_data; 
-	arma::Col<int> row;
-	arma::Col<int> col;
-	int dim;
-	int data_dim;
+    // Example weights (used by svmlight)
+    bool use_example_weights;
+    arma::vec example_weights;
 
-    // Data cost
-    bool use_cost;              // currently only svmligth-implemented
-    arma::vec data_cost;
+    Logger log;
 
-	Logger log;
+    arma::vec w; //d
+    double b;
+    double pos_target;
+    double neg_target;
 
-	//universal parameters
-	arma::vec w; //d
-	double pos_target;
-	double neg_target;
+    //2eParameters & Variables
+    double cov_eps_smoothing_start;
+    double cov_eps_smoothing_end;
+    arma::mat inv_of_sqrt_of_cov;
+    arma::mat tmp_data;
+    arma::mat tmp_target;
 
-	//2eParameters & Variables
-	double cov_eps_smoothing_start;
-	double cov_eps_smoothing_end;
-	arma::mat inv_of_sqrt_of_cov;
-	arma::mat tmp_data;
-	arma::mat tmp_target;
+    // debug
+    bool debug_library_predict;
 
 
-	// constructors
-	SVMConfiguration();
-	SVMConfiguration(bool);
+    // constructors
+    SVMConfiguration();
+    SVMConfiguration(bool);
 
-	// methods
-	arma::mat getData();
-	void setData(arma::mat);
-	void setDefaultParams();
+    // methods
+    arma::mat getData();
+    void setData(arma::mat);
+    void setDefaultParams();
 
-	void setFilename(std::string);
-	std::string getFilename();
+    void setFilename(std::string);
+    std::string getFilename();
 
-	void setModelFilename(std::string);
-	std::string getModelFilename();
+    void setModelFilename(std::string);
+    std::string getModelFilename();
 
-	void setOutputFilename(std::string);
-	std::string getOutputFilename();
+    void setOutputFilename(std::string);
+    std::string getOutputFilename();
 
-	void setPrediction(bool);
-	bool isPrediction();
+    void setPrediction(bool);
+    bool isPrediction();
 
-#ifdef RCPP_INTERFACE
-	void setWeights( Rcpp::NumericVector );
-#endif
-	void setLibrary( std::string );
-	void setKernel( std::string );
-	void setPreprocess( std::string );
-	double getB();
-	void setB(double b);
-	// logger
-	void set_verbosity( int );
 
-	void setSparse(bool sparse);
+    void setLibrary( std::string );
+    void setKernel( std::string );
+    void setPreprocess( std::string );
+    double getB();
+    void setB(double b);
+    // logger
+    void set_verbosity( int );
+
+    void setSeed(int);
+
+    void setSparse(bool sparse);
 
     /**
      * Sets sparse data from CSC sparse matrix format
@@ -159,14 +152,18 @@ public:
         arma::uvec colptr,
         arma::vec values,
         size_t n_rows,
-        size_t n_cols
+        size_t n_cols,
+        bool one_indexed=false
     );
 
-    arma::sp_mat getSparseData();
+    //@param class_weights_labels - needed for libsvm
+    void setClassWeights(arma::vec);
 
-	bool isSparse();
-	int getDataDim();
-	int getDataExamplesNumber();
+    arma::sp_mat &getSparseData();
+
+    bool isSparse();
+    int getDataDim();
+    int getDataExamplesNumber();
     size_t getSVCount();
 };
 

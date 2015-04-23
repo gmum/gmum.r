@@ -202,7 +202,6 @@ TEST(LibSVMRunnerTest, integration_svmclient_predict) {
 	svm_config.target = b;
 	LibSVMRunner lib_svm_runner;
 	lib_svm_runner.processRequest(svm_config);
-    
 
     std::cout << "Testing SVMClient prediction..." << std::endl << std::flush;
 	svm_config.data = helper_testing_data_01();

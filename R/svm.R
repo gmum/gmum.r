@@ -155,7 +155,8 @@ evalqOnLoad({
            example.weights    = NULL,
            cache_size  = 200,
            tol         = 1e-3,
-           verbosity   = 4) {
+           verbosity   = 4,
+           seed = NULL) {
     
     call <- match.call(expand.dots = TRUE)
     call[[1]] <- as.name("SVM")
@@ -212,6 +213,12 @@ evalqOnLoad({
     if (is.factor(y)){
       levels <- levels(y)
       y <- as.integer(y)
+    }else{
+      # Standarizing, easier for library
+      y <- as.factor(y)
+      levels <- levels(y)
+      y <- as.integer(y)
+      warning("It is recommended to pass y as factor")
     }
     
     config <- new(SVMConfiguration)
@@ -221,23 +228,18 @@ evalqOnLoad({
     if (sparse) {
       config$sparse <- 1
       
-      # OLD (for our conversion) TODO: Delete after rewrite in LibSVMRunner
-      config$sp_x <- x@ra
-      config$sp_row <- x@ia
-      config$sp_col <- x@ja
-      config$dim <- nrow(x)
-      config$data_dim <- ncol(x)
-
       # NEW (for arma::sp_mat)  
       x <- as.matrix.csc(x)
-      config$set_sparse_data(x@ja, x@ia, x@ra, nrow(x), ncol(x))
+      config$set_sparse_data(x@ja, x@ia, x@ra, nrow(x), ncol(x), TRUE)
     }
     else {
       config$sparse <- 0
       config$x <- x
     }
     
-    
+    if(!is.null(seed)){
+      config$setSeed(seed)
+    }
     config$setLibrary(lib)
     config$setKernel(kernel)
     config$setPreprocess(prep)
@@ -250,16 +252,30 @@ evalqOnLoad({
     config$eps <- tol
     config$cache_size <- cache_size
     
-    
-    if(!is.null(class.weights) && !is.logical(class.weights)) {
+    if (!is.null(class.weights) && !is.logical(class.weights)) {
+      
+      if(is.null(names(class.weights)) && class.weights != 'auto'){
+          stop("Please provide class.weights as named (by classes) list or vector or 'auto'")
+      }
+      
       if (is.character(class.weights) && class.weights == "auto") {
+        # sklearns heuristic automatic class weighting
         counts <- hist(y, breaks=2, plot=FALSE)$counts
         inv_freq <- 1 / counts
         weights <- inv_freq / mean(inv_freq)
-        config$setWeights(weights)
+        config$setClassWeights(weights)
       }
       else {
-        config$setWeights(class.weights)
+        # Maps name -> index that is feed into SVM
+        # Note: factor is transformed such that class -> index in levels of factor
+        class.labels.indexes <- sapply(names(class.weights), function(cls){ which(levels== cls)[1] })
+        # Standarize for all libraries (so if passed list("2"=1, "1"=3) it is reversed)
+        class.weights <- class.weights[order(class.labels.indexes)] 
+        # We always pass numeric, so it will work if it is the case
+        if(!is.numeric(y)){
+          stop("[DEV] breaking change, please fix")
+        }
+        config$setClassWeights(as.numeric(class.weights))
       }
     }
     
@@ -411,7 +427,13 @@ evalqOnLoad({
     }
     prediction <- object$getPrediction()
     
+    if(any(prediction == 0) || any(prediction > length(object$levels))){
+       stop("Failed prediction, target not in range 1:length(levels).")
+    }
+    
     if(!is.null(object$levels)){
+      # This line works because we do as.numeric() which transforms into 1 and 2
+      # And we expect SVM to return same labels as passed
       prediction <- factor(object$levels[prediction], levels = object$levels)
     }
     

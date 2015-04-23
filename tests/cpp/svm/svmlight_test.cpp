@@ -44,6 +44,21 @@ protected:
         testing_target_01 = helper_testing_target_01();
         testing_target_02 = helper_testing_target_02();
 
+        sparse_matrix_csc_01_row_indices =
+            helper_sparse_matrix_csc_01_row_indices();
+        sparse_matrix_csc_01_column_pointers =
+            helper_sparse_matrix_csc_01_column_pointers();
+        sparse_matrix_csc_01_values =
+            helper_sparse_matrix_csc_01_values();
+        sparse_matrix_csc_01_nrow =
+            helper_sparse_matrix_csc_01_nrow();
+        sparse_matrix_csc_01_ncol =
+            helper_sparse_matrix_csc_01_ncol();
+        sparse_matrix_csc_01_sp_mat =
+            helper_sparse_matrix_csc_01_sp_mat();
+        sparse_matrix_csc_01_learning_target =
+            helper_sparse_matrix_csc_01_learning_target();
+
         std::cout << "Starting test..." << std::endl << std::flush;
     }
 
@@ -68,6 +83,14 @@ protected:
     arma::mat testing_data_01;
     arma::vec testing_target_01;
     arma::vec testing_target_02;
+
+	arma::uvec sparse_matrix_csc_01_row_indices;
+    arma::uvec sparse_matrix_csc_01_column_pointers;
+    arma::vec sparse_matrix_csc_01_values;
+    size_t sparse_matrix_csc_01_nrow;
+    size_t sparse_matrix_csc_01_ncol;
+    arma::sp_mat sparse_matrix_csc_01_sp_mat;
+    arma::vec sparse_matrix_csc_01_learning_target;
 };
 
 
@@ -101,9 +124,9 @@ TEST_F(SVMLightRunnerTest, processRequest_learning) {
     // highest feature index - no assignment to read-only data
     ASSERT_EQ(svm_config.data.n_cols, 4);
     // number of support vectors
-    ASSERT_EQ(svm_config.l, 5);
+    ASSERT_EQ(svm_config.l, 3);
     // threshold b
-    ASSERT_DOUBLE_EQ(svm_config.threshold_b, 0.11450359507913976);
+    ASSERT_DOUBLE_EQ(svm_config.b, 2.8710367416806548e-13);
 }
 
 TEST_F(SVMLightRunnerTest, processRequest_classification) {
@@ -203,6 +226,8 @@ TEST_F(SVMLightRunnerTest, processRequest_with_sigmoid_kernel) {
     svm_config.data = learning_data_01;
     svm_config.target = learning_target_02;
     svm_config.setPrediction(false);
+    /* C calulated by SVMLight: [avg. x*x]^-1 */
+    svm_config.C = 2.8411;
     svmlr.processRequest(svm_config);
 
     std::cout << "Testing prediction..." << std::endl << std::flush;
@@ -220,6 +245,7 @@ TEST_F(SVMLightRunnerTest, integration_svmclient_predict) {
     svm_config.data = learning_data_01;
     svm_config.target = learning_target_01;
     svm_config.setPrediction(false);
+    // We must do it that way because we are testing SVMLightRunner here :)
     svmlr.processRequest(svm_config);
 
     std::cout << "Testing SVMClient prediction..." << std::endl << std::flush;
@@ -228,10 +254,40 @@ TEST_F(SVMLightRunnerTest, integration_svmclient_predict) {
     SVMClient *svm_client = new SVMClient(&svm_config);
     svm_client->predict(testing_data_01);
     SVMConfiguration client_config = svm_client->getConfiguration();
-    
-    for (int i = 0; i < 4; ++i) {
+
+    for (int i = 0; i < testing_target_01.n_rows; ++i) {
         ASSERT_DOUBLE_EQ(
             client_config.result[i], testing_target_01[i]);
+    }
+}
+
+TEST_F(SVMLightRunnerTest, integration_svmclient_sparse_predict) {
+    std::cout << "Testing learning..." << std::endl << std::flush;
+    // Sparse matrix is currently being held as transposed
+    svm_config.sparse_data = sparse_matrix_csc_01_sp_mat.t();
+    svm_config.target = sparse_matrix_csc_01_learning_target;
+    svm_config.setPrediction(false);
+    svm_config.setSparse(true);
+    svmlr.processRequest(svm_config);
+
+    std::cout << "Testing SVMClient sparse prediction..." << std::endl << std::flush;
+    svm_config.setPrediction(true);
+
+    SVMClient *svm_client = new SVMClient(&svm_config);
+    ASSERT_EQ(svm_client->isSparse(), true);
+
+    svm_client->sparse_predict(
+        sparse_matrix_csc_01_row_indices,
+        sparse_matrix_csc_01_column_pointers,
+        sparse_matrix_csc_01_values,
+        sparse_matrix_csc_01_nrow,
+        sparse_matrix_csc_01_ncol
+    );
+    SVMConfiguration client_config = svm_client->getConfiguration();
+
+    for (int i = 0; i < sparse_matrix_csc_01_learning_target.n_rows; ++i) {
+        ASSERT_DOUBLE_EQ(
+            client_config.result[i], sparse_matrix_csc_01_learning_target[i]);
     }
 }
 
