@@ -66,5 +66,5 @@ cec_energy <- function(dataset, clustering, entropy_func)
         curr_cluster_energy <- cluster_energy(curr_cluster_entropy, cluster_npoints, npoints)
         energy <- energy + curr_cluster_energy
     }
-    return(energy)
+    return(as.numeric(energy))
 }
