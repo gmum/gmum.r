@@ -46,7 +46,7 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 		//examples x dim
 		//config.alpha_y = SvmUtils::arrtoarmavec(config.sv_coef, config.l);
 		//DIM W: (nsv x 1)^T x nsv x dim = 1 x dim
-		config.w = (config.alpha_y.t() * config.support_vectors).t();
+		config.w = (config.alpha_y.t() * config.support_vectors.t()).t();
 	} else {
 		arma_prediction(config);
 	}
@@ -104,7 +104,8 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 
 	int dim = config.getDataDim();
 	ASSERT(dim > 0);
-	config.support_vectors = SvmUtils::libtoarma(model->SV, nr_support_vectors, dim);
+	//config.support_vectors = SvmUtils::libtoarma(model->SV, nr_support_vectors, dim);
+	config.support_vectors = SvmUtils::SvmNodeToArmaSpMat(model->SV, nr_support_vectors, dim).t();
 
 	// config.SV = (svm_node **) malloc(config.l * sizeof(svm_node*));
 	// for (int i = 0; i < config.l; i++) {
@@ -141,17 +142,19 @@ svm_model* LibSVMRunner::load_model_from_config(SVMConfiguration& config,
 
 	model = Malloc(svm_model, 1);
 
-	model->l =  config.support_vectors.n_rows; //support vectors number
+	model->l =  config.getSVCount(); //support vectors number
 	model->nr_class = config.nr_class;
 	model->param = *param;
 
 	model->sv_coef = (double **) malloc(model->nr_class * sizeof(double*));
 	for (int i = 0; i < config.nr_class - 1; i++) {
-		model->sv_coef[i] = (double *) malloc(config.support_vectors.n_rows * sizeof(double));
-		std::copy(config.alpha_y.begin(), config.alpha_y.end(), model->sv_coef[i *  config.support_vectors.n_rows]);
+		model->sv_coef[i] = (double *) malloc(config.getSVCount() * sizeof(double));
+		std::copy(config.alpha_y.begin(), config.alpha_y.end(), model->sv_coef[i *  config.getSVCount()]);
 	}
 
-	model->SV = armatlib(config.support_vectors);
+    model->SV = armatlib(arma::mat(config.support_vectors.t()));
+	// FIXME: Why below is not working?
+    //model->SV = ArmaSpMatToSvmNode(config.support_vectors);
 
 	model->rho = (double *) malloc(
 			config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));

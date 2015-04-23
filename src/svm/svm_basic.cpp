@@ -44,7 +44,7 @@ int SVMConfiguration::getDataDim() {
 }
 
 size_t SVMConfiguration::getSVCount() {
-    return this->support_vectors.n_rows;
+    return this->support_vectors.n_cols;
 }
 
 SVMConfiguration::SVMConfiguration(bool prediction) {

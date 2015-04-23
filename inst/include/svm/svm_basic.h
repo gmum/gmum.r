@@ -75,14 +75,14 @@ public:
 
     /* Global "stuff" */
     arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
-    arma::mat support_vectors;  // sacherus: number of support vectors x data_dim
+    arma::sp_mat support_vectors;   ///< Vectors are transposed (column vectors)
     arma::mat data;     // armadillo matrix and vector (double)
     arma::vec target;
     arma::vec result;
 
     // Sparse data
     bool sparse;
-    arma::sp_mat sparse_data;
+    arma::sp_mat sparse_data;   ///< Data is transposed (one example for one column)
 
     // Class weights
     arma::vec class_weights;

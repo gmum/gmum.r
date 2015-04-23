@@ -11,7 +11,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <time.h>
-#include "svm.h" 
+#include "svm.h"
 #include "svm_handler.h"
 #include "svm_basic.h"
 
