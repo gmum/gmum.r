@@ -46,7 +46,8 @@ test_that("auto class weighting works for svm" ,{
   liver <- read.matrix.csr(system.file("data_sets", "svm", "liver-disorders", mustWork=TRUE, package="gmum.r"))
   x <- liver$x
   y <- as.factor(liver$y)
-    
+  set.seed(777)
+  i <- as.numeric(createDataPartition(y, times=1, list=FALSE))  
   svm <- SVM(x[i],y[i], C=1, class.weights = 'auto')
   w <- svm$getClassWeights() 
   p <- predict(svm, x[-i])
