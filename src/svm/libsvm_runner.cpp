@@ -198,6 +198,7 @@ svm_parameter* LibSVMRunner::configuration_to_problem(
 	param->nr_weight = config.nr_weight;
 	param->weight_label = config.weight_label;
 	param->weight = config.weight;
+	param->max_iter = config.max_iter;
 
 	if ( config.kernel_type == _LINEAR ) {
 			param->kernel_type = LINEAR;
