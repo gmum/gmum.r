@@ -55,13 +55,19 @@ protected:
     std::vector<unsigned int> expected_clustering;
 };
 
+class ControlEpsTests : public TestsFixture
+{
+public:
+    virtual void SetUp();
+};
+
 struct BigDataTestsFixtureParam : public TestsFixtureParam
 {
     BigDataTestsFixtureParam(ClusterReader _reader, boost::shared_ptr<DefaultGmumParams> _params, unsigned int _iterations_limit, unsigned int _times = 1);
     unsigned int iterations_limit;
 };
 
-class BigDataTestsFixture : public ::testing::TestWithParam< BigDataTestsFixtureParam >
+class BigDataTests : public ::testing::TestWithParam< BigDataTestsFixtureParam >
 {
 public:
     virtual void SetUp();

@@ -48,7 +48,7 @@ TEST_P(CoverageTests, IsCoverageCorrect)
     EXPECT_GT(number_of_times_acceptable , times / 2.0);
 }
 
-TEST_P(BigDataTestsFixture, BigDataTest)
+TEST_P(BigDataTests, BigDataTest)
 {
     for (unsigned int i = 0; i < times; ++i)
     {
@@ -60,11 +60,9 @@ TEST_P(BigDataTestsFixture, BigDataTest)
     }
 }
 
-TEST_P(TestsFixture, IsControlEpsBoundaryCaseCorrect)
+TEST_P(ControlEpsTests, IsControlEpsBoundaryCaseCorrect)
 {
     CecConfiguration conf;
-    params.kill_threshold = (params.dataset.n_rows - 1) / static_cast<double>(params.dataset.n_rows);
-    params.log_nclusters = true;
     conf.set_params(params);
     conf.set_algorithm("hartigan");
     CecModel cec(&conf);
@@ -72,7 +70,7 @@ TEST_P(TestsFixture, IsControlEpsBoundaryCaseCorrect)
     EXPECT_EQ(final_nclusters, 1);
 }
 
-INSTANTIATE_TEST_CASE_P(CEC_NumericTest, BigDataTestsFixture, ::testing::Values(
+INSTANTIATE_TEST_CASE_P(CEC_NumericTest, BigDataTests, ::testing::Values(
     BigDataTestsFixtureParam(ClusterReader("bigData_1"), boost::make_shared<DefaultGmumParams>(3, kstandard, kkmeanspp), 25),
     BigDataTestsFixtureParam(ClusterReader("bigData_1"), boost::make_shared<DefaultGmumParams>(3, kstandard, krandom), 45),
                                                                                 
@@ -104,6 +102,23 @@ INSTANTIATE_TEST_CASE_P(CEC, EnergyTests, ::testing::Values(
 ));
 
 INSTANTIATE_TEST_CASE_P(CEC, CoverageTests, ::testing::Values(
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, ksphere, kkmeanspp), 20),
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, ksphere, krandom), 20),
+
+    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, ksphere, kkmeanspp), 20),
+    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, ksphere, krandom), 20),
+
+    TestsFixtureParam(ClusterReader("EllipseGauss"), boost::make_shared<DefaultGmumParams>(4, kstandard, kkmeanspp), 20),
+    TestsFixtureParam(ClusterReader("EllipseGauss"), boost::make_shared<DefaultGmumParams>(4, kstandard, krandom), 20),
+
+    TestsFixtureParam(ClusterReader("simple_1"), boost::make_shared<DefaultGmumParams>(1, kstandard, krandom), 20),
+    TestsFixtureParam(ClusterReader("simple_1"), boost::make_shared<DefaultGmumParams>(1, kstandard, kkmeanspp), 20),
+
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<MixTypeParamsThreeSpheres>(kkmeanspp), 20),
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<MixTypeParamsThreeSpheres>(krandom), 20)
+));
+
+INSTANTIATE_TEST_CASE_P(CEC, ControlEpsTests, ::testing::Values(
     TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, ksphere, kkmeanspp), 20),
     TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, ksphere, krandom), 20),
 

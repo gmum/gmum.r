@@ -1,77 +1,70 @@
-
-tr <- function(mat){
-
-    return(sum(diag(mat)))
-}
-energyOneCluster <- function( kind, probab, covariances,dimOfData){ # Move this to separate function parameter passed 
-  energy <- switch(kind,
-  { # 1
-     
-    energy = probab*( -log(probab)+0.5*log(det(covariances) ) +dimOfData*0.5*log(2*pi*exp(1)))
-  },      
-  { # 2
-    N = dimOfData
-    print("N")
-    print(N)
-    print("tr(covariances)")
-    print(tr(covariances))
-    print("log(tr(covariances) )")
-    print(log(tr(covariances) ))
-    p = probab
-    print("p")
-    print(p)
-    energy = probab*( -log(probab)+0.5*dimOfData*log(tr(covariances) ) +dimOfData*0.5*log(2*pi*exp(1)/dimOfData))
-  })
-    print("energy")
-    print(energy)
-  return(energy)
+standard_entropy <- function(cluster_points)
+{
+    dimension <- dim(cluster_points)[2]
+    cluster_cov_mat <- cov_mat(cluster_points)
+    return( dimension/2 * log(2 * pi * exp(1)) + log(det(cluster_cov_mat)) / 2 )
 }
 
-CECEnergy<-function(dataSet,label,kind){
-  k<-length(unique(label))
-  dim<-ncol(dataSet)  
-    means <- matrix(0,k,dim)
-    probab<- matrix(0,k,1)
-    energyArray<- matrix(0,k,1)
-    covariances <- array(c(1:k*dim*dim),c(k,dim,dim))
-    energy<-0
-    for (i in 1:k){
-      means[i,] <- apply(dataSet[label == i,],2,mean)
-      covariances[i,,] <- ((length(dataSet[,1])-1)/length(dataSet[,1]))*cov(dataSet[label == i,])
-      probab[i] <- length(dataSet[label == i,1])/length(dataSet[,1])
-      energyArray[i]  <- energyOneCluster(kind=2, probab=probab[i], covariances=covariances[i,,],dim)
-      energy <- energy + energyOneCluster(kind=2, probab=probab[i], covariances=covariances[i,,],dim)
+sphere_entropy <- function(cluster_points)
+{
+    dimension <- dim(cluster_points)[2]
+    cluster_cov_mat_trace <- cov_mat_trace(cluster_points)
+    return ( dimension/2 * log(2 * pi * exp(1) / dimension) + dimension / 2 * log(cluster_cov_mat_trace) )
+}
+
+diagonal_entropy <- function(cluster_points)
+{
+    dimension <- dim(cluster_points)[2]
+    cluster_cov_mat <- cov_mat(cluster_points)
+    return ( dimension/2 * log(2 * pi * exp(1)) + log(prod(diag(cluster_cov_mat))) / 2 )
+}
+
+cluster_energy <- function(cluster_entropy, cluster_npoints, npoints)
+{
+    p <- cluster_npoints / npoints
+    return( p * (cluster_entropy - log(p)) )
+}
+
+cov_mat <- function(cluster_points)
+{
+    npoints <- dim(cluster_points)[1]
+    dimension <- dim(cluster_points)[2]
+    mean <- as.vector(colMeans(cluster_points))
+    result <- matrix(nrow = dimension, ncol = dimension, data = 0)
+    for(i in 1:npoints)
+    {
+        p <- as.matrix(cluster_points[i, ] - mean)
+        result <- result + (p %*% t(p)) / npoints        
     }
-    list(means=means,covariances=covariances,energyArray=energyArray,energy=energy)
+    return(result)    
 }
 
-dataPath = file.path("..","..","inst","data_sets","cec")
-simplePath = file.path(dataPath,"simple_1")
-mousePath = file.path(dataPath,"mouse_1")
-mousePathS = file.path(dataPath,"mouse_1_spherical")
-ellipsePath = file.path(dataPath,"EllipseGauss")
-rpath = mousePathS
-dataSetPath = file.path(rpath,"input.txt")
-labelPathPrzemek = file.path(rpath,"cluster.txt")
-labelPathMy = file.path(rpath,"our_clusters.txt")
+cov_mat_trace <- function(cluster_points)
+{
+    npoints <- dim(cluster_points)[1]
+    mean <- as.vector(colMeans(cluster_points))
+    result <- 0
+    for(i in 1:npoints)
+    {
+        p <- cluster_points[i, ] - mean
+        result <- result + (p %*% p)       
+    }
+    result <- result / npoints
+    return(result)   
+}
 
-dataSet <- matrix(as.numeric(as.matrix(read.table(dataSetPath),skipNul=TRUE)),ncol=2);
-
-labelPrzemek <- as.matrix(read.table(labelPathPrzemek));
-print(min(labelPrzemek))
-labelPrzemek<- labelPrzemek + (1 - min(labelPrzemek))
-#labelMy <- as.matrix(read.table(labelPathMy));
-#print (min(labelMy))
-#labelMy<- labelMy + (1 - min(labelMy))
-
-
-print(CECEnergy(dataSet,labelPrzemek,1))
-#print(CECEnergy(dataSet,labelMy,1))
-  
-  
-#file.path("gmum.r\\test\\data\\simple_1\\input.txt", fsep = .Platform$file.sep)
-#plot(dataSet,pch=20,col=label)
-
-
-
-
+cec_energy <- function(dataset, clustering, entropy_func)
+{
+    dimension <- ncol(dataset)
+    npoints <- dim(dataset)[1]
+    energy <- 0
+    for (i in unique(clustering))
+    {
+        cluster_points <- dataset[clustering == i,] 
+        cluster_npoints <- dim(cluster_points)[1]
+        curr_cluster_entropy <- entropy_func(cluster_points)
+        curr_cluster_energy <- cluster_energy(curr_cluster_entropy, cluster_npoints, npoints)
+        energy <- energy + curr_cluster_energy
+    }
+    return(as.numeric(energy))
+}
