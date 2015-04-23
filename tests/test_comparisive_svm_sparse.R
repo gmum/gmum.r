@@ -9,9 +9,13 @@ if (!file.exists(x_file) || !file.exists(y_file)) {
   stop("Use script 'download_mushrooms/sh' to get the dataset")
 }
 
-x <- read.matrix.csr(system.file("inst", "data_sets", "svm", "mushrooms.x", mustWork=TRUE, package="gmum.r"))
-y <- read.table(system.file("inst", "data_sets", "svm", "mushrooms.y", mustWork=TRUE, package="gmum.r"))
-y <- as.vector(unlist(y))
+
+#x <- read.matrix.csr(system.file("inst", "data_sets", "svm", "mushrooms.x", mustWork=TRUE, package="gmum.r"))
+#y <- read.table(system.file("inst", "data_sets", "svm", "mushrooms.y", mustWork=TRUE, package="gmum.r"))
+#y <- as.vector(unlist(y))
+
+x <- read.matrix.csr(system.file("data_sets", "svm", "dexter_train.data", mustWork=TRUE, package="gmum.r"))
+y <- as.factor(unlist(read.table(system.file("data_sets", "svm", "dexter_train.labels", mustWork=TRUE, package="gmum.r"))))
 
 
 libs <- c("svmlight", "libsvm")
@@ -26,7 +30,6 @@ for (lib_i in libs) {
     
     test_time <- Sys.time()
     gmum_pred <- predict(svm, x)
-    print(gmum_pred)
     gmum_test_time <- Sys.time() - test_time
     
     gmum_acc <- svm.accuracy(prediction=gmum_pred, target=y)

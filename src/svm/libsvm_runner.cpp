@@ -152,8 +152,9 @@ svm_model* LibSVMRunner::load_model_from_config(SVMConfiguration& config,
 		std::copy(config.alpha_y.begin(), config.alpha_y.end(), model->sv_coef[i *  config.support_vectors.n_rows]);
 	}
 
-    //model->SV = armatlib(config.support_vectors);
-	model->SV = ArmaSpMatToSvmNode(config.support_vectors);
+    model->SV = armatlib(arma::mat(config.support_vectors));
+	// FIXME: Why below is not working?
+    //model->SV = ArmaSpMatToSvmNode(config.support_vectors);
 
 	model->rho = (double *) malloc(
 			config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
