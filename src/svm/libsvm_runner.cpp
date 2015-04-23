@@ -95,7 +95,7 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 		throw std::invalid_argument( "Code is not implemented for more than 2 classes right now");
 	}
 
-	config.threshold_b = -model->rho[0];
+	config.b = -model->rho[0];
 	// memcpy(config.rho, ,
 	// 		config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
 
@@ -157,7 +157,7 @@ svm_model* LibSVMRunner::load_model_from_config(SVMConfiguration& config,
 			config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
 
 	//i need change sign in b
-	double local_rho = -config.threshold_b;
+	double local_rho = -config.b;
 	
 	if(config.nr_class != 2) {
 		throw std::invalid_argument( "Code is not implemented for more than 2 classes right now");

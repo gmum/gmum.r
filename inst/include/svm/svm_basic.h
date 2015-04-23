@@ -66,27 +66,19 @@ public:
     /*TODO: neccessery? check what are they doing */
     double nu; /* for NU_SVC, ONE_CLASS, and NU_SVR */
     double p; /* for EPSILON_SVR */
-
-    //  libsvm Model parameters
     int l; //TODO: remove it in svm_ligth
-    //libsvm model parameters
-
 
     /* SVMLight parameters */
-    double threshold_b;
     char *kernel_parm_custom;   // Custom kernel parameter(s)
+
+    /* Global "stuff" */
     arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
     arma::mat support_vectors;  // sacherus: number of support vectors x data_dim
-    // User-defined classification mode labels
-    //TODO: delete it; we are using pos_target, and neg_target;
-    int label_negative; 
-    int label_positive;
-
     arma::mat data;     // armadillo matrix and vector (double)
     arma::vec target;
     arma::vec result;
 
-    // sparse data
+    // Sparse data
     bool sparse;
     arma::sp_mat sparse_data;
 
@@ -100,8 +92,8 @@ public:
 
     Logger log;
 
-    //universal parameters
     arma::vec w; //d
+    double b;
     double pos_target;
     double neg_target;
 

@@ -194,11 +194,11 @@ void SVMConfiguration::set_verbosity(int verbosity){
 }
 
 double SVMConfiguration::getB() {
-  return threshold_b;
+  return b;
 }
 
 void SVMConfiguration::setB(double b) {
-  threshold_b = b;
+  this->b = b;
 }
 
 void SVMConfiguration::setDefaultParams() {
