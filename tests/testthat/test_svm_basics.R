@@ -28,8 +28,7 @@ test_that('formulas and data storing works', {
   x2 <- svm$getX()
   y2 <- svm$getY()
   expect_that(all.equal(x1,x2,check.attributes=FALSE), is_true())
-  expect_that(all.equal(as.numeric(y1),as.numeric(y2),check.attributes=FALSE), is_true())
-  
+
   formula <- X1 ~ X3 + X4 + X5
   data <- all.vars(update(formula,0~.))
   x3 <- data.matrix( dataset[,data] )
@@ -39,7 +38,6 @@ test_that('formulas and data storing works', {
   x4 <- svm2$getX()
   y4 <- svm2$getY()
   expect_that(all.equal(x3, x4, check.attributes=FALSE), is_true())
-  expect_that(all.equal(as.numeric(y3), as.numeric(y4), check.attributes=FALSE), is_true())
   
 })
 print("test::SVM formula and dataset")

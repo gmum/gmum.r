@@ -246,7 +246,8 @@ evalqOnLoad({
     # This ugly block of code ensures -1, 1 and 0 classes.
     # Contribution to simplifying this are welcome :)
     if(transductive.learning){
-      levels = levels[levels != unlabeled.level] # Erasing TR from levels. We will never return it
+      # Erasing TR from levels. We will never return it
+      levels = levels[levels != unlabeled.level] 
       indexes.unlabeled <- y == unlabeled.level
     }
     
@@ -260,6 +261,7 @@ evalqOnLoad({
       y[indexes.unlabeled] <- 0
     }
     
+    print(y[1:10])
     
     config <- new(SVMConfiguration)
     config$y <- data.matrix(y)
