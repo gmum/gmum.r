@@ -64,6 +64,26 @@ void SVMClient::setConfiguration(SVMConfiguration *config) {
     this->config = current_config;
 }
 
+void SVMClient::setW(arma::vec new_w){
+    if (config.kernel_type != _LINEAR) {
+        LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundary is not available with non-linear kernel"));
+    }
+    else if (new_w.n_elem != config.w.n_elem) {
+        LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Vectors are of different length"));
+    }
+    else 
+        config.w = new_w;
+}
+
+void  SVMClient::setAlpha(arma::vec new_alpha){
+    if (new_alpha.n_elem != config.alpha_y.n_elem){
+        LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Vectors are of different length"));
+    }
+    else {
+        config.alpha_y = new_alpha;
+    }
+}
+
 // Getters
 arma::mat SVMClient::getX(){
     return config.data;
