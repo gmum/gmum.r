@@ -38,3 +38,28 @@ test_that('Simple test that class.weights works for libsvm and svmlight', {
     }
   }
 })
+print("test::svm class weights")
+
+test_that("auto class weighting works for svm" ,{
+  library(caret)
+  library(e1071)
+  liver <- read.matrix.csr(system.file("data_sets", "svm", "liver-disorders", mustWork=TRUE, package="gmum.r"))
+  x <- liver$x
+  y <- as.factor(liver$y)
+  set.seed(777)
+  i <- as.numeric(createDataPartition(y, times=1, list=FALSE))  
+  svm <- SVM(x[i],y[i], C=1, class.weights = 'auto')
+  w <- svm$getClassWeights() 
+  p <- predict(svm, x[-i])
+  acc <- svm.accuracy(p, y[-i])
+  
+  e_svm <- e1071::svm(x[i],y[i], type='C-classification', kernel="linear", 
+                      class.weights = list("1"=w[1], "2"=w[2]), cost=1, scale=FALSE)
+  e_p <- predict(e_svm, x[-i])
+  e_acc <- svm.accuracy(e_p, y[-i])
+  
+  diff <- w - c(1.15942, 0.84057)
+  
+  expect_true(mean(diff) < 1e-2)
+})
+print("test::svm auto class weights")

@@ -2,6 +2,7 @@
 #define SVM_BASIC_H
 
 #include <string>
+#include <cstdlib>
 
 #ifdef RCPP_INTERFACE
 #include <RcppArmadillo.h>
@@ -27,6 +28,7 @@ enum Preprocess {
 class SVMConfiguration {
 
 public:
+	int seed;
 
     std::string filename; //filename with data
     std::string model_filename;
@@ -138,6 +140,8 @@ public:
     // logger
     void set_verbosity( int );
 
+    void setSeed(int);
+
     void setSparse(bool sparse);
 
     /**
@@ -153,7 +157,7 @@ public:
     );
 
     //@param class_weights_labels - needed for libsvm
-    void setClassWeights(arma::vec, arma::vec);
+    void setClassWeights(arma::vec);
 
     arma::sp_mat &getSparseData();
 

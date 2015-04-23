@@ -5,6 +5,7 @@
  * @copyright   GPLv3
  */
 
+
 #include <string.h>
 #include <iostream>
 #include <iomanip>
@@ -281,6 +282,10 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     if (config.coef0){
         kernel_parm->coef_const = config.coef0;
     }
+
+    //This is tricky - both LIBSVM and SVMLIGHT have same default eps.
+    //However in general we should do things like that
+    learn_parm->epsilon_crit=config.eps;
 
 
     // GMUM.R changes }
