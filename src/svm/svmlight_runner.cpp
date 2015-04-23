@@ -977,8 +977,8 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
 
     std::ostringstream ss;
     ss << std::setprecision(32) << config.alpha_y[line_num];
-    for (long int i = 1; i <= config.support_vectors.n_cols; ++i) {
-        ss << ' ' << i << ':' << std::setprecision(8) << config.support_vectors(line_num, i-1);
+    for (long int i = 1; i <= config.support_vectors.n_rows; ++i) {
+        ss << ' ' << i << ':' << std::setprecision(8) << config.support_vectors(i-1, line_num);
     }
     ss << " #" << std::endl;
     line_string = ss.str();
@@ -1038,7 +1038,8 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     config.b = - model->b;
 
     config.alpha_y = arma::zeros<arma::vec>(config.l);
-    config.support_vectors = arma::zeros<arma::mat>(config.l, model->totwords);
+    config.support_vectors = \
+        arma::zeros<arma::sp_mat>(config.l, model->totwords);
 
     for (i = 1; i < model->sv_num; i++) {
       for (v = model->supvec[i]->fvec; v; v=v->next) {
@@ -1049,7 +1050,8 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
         }
       }
     }
-    config.w = (config.alpha_y.t() * config.support_vectors).t();
+    config.support_vectors = config.support_vectors.t();
+    config.w = (config.alpha_y.t() * config.support_vectors.t()).t();
     LOG(
         config.log,
         LogLevel::DEBUG,

@@ -199,7 +199,7 @@ arma::vec SVMClient::getW() {
 }
 
 int SVMClient::get_number_sv() {
-  return config.support_vectors.n_rows;
+  return config.getSVCount();
 }
 
 int SVMClient::get_number_class() {
@@ -275,8 +275,8 @@ void SVMClient::predictFromConfig() {
         if(config.kernel_type == ::_LINEAR){
             if (isSparse()) {
             	doc_result = arma::dot(
-                    config.w.t(),
-                    config.getSparseData().col(i).t()
+                    config.getSparseData().col(i).t(),
+                    config.w.t()
                 );
             } else {
             	doc_result = arma::dot(
@@ -331,12 +331,12 @@ double SVMClient::kernel(size_t i, size_t j) {
             if (isSparse()) {
                 result = arma::dot(
                     config.getSparseData().col(i),
-                    config.support_vectors.row(j).t()
+                    config.support_vectors.col(j)
                 );
             } else {
                 result = arma::dot(
                     config.data.row(i),
-                    config.support_vectors.row(j)
+                    config.support_vectors.col(j).t()
                 );
             }
             break;
@@ -347,12 +347,12 @@ double SVMClient::kernel(size_t i, size_t j) {
             if (isSparse()) {
                 result = arma::dot(
                     config.getSparseData().col(i),
-                    config.support_vectors.row(j).t()
+                    config.support_vectors.col(j)
                 );
             } else {
                 result = arma::dot(
                     config.data.row(i),
-                    config.support_vectors.row(j)
+                    config.support_vectors.col(j).t()
                 );
             }
 
@@ -365,14 +365,14 @@ double SVMClient::kernel(size_t i, size_t j) {
             double norm = 0;
             if (isSparse()) {
                 norm = arma::norm(
-                    config.getSparseData().col(i).t()
-                    - config.support_vectors.row(j),
+                    config.getSparseData().col(i)
+                    - config.support_vectors.col(j),
                     2
                 );
             } else {
                 norm = arma::norm(
-                    config.data.row(i)
-                    - config.support_vectors.row(j),
+                    config.data.row(i).t()
+                    - config.support_vectors.col(j),
                     2
                 );
             }
@@ -385,12 +385,12 @@ double SVMClient::kernel(size_t i, size_t j) {
             if (isSparse()) {
                 tanh_arg = arma::dot(
                     config.getSparseData().col(i),
-                    config.support_vectors.row(j).t()
+                    config.support_vectors.col(j)
                 );
             } else {
                 tanh_arg = arma::dot(
                     config.data.row(i),
-                    config.support_vectors.row(j)
+                    config.support_vectors.col(j).t()
                 );
             }
             return tanh(tanh_arg * config.gamma + config.coef0);
