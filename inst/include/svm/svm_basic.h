@@ -2,6 +2,7 @@
 #define SVM_BASIC_H
 
 #include <string>
+#include <cstdlib>
 
 #ifdef RCPP_INTERFACE
 #include <RcppArmadillo.h>
@@ -27,6 +28,7 @@ enum Preprocess {
 class SVMConfiguration {
 
 public:
+	int seed;
 
     std::string filename; //filename with data
     std::string model_filename;
@@ -137,6 +139,8 @@ public:
     void setB(double b);
     // logger
     void set_verbosity( int );
+
+    void setSeed(int);
 
     void setSparse(bool sparse);
 

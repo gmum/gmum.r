@@ -195,6 +195,11 @@ double SVMConfiguration::getB() {
   return b;
 }
 
+void SVMConfiguration::setSeed(int seed){
+	srand(seed);
+	this->seed = seed;
+}
+
 void SVMConfiguration::setB(double b) {
   this->b = b;
 }

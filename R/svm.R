@@ -155,7 +155,8 @@ evalqOnLoad({
            example.weights    = NULL,
            cache_size  = 200,
            tol         = 1e-3,
-           verbosity   = 4) {
+           verbosity   = 4,
+           seed = NULL) {
     
     call <- match.call(expand.dots = TRUE)
     call[[1]] <- as.name("SVM")
@@ -236,7 +237,9 @@ evalqOnLoad({
       config$x <- x
     }
     
-    
+    if(!is.null(seed)){
+      config$setSeed(seed)
+    }
     config$setLibrary(lib)
     config$setKernel(kernel)
     config$setPreprocess(prep)

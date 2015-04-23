@@ -33,7 +33,7 @@ RCPP_MODULE(svm_wrapper) {
 			.field("sparse", &SVMConfiguration::sparse)
 
 			.method("set_sparse_data", &SVMConfiguration::setSparseData)
-
+			.method("setSeed", &SVMConfiguration::setSeed)
 			.method("setPrediction", &SVMConfiguration::setPrediction)
 			.method("setLibrary", &SVMConfiguration::setLibrary)
 			.method("setKernel", &SVMConfiguration::setKernel)
