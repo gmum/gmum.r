@@ -960,7 +960,7 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
         //Always output last row
         if(current_row != config.getSparseData().n_rows-1){
         	ss << ' ' << config.getSparseData().n_rows << ':' << std::setprecision(8);
-        	ss << config.getSparseData()(config.getSparseData().n_rows, line_num);
+        	ss << config.getSparseData()(config.getSparseData().n_rows-1, line_num);
         }
 
     } else {
