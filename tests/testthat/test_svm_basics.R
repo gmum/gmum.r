@@ -79,5 +79,34 @@ test_that("svm accepts and deals properly with factors", {
   
 })
 
+test_that("svm max.iter works", {
+  
+  data(svm_breast_cancer_dataset)
+  ds <- svm.breastcancer.dataset
+  x <- subset(ds, select = -X1)
+  y <- factor(unlist(ds['X1']))
+
+  
+  start_time <- Sys.time()
+  svm1 <- SVM(x,y, lib="libsvm", max.iter = 10)
+  restricted_time <- Sys.time() - start_time
+  
+  start_time <- Sys.time()
+  svm2 <- SVM(x,y, lib="libsvm")
+  normal_time <- Sys.time() - start_time
+  
+  expect_true(restricted_time < normal_time)
+  
+  start_time <- Sys.time()
+  svm1 <- SVM(x,y, lib="svmlight", max.iter = 10)
+  restricted_time <- Sys.time() - start_time
+  
+  start_time <- Sys.time()
+  svm2 <- SVM(x,y, lib="svmlight")
+  normal_time <- Sys.time() - start_time
+  
+  expect_true(restricted_time < normal_time)
+})
+
 
 

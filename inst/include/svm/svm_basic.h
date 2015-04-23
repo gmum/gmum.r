@@ -56,6 +56,7 @@ public:
     int class_weight_length;      // for C_SVC
     int shrinking;      // use the shrinking heuristics
     int probability;    // do probability estimates
+    int max_iter;       // when to stop optimization
 
     int nr_class; /* number of classes, = 2 in regression/one class svm */
 
@@ -69,6 +70,7 @@ public:
     double nu; /* for NU_SVC, ONE_CLASS, and NU_SVR */
     double p; /* for EPSILON_SVR */
     int l; //TODO: remove it in svm_ligth
+
 
     /* SVMLight parameters */
     char *kernel_parm_custom;   // Custom kernel parameter(s)
