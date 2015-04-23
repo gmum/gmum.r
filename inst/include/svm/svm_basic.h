@@ -54,6 +54,7 @@ public:
 	double* weight;		// for C_SVC
 	int shrinking;		// use the shrinking heuristics
 	int probability; 	// do probability estimates
+	int max_iter; 	    // when to stop optimisation
 
 	int nr_class; /* number of classes, = 2 in regression/one class svm */
 

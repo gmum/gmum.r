@@ -234,7 +234,6 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     learn_parm->svm_maxqpsize=10;
     learn_parm->svm_newvarsinqp=0;
     learn_parm->svm_iter_to_shrink=-9999;
-    learn_parm->maxiter=100000;
     learn_parm->kernel_cache_size=40;
     /* upper bound C on alphas */
     learn_parm->svm_c=0.0;
@@ -257,6 +256,11 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     kernel_parm->coef_const=1;
     strcpy(kernel_parm->custom,"empty");
     strcpy(type,"c");
+
+    if (config.max_iter == -1)
+        learn_parm->maxiter = 100000;
+    else
+        learn_parm->maxiter = config.max_iter;
 
     if (static_cast<long int>(config.kernel_type) == 3) {
         // sigmoid tanh(s a*b + c)

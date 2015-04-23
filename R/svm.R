@@ -155,6 +155,7 @@ evalqOnLoad({
            example.weights    = NULL,
            cache_size  = 200,
            tol         = 1e-3,
+           max.iter    = -1,
            verbosity   = 4) {
     
     call <- match.call(expand.dots = TRUE)
@@ -249,6 +250,7 @@ evalqOnLoad({
     config$degree <- degree
     config$eps <- tol
     config$cache_size <- cache_size
+    config$max_iter <- max.iter
     
     
     if(!is.null(class.weights) && !is.logical(class.weights)) {

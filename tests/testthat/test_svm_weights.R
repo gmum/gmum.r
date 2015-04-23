@@ -1,7 +1,8 @@
 library(gmum.r)
 library(caret)
 
-liver <- read.table(system.file("inst", "data_sets", "svm", "liver-disorders", mustWork=TRUE, package="gmum.r"), quote="\"")
+liver <- read.matrix.csr(system.file("inst", "data_sets", "svm", "liver-disorders", mustWork=TRUE, package="gmum.r"))
+
 x <- liver[,-1]
 y <- liver[,1]
 
