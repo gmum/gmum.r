@@ -226,14 +226,14 @@ TEST_F(SVMLightRunnerTest, processRequest_with_sigmoid_kernel) {
     svm_config.data = learning_data_01;
     svm_config.target = learning_target_02;
     svm_config.setPrediction(false);
+    /* C calulated by SVMLight: [avg. x*x]^-1 */
+    svm_config.C = 2.8411;
     svmlr.processRequest(svm_config);
 
     std::cout << "Testing prediction..." << std::endl << std::flush;
     svm_config.data = testing_data_01;
     svm_config.setPrediction(true);
     svmlr.processRequest(svm_config);
-
-    std::cout << svm_config.result << std::endl;
 
     for (int i = 0; i < 4; ++i) {
         ASSERT_DOUBLE_EQ(svm_config.result[i], testing_target_02[i]);
