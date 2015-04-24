@@ -145,6 +145,8 @@ evalqOnLoad({
            kernel      = "linear",
            prep        = "none",
            mclass      = "none",
+           transductive.learning = FALSE,
+           transductive.posratio = -1.,
            C           = 1,
            gamma       = if (is.vector(x)) 1 else 1 / ncol(x),
            coef0       = 0,
@@ -164,13 +166,15 @@ evalqOnLoad({
 
     # check for errors
     if ( lib != "libsvm" && lib != "svmlight") stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" ))  
+    if ( lib != "svmlight" && transductive.learning) stop(paste(GMUM_WRONG_LIBRARY, ": bad library, transductive learning is supported only by svmlight" ))  
     if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
     if (prep != "2e" && prep != "none") stop(paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
     if (mclass != "none") stop(paste(GMUM_NOT_SUPPORTED, ": multiclass" ))
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
     if (C < 0 || gamma < 0 || degree < 1) stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
-      
+    if ((transductive.posratio < 0 && transductive.posratio != -1) || transductive.posratio > 1) stop("Please pass transductive.posratio in range [0,1]")  
+    
     # check data
     if(nrow(x) != length(y)) stop("x and y have different lengths")
     if(inherits(x, "Matrix")) {
@@ -213,17 +217,62 @@ evalqOnLoad({
     levels <- NULL
     if (is.factor(y)){
       levels <- levels(y)
-      y <- as.integer(y)
     }else{
       # Standarizing, easier for library
       y <- as.factor(y)
       levels <- levels(y)
-      y <- as.integer(y)
       warning("It is recommended to pass y as factor")
     }
     
+    # Binary classification or 2 classes + unlabeled (for transductive learning)
+    if( (length(levels) != 2 && !transductive.learning) || 
+         (length(levels) != 3 && transductive.learning)){
+      stop("Please pass correct (binary) number of classes or 3 for transductive")
+    }
+
+    # Decide what label is used for unlabeled examples
+    unlabeled.level = "TR"
+    unlabeled.level = "TR"
+    if(transductive.learning){
+      if(! ("TR" %in% levels || "0" %in% levels ) ){
+        stop("Please include TR or 0 factor in levels for transductive learning")
+      }
+      if("TR" %in% levels && "0" %in% levels ){
+        stop("Couldn't deduce which label to use for transductive learning")
+      }
+      
+      if("TR" %in% levels){
+        unlabeled.level <- "TR"
+      }else{
+        unlabeled.level <- "0"
+      }
+    }
+    # This ugly block of code ensures -1, 1 and 0 classes.
+    # Contribution to simplifying this are welcome :)
+    if(transductive.learning){
+      # Erasing TR from levels. We will never return it
+      levels = levels[levels != unlabeled.level] 
+      indexes.unlabeled <- y == unlabeled.level  
+      z <- y[!indexes.unlabeled]
+      z <- as.integer(factor(z, levels=levels))
+      z[z==1] = -1
+      z[z==2] = 1
+      
+      y <- as.integer(y)
+      y[indexes.unlabeled] <- 0
+      y[!indexes.unlabeled] <- z
+    }else{
+      y <- as.integer(y) # Standarization, omits 0!
+      y[y==1] = -1 # Standarize it further!
+      y[y==2] = 1
+    }
+    
+    
     config <- new(SVMConfiguration)
     config$y <- data.matrix(y)
+    
+    config$use_transductive_learning = transductive.learning
+    config$transductive_posratio = transductive.posratio
     
     # sparse 
     if (sparse) {
@@ -429,14 +478,21 @@ evalqOnLoad({
     }
     prediction <- object$getPrediction()
     
-    if(any(prediction == 0) || any(prediction > length(object$levels))){
-       stop("Failed prediction, target not in range 1:length(levels).")
+    if(any(prediction == 0) || length(unique(prediction)) > length(object$levels)){
+       stop("Failed prediction, returned too many unique labels from library.")
     }
+    
     
     if(!is.null(object$levels)){
       # This line works because we do as.numeric() which transforms into 1 and 2
       # And we expect SVM to return same labels as passed
-      prediction <- factor(object$levels[prediction], levels = object$levels)
+      if(length(object$levels) == 2){
+         # Binary case
+         prediction <- factor(object$levels[(prediction+1)/2 + 1], levels = object$levels)
+      }else{
+         prediction <- factor(object$levels[prediction], levels = object$levels)
+      }
+     
     }
     
     prediction

@@ -166,6 +166,7 @@ void svm_learn_classification(DOC **docs, double *class, long int
   }
   if(verbosity>=2) {
     printf("%ld positive, %ld negative, and %ld unlabeled examples.\n",trainpos,trainneg,totdoc-trainpos-trainneg); fflush(stdout);
+    printf("transductive=%ld, ", transduction);
   }
 
   /* caching makes no sense for linear kernel */
