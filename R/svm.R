@@ -172,7 +172,8 @@ evalqOnLoad({
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
     if (C < 0 || gamma < 0 || degree < 1) stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
-      
+    if ((transductive.posratio < 0 && transductive.posratio != -1) || transductive.posratio > 1) stop("Please pass transductive.posratio in range [0,1]")  
+    
     # check data
     if(nrow(x) != length(y)) stop("x and y have different lengths")
     if(inherits(x, "Matrix")) {
@@ -250,14 +251,13 @@ evalqOnLoad({
     if(transductive.learning){
       # Erasing TR from levels. We will never return it
       levels = levels[levels != unlabeled.level] 
-      indexes.unlabeled <- y == unlabeled.level
-      
-      y <- as.integer(y)
-      
+      indexes.unlabeled <- y == unlabeled.level  
       z <- y[!indexes.unlabeled]
       z <- as.integer(factor(z, levels=levels))
       z[z==1] = -1
       z[z==2] = 1
+      
+      y <- as.integer(y)
       y[indexes.unlabeled] <- 0
       y[!indexes.unlabeled] <- z
     }else{
