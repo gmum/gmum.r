@@ -19,7 +19,7 @@ void TwoeSVMPostprocessor::processRequest(SVMConfiguration &data) {
 
 		//TODO: Use copying memory for better memory optimalization
 		//DIM PROJECTION: examps x dim x dim x 1 = exams x 1
-    	arma::vec w = data.inv_of_sqrt_of_cov.t() * data.w;
+    	arma::vec w = data.inv_of_sqrt_of_cov.t() * arma::vec(data.w);
     	
 		double p_plus = stddev(SvmUtils::matrixByValue(data.data, data.target, data.pos_target) * w);
 		double p_minus = stddev(SvmUtils::matrixByValue(data.data, data.target, data.neg_target) * w);

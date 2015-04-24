@@ -1,6 +1,6 @@
 ds <- svm.dataset.xor()
 x <- ds[,c(1,2)]
-y <- ds[,3]
+y <- as.factor(ds[,3])
 
 library(SparseM)
 xs <- as(x, "matrix.csr")
