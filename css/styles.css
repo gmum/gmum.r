@@ -32,23 +32,28 @@ section {
     min-height: calc(100% - 1px);
 }
 
+h1 {
+    font-family: 'Titillium Web';
+    font-weight: 600;
+}
+
 @media (min-width: 0) {
     h1 {
-        font-size: 4em;
+        font-size: 3.5em;
     }
 
     h2 {
-        font-size: 3em;
+        font-size: 2.2em;
     }
 }
 
 @media (min-width: 992px) {
     h1 {
-        font-size: 6em;
+        font-size: 4.2em;
     }
 
     h2 {
-        font-size: 4em;
+        font-size: 2.8em;
     }
 }
 
@@ -96,11 +101,11 @@ code {
 }
 
 .row.head {
-    margin-bottom: 50px;
+    margin-bottom: 25px;
 }
 
 hr.primary {
-    border: 3px solid;
+    border: 2px solid;
     max-width: 40vw;
     margin: 30px auto;
 }
@@ -392,7 +397,7 @@ hr.primary {
 #about .footer {
     background-color: #d0d0d0;
     display: inline-block;
-    margin: 0 auto;
+    margin: 10px auto 0 auto;
     padding: 10px;
 }
 
@@ -465,7 +470,7 @@ hr.primary {
 #contribute .footer {
     background-color: rgba(217, 92, 92, 0.1);
     display: inline-block;
-    margin: auto 10px 20px 10px;
+    margin: 10px 10px 20px 10px;
     padding: 10px;
 }
 
