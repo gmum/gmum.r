@@ -167,22 +167,6 @@ TEST_F(SVMLightRunnerTest, test_globals_cleaning) {
     ASSERT_EQ(kernel_cache_statistic, null_long);
 }
 
-TEST_F(SVMLightRunnerTest, processRequest_classification_tagged_classes) {
-    std::cout << "Testing learning..." << std::endl << std::flush;
-    svm_config.data = learning_data_01;
-    svm_config.target = learning_target_02;
-    svm_config.setPrediction(false);
-    svmlr.processRequest(svm_config);
-
-    std::cout << "Testing prediction..." << std::endl << std::flush;
-    svm_config.data = testing_data_01;
-    svm_config.setPrediction(true);
-    svmlr.processRequest(svm_config);
-
-    for (int i = 0; i < 4; ++i) {
-        ASSERT_DOUBLE_EQ(svm_config.result[i], testing_target_02[i]);
-    }
-}
 
 TEST_F(SVMLightRunnerTest, processRequest_with_poly_kernel) {
     std::cout << "Testing learning..." << std::endl << std::flush;

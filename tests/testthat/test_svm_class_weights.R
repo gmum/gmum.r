@@ -7,7 +7,7 @@ library(gmum.r)
 test_that('Simple test that class.weights works for libsvm and svmlight', {
   library(SparseM)
   
-  for(weight_pos in c(1,2,3)){
+  for(weight_pos in c(1,2,10)){
     for(lib in c("svmlight", "libsvm")){
       liver <- read.matrix.csr(system.file("data_sets", "svm", "liver-disorders", mustWork=TRUE, package="gmum.r"))
       x <- liver$x

@@ -29,10 +29,16 @@ void SVMConfiguration::setClassWeights(arma::vec class_weights){
     }
     libsvm_class_weights = new double[class_weight_length];
     libsvm_class_weights_labels = new int[class_weight_length];
-    for(size_t i=0; i<class_weight_length; ++i){
-    	libsvm_class_weights[i] = class_weights(i);
-    	libsvm_class_weights_labels[i] = i+1; // this requires (1,2) class labels 
+
+    if(this->class_weight_length != 2){
+        printf("SVMLight doesn't support multiclass classification. Please pass two class weights. \n");
+        exit(1);
     }
+
+    libsvm_class_weights[0] = class_weights(0);
+    libsvm_class_weights_labels[0] = -1;
+    libsvm_class_weights[1] = class_weights(1);
+    libsvm_class_weights_labels[1] = 1;
 }
 
 int SVMConfiguration::getDataDim() {
