@@ -73,7 +73,10 @@ void SVMClient::setW(arma::vec new_w){
         LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Vectors are of different length"));
     }
     else 
-        config.w = new_w;
+        config.w = arma::sp_mat(new_w.n_elem,1);
+        for (int i = 0; i != new_w.n_elem; ++i) {
+            if (new_w(i) != 0) config.w(i,0) = new_w(i);
+        }
 }
 
 void  SVMClient::setAlpha(arma::vec new_alpha){
@@ -176,7 +179,7 @@ double SVMClient::getBias() {
 
 arma::vec SVMClient::getW() {       
     if ( config.kernel_type == _LINEAR ) {
-        return config.w;
+        return arma::vec(config.w);
     }
     else {
     	LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundary is not available with non-linear kernel"));

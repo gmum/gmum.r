@@ -1106,8 +1106,11 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
       }
     }
     config.support_vectors = config.support_vectors.t();
-    config.w = (config.alpha_y.t() * config.support_vectors.t()).t();
-
+    arma::vec w = (config.alpha_y.t() * config.support_vectors.t()).t();
+    config.w = arma::sp_mat(w.n_elem,1);
+    for (int i = 0; i != w.n_elem; ++i) {
+      if (w(i) != 0) config.w(i,0) = w(i);
+    }
 
     LOG(
         config.log,

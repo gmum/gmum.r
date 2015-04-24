@@ -14,7 +14,6 @@ test_that('accuracy is calculated', {
   
   svm <- SVM(formula, ds, lib="libsvm", kernel="linear", C=10); 
   pred <- predict(svm, x)
-  length(pred)
   acc <- svm.accuracy(prediction=pred, target=y)
   
   expect_that(acc, is_a("numeric"))

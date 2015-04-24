@@ -99,7 +99,7 @@ public:
 
     Logger log;
 
-    arma::vec w; //d
+    arma::sp_mat w; //d
     double b;
     double pos_target;
     double neg_target;
