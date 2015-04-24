@@ -241,13 +241,6 @@ void SVMClient::predict( arma::mat problem ) {
 void SVMClient::predictFromConfig() {
     LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".predictFromConfig() Started.");
 
-    // FIXME: Calculate TwoE prediction in this method
-    if (config.preprocess == TWOE) {
-        // Request prediction from handlers when not globally supported
-        requestPredict();
-        return;
-    }
-
     // Number of docs is a number of rows in data matrix
     size_t n_docs = config.getDataExamplesNumber();
     config.result = arma::zeros<arma::vec>(n_docs);
@@ -454,37 +447,36 @@ void SVMClient::createFlow() {
     Preprocess preprocess = config.preprocess;
     std::vector<SVMHandler*> handlers;
 
-
-        switch (svm_type) {
-            case LIBSVM: {
-                LibSVMRunner *runner = new LibSVMRunner();
-                handlers.push_back(runner);
-                break;
-            }
-            case SVMLIGHT : {   
-        SVMLightRunner *runner = new SVMLightRunner();      // Wating for svm light runner implementation
-                handlers.push_back(runner);
-                break;
-            }
-            default: {
-                LibSVMRunner *runner = new LibSVMRunner();              // dafault will be libsvm
-                handlers.push_back(runner);
-                break;
-            }
+    switch (svm_type) {
+        case LIBSVM: {
+            LibSVMRunner *runner = new LibSVMRunner();
+            handlers.push_back(runner);
+            break;
         }
+        case SVMLIGHT: {
+            SVMLightRunner *runner = new SVMLightRunner();
+            handlers.push_back(runner);
+            break;
+        }
+        default: {
+            LibSVMRunner *runner = new LibSVMRunner();
+            handlers.push_back(runner);
+            break;
+        }
+    }
 
     switch (preprocess) {
-      case TWOE :   {   
-          TwoeSVMPostprocessor *post_runner = new TwoeSVMPostprocessor();
-                    TwoeSVMPreprocessor *pre_runner = new TwoeSVMPreprocessor();
-                    handlers.insert( handlers.begin(), pre_runner );
-                    handlers.push_back( post_runner );
-                    break;
-      }
-    case NONE:
-        break; 
-    default:
-        break;
+        case TWOE: {
+            TwoeSVMPostprocessor *post_runner = new TwoeSVMPostprocessor();
+            TwoeSVMPreprocessor *pre_runner = new TwoeSVMPreprocessor();
+            handlers.insert( handlers.begin(), pre_runner );
+            handlers.push_back( post_runner );
+            break;
+        }
+        case NONE:
+            break;
+        default:
+            break;
     }
 
     this->SVMHandlers = handlers;
