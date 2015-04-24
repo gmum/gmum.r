@@ -45,6 +45,7 @@ public:
     arma::mat getX();
     arma::vec getY();
     arma::vec getPrediction();
+    arma::vec getDecisionFunction();
 
     // params getters
     std::string getLibrary();

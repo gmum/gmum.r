@@ -83,7 +83,7 @@ public:
     arma::sp_mat support_vectors;   ///< Vectors are transposed (column vectors)
     arma::mat data;     // armadillo matrix and vector (double)
     arma::vec target;
-    arma::vec result;
+    arma::vec result, decision_function;
 
     // Sparse data
     bool sparse;

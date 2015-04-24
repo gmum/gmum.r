@@ -94,6 +94,9 @@ arma::vec SVMClient::getY(){
 arma::vec SVMClient::getPrediction() {
     return SVMClient::config.result;
 }
+arma::vec SVMClient::getDecisionFunction() {
+    return SVMClient::config.decision_function;
+}
 std::string SVMClient::getLibrary(){
     switch(config.svm_type) {
     case LIBSVM : return "libsvm";
@@ -251,6 +254,7 @@ void SVMClient::predictFromConfig() {
     // Number of docs is a number of rows in data matrix
     size_t n_docs = config.getDataExamplesNumber();
     config.result = arma::zeros<arma::vec>(n_docs);
+    config.decision_function = arma::zeros<arma::vec>(n_docs);
 
 
     LOG(config.log, LogLevel::DEBUG,
@@ -290,7 +294,7 @@ void SVMClient::predictFromConfig() {
         		doc_result += kernel(i, j) * config.alpha_y(j);
         	}
         }
-        config.result[i] = doc_result + config.b;
+        config.decision_function[i] = doc_result + config.b;
 //        LOG(config.log, 5, "Decision function "+svm_to_str(doc_result));
     }
 
@@ -305,7 +309,7 @@ void SVMClient::predictFromConfig() {
     n_docs = config.result.n_rows;
     double doc_result = 0;
     for (int i=0; i < n_docs; ++i) {
-        doc_result = config.result[i];
+        doc_result = config.decision_function[i];
 
         // Store user-defined label
         if (doc_result > 0) {

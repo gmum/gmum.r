@@ -27,6 +27,15 @@ library(ggplot2)
 #' 
 SVM <- NULL
 
+setClass("MultiClassSVM",
+         representation(
+           models="list",
+           class.type="character"))
+
+
+
+.createMultiClassSVM <- NULL
+
 #' @title Predict
 #' 
 #' @description Returns predicted classes for provided test examples.
@@ -138,6 +147,67 @@ evalqOnLoad({
     return(ret)
   }
   
+  .createMultiClassSVM <<- function(x, y, class.type, ...){
+    ys <- as.factor(y)
+    tys <- table(ys)
+    lev <- levels(ys)
+    if (class.type == 'one.versus.all'){
+      ymat <- matrix(-1, nrow = nrow(x), ncol = length(tys))
+      ymat[cbind(seq(along = ys), sapply(ys, function(x) which(x == lev)))] <- 1
+      # Result: ymat - dummy matrix where ymat[, i] is matrix for problem i
+    } else if(class.type == 'one.versus.one') { 
+      ## Classification: one against one
+      nclass <- length(tys)
+      m <- (nclass - 1)
+      minus <- nclass + 1 - sequence(m:1)
+      plus <- rep(1:m, m:1)
+      pick <- rbind(plus, minus)
+      xsplit <- split(data.frame(x), ys)
+      ymat <- list()
+      xlist <- list()
+      for(k in 1:ncol(pick)){
+        ymat[[k]] <- c(rep(1, nrow(xsplit[[ pick[1, k] ]])), rep(-1, nrow(xsplit[[ pick[2, k] ]])))
+        xlist[[k]] <- rbind(xsplit[[ pick[1, k] ]], xsplit[[ pick[2, k] ]])
+      }
+      
+      # Result: ymat[[i]] - classes for problem i
+      # Result: xlist[[i]] - dataset for problem i
+    }else{
+      stop("Incorrect class.type")
+    }
+    
+    # Get number of subproblems
+    if(is.matrix(ymat)){ 
+      J <- 1:ncol(ymat)               
+    }else if(is.list(ymat)){
+      J <- 1:length(ymat)
+    }
+    
+    models <- list()
+    
+    # Fit one model after another
+    for (j in J){
+      x.model <- NULL
+      y.model <- NULL
+      
+      if (class.type == "one.versus.all"){
+        x.model <- x
+        y.model <- ymat[,j]
+      }else{
+        # Note: it could be improved, but not so easily in R (all is copy)
+        x.model <- x.list[[j]]
+        y.model <- ymat[[j]]
+      }  
+      #TODO: uncomment
+      p <- as.list(match.call(expand.dots=TRUE))
+      p$x <- x.model
+      p$y <- y.model
+      models[[j]] <- do.call(SVM, p[2:length(p)])
+    }
+    
+    new('MultiClassSVM', models=models, class.type=class.type)
+  }
+  
   SVM.default <<- 
   function(x,
            y,
@@ -159,7 +229,31 @@ evalqOnLoad({
            tol         = 1e-3,
            max.iter    = -1,
            verbosity   = 4,
+           class.type = 'one.versus.all',
            seed = NULL) {
+    # First check if we have binary or multiclass case
+    if (!is.vector(y) && !is.factor(y)) {
+      stop("y is of a wrong class, please provide vector or factor")
+    }
+    
+    levels <- NULL
+    if (is.factor(y)){
+      levels <- levels(y)
+    }else{
+      # Standarizing, easier for library
+      y <- as.factor(y)
+      levels <- levels(y)
+      warning("It is recommended to pass y as factor")
+    }
+    
+    # We don't support transductive multiclass, because it is bazinga
+    if( (length(levels) > 2 && !transductive.learning)){
+      params <- as.list(match.call(expand.dots=TRUE))
+      print(params[2:length(params)])
+      #skipping first param which is function itself
+      return(do.call(.createMultiClassSVM, as.list(params[2:length(params)])))
+    }
+    
     
     call <- match.call(expand.dots = TRUE)
     call[[1]] <- as.name("SVM")
@@ -212,17 +306,7 @@ evalqOnLoad({
       }
     }
     
-    if (!is.vector(y) && !is.factor(y)) stop("y is of a wrong class, please provide vector or factor")
     
-    levels <- NULL
-    if (is.factor(y)){
-      levels <- levels(y)
-    }else{
-      # Standarizing, easier for library
-      y <- as.factor(y)
-      levels <- levels(y)
-      warning("It is recommended to pass y as factor")
-    }
     
     # Binary classification or 2 classes + unlabeled (for transductive learning)
     if( (length(levels) != 2 && !transductive.learning) || 
@@ -456,7 +540,7 @@ evalqOnLoad({
     }
   }
   
-  predict.svm.gmum <<- function(object, x) {
+  predict.svm.gmum <<- function(object, x, decision.function=FALSE) {
     if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric") && !is(x,"matrix.csr") ) {
       stop("Wrong target class, please provide data.frame, matrix or numeric vector")
     }
@@ -476,26 +560,31 @@ evalqOnLoad({
       x <- as.matrix.csc(x)
       object$sparse_predict(x@ja, x@ia, x@ra, nrow(x), ncol(x))
     }
-    prediction <- object$getPrediction()
     
-    if(any(prediction == 0) || length(unique(prediction)) > length(object$levels)){
-       stop("Failed prediction, returned too many unique labels from library.")
-    }
-    
-    
-    if(!is.null(object$levels)){
-      # This line works because we do as.numeric() which transforms into 1 and 2
-      # And we expect SVM to return same labels as passed
-      if(length(object$levels) == 2){
-         # Binary case
-         prediction <- factor(object$levels[(prediction+1)/2 + 1], levels = object$levels)
-      }else{
-         prediction <- factor(object$levels[prediction], levels = object$levels)
+    if(decision.function){
+      return(object$getDecisionFunction())
+    }else{
+      prediction <- object$getPrediction()
+      
+      if(any(prediction == 0) || length(unique(prediction)) > length(object$levels)){
+         stop("Failed prediction, returned too many unique labels from library.")
       }
-     
+      
+      
+      if(!is.null(object$levels)){
+        # This line works because we do as.numeric() which transforms into 1 and 2
+        # And we expect SVM to return same labels as passed
+        if(length(object$levels) == 2){
+           # Binary case
+           prediction <- factor(object$levels[(prediction+1)/2 + 1], levels = object$levels)
+        }else{
+           prediction <- factor(object$levels[prediction], levels = object$levels)
+        }
+       
+      }
+      
+      prediction
     }
-    
-    prediction
   }
 
   setMethod("print", "Rcpp_SVMClient", print.svm)
