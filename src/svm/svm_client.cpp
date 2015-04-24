@@ -273,7 +273,7 @@ void SVMClient::predictFromConfig() {
     for (int i=0; i < n_docs; ++i) {
     	double doc_result = 0;
         // For linear kernel it is possible to speed up
-        if(config.kernel_type == ::_LINEAR){
+        if(config.kernel_type == -1){
             if (isSparse()) {
             	doc_result = arma::dot(
                     config.getSparseData().col(i).t(),

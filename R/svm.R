@@ -230,6 +230,7 @@ evalqOnLoad({
 
     # Decide what label is used for unlabeled examples
     unlabeled.level = "TR"
+    unlabeled.level = "TR"
     if(transductive.learning){
       if(! ("TR" %in% levels || "0" %in% levels ) ){
         stop("Please include TR or 0 factor in levels for transductive learning")
@@ -244,26 +245,27 @@ evalqOnLoad({
         unlabeled.level <- "0"
       }
     }
-    
     # This ugly block of code ensures -1, 1 and 0 classes.
     # Contribution to simplifying this are welcome :)
     if(transductive.learning){
       # Erasing TR from levels. We will never return it
       levels = levels[levels != unlabeled.level] 
       indexes.unlabeled <- y == unlabeled.level
-    }
-    
-    indexes.negative <- y == levels[1]
-    indexes.positive <- y == levels[2]
-    y <- as.integer(y)
-    y[indexes.negative] <- -1 # Standarization
-    y[indexes.positive] <- 1
-    
-    if(transductive.learning){
+      
+      y <- as.integer(y)
+      
+      z <- y[!indexes.unlabeled]
+      z <- as.integer(factor(z, levels=levels))
+      z[z==1] = -1
+      z[z==2] = 1
       y[indexes.unlabeled] <- 0
+      y[!indexes.unlabeled] <- z
+    }else{
+      y <- as.integer(y) # Standarization, omits 0!
+      y[y==1] = -1 # Standarize it further!
+      y[y==2] = 1
     }
     
-    print(y[1:10])
     
     config <- new(SVMConfiguration)
     config$y <- data.matrix(y)

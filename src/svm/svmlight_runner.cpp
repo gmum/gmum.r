@@ -1101,6 +1101,8 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     }
     config.support_vectors = config.support_vectors.t();
     config.w = (config.alpha_y.t() * config.support_vectors.t()).t();
+
+
     LOG(
         config.log,
         LogLevel::DEBUG,
