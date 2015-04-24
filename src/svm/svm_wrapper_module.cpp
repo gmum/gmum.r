@@ -61,6 +61,7 @@ RCPP_MODULE(svm_wrapper) {
       		.method("setBias", &SVMClient::setBias)
       		.method("setW", &SVMClient::setW)
       		.method("setAlpha", &SVMClient::setAlpha)
+      		.method(".setNumberClass", &SVMClient::setNumberClass)
 
 			.method(".getX", &SVMClient::getX)
 			.method(".getY", &SVMClient::getY)
@@ -84,8 +85,8 @@ RCPP_MODULE(svm_wrapper) {
       		.method("getAlpha", &SVMClient::getAlpha)
 			.method("getBias", &SVMClient::getBias)
 			.method("getW", &SVMClient::getW)
-	      	.method("getNumberSV", &SVMClient::get_number_sv)
-	      	.method("getNumberClass", &SVMClient::get_number_class)
+	      	.method("getNumberSV", &SVMClient::getNumberSV)
+	      	.method("getNumberClass", &SVMClient::getNumberClass)
 	      	.method("getSV", &SVMClient::getSV)
 
 			.method("train", &SVMClient::train)

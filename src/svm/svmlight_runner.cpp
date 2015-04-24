@@ -1090,6 +1090,7 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     // Threshold b (has opposite sign than SVMClient::predict()
     // NOTE: see libraryReadModel()
     config.b = - model->b;
+    config.nr_class = 2; // svmlight works only with 2 classes
 
     config.alpha_y = arma::zeros<arma::vec>(config.l);
     config.support_vectors = \

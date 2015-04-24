@@ -56,6 +56,15 @@ void SVMClient::setConfiguration(SVMConfiguration *config) {
     this->config = current_config;
 }
 
+void SVMClient::setNumberClass(int nr_class){
+    if(nr_class < 1){
+        LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("There needs to be at least 1 class"));
+    }
+    else {
+        config.nr_class = nr_class;
+    }
+}
+
 void SVMClient::setW(arma::vec new_w){
     if (config.kernel_type != _LINEAR) {
         LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundary is not available with non-linear kernel"));
@@ -157,21 +166,6 @@ arma::vec SVMClient::getAlpha() {
     return config.alpha_y;
 }
 
-//void SVMClient::setAlpha(double* alpha) {
-//  if (config. - length(alpha) == 1) {
-//    for (int i = 0; i != length(alpha); i++) {
-//      config.rho[i+1] = alpha[i];
-//    }
-//  } 
-//  else if (length(config.rho) != length(alpha)) {
-//    LOG(config.log, logLevel::ERR, "ERROR: " + to_string("Wrong alpha array size."));
-//    return;
-//  }
-//  else {
-//    config.rho = alpha;
-//  }
-//}
-
 void SVMClient::setBias(double bias) {
     config.setB(bias);
 }
@@ -190,11 +184,11 @@ arma::vec SVMClient::getW() {
     }
 }
 
-int SVMClient::get_number_sv() {
+int SVMClient::getNumberSV() {
   return config.getSVCount();
 }
 
-int SVMClient::get_number_class() {
+int SVMClient::getNumberClass() {
   return config.nr_class;
 }
 

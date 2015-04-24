@@ -372,8 +372,8 @@ evalqOnLoad({
                   object$getKernel(), 
                   object$getPreprocess()))
     print(sprintf("%d classes with %d support vectors", 
-                  object$get_number_class(), 
-                  object$get_number_sv()))
+                  object$getNumberClass(), 
+                  object$getNumberSV()))
   }
   
   plot.svm <<- function(x, mode="normal", dim1 = 1, dim2 = 2, log="") {
