@@ -31,6 +31,7 @@ RCPP_MODULE(svm_wrapper) {
 			.field("use_example_weights", &SVMConfiguration::use_example_weights)
 			.field("use_transductive_learning", &SVMConfiguration::use_transductive_learning)
 			.field("transductive_posratio", &SVMConfiguration::transductive_posratio)
+			.field("max_iter", &SVMConfiguration::max_iter)
 			.field("sparse", &SVMConfiguration::sparse)
 
 			.method("set_sparse_data", &SVMConfiguration::setSparseData)
