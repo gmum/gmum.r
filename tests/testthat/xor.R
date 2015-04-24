@@ -17,4 +17,3 @@ print("")
 print("svmlight dense: Alphas, SVs")
 print(svm2$getAlpha())
 print(svm2$getSV())
-
