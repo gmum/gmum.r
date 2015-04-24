@@ -17,10 +17,6 @@ public:
     //constructors
     SVMClient(SVMConfiguration*);
 
-    // data setters
-    void setX( arma::mat );
-    void setY( arma::vec );
-
     // params setter
     void setLibrary(std::string);
     void setKernel(std::string);

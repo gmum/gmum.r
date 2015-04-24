@@ -47,9 +47,6 @@ RCPP_MODULE(svm_wrapper) {
 	class_<SVMClient>("SVMClient")
 			.constructor<SVMConfiguration*>()
 
-			.method("setX", &SVMClient::setX)
-			.method("setY", &SVMClient::setY)
-
 			.method("setLibrary",&SVMClient::setLibrary)
 			.method("setKernel", &SVMClient::setKernel)
 			.method("setPreprocess",&SVMClient::setPreprocess)
@@ -65,8 +62,8 @@ RCPP_MODULE(svm_wrapper) {
       		.method("setW", &SVMClient::setW)
       		.method("setAlpha", &SVMClient::setAlpha)
 
-			.method("getX", &SVMClient::getX)
-			.method("getY", &SVMClient::getY)
+			.method(".getX", &SVMClient::getX)
+			.method(".getY", &SVMClient::getY)
 			.method("getPrediction", &SVMClient::getPrediction)
 
 			.method("getLibrary", &SVMClient::getLibrary)

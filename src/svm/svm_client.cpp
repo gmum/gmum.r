@@ -16,14 +16,6 @@ const std::string __debug_prefix__ = __file__ + "." + __client_class__;
 // Constructor
 SVMClient::SVMClient(SVMConfiguration *config): config(*config) {}
 
-// Setters
-void SVMClient::setX( arma::mat x ){
-    config.data = x;
-}
-void SVMClient::setY( arma::vec y ){
-    config.target = y;
-}
-
 void SVMClient::setLibrary(std::string library){
     config.setLibrary(library);
 }

@@ -7,8 +7,9 @@ test_that('accuracy is calculated', {
   
   data(svm_breast_cancer_dataset)
   ds <- svm.breastcancer.dataset
-  x <- subset(ds, select = -X1)
-  y <- as.factor(ds[,'X1'])
+  ds[,'X1'] <- as.factor(ds[,'X1'])
+  x <- ds[,-1]
+  y <- ds[,1]
   formula <- X1 ~ .
   
   svm <- SVM(formula, ds, lib="libsvm", kernel="linear", C=10); 
@@ -18,18 +19,18 @@ test_that('accuracy is calculated', {
   
   expect_that(acc, is_a("numeric"))
   expect_that(acc <= 1, is_true())
-  expect_that(acc > 0.5, is_true())
-  
+  expect_that(acc > 0.95, is_true())
 })
-print("test::accuracy")
+print("test::svm accuracy")
 
 test_that('accuracy checks input size', {
           
-  ds <- svm.dataset.xor()
+  ds <- as.data.frame(svm.dataset.xor())
+  ds[,3] <- as.factor(ds[,3])
   formula <- t ~ .
   svm <- SVM(formula, ds, lib="libsvm", kernel="linear", C=100);
   
-  x <- svm$getX()
+  x <- ds[,-3]
   pred <- predict(svm, x)
   target <- c(1, 1)
   
