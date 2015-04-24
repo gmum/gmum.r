@@ -24,7 +24,7 @@ arma::vec helper_learning_target_01() {
 arma::vec helper_learning_target_02() {
     arma::vec vector;
     vector
-        << 2 << 2 << 4 << 4 << 4;
+        << -1 << -1 << 1 << 1 << 1;
     return vector;
 }
 
@@ -48,7 +48,7 @@ arma::vec helper_testing_target_01() {
 arma::vec helper_testing_target_02() {
     arma::vec vector;
     vector
-        << 2 << 2 << 4 << 4;
+        << -1 << -1 << 1 << 1;
     return vector;
 }
 
