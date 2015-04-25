@@ -66,7 +66,7 @@ RCPP_MODULE(svm_wrapper) {
 			.method(".getX", &SVMClient::getX)
 			.method(".getY", &SVMClient::getY)
 			.method("getPrediction", &SVMClient::getPrediction)
-
+			.method("getDecisionFunction", &SVMClient::getDecisionFunction)
 			.method("getLibrary", &SVMClient::getLibrary)
 			.method("getKernel", &SVMClient::getKernel)
 			.method("getPreprocess", &SVMClient::getPreprocess)
