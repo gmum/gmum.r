@@ -7,6 +7,7 @@ data(svm_breast_cancer_dataset)
 test_that('SVM fucntions is fool proof', {
   
   ds <- svm.twoellipsoids.dataset
+  ds[,'V3'] <- as.factor(ds[,'V3'])
   f <- V3 ~ .
 
   expect_error( SVM(f, ds, lib="xyz"), paste(GMUM_WRONG_LIBRARY, ": bad library" ))
@@ -19,35 +20,13 @@ test_that('SVM fucntions is fool proof', {
 })
 print("test::SVM throws user errors")
 
-test_that('formulas and data storing works', {
-  
-  dataset <- svm.breastcancer.dataset
-  x1 <- data.matrix( dataset[,names(dataset) != "X1"] )
-  y1 <- as.factor( dataset[,"X1"] )
-  svm <- SVM( X1 ~ ., dataset )
-  x2 <- svm$getX()
-  y2 <- svm$getY()
-  expect_that(all.equal(x1,x2,check.attributes=FALSE), is_true())
-
-  formula <- X1 ~ X3 + X4 + X5
-  data <- all.vars(update(formula,0~.))
-  x3 <- data.matrix( dataset[,data] )
-  y3 <- as.factor(dataset[,"X1"] )
-
-  svm2 <- SVM(formula, dataset)
-  x4 <- svm2$getX()
-  y4 <- svm2$getY()
-  expect_that(all.equal(x3, x4, check.attributes=FALSE), is_true())
-  
-})
-print("test::SVM formula and dataset")
-
 test_that("SVM both constructor works", {
   
   data(svm_breast_cancer_dataset)
   ds <- svm.breastcancer.dataset
+  ds[,'X1'] <- as.factor(ds[,'X1'])
   x <- subset(ds, select = -X1)
-  y <- as.vector(unlist(ds['X1']))
+  y <- ds[,'X1']
   f <- X1 ~ .
   
   svm1 <- SVM(x,y)

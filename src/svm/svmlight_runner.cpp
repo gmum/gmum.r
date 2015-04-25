@@ -795,6 +795,7 @@ MODEL * SVMLightRunner::libraryReadModel(
                               0,0,
                               0.0,
                               create_svector(words,comment,1.0));
+            free(line);
         }
     }
     // GMUM.R changes }
@@ -1027,7 +1028,6 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
         __debug_prefix__ + ".SVMConfigurationToSVMLightModelSVLine() Started."
     );
 
-    std::string line_string = "";
 
     std::ostringstream ss;
     ss << std::setprecision(32) << config.alpha_y[line_num];
@@ -1035,7 +1035,6 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
         ss << ' ' << i << ':' << std::setprecision(8) << config.support_vectors(i-1, line_num);
     }
     ss << " #" << std::endl;
-    line_string = ss.str();
 
     LOG(
         config.log,
@@ -1043,7 +1042,12 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
         __debug_prefix__ + ".SVMConfigurationToSVMLightModelSVLine() Done."
     );
 
-    return (char*)line_string.c_str();
+    std::string line = ss.str();
+    char * c_line = new char[line.length() + 1];
+    strcpy(c_line, line.c_str());
+
+    //FIXME: well.. this hopefully will be fixed once we change way we interact with SVMLight
+    return(c_line);
 }
 
 
@@ -1090,6 +1094,7 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     // Threshold b (has opposite sign than SVMClient::predict()
     // NOTE: see libraryReadModel()
     config.b = - model->b;
+    config.nr_class = 2; // svmlight works only with 2 classes
 
     config.alpha_y = arma::zeros<arma::vec>(config.l);
     config.support_vectors = \
@@ -1105,8 +1110,11 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
       }
     }
     config.support_vectors = config.support_vectors.t();
-    config.w = (config.alpha_y.t() * config.support_vectors.t()).t();
-
+    arma::vec w = (config.alpha_y.t() * config.support_vectors.t()).t();
+    config.w = arma::sp_mat(w.n_elem,1);
+    for (int i = 0; i != w.n_elem; ++i) {
+      if (w(i) != 0) config.w(i,0) = w(i);
+    }
 
     LOG(
         config.log,

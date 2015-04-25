@@ -460,8 +460,8 @@ evalqOnLoad({
                   object$getKernel(), 
                   object$getPreprocess()))
     print(sprintf("%d classes with %d support vectors", 
-                  object$get_number_class(), 
-                  object$get_number_sv()))
+                  object$getNumberClass(), 
+                  object$getNumberSV()))
   }
   
   plot.svm <<- function(x, mode="normal", dim1 = 1, dim2 = 2, log="") {
@@ -472,8 +472,8 @@ evalqOnLoad({
       stop("Wrong mode!") 
     }
     kernel <- x$getKernel()
-    df <- data.frame( x$getX() )
-    t <- x$getY()
+    df <- data.frame( x$.getX() )
+    t <- x$.getY()
     if (mode != "contour" && kernel == "linear") {
       w <- c(x$getW())
     }
@@ -511,7 +511,7 @@ evalqOnLoad({
     }
     else if (mode == "contour" || kernel != "linear") {    # test mode
       warning("This is experimental mode, it will change your SVM's data!")
-      temp_target <- x$getY()
+      temp_target <- x$.getY()
       x_col <- df[colnames(df)[1]]
       y_col <- df[colnames(df)[2]]
       
@@ -700,7 +700,7 @@ evalqOnLoad({
                                  predict(modelFit, newdata)
                                },
                                varImp = NULL,
-                               levels = function(x) {levels(x$getY())},
+                               levels = function(x) {levels(x$.getY())},
                                sort = function(x) x[order(x[,1]),]
   )
   
