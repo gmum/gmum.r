@@ -233,6 +233,10 @@ void SVMConfiguration::setDefaultParams() {
     nu = 0.5;
     p = 0.1;
     
+
+    use_transductive_learning = false;
+    transductive_posratio = -1;
+
     // Sparse data
     sparse = false;
 
@@ -246,5 +250,7 @@ void SVMConfiguration::setDefaultParams() {
     pos_target = 0;
 
     debug_library_predict = false;
+
+    max_iter = 10000000;
 }
 
