@@ -55,7 +55,7 @@ test_that("ovo and ova multiclass schemes work for SVM on simple datasets", {
   sv <- SVM(x=df[,1:2], y=df[,3], class.type="one.versus.all")
   preds <- predict(sv, df[,1:2])
   acc <- sum(diag(table(preds, df[,3])))/sum(table(preds, df[,3]))
-  expect_that(acc > 0.9, is_true())
+  expect_that(acc > 0.96, is_true())
   
   
   data(iris)
@@ -97,4 +97,4 @@ test_that("ovo and ova multiclass schemes work for SVM on simple datasets", {
   expect_that(acc.ova < acc.ovo && abs(acc.e1 - acc.ovo) < 1e-1, is_true())
   
 
-}
+})
