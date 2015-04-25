@@ -547,7 +547,7 @@ evalqOnLoad({
   predict.MultiClassSVM <<- function(object, x){
     # Sums votes
     prediction.row.oao <- function(r){
-      object$levels[which.max(sapply(object$levels, function(cl){ sum(r==cl)}))]
+      object$levels[which.max(sapply(1:length(object$levels), function(cl){ sum(r==cl)}))]
     }
     # Argmax of decision function
     prediction.row.oaa <- function(r){
@@ -579,7 +579,7 @@ evalqOnLoad({
     }else{
       stop("Unrecognized class.type")
     }
-    return(ymat.preds)
+    return(factor(ymat.preds, levels=object$levels))
   }
   
   predict.svm.gmum <<- function(object, x, decision.function=FALSE) {
