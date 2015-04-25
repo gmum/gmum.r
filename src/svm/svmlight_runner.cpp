@@ -795,6 +795,7 @@ MODEL * SVMLightRunner::libraryReadModel(
                               0,0,
                               0.0,
                               create_svector(words,comment,1.0));
+            free(line);
         }
     }
     // GMUM.R changes }
@@ -1027,7 +1028,6 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
         __debug_prefix__ + ".SVMConfigurationToSVMLightModelSVLine() Started."
     );
 
-    std::string line_string = "";
 
     std::ostringstream ss;
     ss << std::setprecision(32) << config.alpha_y[line_num];
@@ -1035,7 +1035,6 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
         ss << ' ' << i << ':' << std::setprecision(8) << config.support_vectors(i-1, line_num);
     }
     ss << " #" << std::endl;
-    line_string = ss.str();
 
     LOG(
         config.log,
@@ -1043,7 +1042,12 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
         __debug_prefix__ + ".SVMConfigurationToSVMLightModelSVLine() Done."
     );
 
-    return (char*)line_string.c_str();
+    std::string line = ss.str();
+    char * c_line = new char[line.length() + 1];
+    strcpy(c_line, line.c_str());
+
+    //FIXME: well.. this hopefully will be fixed once we change way we interact with SVMLight
+    return(c_line);
 }
 
 
