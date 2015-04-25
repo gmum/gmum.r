@@ -11,7 +11,6 @@ library(ggplot2)
 #' @param lib Desired SVM Library, avialable are: libsvm
 #' @param kernel Kernel type, avialable are: linear, poly, rbf, sigmoid
 #' @param prep Preprocess method, avialable are: none, 2e
-#' @param mclass Multiclass wariant, avialable are: none
 #' @param C Cost/Complexity parameter
 #' @param gamma Gamma parameter for poly, rbf and sigmoid kernels
 #' @param coef0 Coef0 for poly and sigmoid kernels
@@ -30,7 +29,7 @@ SVM <- NULL
 
 
 
-
+summary.MultiClassSVM <- NULL
 .createMultiClassSVM <- NULL
 
 #' @title Predict
@@ -148,6 +147,7 @@ evalqOnLoad({
   }
   
   .createMultiClassSVM <<- function(x, y, class.type, ...){
+    call <- match.call(expand.dots=TRUE)
     ys <- as.factor(y)
     tys <- table(ys)
     lev <- levels(ys)
@@ -206,8 +206,12 @@ evalqOnLoad({
       p$y <- y.model
       models[[j]] <- do.call(SVM, p[2:length(p)])
     }
-    
-    obj <- list(models=models, class.type=class.type, pick=pick, levels=lev)
+    call[[1]] <- as.name("SVM")
+    lib <- as.list(call)$lib
+    kernel <- as.list(call)$kernel
+    if (is.null(lib)) lib <- "libsvm"
+    if (is.null(kernel)) kernel <- "linear"
+    obj <- list(models=models, class.type=class.type, pick=pick, levels=lev, call=call, lib=lib, kernel=kernel)
     class(obj) <- "MultiClassSVM"
     obj
   }
@@ -218,7 +222,6 @@ evalqOnLoad({
            lib         = "libsvm",             
            kernel      = "linear",
            prep        = "none",
-           mclass      = "none",
            transductive.learning = FALSE,
            transductive.posratio = -1.,
            C           = 1,
@@ -253,7 +256,6 @@ evalqOnLoad({
     # We don't support transductive multiclass, because it is bazinga
     if((length(levels) > 2 && !transductive.learning)){
       params <- as.list(match.call(expand.dots=TRUE))
-      print(params[2:length(params)])
       #skipping first param which is function itself
       return(do.call(.createMultiClassSVM, as.list(params[2:length(params)])))
     }
@@ -267,7 +269,6 @@ evalqOnLoad({
     if ( lib != "svmlight" && transductive.learning) stop(paste(GMUM_WRONG_LIBRARY, ": bad library, transductive learning is supported only by svmlight" ))  
     if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
     if (prep != "2e" && prep != "none") stop(paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
-    if (mclass != "none") stop(paste(GMUM_NOT_SUPPORTED, ": multiclass" ))
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
     if (C < 0 || gamma < 0 || degree < 1) stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
@@ -452,6 +453,15 @@ evalqOnLoad({
                   x$getGamma(),
                   x$getCoef0(),
                   x$getDegree() ))
+  }
+  
+  summary.MultiClassSVM <<- function(object) {
+    print(sprintf("Support Vector Machine, multiclass.type: %s,library: %s, kernel: %s",
+                  object$class.type, 
+                  object$lib, 
+                  object$kernel))
+    print(sprintf("%d classes", 
+                  length(object$levels)))
   }
   
   summary.svm <<- function(object) {
