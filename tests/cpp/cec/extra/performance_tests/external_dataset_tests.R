@@ -9,6 +9,7 @@ cran_plot_path <- file.path(plots_path, 'cran')
 dir.create(gmum_plot_path, showWarnings = FALSE, recursive = TRUE)
 dir.create(cran_plot_path, showWarnings = FALSE, recursive = TRUE)
 test_data = list()
+default_parameters = list(nstart=1000, init_type='kmeans++', max_iterations=200)
 
 #test_data[['DimSet']] = list(
 #    DimSets_32 = load_dataset(data_path = file.path(data_path, "DimSets_32")),
@@ -31,12 +32,15 @@ test_data[['UCI']] = list(
 )
 
 gmum_cec_uci <- function(method_type, points, nclusters, output_plot_path = NULL) {
-    return (gmum_cec(nstart = 1, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = 0.01, output_plot_path))     
+    return (gmum_cec(nstart = default_parameters$nstart, init_type = default_parameters$init_type, max_iterations = default_parameters$max_iterations, method_type = method_type, points = points, nclusters = nclusters, eps = 0.01, output_plot_path))     
 }
 
 cran_cec_uci <- function(method_type, points, nclusters, output_plot_path = NULL) {
-    return (cran_cec(nstart = 1, init_type = 'kmeans++', max_iterations = 200, method_type = method_type, points = points, nclusters = nclusters, eps = "1%", output_plot_path))
+    return (cran_cec(nstart = default_parameters$nstart, init_type = default_parameters$init_type, max_iterations = default_parameters$max_iterations, method_type = method_type, points = points, nclusters = nclusters, eps = "1%", output_plot_path))
 }
+
+print('default parameters')
+print(default_parameters)
 
 for(name in names(test_data)) {    
     for(i in 1:length(test_data[[name]])) {
@@ -131,7 +135,7 @@ for(name in names(test_data)) {
             cat('method type: ', method_types$gmum[j], '\n')
             table_data <- as.table(table_data)
             colnames(table_data) <- c('gmum', 'cran')
-            rownames(table_data) <- c('energy','gmum energy f', 'iters', 'time', 'clusters', 'rand index', 'BIC')            
+            rownames(table_data) <- c('energy','R energy func', 'iters', 'time', 'clusters', 'rand index', 'BIC')            
             print(table_data)
             cat('\n')
         }
