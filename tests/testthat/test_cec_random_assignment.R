@@ -33,6 +33,7 @@ test_that("EllipseGauss random assignment is correct", {
   for(i in 1:t)
   {
     c <- CEC(k=nclusters, x=dataset_points, method.init='random')
+    plot(c)
     correct_percentage <- correctness(dataset_clusters, c$clustering(), npoints, nclusters)
     if(isTRUE(all.equal(current = c$energy(), target=expected_energy, tolerance=0.25)) | (correct_percentage >= 0.9) ) {
       accepted <- accepted + 1
