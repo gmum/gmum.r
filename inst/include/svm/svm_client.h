@@ -11,6 +11,8 @@ private:
 	SVMConfiguration &config;
 	void createFlow();
 
+    double kernel(size_t data_i, size_t sv_j);
+
 public:
 	//constructors
 	SVMClient(SVMConfiguration*);
@@ -56,6 +58,7 @@ public:
 	double getEps();
 	bool isShrinking();
 	bool isProbability();
+	bool isSparse();
 	bool areExamplesWeighted();
 	arma::vec getExampleWeights();
 
@@ -69,12 +72,21 @@ public:
     arma::mat getSV();
 
     // additional getters
-    SVMConfiguration getConfiguration();
+    SVMConfiguration &getConfiguration();
 
 	// runners
 	void run();
     // Prediction independent of SVMHandlers
     void predict(arma::mat);
+    void predictFromConfig();
+    void sparse_predict(
+        arma::uvec rowind,
+        arma::uvec colptr,
+        arma::vec values,
+        size_t n_rows,
+        size_t n_cols
+    );
+
     /// Process a request of prediction with a SVMHandlers implementations
 	void requestPredict(arma::mat);
 	void train();

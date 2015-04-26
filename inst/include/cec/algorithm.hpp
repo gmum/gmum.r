@@ -28,7 +28,7 @@ struct TotalResult {
 	double energy;
 
 	TotalResult() :
-			iterations(0) {
+            iterations(0) {
 		energy = std::numeric_limits<double>::max();
 	}
 	void append(SingleResult result, bool log_nlusters, bool log_energy) {

@@ -21,22 +21,6 @@ TestsFixtureParam::TestsFixtureParam(ClusterReader _reader, boost::shared_ptr<De
     :   reader(_reader), default_params(_params), times(_times)
 { }
 
-TestsFixture::TestsFixture()
-{ }
-
-void TestsFixture::SetUp()
-{
-    TestsFixtureParam p(GetParam());
-    p.reader.get_clustering(expected_clustering);
-    expected_energy = p.reader.get_energy();
-    params = p.default_params->gmum_params;
-    params.dataset = p.reader.get_points_in_matrix();
-    params.nstart = 3;
-    times = p.times;
-}
-
-TestsFixture::~TestsFixture() { }
-
 BigDataTestsFixtureParam::BigDataTestsFixtureParam(ClusterReader _reader, boost::shared_ptr<DefaultGmumParams> _params, unsigned int _iterations_limit, unsigned int _times)
     :   TestsFixtureParam(_reader, _params, _times), iterations_limit(_iterations_limit)
 {
@@ -44,10 +28,16 @@ BigDataTestsFixtureParam::BigDataTestsFixtureParam(ClusterReader _reader, boost:
     params.it_max = _iterations_limit + 10;
 }
 
-BigDataTestsFixture::BigDataTestsFixture()
-{ }
+void TestsFixture::SetUp()
+{
+    TestsFixtureParam p(GetParam());
+    params = p.default_params->gmum_params;
+    params.dataset = p.reader.get_points_in_matrix();
+    params.nstart = 3;
+    times = p.times;
+}
 
-void BigDataTestsFixture::SetUp()
+void BigDataTests::SetUp()
 {
     BigDataTestsFixtureParam p(GetParam());
     params = p.default_params->gmum_params;
@@ -57,5 +47,26 @@ void BigDataTestsFixture::SetUp()
     times = p.times;
 }
 
-BigDataTestsFixture::~BigDataTestsFixture()
-{ }
+void CoverageTests::SetUp()
+{
+    TestsFixture::SetUp();
+    TestsFixtureParam p(GetParam());
+    p.reader.get_clustering(expected_clustering);
+}
+
+void EnergyTests::SetUp()
+{
+    TestsFixture::SetUp();
+    TestsFixtureParam p(GetParam());
+    expected_energy = p.reader.get_energy();
+}
+
+void ControlEpsTests::SetUp()
+{
+    TestsFixture::SetUp();
+    params.kill_threshold = (params.dataset.n_rows - 1) / static_cast<double>(params.dataset.n_rows);
+    params.log_nclusters = true;
+}
+
+
+

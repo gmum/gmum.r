@@ -16,6 +16,7 @@ Cluster::Cluster(unsigned int id, const std::vector<unsigned int> &assignment,
 		throw(NoPointsInCluster());
 
 	m_n = points.n_cols;
+    m_entropy = 0.0;
 }
 
 arma::rowvec Cluster::initialize_mean(unsigned int id,
@@ -56,7 +57,7 @@ void ClusterUseCovMat::initialize_cov_mat(unsigned int id,
 			arma::rowvec point = points.row(i);
 			arma::rowvec tmp = point - m;
 			out += (tmp.t() * tmp) / (m_count);
-		}
+        }
 
 	m_cov_mat = out;
 	m_cov_mat_tmp = m_cov_mat;

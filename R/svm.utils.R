@@ -1,3 +1,6 @@
+svm.data.root <- system.file("data_sets", "svm", package="gmum.r")
+svm.colon_cancer.path <- file.path(svm.data.root, "colon-cancer")
+
 svm.lib.libsvm <- "libsvm"
 svm.lib.svmlight <- "svmlight"
 
@@ -15,6 +18,11 @@ svm.plot.pca <- "pca"
 svm.dataset.breast_cancer <- function() {
   data(svm_breast_cancer_dataset)
   return (svm.breastcancer.dataset)
+}
+
+svm.dataset.colon_cancer <- function() {
+  bc <- read.libsvm(svm.colon_cancer.path, 2000)
+  return(bc)
 }
 
 svm.dataset.2e <- function() {
@@ -82,5 +90,48 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
+scale.data.frame <-
+  function(x, center = TRUE, scale = TRUE)
+  {
+    i <- sapply(x, is.numeric)
+    if (ncol(x[, i, drop = FALSE])) {
+      x[, i] <- tmp <- scale.default(x[, i, drop = FALSE], na.omit(center), na.omit(scale))
+      if(center || !is.logical(center))
+        attr(x, "scaled:center")[i] <- attr(tmp, "scaled:center")
+      if(scale || !is.logical(scale))
+        attr(x, "scaled:scale")[i]  <- attr(tmp, "scaled:scale")
+    }
+    x
+  }
+
+read.matrix.csr <- function(file, fac = TRUE, ncol = NULL) {
+  l <- strsplit(readLines(file), "[ ]+")
+  
+  ## extract y-values, if any
+  y <- if (is.na(l[[1]][1]) || length(grep(":",l[[1]][1])))
+    NULL
+  else
+    sapply(l, function(x) x[1])
+  
+  ## x-values
+  rja <- do.call("rbind",
+                 lapply(l, function(x)
+                   do.call("rbind",
+                           strsplit(if (is.null(y)) x else x[-1], ":")
+                   )
+                 )
+  )
+  ja <- as.integer(rja[,1])
+  ia <- cumsum(c(1, sapply(l, length) - !is.null(y)))
+  
+  max.ja <- max(ja)
+  dimension <- c(length(l), if (is.null(ncol)) max.ja else max(ncol, max.ja))
+  x = new(getClass("matrix.csr", where = asNamespace("SparseM")),
+          ra = as.numeric(rja[,2]), ja = ja,
+          ia = as.integer(ia), dimension = as.integer(dimension))
+  if (length(y))
+    list(x = x, y = if (fac) as.factor(y) else as.numeric(y))
+  else x
+}
 
 
