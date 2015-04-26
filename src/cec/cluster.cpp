@@ -242,7 +242,7 @@ double ClusterCovMat::calculate_entropy(int n, const arma::mat &cov_mat) {
 
     arma::mat ClusterCovMat::get_cov_mat(unsigned int id,
                                            const std::vector<unsigned int> &assignment, const arma::mat &points) {
-        return m_inv_sigma;
+        return arma::inv(m_inv_sigma);
     }
 
 ClusterConstRadius::ClusterConstRadius(double r, unsigned int id,
