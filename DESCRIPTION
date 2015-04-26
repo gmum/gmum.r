@@ -16,6 +16,7 @@ Depends:
     igraph
 LinkingTo: Rcpp, RcppArmadillo, BH
 NeedsCompilation: yes
+LazyData: yes
 Suggests:
     testthat,
     SparseM

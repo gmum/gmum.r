@@ -15,14 +15,15 @@ protected:
     std::string cluster_path();
     std::string energy_path();
     std::string dimension_path();
+    void normalize_clustering(std::vector<int>& clusters);
+
     std::string m_folder_name;
     std::vector<std::vector<double> > m_points;
     std::vector<unsigned int> m_clustering;
     double m_energy;
     unsigned int m_dim;
 public:
-    ClusterReader(const char * name, unsigned int dim);
-    ClusterReader(const char * name);
+    ClusterReader(const char * name, unsigned int dim = 0);
     void read_points();
     void read_clustering();
     void read_dimension();

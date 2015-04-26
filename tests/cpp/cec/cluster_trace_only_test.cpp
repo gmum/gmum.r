@@ -7,7 +7,7 @@
 #include <vector>
 using namespace gmum;
 
-TEST(TraceOnly,AddPoint) {
+TEST(CEC_TraceOnly,AddPoint) {
     //arma_rng::set_seed(0);
     int n = 10000;
     int dim = 2;
@@ -29,9 +29,7 @@ TEST(TraceOnly,AddPoint) {
         }
     }
 
-    ASSERT_TRUE(true);
-
-    Cluster * m(new ClusterSpherical(id,fits,init_matrix));
+    boost::scoped_ptr<Cluster> m(new ClusterSpherical(id,fits,init_matrix));
     // Dodajemy element o indeksie i
     for (int i = beg; i < n-1; ++i) {
 
@@ -44,7 +42,7 @@ TEST(TraceOnly,AddPoint) {
 
         arma::rowvec point(data.row(i));
         m->add_point(point);
-        ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m);
+        ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m.get());
         ClusterStandard tmp(id,fits,tmp_matrix);
         arma::rowvec mean_online_difference = upref->get_mean() - real_m;
         float trace_diff = upref->get_cov_mat_trace() - arma::trace(covariance);
@@ -59,7 +57,7 @@ TEST(TraceOnly,AddPoint) {
     }
 }
 
-TEST(TraceOnly,removePoint) {
+TEST(CEC_TraceOnly,removePoint) {
     //arma_rng::set_seed(0);
     int n = 100;
     int dim = 2;
@@ -81,7 +79,7 @@ TEST(TraceOnly,removePoint) {
         }
     }
 
-    Cluster * m(new ClusterSpherical(id,fits,init_matrix));
+    boost::scoped_ptr<Cluster> m(new ClusterSpherical(id,fits,init_matrix));
     // Dodajemy element o indeksie i
     for (int i = n-1; i > end; --i) {
 
@@ -97,7 +95,7 @@ TEST(TraceOnly,removePoint) {
         m->remove_point(point);
         ClusterStandard tmp(id,fits,tmp_matrix);
 
-        ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m);
+        ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m.get());
         arma::rowvec mean_online_difference = upref->get_mean() - real_m;
         float trace_diff = upref->get_cov_mat_trace() - arma::trace(covariance);
         // float relative_error = std::abs(trace_diff/arma::trace(covariance));
@@ -108,5 +106,4 @@ TEST(TraceOnly,removePoint) {
             EXPECT_LT(std::abs(mean_online_difference(j)),acceptable_difference) << "at position" << j << " means differ by more than " << acceptable_difference;
         }
     }
-    ASSERT_TRUE(true);
 }

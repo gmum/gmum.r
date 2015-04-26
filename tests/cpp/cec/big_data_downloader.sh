@@ -8,7 +8,7 @@ FILES=`cat test_data_list`
 # mkdir if not exist
 for d in $DIRS
 do
-    mkdir $DATA_DIR/$d
+    mkdir -p $DATA_DIR/$d
 done
 
 # Download data

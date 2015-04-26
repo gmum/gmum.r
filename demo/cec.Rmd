@@ -19,11 +19,11 @@ library(devtools)
 library('gmum.r')
 
 data(cec_mouse_1_spherical)
-dataset = input
+dataset = cec.mouse1spherical
 ```
 That is the dataset we want to cluster:
 ```{r fig.width=7, fig.height=6}
-plot(dataset)
+plot(dataset, main="Mouse-like dataset")
 ```
 
 Run CEC with default parameters. Set number of clusters and dataset.
