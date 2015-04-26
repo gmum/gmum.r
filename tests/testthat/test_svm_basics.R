@@ -4,7 +4,7 @@ library('gmum.r')
 data(svm_two_ellipsoids_dataset)
 data(svm_breast_cancer_dataset)
 
-test_that('SVM fucntions is fool proof', {
+test_that('SVM functions are fool proof', {
   
   ds <- svm.twoellipsoids.dataset
   ds[,'V3'] <- as.factor(ds[,'V3'])

@@ -198,9 +198,9 @@ int SVMClient::getNumberClass() {
   return config.nr_class;
 }
 
-arma::mat SVMClient::getSV(){
+arma::sp_mat SVMClient::getSV(){
     // FIXME: Workaround for R interface
-    return arma::mat(config.support_vectors.t());
+    return config.support_vectors.t();
 }
 
 SVMConfiguration &SVMClient::getConfiguration() {
