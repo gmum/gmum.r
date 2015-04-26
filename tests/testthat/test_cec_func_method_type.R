@@ -5,7 +5,7 @@ source("cec_function.R")
 
 data(cec_simple_1)
 
-expected_energy <- cec.simple1.extra["energy"]
+expected_energy <- cec.simple1.extra[["energy"]]
 dataset_points <- cec.simple1
 
 test_that("Entropy is correct", {  
