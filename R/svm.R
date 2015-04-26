@@ -31,6 +31,7 @@ SVM <- NULL
 
 summary.MultiClassSVM <- NULL
 .createMultiClassSVM <- NULL
+show.MultiClassSVM <- NULL
 
 #' @title Predict
 #' 
@@ -203,7 +204,7 @@ evalqOnLoad({
       #TODO: uncomment
       p <- as.list(match.call(expand.dots=TRUE))
       p$x <- x.model
-      p$y <- y.model
+      p$y <- as.factor(y.model)
       models[[j]] <- do.call(SVM, p[2:length(p)])
     }
     call[[1]] <- as.name("SVM")
@@ -464,14 +465,18 @@ evalqOnLoad({
                   length(object$levels)))
   }
   
+  print.MultiClassSVM <<- function(object) {
+    summary.MultiClassSVM(object)
+  }
+  
   summary.svm <<- function(object) {
     print(sprintf("Support Vector Machine, library: %s, kernel: %s, preprocess: %s",
                   object$getLibrary(), 
                   object$getKernel(), 
                   object$getPreprocess()))
     print(sprintf("%d classes with %d support vectors", 
-                  object$get_number_class(), 
-                  object$get_number_sv()))
+                  object$getNumberClass(), 
+                  object$getNumberSV()))
   }
   
   plot.svm <<- function(x, mode="normal", dim1 = 1, dim2 = 2, log="") {
@@ -645,7 +650,8 @@ evalqOnLoad({
   setMethod("summary", "Rcpp_SVMClient", summary.svm)
   setMethod("show", "Rcpp_SVMClient", summary.svm)
 
-  # Add (very basic) support for caret
+
+# Add (very basic) support for caret
   
   copy <- function(x) x
   
