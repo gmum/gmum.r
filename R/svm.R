@@ -11,7 +11,6 @@ library(ggplot2)
 #' @param lib Desired SVM Library, avialable are: libsvm
 #' @param kernel Kernel type, avialable are: linear, poly, rbf, sigmoid
 #' @param prep Preprocess method, avialable are: none, 2e
-#' @param mclass Multiclass wariant, avialable are: none
 #' @param C Cost/Complexity parameter
 #' @param gamma Gamma parameter for poly, rbf and sigmoid kernels
 #' @param coef0 Coef0 for poly and sigmoid kernels
@@ -30,8 +29,10 @@ SVM <- NULL
 
 
 
-
+summary.MultiClassSVM <- NULL
 .createMultiClassSVM <- NULL
+show.MultiClassSVM <- NULL
+plot.MulticlassSVM <- NULL
 
 #' @title Predict
 #' 
@@ -148,6 +149,7 @@ evalqOnLoad({
   }
   
   .createMultiClassSVM <<- function(x, y, class.type, ...){
+    call <- match.call(expand.dots=TRUE)
     ys <- as.factor(y)
     tys <- table(ys)
     lev <- levels(ys)
@@ -203,11 +205,15 @@ evalqOnLoad({
       #TODO: uncomment
       p <- as.list(match.call(expand.dots=TRUE))
       p$x <- x.model
-      p$y <- y.model
+      p$y <- as.factor(y.model)
       models[[j]] <- do.call(SVM, p[2:length(p)])
     }
-    
-    obj <- list(models=models, class.type=class.type, pick=pick, levels=lev)
+    call[[1]] <- as.name("SVM")
+    lib <- as.list(call)$lib
+    kernel <- as.list(call)$kernel
+    if (is.null(lib)) lib <- "libsvm"
+    if (is.null(kernel)) kernel <- "linear"
+    obj <- list(models=models, class.type=class.type, pick=pick, levels=lev, call=call, lib=lib, kernel=kernel)
     class(obj) <- "MultiClassSVM"
     obj
   }
@@ -218,7 +224,6 @@ evalqOnLoad({
            lib         = "libsvm",             
            kernel      = "linear",
            prep        = "none",
-           mclass      = "none",
            transductive.learning = FALSE,
            transductive.posratio = -1.,
            C           = 1,
@@ -253,7 +258,6 @@ evalqOnLoad({
     # We don't support transductive multiclass, because it is bazinga
     if((length(levels) > 2 && !transductive.learning)){
       params <- as.list(match.call(expand.dots=TRUE))
-      print(params[2:length(params)])
       #skipping first param which is function itself
       return(do.call(.createMultiClassSVM, as.list(params[2:length(params)])))
     }
@@ -267,7 +271,6 @@ evalqOnLoad({
     if ( lib != "svmlight" && transductive.learning) stop(paste(GMUM_WRONG_LIBRARY, ": bad library, transductive learning is supported only by svmlight" ))  
     if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
     if (prep != "2e" && prep != "none") stop(paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
-    if (mclass != "none") stop(paste(GMUM_NOT_SUPPORTED, ": multiclass" ))
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
     if (C < 0 || gamma < 0 || degree < 1) stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
@@ -454,6 +457,19 @@ evalqOnLoad({
                   x$getDegree() ))
   }
   
+  summary.MultiClassSVM <<- function(object) {
+    print(sprintf("Support Vector Machine, multiclass.type: %s, library: %s, kernel: %s",
+                  object$class.type, 
+                  object$lib, 
+                  object$kernel))
+    print(sprintf("%d classes", 
+                  length(object$levels)))
+  }
+  
+  print.MultiClassSVM <<- function(object) {
+    summary.MultiClassSVM(object)
+  }
+  
   summary.svm <<- function(object) {
     print(sprintf("Support Vector Machine, library: %s, kernel: %s, preprocess: %s",
                   object$getLibrary(), 
@@ -464,6 +480,84 @@ evalqOnLoad({
                   object$getNumberSV()))
   }
   
+  plot.MultiClassSVM <<- function(x, X=NULL, cols=c(1,2), radius=3, radius.max=10) {
+    obj <- x$models[[1]]
+    
+    if(obj$isSparse()){
+      library(SparseM)
+    }
+    
+    if(is.null(X)){
+      X <- obj$.getX()
+    }
+    
+    if (ncol(X) > 2){
+      warning("Only 2 dimension plotting is supported for multiclass. Plotting 1st and 2nd dimension.")
+    }   
+    if (ncol(X) == 1){
+      stop("Plotting is not supported for 1 dimensional data")
+    }
+    
+
+    # This is ugly copy so that we can do whatever we want
+    df <- data.frame( as.matrix(X[,cols] ))
+    colnames(df) <- c("X1", "X2") # This is even worse
+
+    
+    t <- predict(x, X)
+    labels <- levels(t)
+    
+    
+    
+    if (obj$areExamplesWeighted()) {
+      df['sizes'] <- obj$getExampleWeights()
+      scale_size <- scale_size_continuous(range = c(radius,radius.max))
+    }else {
+      df['sizes'] <- radius
+      scale_size <- scale_size_identity()
+    }
+        
+    
+    df['t'] <- t
+    
+    #TODO: add getter for data dimensionality
+    if(ncol(X) == 2){
+      x_col <- df[colnames(df)[cols[1]]]
+      y_col <- df[colnames(df)[cols[2]]]
+      
+      x_max <- max(x_col)
+      x_min <- min(x_col) 
+      y_max <- max(y_col)
+      y_min <- min(y_col)
+      
+      x_axis <- seq(from=x_min, to=x_max, length.out=300)
+      y_axis <- seq(from=y_min, to=y_max, length.out=300)
+      grid <- data.frame(x_axis,y_axis)
+      grid <- expand.grid(x=x_axis,y=y_axis)
+      
+      target <- predict(x, grid)
+      grid['target'] <- target
+      
+      pl <- ggplot()+ 
+        geom_tile(data=grid, aes(x=x,y=y, fill=target, alpha=.5)) + 
+          theme(legend.position="none") + 
+          scale_fill_brewer(palette="Set1") + 
+          scale_alpha_identity() + 
+        geom_point(data=df, aes(X1, X2, size=sizes, colour=t)) + 
+          scale_colour_brewer(palette="Set1") + 
+          scale_size
+      
+    }else{
+      warning("Only limited plotting is currently supported for multidimensional data")
+      
+      pl <- ggplot()+ 
+        geom_point(data=df, aes(X1, X2, size=sizes, colour=t)) + 
+        scale_colour_brewer(palette="Set1") + 
+        scale_size
+    }
+    plot(pl) 
+  }
+  
   plot.svm <<- function(x, mode="normal", dim1 = 1, dim2 = 2, log="") {
     if (x$isSparse()) {
       stop("Data is sparse")
@@ -471,9 +565,12 @@ evalqOnLoad({
     if (mode != "pca" && mode != "normal" && mode != "contour" ) {
       stop("Wrong mode!") 
     }
+    
     kernel <- x$getKernel()
     df <- data.frame( x$.getX() )
     t <- x$.getY()
+    labels <- unique(t)
+    
     if (mode != "contour" && kernel == "linear") {
       w <- c(x$getW())
     }
@@ -488,8 +585,11 @@ evalqOnLoad({
       s <- -A/B
       int <- -C/B
       
+      t <- replace(t, t==labels[1], 'blue')
+      t <- replace(t, t==labels[2], 'red')
+      
       pl <- ggplot() +
-        geom_point(data=scores, aes(PC1, PC2), colour=factor(t+2)) + geom_abline(slope=s, intercept=int)
+        geom_point(data=scores, aes(PC1, PC2), colour=t) + geom_abline(slope=s, intercept=int)
       plot(pl)
     }
     else if (mode == "normal" && kernel == "linear") { 
@@ -502,16 +602,14 @@ evalqOnLoad({
       s <- -A/B
       int <- -C/B
     
-      t <- replace(t, t==1, 'blue')
-      t <- replace(t, t==-1, 'red')
-      
+      t <- replace(t, t==labels[1], 'blue')
+      t <- replace(t, t==labels[2], 'red')
+      df['sizes'] <- 0.1
       pl <- ggplot() + geom_point(data=df, aes(X1, X2), colour=t)  +
         geom_abline(slope=s, intercept=int)
       plot(pl)
     }
-    else if (mode == "contour" || kernel != "linear") {    # test mode
-      warning("This is experimental mode, it will change your SVM's data!")
-      temp_target <- x$.getY()
+    else if (mode == "contour" || kernel != "linear") {   
       x_col <- df[colnames(df)[1]]
       y_col <- df[colnames(df)[2]]
       
@@ -519,27 +617,34 @@ evalqOnLoad({
       x_min <- min(x_col) 
       y_max <- max(y_col)
       y_min <- min(y_col)
-      
+            
       x_axis <- seq(from=x_min, to=x_max, length.out=300)
       y_axis <- seq(from=y_min, to=y_max, length.out=300)
       grid <- data.frame(x_axis,y_axis)
       grid <- expand.grid(x=x_axis,y=y_axis)
-      target <- predict(x, grid)
-      
+      target <- as.numeric(predict(x, grid))
+
       if (x$areExamplesWeighted()) {
         df['sizes'] <- x$getExampleWeights()
+        scale <- scale_size_continuous(range = c(3,10))
       }
       else {
-        df['sizes'] <- 0.1
+        df['sizes'] <- 2
+        scale <- scale_size_identity()
       }
       
-      t <- replace(t, t==1, 'blue')
-      t <- replace(t, t==-1, 'red')
+      t <- replace(t, t==labels[1], 'blue')
+      t <- replace(t, t==labels[2], 'red')
+      
+      target <- replace(target, target==labels[1], 'blue')
+      target <- replace(target, target==labels[2], 'red')
+      
       grid["target"] <- target
+      df['t'] <- t
       
       pl <- ggplot()+ 
-        geom_tile(data=grid, aes(x=x,y=y, fill=factor(target))) + theme(legend.position="none") +
-        geom_point(data=df, aes(X1, X2, size=sizes), colour=t) + scale_size_continuous(range = c(3, 6))
+        geom_tile(data=grid, aes(x=x,y=y, fill=target)) + theme(legend.position="none") +
+        geom_point(data=df, aes(X1, X2, size=sizes), colour=t) + scale
       plot(pl)
     }
   }
@@ -635,7 +740,8 @@ evalqOnLoad({
   setMethod("summary", "Rcpp_SVMClient", summary.svm)
   setMethod("show", "Rcpp_SVMClient", summary.svm)
 
-  # Add (very basic) support for caret
+
+# Add (very basic) support for caret
   
   copy <- function(x) x
   
