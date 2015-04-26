@@ -4,8 +4,12 @@ library(testthat)
 library(gmum.r)
 library(caret)
 
+
+
+
+
 test_that("ovo and ova multiclass schemes work for SVM on simple datasets", {
-  set.seed(666)
+  set.seed(777)
   
   centers <- list(c(0,0),  
                   c(10,0), 
@@ -33,19 +37,18 @@ test_that("ovo and ova multiclass schemes work for SVM on simple datasets", {
   preds <- predict(sv, df[,1:2])
   acc <- sum(diag(table(preds, df[,3])))/sum(table(preds, df[,3]))
   expect_that(acc > 0.96, is_true())
-  
-  
+  plot(sv, X=df[,1:2])
   data(iris)
   
   sv.ova <- SVM(Species ~ ., data=iris, class.type="one.versus.all")
   preds <- predict(sv.ova, iris[,1:4])
-  acc.ova <- sum(diag(table(preds, iris$Species)))/sum(table(preds, iris$Species))
-  
+  acc.ova <- sum(diag(table(preds, iris$Species)))/sum(table(preds, iris$Species))  
+  plot(sv.ova)
   
   sv.ovo <- SVM(x=iris[,1:4], y=iris[,5], class.type="one.versus.one")
   preds <- predict(sv.ovo, iris[,1:4])
   acc.ovo <- sum(diag(table(preds, iris$Species)))/sum(table(preds, iris$Species))
-  
+  plot(sv.ovo)
   
   e1.sv <- e1071::svm(Species ~., data=iris, kernel='linear')
   preds <- predict(e1.sv, iris[,1:4])

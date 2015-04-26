@@ -480,53 +480,81 @@ evalqOnLoad({
                   object$getNumberSV()))
   }
   
-  plot.MultiClassSVM <<- function(x) {
+  plot.MultiClassSVM <<- function(x, X=NULL, cols=c(1,2), radius=3, radius.max=10) {
     obj <- x$models[[1]]
-    if (obj$isSparse()) {
-      stop("Data is sparse")
-    }
-    df <- data.frame( obj$.getX() )
     
-    if (ncol(df) > 2){
-      stop("Only 2 dimension plotting is supported for multiclass")
+    if(obj$isSparse()){
+      library(SparseM)
     }
-    t <- predict(x, df)
+    
+    if(is.null(X)){
+      X <- obj$.getX()
+    }
+    
+    if (ncol(X) > 2){
+      warning("Only 2 dimension plotting is supported for multiclass. Plotting 1st and 2nd dimension.")
+    }   
+    if (ncol(X) == 1){
+      stop("Plotting is not supported for 1 dimensional data")
+    }
+    
+
+    # This is ugly copy so that we can do whatever we want
+    df <- data.frame( as.matrix(X[,cols] ))
+    colnames(df) <- c("X1", "X2") # This is even worse
+
+    
+    t <- predict(x, X)
     labels <- levels(t)
     
-    x_col <- df[colnames(df)[1]]
-    y_col <- df[colnames(df)[2]]
     
-    x_max <- max(x_col)
-    x_min <- min(x_col) 
-    y_max <- max(y_col)
-    y_min <- min(y_col)
-    
-    x_axis <- seq(from=x_min, to=x_max, length.out=300)
-    y_axis <- seq(from=y_min, to=y_max, length.out=300)
-    grid <- data.frame(x_axis,y_axis)
-    grid <- expand.grid(x=x_axis,y=y_axis)
-    target <- predict(x, grid)
     
     if (obj$areExamplesWeighted()) {
       df['sizes'] <- obj$getExampleWeights()
-      scale_size <- scale_size_continuous(range = c(3,10))
-    }
-    else {
-      df['sizes'] <- 2
+      scale_size <- scale_size_continuous(range = c(radius,radius.max))
+    }else {
+      df['sizes'] <- radius
       scale_size <- scale_size_identity()
     }
         
-    grid['target'] <- target
+    
     df['t'] <- t
     
-    pl <- ggplot()+ 
-      geom_tile(data=grid, aes(x=x,y=y, fill=target, alpha=.5)) + 
-        theme(legend.position="none") + 
-        scale_fill_brewer(palette="Set1") + 
-        scale_alpha_identity() + 
-      geom_point(data=df, aes(X1, X2, size=sizes, colour=t)) + 
+    #TODO: add getter for data dimensionality
+    if(ncol(X) == 2){
+      x_col <- df[colnames(df)[cols[1]]]
+      y_col <- df[colnames(df)[cols[2]]]
+      
+      x_max <- max(x_col)
+      x_min <- min(x_col) 
+      y_max <- max(y_col)
+      y_min <- min(y_col)
+      
+      x_axis <- seq(from=x_min, to=x_max, length.out=300)
+      y_axis <- seq(from=y_min, to=y_max, length.out=300)
+      grid <- data.frame(x_axis,y_axis)
+      grid <- expand.grid(x=x_axis,y=y_axis)
+      
+      target <- predict(x, grid)
+      grid['target'] <- target
+      
+      pl <- ggplot()+ 
+        geom_tile(data=grid, aes(x=x,y=y, fill=target, alpha=.5)) + 
+          theme(legend.position="none") + 
+          scale_fill_brewer(palette="Set1") + 
+          scale_alpha_identity() + 
+        geom_point(data=df, aes(X1, X2, size=sizes, colour=t)) + 
+          scale_colour_brewer(palette="Set1") + 
+          scale_size
+      
+    }else{
+      warning("Only limited plotting is currently supported for multidimensional data")
+      
+      pl <- ggplot()+ 
+        geom_point(data=df, aes(X1, X2, size=sizes, colour=t)) + 
         scale_colour_brewer(palette="Set1") + 
         scale_size
+    }
     plot(pl) 
   }
   
