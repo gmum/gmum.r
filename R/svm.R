@@ -32,6 +32,7 @@ SVM <- NULL
 summary.MultiClassSVM <- NULL
 .createMultiClassSVM <- NULL
 show.MultiClassSVM <- NULL
+plot.MulticlassSVM <- NULL
 
 #' @title Predict
 #' 
@@ -457,7 +458,7 @@ evalqOnLoad({
   }
   
   summary.MultiClassSVM <<- function(object) {
-    print(sprintf("Support Vector Machine, multiclass.type: %s,library: %s, kernel: %s",
+    print(sprintf("Support Vector Machine, multiclass.type: %s, library: %s, kernel: %s",
                   object$class.type, 
                   object$lib, 
                   object$kernel))
@@ -479,6 +480,56 @@ evalqOnLoad({
                   object$getNumberSV()))
   }
   
+  plot.MultiClassSVM <<- function(x) {
+    obj <- x$models[[1]]
+    if (obj$isSparse()) {
+      stop("Data is sparse")
+    }
+    df <- data.frame( obj$.getX() )
+    
+    if (ncol(df) > 2){
+      stop("Only 2 dimension plotting is supported for multiclass")
+    }
+    t <- predict(x, df)
+    labels <- levels(t)
+    
+    x_col <- df[colnames(df)[1]]
+    y_col <- df[colnames(df)[2]]
+    
+    x_max <- max(x_col)
+    x_min <- min(x_col) 
+    y_max <- max(y_col)
+    y_min <- min(y_col)
+    
+    x_axis <- seq(from=x_min, to=x_max, length.out=300)
+    y_axis <- seq(from=y_min, to=y_max, length.out=300)
+    grid <- data.frame(x_axis,y_axis)
+    grid <- expand.grid(x=x_axis,y=y_axis)
+    target <- predict(x, grid)
+    
+    if (obj$areExamplesWeighted()) {
+      df['sizes'] <- obj$getExampleWeights()
+      scale_size <- scale_size_continuous(range = c(3,10))
+    }
+    else {
+      df['sizes'] <- 2
+      scale_size <- scale_size_identity()
+    }
+        
+    grid['target'] <- target
+    df['t'] <- t
+    
+    pl <- ggplot()+ 
+      geom_tile(data=grid, aes(x=x,y=y, fill=target, alpha=.5)) + 
+        theme(legend.position="none") + 
+        scale_fill_brewer(palette="Set1") + 
+        scale_alpha_identity() + 
+      geom_point(data=df, aes(X1, X2, size=sizes, colour=t)) + 
+        scale_colour_brewer(palette="Set1") + 
+        scale_size
+    plot(pl) 
+  }
+  
   plot.svm <<- function(x, mode="normal", dim1 = 1, dim2 = 2, log="") {
     if (x$isSparse()) {
       stop("Data is sparse")
@@ -486,9 +537,12 @@ evalqOnLoad({
     if (mode != "pca" && mode != "normal" && mode != "contour" ) {
       stop("Wrong mode!") 
     }
+    
     kernel <- x$getKernel()
     df <- data.frame( x$.getX() )
     t <- x$.getY()
+    labels <- unique(t)
+    
     if (mode != "contour" && kernel == "linear") {
       w <- c(x$getW())
     }
@@ -503,8 +557,11 @@ evalqOnLoad({
       s <- -A/B
       int <- -C/B
       
+      t <- replace(t, t==labels[1], 'blue')
+      t <- replace(t, t==labels[2], 'red')
+      
       pl <- ggplot() +
-        geom_point(data=scores, aes(PC1, PC2), colour=factor(t+2)) + geom_abline(slope=s, intercept=int)
+        geom_point(data=scores, aes(PC1, PC2), colour=t) + geom_abline(slope=s, intercept=int)
       plot(pl)
     }
     else if (mode == "normal" && kernel == "linear") { 
@@ -517,16 +574,14 @@ evalqOnLoad({
       s <- -A/B
       int <- -C/B
     
-      t <- replace(t, t==1, 'blue')
-      t <- replace(t, t==-1, 'red')
-      
+      t <- replace(t, t==labels[1], 'blue')
+      t <- replace(t, t==labels[2], 'red')
+      df['sizes'] <- 0.1
       pl <- ggplot() + geom_point(data=df, aes(X1, X2), colour=t)  +
         geom_abline(slope=s, intercept=int)
       plot(pl)
     }
-    else if (mode == "contour" || kernel != "linear") {    # test mode
-      warning("This is experimental mode, it will change your SVM's data!")
-      temp_target <- x$.getY()
+    else if (mode == "contour" || kernel != "linear") {   
       x_col <- df[colnames(df)[1]]
       y_col <- df[colnames(df)[2]]
       
@@ -534,27 +589,34 @@ evalqOnLoad({
       x_min <- min(x_col) 
       y_max <- max(y_col)
       y_min <- min(y_col)
-      
+            
       x_axis <- seq(from=x_min, to=x_max, length.out=300)
       y_axis <- seq(from=y_min, to=y_max, length.out=300)
       grid <- data.frame(x_axis,y_axis)
       grid <- expand.grid(x=x_axis,y=y_axis)
-      target <- predict(x, grid)
-      
+      target <- as.numeric(predict(x, grid))
+
       if (x$areExamplesWeighted()) {
         df['sizes'] <- x$getExampleWeights()
+        scale <- scale_size_continuous(range = c(3,10))
       }
       else {
-        df['sizes'] <- 0.1
+        df['sizes'] <- 2
+        scale <- scale_size_identity()
       }
       
-      t <- replace(t, t==1, 'blue')
-      t <- replace(t, t==-1, 'red')
+      t <- replace(t, t==labels[1], 'blue')
+      t <- replace(t, t==labels[2], 'red')
+      
+      target <- replace(target, target==labels[1], 'blue')
+      target <- replace(target, target==labels[2], 'red')
+      
       grid["target"] <- target
+      df['t'] <- t
       
       pl <- ggplot()+ 
-        geom_tile(data=grid, aes(x=x,y=y, fill=factor(target))) + theme(legend.position="none") +
-        geom_point(data=df, aes(X1, X2, size=sizes), colour=t) + scale_size_continuous(range = c(3, 6))
+        geom_tile(data=grid, aes(x=x,y=y, fill=target)) + theme(legend.position="none") +
+        geom_point(data=df, aes(X1, X2, size=sizes), colour=t) + scale
       plot(pl)
     }
   }

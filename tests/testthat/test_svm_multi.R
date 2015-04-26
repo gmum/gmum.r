@@ -5,50 +5,28 @@ library(gmum.r)
 library(caret)
 
 test_that("ovo and ova multiclass schemes work for SVM on simple datasets", {
-  set.seed(777)
+  set.seed(666)
   
-  # sciagnij jesli nie masz, z tego co pamietam gmum.r i tak wymaga tej paczki
-  
-  # funkcja wygeneruje tyle klas ile chcesz
-  generate_gaussians <- function(sizes, centers, simgas) {
-    
-    n <- length(centers)
-    if (n != length(sigmas)) stop ("paramters length must match")
-    if (n != length(sizes)) stop ("paramters length must match")
-    
-    df <- c()
-    for(i in 1:n){
-      df <- rbind(df, cbind(mvrnorm(n=sizes[[i]], mu=centers[[i]], Sigma=sigmas[[i]]), rep(i,sizes[[i]])))
-    }
-    df <- data.frame(df)
-    colnames(df) <- c("x1","x2", "y")
-    return(as.matrix(df))
-  }
-  
-  
-  # tu przykladowe wywloanie dla 3 klas
-  # jesli chcesz wiecej klas -> daj wiecej elementow na kazdej liscie
-  
-  # srodki gaussow jako lista
-  centers <- list(c(0,0),  # srodek pierwszej klasy
-                  c(10,0), # drugiej
+  centers <- list(c(0,0),  
+                  c(10,0), 
                   c(0,10),
-                  c(3,3)
-                    ) # itd.
+                  c(3,3))
   
-  # macierze kowariancji 2-wymiarowych gaussow, tym mozesz sie pobawic
-  # jak chcesz inne ksztalty gaussow
-  sigmas <- list(matrix(c(1, 0, 0, 1), nrow=2), # macierz kowariancji pierwszej klasy
-                 matrix(c(1, 0, 0, 1), nrow=2),  # drugiej
+  sigmas <- list(matrix(c(1, 0, 0, 1), nrow=2), 
+                 matrix(c(1, 0, 0, 1), nrow=2),  
                  matrix(c(1, 0, 0, 1), nrow=2),
-                 matrix(c(1, 0, 1, 1), nrow=2))  # itd.
+                 matrix(c(1, 0, 1, 1), nrow=2))  
   
-  # rozmiary kazdej klasy, mozna zmienic ale na razie najlepiej testowac na zbalanoswanych danych
-  # tzn. kazda klasa ma tyle samo elementow
   sizes <- list(100, 100, 100, 101)
   
-  # wywolanie
-  df <- generate_gaussians(sizes, centers, sigmas)
+  n <- length(centers)  
+  df <- c()
+  for(i in 1:n){
+    df <- rbind(df, cbind(mvrnorm(n=sizes[[i]], mu=centers[[i]], Sigma=sigmas[[i]]), rep(i,sizes[[i]])))
+  }
+  df <- data.frame(df)
+  colnames(df) <- c("x1","x2", "y")
+  
   df[,3] <- as.factor(df[,3])
   
   sv <- SVM(x=df[,1:2], y=df[,3], class.type="one.versus.all")

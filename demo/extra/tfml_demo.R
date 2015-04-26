@@ -126,7 +126,7 @@ wsvm <- SVM(formula,
             df, 
             lib             = "svmlight", 
             kernel          = "rbf", 
-            example_weights = weights, 
+            example.weights = weights, 
             C               = 10, 
             gamma           = 30, 
             verbosity       = 0);
