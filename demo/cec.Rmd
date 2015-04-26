@@ -19,7 +19,7 @@ library(devtools)
 library('gmum.r')
 
 data(cec_mouse_1_spherical)
-dataset = cec_mouse_1_spherical.input
+dataset = cec.mouse1spherical
 ```
 That is the dataset we want to cluster:
 ```{r fig.width=7, fig.height=6}
