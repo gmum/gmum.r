@@ -118,9 +118,6 @@ TEST_F(SVMLightRunnerTest, processRequest_learning) {
     ASSERT_EQ(svm_config.coef0, 1);
     // -r float    -> parameter c in sigmoid/poly kernel
     ASSERT_EQ(svm_config.C, 1);
-    // -u string   -> parameter of user defined kernel
-    ASSERT_EQ(
-        std::string(svm_config.kernel_parm_custom), std::string("empty"));
     // highest feature index - no assignment to read-only data
     ASSERT_EQ(svm_config.data.n_cols, 4);
     // number of support vectors

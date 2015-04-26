@@ -17,10 +17,6 @@ public:
     //constructors
     SVMClient(SVMConfiguration*);
 
-    // data setters
-    void setX( arma::mat );
-    void setY( arma::vec );
-
     // params setter
     void setLibrary(std::string);
     void setKernel(std::string);
@@ -37,6 +33,7 @@ public:
     void setBias(double);
     void setW(arma::vec);
     void setAlpha(arma::vec);
+    void setNumberClass(int);
 
     // additional setters
     void setConfiguration(SVMConfiguration *);
@@ -68,8 +65,8 @@ public:
 
     // model getters
     // double** getSV(); // double**, std::vector, arma:mat ?
-    int get_number_sv();
-    int get_number_class();
+    int getNumberSV();
+    int getNumberClass();
     arma::vec getAlpha();
     double getBias();
     arma::vec getW();

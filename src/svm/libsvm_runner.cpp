@@ -46,7 +46,11 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 		//examples x dim
 		//config.alpha_y = SvmUtils::arrtoarmavec(config.sv_coef, config.l);
 		//DIM W: (nsv x 1)^T x nsv x dim = 1 x dim
-		config.w = (config.alpha_y.t() * config.support_vectors.t()).t();
+		arma::vec w = (config.alpha_y.t() * config.support_vectors.t()).t();
+		config.w = arma::sp_mat(w.n_elem,1);
+    	for (int i = 0; i != w.n_elem; ++i) {
+      		if (w(i) != 0) config.w(i,0) = w(i);
+    	}
 	} else {
 		arma_prediction(config);
 	}
