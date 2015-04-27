@@ -2296,7 +2296,9 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 				++p;
 			}
 		
-		free(label);
+		LOG(log, LogLevel::TRACE, "Written SV");
+		
+        free(label);
 		free(probA);
 		free(probB);
 		free(count);
@@ -2311,6 +2313,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 		free(nz_count);
 		free(nz_start);
 	}
+	LOG(log, LogLevel::TRACE, "Finished fitting");
 	return model;
 }
 

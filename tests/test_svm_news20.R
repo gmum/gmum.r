@@ -1,7 +1,9 @@
 library(gmum.r)
 library(caret)
 
-data_file <- system.file("inst", "data_sets", "svm", "large", "news20.binary", mustWork=TRUE, package="gmum.r")
+data_file <- system.file("data_sets", "svm", "large", "news20.binary", mustWork=TRUE, package="gmum.r")
+
+
 
 if (!file.exists(x_file) || !file.exists(y_file)) {
   stop("Missing dataset file")
@@ -24,13 +26,14 @@ save(news20.part, file="news20_part.RData", compress = TRUE)
 data_file <- system.file("inst", "data_sets", "svm", "large", "news20_part.RData", mustWork=TRUE, package="gmum.r")
 load(data_file)
 
+load("~/Downloads/news20_part.RData")
 x <- news20.part$x
 y <- news20.part$y
 
 library(caret)
 train <- as.integer(createDataPartition(y, p=0.1, list=FALSE))
 
-lib <- "svmlight"
+lib <- "libsvm"
 kernel <- "linear"
 
 library(e1071)
@@ -43,6 +46,7 @@ if (kernel=="rbf") kernel <- "radial"
 train_start <- proc.time()
 e_svm <- e1071::svm(x=x[train], y=y[train], type='C-classification', kernel=kernel, cost=1, gamma=1, scale=FALSE, fitted=FALSE)
 e_train <- as.numeric((proc.time() - train_start)[3])
+
 
 test_start <- proc.time()
 gmum_pred <- predict(gmum_svm, x[-train])

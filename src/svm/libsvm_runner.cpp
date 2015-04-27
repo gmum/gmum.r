@@ -347,10 +347,10 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 	free(ret);
 }
 
-svm_node **LibSVMRunner::ArmaSpMatToSvmNode(arma::sp_mat sparse_data) {
+svm_node **LibSVMRunner::ArmaSpMatToSvmNode(arma::sp_mat & sparse_data) {
     int max_rows = sparse_data.n_rows + 1;
-    svm_node **sn = new svm_node*[sparse_data.n_cols];
-    svm_node tmp_col[max_rows];
+    svm_node **sn = new svm_node*[sparse_data.n_cols + 1];
+    svm_node * tmp_col = new svm_node[max_rows];
     long int current_col_counter;
     long int row;
     for (unsigned int col = 0; col < sparse_data.n_cols; ++col) {
@@ -359,17 +359,17 @@ svm_node **LibSVMRunner::ArmaSpMatToSvmNode(arma::sp_mat sparse_data) {
 
         for (
             arma::sp_mat::iterator it = sparse_data.begin_col(col);
-            it.row() > row; ++it
+            it != sparse_data.end_col(col); ++it
         ) {
-            row = it.row();
-            tmp_col[current_col_counter].value = sparse_data(row, col);
-            tmp_col[current_col_counter++].index = row + 1;
+            tmp_col[current_col_counter].value = *it;
+            tmp_col[current_col_counter++].index = it.row() + 1;
         }
         
         sn[col] = new svm_node[current_col_counter + 1];
         memcpy(sn[col], tmp_col, current_col_counter * sizeof(svm_node));
         sn[col][current_col_counter].index = -1.0;
     }
+    delete [] tmp_col;
     return sn;
 }
 

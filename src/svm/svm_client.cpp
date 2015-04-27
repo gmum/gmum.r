@@ -395,8 +395,8 @@ double SVMClient::kernel(size_t i, size_t j) {
 }
 
 void SVMClient::sparse_predict(
-    arma::uvec rowind,
-    arma::uvec colptr,
+    arma::uvec rowptr,
+    arma::uvec colind,
     arma::vec values,
     size_t n_rows,
     size_t n_cols
@@ -404,8 +404,8 @@ void SVMClient::sparse_predict(
     LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".sparse_predict() Started.");
 
     config.setSparseData(
-        rowind,
-        colptr,
+        rowptr,
+        colind,
         values,
         n_rows,
         n_cols,

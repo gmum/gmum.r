@@ -369,9 +369,10 @@ evalqOnLoad({
     if (sparse) {
       config$sparse <- 1
       
-      # NEW (for arma::sp_mat)  
-      x <- as.matrix.csc(x)
-      config$set_sparse_data(x@ja, x@ia, x@ra, nrow(x), ncol(x), TRUE)
+      #x@ia - rowptr 
+      #x@ja - colind
+      #x@ra - values
+      config$set_sparse_data(x@ia, x@ja, x@ra, nrow(x), ncol(x), TRUE)
     }
     else {
       config$sparse <- 0
@@ -662,8 +663,7 @@ evalqOnLoad({
       if (!is(x, "matrix.csr")) {
         stop("Please provide sparse matrix")
       }
-      x <- as.matrix.csc(x)
-      object$sparse_predict(x@ja, x@ia, x@ra, nrow(x), ncol(x))
+      object$sparse_predict(x@ia, x@ja, x@ra, nrow(x), ncol(x))
     }
     
     if(decision.function){
