@@ -1,64 +1,100 @@
 library(ggplot2)
 
 #' @title SVM
-#' 
 #' @export
 #' 
-#' @description Create and train SVM model object. If any parameter will be omitted a default value will be used
+#' @description Create and train SVM model object. 
 #' 
-#' @param x Dataset without labels
-#' @param y Labels
-#' @param lib Desired SVM Library, avialable are: libsvm
-#' @param kernel Kernel type, avialable are: linear, poly, rbf, sigmoid
-#' @param prep Preprocess method, avialable are: none, 2e
-#' @param C Cost/Complexity parameter
-#' @param gamma Gamma parameter for poly, rbf and sigmoid kernels
-#' @param coef0 Coef0 for poly and sigmoid kernels
-#' @param degree Degree for poly kernel
-#' @param shrinking Whether to use shrinking heuristics
-#' @param probability Whether to train a model for probability estimates 
-#' @param cache_size Cache size
-#' @param tol Tolerance of termination criterion
-#' 
+#' @param x training data without labels in one of the following formats:
+#'  \code{data.frame}, \code{data.matrix}, \code{SparseM::matrix.csr}, \code{Matrix::Matrix},
+#'  \code{slam::simple_triplet_matrix}
+#' @param y labels in one of the followinf formts: \code{factor}, \code{vector}. 
+#'  Recommended type is \code{factor}
+#' @param data can be passed instead of \code{x,} \code{y} pair with \code{formula} to mark the labels 
+#'  column, supported formats are:
+#'  \code{data.frame}, \code{data.matrix}
+#' @param formula can be passed with \code{data}  instead of \code{x}, \code{y} pair, 
+#'  formula needs to point to lables column, for example: \code{target~.}
+#' @param lib support Vector Machine library to use in traning, available are: 
+#'  \code{'libsvm'}, \code{'svmlight'}; default: \code{'libsvm'} 
+#' @param kernel kernel type as string, avialable are: \code{'linear'}, \code{'poly'},
+#' \code{'rbf'}, \code{'sigmoid'}; 
+#' default: \code{'linear'}
+#' \itemize{
+#' \item \code{linear}: \eqn{x'*w}
+#' \item \code{poly}: \eqn{(gamma*x'*w + coef0)^degree}
+#' \item \code{rbf}: \eqn{exp(-gamma*|x-w|^2)}
+#' \item \code{sigmoid}: \eqn{tanh(gamma*x'*w + coef0)}
+#' }
+#' @param prep preprocess method as string, avialable are: \code{'none'}, \code{'2e'}; 
+#' default: \code{'none'}. For more information on \code{2eSVM} see:
+#' \url{http://www.sciencedirect.com/science/article/pii/S0957417414004138}
+#' @param C cost/complexity parameter, default: \code{1}
+#' @param gamma parameter for \code{poly}, \code{rbf} and \code{sigmoid} kernels, 
+#'  default: \code{1/n_features}
+#' @param coef0 for \code{poly} and \code{sigmoid} kernels, default: \code{0}
+#' @param degree for \code{poly} kernel, default: \code{3}
+#' @param cache_size cache memory size in MB, default: \code{100}
+#' @param tol tolerance of termination criterion, default: \code{1e-3}
+#' @param max.iter depending on library:
+#' \itemize{
+#'  \item libsvm: number of iterations after which the training porcess is killed 
+#'  (it can end earlier is desired tolerance is met), default: \code{1e6}
+#'  \item svmlight: number of iterations after which if there is no progress traning is killed, 
+#'  default: \code{-1} (no limit)
+#'  }  
+#' @param transductive.learning option got SVM model to deduce missing labels from the dataset, 
+#'  default: \code{FALSE}
+#'  NOTE: this feature is only available with svmlight library, missing labels are marked as 
+#'  \code{'TR'}, if none are found and transductive to \code{TRUE}, label \code{0} will be 
+#'  interpreted as missing
+#' @param transductive.posratio fraction of unlabeled examples to be classified into the positive class 
+#'  as float from \eqn{[0,1]}, default: the ratio of positive and negative examples in the training data
+#' @param class.weights named vector with weight fir each class, default: \code{NULL}
+#' @param example.weights vector of the same length as training data with weights for each traning example,
+#'  default: \code{NULL} NOTE: this feature is only supported with svmlight library
+#' @param class.type multiclass algorithm type as string, 
+#' available are: \code{'one.versus.all', 'one.versus.one'}; default: \code{'one.versus.one'}
+#' @param verbosity how verbose should the process be, as integer from \eqn{[1,6]}, default: \code{4}
+#'  
 #' @return SVM model object
 #' @examples 
-#' svm <- SVM(lib = "libsvm", kernel = "linear", C = 1, gamma = 0.01, coef0 = 0,degree = 3)
+#' # train SVM from data in x and labels in y 
+#' svm <- SVM(x, y, lib = "libsvm", kernel = "linear", C = 1)
+#' # train SVM usind dataset with both data and lables and a formula pointing to labels
+#' formula <- target ~ . 
+#' svm <- SVM(formula, data, lib = "svmlight", kernel = "rbf", gamma = 1e3)
 #' 
 SVM <- NULL
 
-
-
-
-summary.MultiClassSVM <- NULL
 .createMultiClassSVM <- NULL
+summary.MultiClassSVM <- NULL
 show.MultiClassSVM <- NULL
 plot.MulticlassSVM <- NULL
+predict.MultiClassSVM <- NULL
 
 #' @title Predict
 #' 
-#' @description Returns predicted classes for provided test examples.
-#' 
-#' @rdname svm-predict-methods
+#' @description Returns predicted classes or distance to discriminative for provided test examples.
 #' 
 #' @export
 #' 
 #' @usage predict(svm, x)
 #' 
 #' @param object Trained SVM object.
-#' @param x unlabeled data, note that each entry needs to be the same dimentionality as training examples.
+#' @param x unlabeled data, in one of the following formats:
+#'  \code{data.frame}, \code{data.matrix}, \code{SparseM::matrix.csr}, \code{Matrix::Matrix},
+#'  \code{slam::simple_triplet_matrix}
+#' @param decision.function if \code{TRUE} returns SVMs decision function 
+#' (distance of a point from discriminant) instead of predicted labels, default: \code{FALSE}
 #' 
 #' @docType methods
 #' 
-#' @aliases test
 predict.svm.gmum <- NULL
-
-predict.MultiClassSVM <- NULL
 
 #' @title print
 #' 
 #' @description Prints short summary of the SVM object and its parameters.
-#' 
-#' @rdname svm-print-methods
 #' 
 #' @export
 #' 
@@ -67,24 +103,33 @@ predict.MultiClassSVM <- NULL
 #' @param object SVM object
 #' 
 #' @docType methods
-#' @aliases summary
 print.svm <- NULL
 
 #' @title plot
 #' 
-#' @description Draws choosen dimenstions from a dataset on 2D plot coloring by class. NOTE: This function will be change to a package default function.
+#' @description Plots trained svm data and models disciriminative
 #' 
 #' @export
 #' 
-#' @usage plot(svm, pca=TRUE, log="x")
-#' @usage plot(svm, dim1=3, dim2=4)
+#' @param x trained svm object
+#' @param X optional new data points to be predicted and plotted in one of the following formats:
+#'  \code{data.frame}, \code{data.matrix}; default: \code{NULL}
+#' @param mode which plotting mode to use as string, available are: 
+#'  \itemize{
+#'  \item \code{'normal'} - default mode, plots data in cols argument and a linear decision 
+#'    boundry in available
+#'  \item \code{'pca'} - preforms PCA decomposition and draws data in a subspace of first 2 dimensions 
+#'  from the PCA 
+#'  \item \code{'contour'} - countour plot for non-linear kernels
+#'  }
+#' @param cols data dimensions to be plotted as vector of length 2, default: \code{c(1,2)}
+#' @param radius radius of the plotted data points as float, default: \code{3}
+#' @param radius.max maximum radius of data points can be plotted, when model is trained 
+#'  with example weights as float, default: \code{10}
 #' 
-#' @param pca Bool, use Principal Component Analysis for plot
-#' @param dim1 (optional) Dimension of dataset to plot on x axis, by default 1
-#' @param dim2 (optional) Dimension of dataset to plot on y axis, by default 2
-#' @param log (optional) Use logarthic transformation for an axis, "x", "y", or "xy"
-#' 
-#' @rdname plot-dataset-methods
+#' @usage plot(svm)
+#' @usage plot(svm, X=x, cols=c(1,3))
+#' @usage plot(svm, mode="pca", radius=5)
 #' 
 plot.svm <- NULL
 
@@ -97,8 +142,6 @@ plot.svm <- NULL
 #' @usage summary(svm)
 #' 
 #' @param svm SVM object 
-#' 
-#' @rdname svm-summary-method
 #' 
 summary.svm <- NULL
 
@@ -234,7 +277,7 @@ evalqOnLoad({
            probability = FALSE,
            class.weights    = NULL,
            example.weights    = NULL,
-           cache_size  = 200,
+           cache_size  = 100,
            tol         = 1e-3,
            max.iter    = -1,
            verbosity   = 4,
@@ -267,14 +310,18 @@ evalqOnLoad({
     call[[1]] <- as.name("SVM")
 
     # check for errors
-    if ( lib != "libsvm" && lib != "svmlight") stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" ))  
-    if ( lib != "svmlight" && transductive.learning) stop(paste(GMUM_WRONG_LIBRARY, ": bad library, transductive learning is supported only by svmlight" ))  
-    if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
+    if ( lib != "libsvm" && lib != "svmlight") 
+      stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" ))  
+    if ( lib != "svmlight" && transductive.learning) 
+      stop(paste(GMUM_WRONG_LIBRARY, ": bad library, transductive learning is supported only by svmlight" ))  
+    if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") 
+      stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
     if (prep != "2e" && prep != "none") stop(paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
     if (C < 0 || gamma < 0 || degree < 1) stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
-    if ((transductive.posratio < 0 && transductive.posratio != -1) || transductive.posratio > 1) stop("Please pass transductive.posratio in range [0,1]")  
+    if ((transductive.posratio < 0 && transductive.posratio != -1) || transductive.posratio > 1)
+      stop("Please pass transductive.posratio in range [0,1]")  
     
     # check data
     if(nrow(x) != length(y)) stop("x and y have different lengths")
@@ -448,14 +495,7 @@ evalqOnLoad({
   } 
 
   print.svm <- function(x) {
-    print(sprintf("SVM object with: library: %s, kernel: %s, preprocess: %s, C: %.1f, gamma: %.3f, coef0: %.3f, degree: %d",
-                  x$getLibrary(),
-                  x$getKernel(),
-                  x$getPreprocess(),
-                  x$getC(),
-                  x$getGamma(),
-                  x$getCoef0(),
-                  x$getDegree() ))
+    summary(x)
   }
   
   summary.MultiClassSVM <<- function(object) {
