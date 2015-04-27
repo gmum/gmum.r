@@ -481,34 +481,54 @@ evalqOnLoad({
   }
   
   plot.MultiClassSVM <<- function(x, X=NULL, cols=c(1,2), radius=3, radius.max=10) {
-    obj <- x$models[[1]]
-    
+    plot.svm(x, X=X, cols=cols, radius=radius, radius.max=radius.max)
+  }
+  
+  plot.svm <<- function(x, X=NULL, mode="normal", cols=c(1,2), radius=3, radius.max=10) {
+    #0. Some initial preparing
+    if (mode != "pca" && mode != "normal" && mode != "contour" ) {
+      stop("Wrong mode!") 
+    }
+    if(class(x) == "MultiClassSVM"){
+      obj <- x$models[[1]]
+    }else{
+      obj <- x
+    }
     if(obj$isSparse()){
       library(SparseM)
     }
     
+    
+    #1. Get X and Y
     if(is.null(X)){
       X <- obj$.getX()
+      if(class(x) == "MultiClassSVM"){
+        t <- predict(x, X)
+      }else{
+        t <- obj$.getY()
+      }
+    }else{
+      t <- predict(x, X)
     }
+    labels <- levels(as.factor(t))
     
+    #2. Do some checking
     if (ncol(X) > 2){
-      warning("Only 2 dimension plotting is supported for multiclass. Plotting 1st and 2nd dimension.")
+      warning("Only 2 dimension plotting is supported for multiclass. Plotting using cols parameter")
     }   
+    if (ncol(X) > 2 && mode == "contour"){
+      stop("Contour mode is supported only for 2 dimensional data")
+    }
     if (ncol(X) == 1){
       stop("Plotting is not supported for 1 dimensional data")
     }
     
-
-    # This is ugly copy so that we can do whatever we want
+    #3. Prepare df. This is ugly copy so that we can do whatever we want
     df <- data.frame( as.matrix(X[,cols] ))
     colnames(df) <- c("X1", "X2") # This is even worse
-
+    df['class'] <- as.factor(t)
     
-    t <- predict(x, X)
-    labels <- levels(t)
-    
-    
-    
+    #4. Prepare data for plotting
     if (obj$areExamplesWeighted()) {
       df['sizes'] <- obj$getExampleWeights()
       scale_size <- scale_size_continuous(range = c(radius,radius.max))
@@ -516,14 +536,35 @@ evalqOnLoad({
       df['sizes'] <- radius
       scale_size <- scale_size_identity()
     }
-        
     
-    df['t'] <- t
+    #5. Support parameters
+    kernel <- obj$getKernel()
     
-    #TODO: add getter for data dimensionality
-    if(ncol(X) == 2){
-      x_col <- df[colnames(df)[cols[1]]]
-      y_col <- df[colnames(df)[cols[2]]]
+    
+    if(mode == "pca"){
+      pca_data = prcomp(X, scale=TRUE)
+      # Transform data
+      df$X1 <- pca_data$x[,1]
+      df$X2 <- pca_data$x[,2]
+    }
+    
+    w <- NULL
+    if (kernel == "linear" && class(x) != "MultiClassSVM") {
+      # W will be used only for binary model
+      if (mode == "pca") {
+        w <- c(obj$getW())
+        w <- w %*% pca_data$rotation
+      }else{
+        w <- c(obj$getW())
+      }
+    }
+    
+    
+    
+    #6. PLOT
+    if(ncol(X) == 2 && mode == "contour"){
+      x_col <- df$X1
+      y_col <- df$X2
       
       x_max <- max(x_col)
       x_min <- min(x_col) 
@@ -540,113 +581,30 @@ evalqOnLoad({
       
       pl <- ggplot()+ 
         geom_tile(data=grid, aes(x=x,y=y, fill=target, alpha=.5)) + 
-          theme(legend.position="none") + 
-          scale_fill_brewer(palette="Set1") + 
-          scale_alpha_identity() + 
-        geom_point(data=df, aes(X1, X2, size=sizes, colour=t)) + 
-          scale_colour_brewer(palette="Set1") + 
-          scale_size
+        theme(legend.position="none") + 
+        scale_fill_brewer(palette="Set1") + 
+        scale_alpha_identity() + 
+        geom_point(data=df, aes(X1, X2, size=sizes, colour=class)) + 
+        scale_colour_brewer(palette="Set1") + 
+        scale_size
       
     }else{
       warning("Only limited plotting is currently supported for multidimensional data")
       
       pl <- ggplot()+ 
-        geom_point(data=df, aes(X1, X2, size=sizes, colour=t)) + 
+        geom_point(data=df, aes(X1, X2, size=sizes, colour=class)) + 
         scale_colour_brewer(palette="Set1") + 
         scale_size
     }
-    plot(pl) 
-  }
-  
-  plot.svm <<- function(x, mode="normal", dim1 = 1, dim2 = 2, log="") {
-    if (x$isSparse()) {
-      stop("Data is sparse")
-    }
-    if (mode != "pca" && mode != "normal" && mode != "contour" ) {
-      stop("Wrong mode!") 
+    
+    # Add line
+    if(!is.null(w)){
+      s <- -w[1]/w[2]
+      int <- obj$getBias()/w[2]
+      pl <- pl + geom_abline(slope=s, intercept=int)
     }
     
-    kernel <- x$getKernel()
-    df <- data.frame( x$.getX() )
-    t <- x$.getY()
-    labels <- unique(t)
-    
-    if (mode != "contour" && kernel == "linear") {
-      w <- c(x$getW())
-    }
-    if (mode == "pca" && kernel == "linear") {
-      pca_data = prcomp(df, scale=TRUE)
-      scores = data.frame(df, pca_data$x[,1:2])
-      w <- w %*% pca_data$rotation
-      A <- w[1]
-      B <- w[2]
-      C <- x$getBias()
-      
-      s <- -A/B
-      int <- -C/B
-      
-      t <- replace(t, t==labels[1], 'blue')
-      t <- replace(t, t==labels[2], 'red')
-      
-      pl <- ggplot() +
-        geom_point(data=scores, aes(PC1, PC2), colour=t) + geom_abline(slope=s, intercept=int)
-      plot(pl)
-    }
-    else if (mode == "normal" && kernel == "linear") { 
-      if (dim1 > ncol(df) || dim2 > ncol(df)) {
-        stop("Too large dimensions")
-      }
-      A <- w[1]
-      B <- w[2]
-      C <- x$getBias()      
-      s <- -A/B
-      int <- -C/B
-    
-      t <- replace(t, t==labels[1], 'blue')
-      t <- replace(t, t==labels[2], 'red')
-      df['sizes'] <- 0.1
-      pl <- ggplot() + geom_point(data=df, aes(X1, X2), colour=t)  +
-        geom_abline(slope=s, intercept=int)
-      plot(pl)
-    }
-    else if (mode == "contour" || kernel != "linear") {   
-      x_col <- df[colnames(df)[1]]
-      y_col <- df[colnames(df)[2]]
-      
-      x_max <- max(x_col)
-      x_min <- min(x_col) 
-      y_max <- max(y_col)
-      y_min <- min(y_col)
-            
-      x_axis <- seq(from=x_min, to=x_max, length.out=300)
-      y_axis <- seq(from=y_min, to=y_max, length.out=300)
-      grid <- data.frame(x_axis,y_axis)
-      grid <- expand.grid(x=x_axis,y=y_axis)
-      target <- as.numeric(predict(x, grid))
-
-      if (x$areExamplesWeighted()) {
-        df['sizes'] <- x$getExampleWeights()
-        scale <- scale_size_continuous(range = c(3,10))
-      }
-      else {
-        df['sizes'] <- 2
-        scale <- scale_size_identity()
-      }
-      
-      t <- replace(t, t==labels[1], 'blue')
-      t <- replace(t, t==labels[2], 'red')
-      
-      target <- replace(target, target==labels[1], 'blue')
-      target <- replace(target, target==labels[2], 'red')
-      
-      grid["target"] <- target
-      df['t'] <- t
-      
-      pl <- ggplot()+ 
-        geom_tile(data=grid, aes(x=x,y=y, fill=target)) + theme(legend.position="none") +
-        geom_point(data=df, aes(X1, X2, size=sizes), colour=t) + scale
-      plot(pl)
-    }
+    plot(pl)
   }
   
   predict.MultiClassSVM <<- function(object, x){
