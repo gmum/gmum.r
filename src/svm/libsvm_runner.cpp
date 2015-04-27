@@ -46,7 +46,7 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 		//examples x dim
 		//config.alpha_y = SvmUtils::arrtoarmavec(config.sv_coef, config.l);
 		//DIM W: (nsv x 1)^T x nsv x dim = 1 x dim
-		arma::vec w = (config.alpha_y.t() * config.support_vectors.t()).t();
+		arma::vec w = (config.support_vectors * config.alpha_y);
 		config.w = arma::sp_mat(w.n_elem,1);
     	for (int i = 0; i != w.n_elem; ++i) {
       		if (w(i) != 0) config.w(i,0) = w(i);
@@ -81,19 +81,10 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 	//*nr = config.support_vectors.n_rows; //support vectors
 	*nclasses = model->nr_class;
 	config.nr_class = model->nr_class;
+	LOG(config.log, LogLevel::TRACE, "save_model_to_config writing down alphas, nclasses= " + svm_to_str(config.nr_class));
 
 	int nr_support_vectors = model->l;
-	//config.sv_coef = (double **) malloc(model->nr_class * sizeof(double*));
-	for (int i = 0; i < config.nr_class - 1; i++) {
-		//config.sv_coef[i] = (double *) malloc(nr_support_vectors * sizeof(double));
-		//memcpy(config.sv_coef[i * nr_support_vectors], model->sv_coef[i],
-				//nr_support_vectors * sizeof(double*));
-		
-		arma::vec alpha_y_copy(model->sv_coef[i], nr_support_vectors);
-		config.alpha_y = alpha_y_copy;
-		// std::vector<double> alpha_y(config.alpha_y.begin(), config.alpha_y.end());
-		// memcpy(model->sv_coef[i * config.l], &alpha_y[0] ,config.l * sizeof(double*));
-	}
+	config.alpha_y = arma::vec(model->sv_coef[0], nr_support_vectors);
 
 	if(config.nr_class != 2) {
 		throw std::invalid_argument( "Code is not implemented for more than 2 classes right now");
@@ -109,13 +100,11 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 	int dim = config.getDataDim();
 	ASSERT(dim > 0);
 	//config.support_vectors = SvmUtils::libtoarma(model->SV, nr_support_vectors, dim);
-	config.support_vectors = SvmUtils::SvmNodeToArmaSpMat(model->SV, nr_support_vectors, dim).t();
-
-	// config.SV = (svm_node **) malloc(config.l * sizeof(svm_node*));
-	// for (int i = 0; i < config.l; i++) {
-	// 	config.SV[i] = (svm_node*) malloc(sizeof(svm_node));
-	// 	memcpy(config.SV, model->SV, sizeof(svm_node));
-	// }
+    //
+	LOG(config.log, LogLevel::TRACE, "save_model_to_config writing down SV, n_SV = " + svm_to_str(nr_support_vectors));
+	config.support_vectors = SvmUtils::SvmNodeToArmaSpMat(model->SV, nr_support_vectors, dim);
+	LOG(config.log, LogLevel::TRACE, "save_model_to_config wrote down SV, n_SV = " + svm_to_str(config.support_vectors.n_cols));
+	LOG(config.log, LogLevel::TRACE, "save_model_to_config wrote down SV, dim = " + svm_to_str(config.support_vectors.n_rows));
 
 	//	TODO: WTF!!!!!???
 	if (config.svm_type < 2) {
@@ -124,6 +113,7 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 		memcpy(config.label, model->label, *nclasses * sizeof(int));
 		memcpy(config.nSV, model->nSV, *nclasses * sizeof(int));
 	}
+
     config.neg_target = model->label[1];
     config.pos_target = model->label[0];
 

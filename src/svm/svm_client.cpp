@@ -262,8 +262,8 @@ void SVMClient::predictFromConfig() {
         if(config.kernel_type == ::_LINEAR){
             if (isSparse()) {
             	doc_result = arma::dot(
-                    config.getSparseData().col(i).t(),
-                    config.w.t()
+                    config.getSparseData().col(i),
+                    config.w
                 );
             } else {
             	doc_result = arma::dot(

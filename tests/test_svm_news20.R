@@ -26,6 +26,9 @@ save(news20.part, file="news20_part.RData", compress = TRUE)
 data_file <- system.file("inst", "data_sets", "svm", "large", "news20_part.RData", mustWork=TRUE, package="gmum.r")
 load(data_file)
 
+
+library(gmum.r)
+library(caret)
 load("~/Downloads/news20_part.RData")
 x <- news20.part$x
 y <- news20.part$y

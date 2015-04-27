@@ -85,21 +85,10 @@ public:
 		}
 	}
 
+    //Constructs effciently CSR matrix containing SVs
 	static arma::sp_mat SvmNodeToArmaSpMat(
         svm_node** svm_nodes, int nr_sv, int dim
-    ) {
-		arma::sp_mat ret(nr_sv, dim);
-
-		for (int row = 0; row < nr_sv; row++) {
-			svm_node* tmp_row = svm_nodes[row];
-			for (int j = 0; tmp_row[j].index != -1; j++) {
-				// cout << "Row, j, index, value" << row << " " << j << " " <<
-				// tmp_row[j].index << " " << tmp_row[j].value << endl;
-				ret(row, tmp_row[j].index - 1) = tmp_row[j].value;
-			}
-		}
-		return ret;
-	}
+    ); 
 
 	static arma::vec arrtoarmavec(double* arr, int size) {
 		arma::vec ret(size);
