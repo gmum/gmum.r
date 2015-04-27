@@ -34,9 +34,10 @@ x <- news20.part$x
 y <- news20.part$y
 
 library(caret)
+set.seed(777)
 train <- as.integer(createDataPartition(y, p=0.1, list=FALSE))
 
-lib <- "libsvm"
+lib <- "svmlight"
 kernel <- "linear"
 
 library(e1071)

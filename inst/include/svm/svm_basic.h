@@ -79,7 +79,7 @@ public:
     double transductive_posratio;
 
     /* Global "stuff" */
-    arma::vec alpha_y;          // SVMLight's alpha*y values for SV's
+    arma::sp_vec alpha_y;          // SVMLight's alpha*y values for SV's
     arma::sp_mat support_vectors;   ///< Vectors are transposed (column vectors)
     arma::mat data;     // armadillo matrix and vector (double)
     arma::vec target;

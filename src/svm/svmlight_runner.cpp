@@ -1097,30 +1097,47 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     config.nr_class = 2; // svmlight works only with 2 classes
 
     config.alpha_y = arma::zeros<arma::vec>(config.l);
-    config.support_vectors = \
-        arma::zeros<arma::sp_mat>(config.l, model->totwords);
+    int dim = model->totwords;
 
+    // Constructing alphas and SV:
+    arma::uvec colptr(config.l+1); //this always has this dim
+    colptr(0) = 0; //always
+
+    int non_zero = 0;
+    //get necessary statistics 
+    for (i = 1; i < model->sv_num; i++) {
+      for (v = model->supvec[i]->fvec; v; v=v->next) {
+        for (j = 0; (v->words[j]).wnum; j++) {
+            non_zero += 1;
+        }
+      }
+    }
+    arma::uvec rowind(non_zero);
+    arma::vec values(non_zero);
+
+    int current = 0;
     for (i = 1; i < model->sv_num; i++) {
       for (v = model->supvec[i]->fvec; v; v=v->next) {
         config.alpha_y(i - 1) = model->alpha[i]*v->factor;
         for (j = 0; (v->words[j]).wnum; j++) {
             k = (v->words[j]).wnum - 1;
-            config.support_vectors(i - 1, k) = v->words[j].weight;
+            rowind[current] = k;
+            values[current] = v->words[j].weight;
+            current++;
         }
+        colptr(i) = current;
       }
     }
-    config.support_vectors = config.support_vectors.t();
-    arma::vec w = (config.alpha_y.t() * config.support_vectors.t()).t();
-    config.w = arma::sp_mat(w.n_elem,1);
-    for (int i = 0; i != w.n_elem; ++i) {
-      if (w(i) != 0) config.w(i,0) = w(i);
-    }
+
+    config.support_vectors = arma::sp_mat(rowind, colptr, values, dim, config.l); 
+	config.w = (config.support_vectors * config.alpha_y);
 
     LOG(
         config.log,
         LogLevel::DEBUG,
         __debug_prefix__ + ".SVMLightModelToSVMConfiguration() Done."
     );
+
 }
 
 void SVMLightRunner::libraryWaitAnyKey()

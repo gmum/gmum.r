@@ -67,7 +67,7 @@ public:
     // double** getSV(); // double**, std::vector, arma:mat ?
     int getNumberSV();
     int getNumberClass();
-    arma::vec getAlpha();
+    arma::sp_vec getAlpha();
     double getBias();
     arma::vec getW();
     arma::sp_mat getSV();

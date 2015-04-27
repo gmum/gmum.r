@@ -168,7 +168,7 @@ SVMClient::areExamplesWeighted() {
     return (bool)config.use_example_weights;
 }
 // model getters
-arma::vec SVMClient::getAlpha() {
+arma::sp_vec SVMClient::getAlpha() {
     return config.alpha_y;
 }
 

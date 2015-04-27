@@ -31,7 +31,7 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 
 //	Training
 	if (!config.isPrediction()) {
-		svm_node** node;
+		svm_node** node = 0;
 		if(config.isSparse()) {
             node = ArmaSpMatToSvmNode(config.sparse_data);
 		} else {
@@ -42,15 +42,8 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 		prob.y = vectlib(config.target);
 		prob.x = node;
 		save_model_to_config(config, param, prob);
-		//Xk is already transposed
-		//examples x dim
-		//config.alpha_y = SvmUtils::arrtoarmavec(config.sv_coef, config.l);
-		//DIM W: (nsv x 1)^T x nsv x dim = 1 x dim
-		arma::vec w = (config.support_vectors * config.alpha_y);
-		config.w = arma::sp_mat(w.n_elem,1);
-    	for (int i = 0; i != w.n_elem; ++i) {
-      		if (w(i) != 0) config.w(i,0) = w(i);
-    	}
+		config.w = (config.support_vectors * config.alpha_y);
+
 	} else {
 		arma_prediction(config);
 	}
@@ -84,7 +77,15 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 	LOG(config.log, LogLevel::TRACE, "save_model_to_config writing down alphas, nclasses= " + svm_to_str(config.nr_class));
 
 	int nr_support_vectors = model->l;
-	config.alpha_y = arma::vec(model->sv_coef[0], nr_support_vectors);
+    //conversion vec->SpCol
+    arma::vec alpha_y_tmp = arma::vec(model->sv_coef[0], nr_support_vectors);
+    //not my fault. Arma fault :)
+	config.alpha_y = arma::zeros(nr_support_vectors);
+    for(int i=0;i<nr_support_vectors;++i){
+        if(alpha_y_tmp(i) != 0){
+            config.alpha_y(i) = alpha_y_tmp(i);
+        }
+    }
 
 	if(config.nr_class != 2) {
 		throw std::invalid_argument( "Code is not implemented for more than 2 classes right now");
