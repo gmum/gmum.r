@@ -168,8 +168,8 @@ SVMClient::areExamplesWeighted() {
     return (bool)config.use_example_weights;
 }
 // model getters
-arma::sp_vec SVMClient::getAlpha() {
-    return config.alpha_y;
+arma::vec SVMClient::getAlpha() {
+    return arma::vec(config.alpha_y);
 }
 
 void SVMClient::setBias(double bias) {
