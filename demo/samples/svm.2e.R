@@ -1,3 +1,9 @@
+#' ---
+#' title: "Two Ellipsoid SVM preprocessing technique"
+#' author: ""
+#' date: ""
+#' ---
+
 # For linear kernel gmum.R provides new preprocessing technique
 # called Two Ellipsoid SVM, which accounts for different covariances
 # of classes

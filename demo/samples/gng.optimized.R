@@ -1,3 +1,9 @@
+#' ---
+#' title: "Optimized version of GNG"
+#' author: ""
+#' date: ""
+#' ---
+
 # For advanced used you might want to consider using OptimizedGNG
 # , which asymptotically much faster implementation without
 # sacrifying quality of the graph

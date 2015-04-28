@@ -1,4 +1,8 @@
-# gmum.R support weighted examples 
+#' ---
+#' title: "Example weight support in gmum.R"
+#' author: ""
+#' date: ""
+#' ---
 
 library(gmum.r)
 library(ggplot2)

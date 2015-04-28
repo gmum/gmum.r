@@ -803,7 +803,7 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     object$components.membership[predict(object, x)]
   }
 
-  plot.gng <<- function(x, vertex.color=gng.plot.color.cluster, layout=gng.plot.layout.v2d, mode=gng.plot.2d){
+  plot.gng <<- function(x, vertex.color=gng.plot.color.cluster, layout=gng.plot.layout.v2d, mode=gng.plot.2d, vertex.size=3){
     
     if(x$getNumberNodes() > 4000){
       warning("Trying to plot very large graph (>4000 nodes). It might take a while.")
@@ -822,10 +822,10 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
       .gng.plot3d(x)
     }
     else if(mode == gng.plot.2d){
-      .gng.plot2d(x, vertex.color, layout)
+      .gng.plot2d(x, vertex.color, layout, vertex.size=vertex.size)
     }
     else if(mode == gng.plot.2d.errors){
-      .gng.plot2d.errors(x, vertex.color, layout)
+      .gng.plot2d.errors(x, vertex.color, layout, vertex.size=vertex.size)
     }
   }
   

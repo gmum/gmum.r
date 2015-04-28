@@ -1,3 +1,10 @@
+#' ---
+#' title: "SVMLight transductive learning"
+#' author: ""
+#' date: ""
+#' ---
+
+
 # We enable different unique features, for instance transductive learning in SVMLight 
 library(gmum.r)
 library(e1071)

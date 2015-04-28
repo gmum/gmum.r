@@ -1,3 +1,9 @@
+#' ---
+#' title: "Basic classification on breast cancer dataset"
+#' author: ""
+#' date: ""
+#' ---
+
 library(gmum.r)
 
 # We will perform basic classification on breast cancer dataset 

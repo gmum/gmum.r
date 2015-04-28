@@ -1,6 +1,12 @@
+#' ---
+#' title: "Caret support in gmum.R"
+#' author: ""
+#' date: ""
+#' ---
+
+
 # We support caret, so that you can construct
 # easily complex experiments using gmum.R
-
 library(gmum.r)
 library(caret)
 library(mlbench) # For Sonar dataset
