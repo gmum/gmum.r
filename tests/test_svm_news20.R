@@ -37,13 +37,13 @@ library(caret)
 set.seed(777)
 train <- as.integer(createDataPartition(y, p=0.1, list=FALSE))
 
-lib <- "svmlight"
+core <- "svmlight"
 kernel <- "linear"
 
 library(e1071)
 
 train_start <- proc.time()
-gmum_svm <- SVM(x[train],y[train], lib=lib, kernel=kernel, C=1, gamma=1)
+gmum_svm <- SVM(x[train],y[train], core=core, kernel=kernel, C=1, gamma=1)
 gmum_train <- as.numeric((proc.time() - train_start)[3])
 
 if (kernel=="rbf") kernel <- "radial"
@@ -63,7 +63,7 @@ e_test <- as.numeric((proc.time() - test_start)[3])
 gmum_acc <- svm.accuracy(y[-train], gmum_pred)
 e_acc <- svm.accuracy(y[-train], e_pred)
 
-print(sprintf("gmum lib: %s", lib))
+print(sprintf("gmum core: %s", core))
 print(sprintf("kernel: %s", kernel))
 
 print(sprintf("gmum  acc: %.4f", gmum_acc))

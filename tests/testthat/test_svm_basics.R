@@ -10,7 +10,7 @@ test_that('SVM functions are fool proof', {
   ds[,'V3'] <- as.factor(ds[,'V3'])
   f <- V3 ~ .
 
-  expect_error( SVM(f, ds, lib="xyz"), paste(GMUM_WRONG_LIBRARY, ": bad library" ))
+  expect_error( SVM(f, ds, core="xyz"), paste(GMUM_WRONG_LIBRARY, ": bad library" ))
   expect_error( SVM(f, ds, kernel="xyz"), paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
   expect_error( SVM(f, ds, prep="xyz"), paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
   expect_error( SVM(f, ds, C = -1), paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
@@ -65,21 +65,21 @@ test_that("svm max.iter works", {
 
   
   start_time <- Sys.time()
-  svm1 <- SVM(x,y, lib="libsvm", max.iter = 10)
+  svm1 <- SVM(x,y, core="libsvm", max.iter = 10)
   restricted_time <- Sys.time() - start_time
   
   start_time <- Sys.time()
-  svm2 <- SVM(x,y, lib="libsvm")
+  svm2 <- SVM(x,y, core="libsvm")
   normal_time <- Sys.time() - start_time
   
   expect_true(restricted_time < normal_time)
   
   start_time <- Sys.time()
-  svm1 <- SVM(x,y, lib="svmlight", max.iter = 10)
+  svm1 <- SVM(x,y, core="svmlight", max.iter = 10)
   restricted_time <- Sys.time() - start_time
   
   start_time <- Sys.time()
-  svm2 <- SVM(x,y, lib="svmlight")
+  svm2 <- SVM(x,y, core="svmlight")
   normal_time <- Sys.time() - start_time
   
   expect_true(restricted_time < normal_time)

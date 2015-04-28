@@ -12,7 +12,7 @@ test_that('accuracy is calculated', {
   y <- ds[,1]
   formula <- X1 ~ .
   
-  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", C=10); 
+  svm <- SVM(formula, ds, core="libsvm", kernel="linear", C=10); 
   pred <- predict(svm, x)
   acc <- svm.accuracy(prediction=pred, target=y)
   
@@ -27,7 +27,7 @@ test_that('accuracy checks input size', {
   ds <- as.data.frame(svm.dataset.xor())
   ds[,3] <- as.factor(ds[,3])
   formula <- t ~ .
-  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", C=100);
+  svm <- SVM(formula, ds, core="libsvm", kernel="linear", C=100);
   
   x <- ds[,-3]
   pred <- predict(svm, x)

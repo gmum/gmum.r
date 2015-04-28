@@ -8,7 +8,7 @@ test_that('Simple test that class.weights works for libsvm and svmlight', {
   library(SparseM)
   
   for(weight_pos in c(1,2,10)){
-    for(lib in c("svmlight", "libsvm")){
+    for(core in c("svmlight", "libsvm")){
       liver <- read.matrix.csr(system.file("data_sets", "svm", "liver-disorders", mustWork=TRUE, package="gmum.r"))
       x <- liver$x
       # Ugly change of level 
@@ -18,11 +18,11 @@ test_that('Simple test that class.weights works for libsvm and svmlight', {
       y <- as.factor(y)
       
       i <- as.numeric(createDataPartition(y, times=1, list=FALSE))
-      wsvm <- SVM(x[i, ], y[i], lib=lib, kernel="linear", 
+      wsvm <- SVM(x[i, ], y[i], core=core, kernel="linear", 
                   C=1, class.weights=list("3"=weight_pos,"2"=3.0))
       pred.1 <- svm.accuracy(predict(wsvm, x[-i, ]), y[-i])
       
-      wsvm <- SVM(x[i, ], y[i], lib=lib, kernel="linear", 
+      wsvm <- SVM(x[i, ], y[i], core=core, kernel="linear", 
                   C=1, class.weights=list("2"=3.0,"3"=weight_pos))
       pred.2 <- svm.accuracy(predict(wsvm, x[-i, ]), y[-i])
       # We have good names in class.weights support

@@ -4,10 +4,6 @@ library(testthat)
 library(gmum.r)
 library(caret)
 
-
-
-
-
 test_that("ovo and ova multiclass schemes work for SVM on simple datasets", {
   set.seed(777)
   

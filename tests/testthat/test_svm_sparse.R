@@ -15,7 +15,7 @@ test_that("sparse matrices work", {
             print(sprintf("Testing %s", lib_i))
 
             print("Learning...")
-            svm <- SVM(x=x, y=y, lib=lib_i, kernel=kernel_i, C=1, verbosity=0)
+            svm <- SVM(x=x, y=y, core=lib_i, kernel=kernel_i, C=1, verbosity=0)
 
             print("Prediction...")
             pred_start_time <- Sys.time()

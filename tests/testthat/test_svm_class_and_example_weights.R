@@ -1,7 +1,7 @@
 library(gmum.r)
 library(testthat)
 
-lib <- "svmlight"
+core <- "svmlight"
 
 x <- cbind(c(2.76405234597, 1.97873798411, 2.86755799015, 1.95008841753, 0.896781148206, 1.14404357116, 
              1.76103772515, 1.44386323275, 2.49407907316, 1.31306770165, -2.55298981583, 0.86443619886, 
@@ -27,9 +27,9 @@ sk_ex_SV <- cbind(c(0.86443619886, 2.26975462399, 1.53277921436, 0.154947425697,
 cl_weights <- c("1"=1, "-1"=10)
 df <- data.frame(x, y)
 
-ex_weights_svm <- SVM(formula=y~., data=df, lib="svmlight", kernel="linear", C=1.0, example.weights=ex_weights)
-cl_weights_svm <- SVM(formula=y~., data=df, lib="svmlight", kernel="linear", C=1.0, class.weights=cl_weights)
-ex_cl_weights_svm <- SVM(formula=y~., data=df, lib="svmlight", kernel="linear", C=1.0, class.weights=cl_weights, example.weights=ex_weights)
+ex_weights_svm <- SVM(formula=y~., data=df, core="svmlight", kernel="linear", C=1.0, example.weights=ex_weights)
+cl_weights_svm <- SVM(formula=y~., data=df, core="svmlight", kernel="linear", C=1.0, class.weights=cl_weights)
+ex_cl_weights_svm <- SVM(formula=y~., data=df, core="svmlight", kernel="linear", C=1.0, class.weights=cl_weights, example.weights=ex_weights)
 
 ex_SV <- ex_weights_svm$getSV()
 

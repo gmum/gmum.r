@@ -23,10 +23,10 @@ test_that("our models have not too differents results than other models", {
   
   # Linear kernel
   e_svm <- e1071::svm(formula, data=ds, type='C-classification', kernel="linear", cost=1, gamma=1, scale=FALSE)
-  glib_svm <- gmum.r::SVM(formula, ds, lib="libsvm", kernel="linear", C=1, verbosity=0)
-  glight_svm <- gmum.r::SVM(formula, ds, lib="svmlight", kernel="linear", C=1)
+  glib_svm <- gmum.r::SVM(formula, ds, core="libsvm", kernel="linear", C=1, verbosity=0)
+  glight_svm <- gmum.r::SVM(formula, ds, core="svmlight", kernel="linear", C=1)
   if(klar) klar_svmlight <- klaR::svmlight(formula, data=ds, type="C", svm.options="-v 0")
-  glib_esvm <- gmum.r::SVM(formula, ds, lib="libsvm", kernel="linear", prep="2e", C=1, verbosity=0)
+  glib_esvm <- gmum.r::SVM(formula, ds, core="libsvm", kernel="linear", prep="2e", C=1, verbosity=0)
   e_pred <- as.numeric(as.matrix(fitted(e_svm)))
   glib_pred <- predict(glib_svm, x)
   glight_pred <- predict(glight_svm, x)
@@ -53,8 +53,8 @@ test_that("our models have not too differents results than other models", {
   
   # Poly kernel
   e_svm <- e1071::svm(formula, data=ds, type='C-classification', kernel="poly", cost=1, gamma=1, scale=FALSE)
-  glib_svm <- gmum.r::SVM(formula, ds, lib="libsvm", kernel="poly", C=1, verbosity=0, gamma=1)
-  glight_svm <- gmum.r::SVM(formula, ds, lib="svmlight", kernel="poly", C=1, gamma=1, coef0=1)
+  glib_svm <- gmum.r::SVM(formula, ds, core="libsvm", kernel="poly", C=1, verbosity=0, gamma=1)
+  glight_svm <- gmum.r::SVM(formula, ds, core="svmlight", kernel="poly", C=1, gamma=1, coef0=1)
   if(klar) klar_svmlight <- klaR::svmlight(formula, data=ds, type="C", svm.options="-v 0 -t 1 -s 1 -r 1")
   
   e_pred <- as.numeric(as.matrix(fitted(e_svm)))
@@ -79,8 +79,8 @@ test_that("our models have not too differents results than other models", {
   
   # RBF kernel
   e_svm <- e1071::svm(formula, data=ds, type='C-classification', kernel="radial", cost=1, gamma=1, scale=FALSE)
-  glib_svm <- gmum.r::SVM(formula, ds, lib="libsvm", kernel="rbf", C=1, verbosity=0, gamma=1)
-  glight_svm <- gmum.r::SVM(formula, ds, lib="svmlight", kernel="rbf", C=1, gamma=1)
+  glib_svm <- gmum.r::SVM(formula, ds, core="libsvm", kernel="rbf", C=1, verbosity=0, gamma=1)
+  glight_svm <- gmum.r::SVM(formula, ds, core="svmlight", kernel="rbf", C=1, gamma=1)
   if(klar) klar_svmlight <- klaR::svmlight(formula, data=ds, type="C", svm.options="-v 0 -t 2 -s 1 -r 1")
   
   e_pred <- as.numeric(as.matrix(fitted(e_svm)))
@@ -104,8 +104,8 @@ test_that("our models have not too differents results than other models", {
   
   # Sigmoid kernel
   e_svm <- e1071::svm(formula, data=ds, type='C-classification', kernel="sigmoid", cost=1, gamma=1, scale=FALSE)
-  glib_svm <- gmum.r::SVM(formula, ds, lib="libsvm", kernel="sigmoid", C=1, verbosity=0)
-  glight_svm <- gmum.r::SVM(formula, ds, lib="svmlight", kernel="sigmoid", C=1)
+  glib_svm <- gmum.r::SVM(formula, ds, core="libsvm", kernel="sigmoid", C=1, verbosity=0)
+  glight_svm <- gmum.r::SVM(formula, ds, core="svmlight", kernel="sigmoid", C=1)
   # -r and -s are sigmoid kernel parameters. 1/dimensions = 1/11 = 0.09090909
   if(klar) klar_svmlight <- klaR::svmlight(formula, data=ds, type="C", svm.options="-v 0 -t 3 -r -1 -s 0.09090909")
   

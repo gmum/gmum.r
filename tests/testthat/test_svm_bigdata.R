@@ -10,8 +10,8 @@ if(!file.exists(svm.colon_cancer.path)) {
 	  ds <- svm.dataset.colon_cancer()
 	  formula <- X1 ~ .
 	  
-	  svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "none", C=10);
-	  twoe_svm <- SVM(formula, ds, lib="libsvm", kernel="linear", prep = "2e", C=10);
+	  svm <- SVM(formula, ds, core="libsvm", kernel="linear", prep = "none", C=10);
+	  twoe_svm <- SVM(formula, ds, core="libsvm", kernel="linear", prep = "2e", C=10);
 	  
     # TODO: check is those a re correct columns
 	  x <- ds[,-1]

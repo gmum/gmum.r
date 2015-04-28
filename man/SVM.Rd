@@ -21,20 +21,20 @@ column, supported formats are:
 \item{formula}{can be passed with \code{data}  instead of \code{x}, \code{y} pair,
 formula needs to point to lables column, for example: \code{target~.}}
 
-\item{lib}{support Vector Machine library to use in traning, available are:
+\item{core}{Support Vector Machine library to use in traning, available are:
 \code{'libsvm'}, \code{'svmlight'}; default: \code{'libsvm'}}
 
-\item{kernel}{kernel type as string, avialable are: \code{'linear'}, \code{'poly'},
+\item{kernel}{kernel type as string, available are: \code{'linear'}, \code{'poly'},
 \code{'rbf'}, \code{'sigmoid'};
 default: \code{'linear'}
 \itemize{
 \item \code{linear}: \eqn{x'*w}
-\item \code{poly}: \eqn{(gamma*x'*w + coef0)^degree}
+\item \code{poly}: \eqn{(gamma*x'*w + coef0)^{degree}}
 \item \code{rbf}: \eqn{exp(-gamma*|x-w|^2)}
 \item \code{sigmoid}: \eqn{tanh(gamma*x'*w + coef0)}
 }}
 
-\item{prep}{preprocess method as string, avialable are: \code{'none'}, \code{'2e'};
+\item{prep}{preprocess method as string, available are: \code{'none'}, \code{'2e'};
 default: \code{'none'}. For more information on \code{2eSVM} see:
 \url{http://www.sciencedirect.com/science/article/pii/S0957417414004138}}
 
@@ -86,9 +86,9 @@ Create and train SVM model object.
 }
 \examples{
 # train SVM from data in x and labels in y
-svm <- SVM(x, y, lib = "libsvm", kernel = "linear", C = 1)
+svm <- SVM(x, y, core = "libsvm", kernel = "linear", C = 1)
 # train SVM usind dataset with both data and lables and a formula pointing to labels
 formula <- target ~ .
-svm <- SVM(formula, data, lib = "svmlight", kernel = "rbf", gamma = 1e3)
+svm <- SVM(formula, data, core = "svmlight", kernel = "rbf", gamma = 1e3)
 }
 
