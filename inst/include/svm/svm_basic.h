@@ -110,6 +110,7 @@ public:
     arma::mat inv_of_sqrt_of_cov;
     arma::mat tmp_data;
     arma::mat tmp_target;
+    int iter;
 
     // debug
     bool debug_library_predict;

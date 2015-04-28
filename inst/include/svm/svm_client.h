@@ -61,8 +61,8 @@ public:
     bool areExamplesWeighted();
     arma::vec getExampleWeights();
     arma::vec getClassWeights();
-
-
+    int getIterations();
+    
     // model getters
     // double** getSV(); // double**, std::vector, arma:mat ?
     int getNumberSV();

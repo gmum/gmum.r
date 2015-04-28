@@ -88,6 +88,7 @@ void  SVMClient::setAlpha(arma::vec new_alpha){
     }
 }
 
+
 // Getters
 arma::mat SVMClient::getX(){
     return config.data;
@@ -201,6 +202,10 @@ int SVMClient::getNumberClass() {
 arma::sp_mat SVMClient::getSV(){
     // FIXME: Workaround for R interface
     return config.support_vectors.t();
+}
+
+int SVMClient::getIterations(){
+    return config.iter;
 }
 
 SVMConfiguration &SVMClient::getConfiguration() {
