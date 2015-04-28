@@ -10,7 +10,7 @@
 namespace gmum {
 
 enum ClusterType {
-	kstandard, kfull, kdiagonal, ksphere, kfsphere, kno_type, kmix, kcustom
+	kstandard, kcovariance, kdiagonal, kspherical, kspherical_fixed_r, kno_type, kmix, kcustom
 };
 
 /**
@@ -24,28 +24,28 @@ struct ClusterParams {
     virtual ~ClusterParams() { };
 };
 
-struct ClusterFullParams: public ClusterParams {
+struct ClusterCovarianceParams : public ClusterParams {
 	bool cov_mat_set;
 	arma::mat cov_mat;
-	ClusterFullParams(arma::mat _cov_mat) :
-			ClusterParams(kfull), cov_mat_set(true), cov_mat(_cov_mat) {
+	ClusterCovarianceParams(arma::mat _cov_mat) :
+			ClusterParams(kcovariance), cov_mat_set(true), cov_mat(_cov_mat) {
 	}
-	ClusterFullParams() :
-			ClusterParams(kfull), cov_mat_set(false) {
+	ClusterCovarianceParams() :
+			ClusterParams(kcovariance), cov_mat_set(false) {
 	}
-    virtual ~ClusterFullParams() { }
+    virtual ~ClusterCovarianceParams() { }
 };
 
-struct ClusterFsphereParams: public ClusterParams {
+struct ClusterSphericalFixedRParams : public ClusterParams {
 	bool radius_set;
 	double radius;
-	ClusterFsphereParams(double _radius) :
-			ClusterParams(kfsphere), radius_set(true), radius(_radius) {
+	ClusterSphericalFixedRParams(double _radius) :
+			ClusterParams(kspherical_fixed_r), radius_set(true), radius(_radius) {
 	}
-	ClusterFsphereParams() :
-			ClusterParams(kfsphere), radius_set(false) {
+	ClusterSphericalFixedRParams() :
+			ClusterParams(kspherical_fixed_r), radius_set(false) {
 	}
-    virtual ~ClusterFsphereParams() { }
+    virtual ~ClusterSphericalFixedRParams() { }
 };
 
 #ifdef RCPP_INTERFACE

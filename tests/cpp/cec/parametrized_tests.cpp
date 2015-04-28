@@ -85,11 +85,11 @@ INSTANTIATE_TEST_CASE_P(CEC_NumericTest, BigDataTests, ::testing::Values(
 ));
 
 INSTANTIATE_TEST_CASE_P(CEC, EnergyTests, ::testing::Values(
-    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, ksphere, kkmeanspp), 20),
-    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, ksphere, krandom), 20),
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, kspherical, kkmeanspp), 20),
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, kspherical, krandom), 20),
 
-    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, ksphere, kkmeanspp), 20),
-    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, ksphere, krandom), 20),
+    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, kspherical, kkmeanspp), 20),
+    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, kspherical, krandom), 20),
 
     TestsFixtureParam(ClusterReader("EllipseGauss"), boost::make_shared<DefaultGmumParams>(4, kstandard, kkmeanspp), 20),
     TestsFixtureParam(ClusterReader("EllipseGauss"), boost::make_shared<DefaultGmumParams>(4, kstandard, krandom), 20),
@@ -102,11 +102,11 @@ INSTANTIATE_TEST_CASE_P(CEC, EnergyTests, ::testing::Values(
 ));
 
 INSTANTIATE_TEST_CASE_P(CEC, CoverageTests, ::testing::Values(
-    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, ksphere, kkmeanspp), 20),
-    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, ksphere, krandom), 20),
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, kspherical, kkmeanspp), 20),
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, kspherical, krandom), 20),
 
-    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, ksphere, kkmeanspp), 20),
-    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, ksphere, krandom), 20),
+    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, kspherical, kkmeanspp), 20),
+    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, kspherical, krandom), 20),
 
     TestsFixtureParam(ClusterReader("EllipseGauss"), boost::make_shared<DefaultGmumParams>(4, kstandard, kkmeanspp), 20),
     TestsFixtureParam(ClusterReader("EllipseGauss"), boost::make_shared<DefaultGmumParams>(4, kstandard, krandom), 20),
@@ -119,11 +119,11 @@ INSTANTIATE_TEST_CASE_P(CEC, CoverageTests, ::testing::Values(
 ));
 
 INSTANTIATE_TEST_CASE_P(CEC, ControlEpsTests, ::testing::Values(
-    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, ksphere, kkmeanspp), 20),
-    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, ksphere, krandom), 20),
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, kspherical, kkmeanspp), 20),
+    TestsFixtureParam(ClusterReader("mouse_1_spherical"), boost::make_shared<DefaultGmumParams>(3, kspherical, krandom), 20),
 
-    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, ksphere, kkmeanspp), 20),
-    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, ksphere, krandom), 20),
+    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, kspherical, kkmeanspp), 20),
+    TestsFixtureParam(ClusterReader("mouse_1"), boost::make_shared<DefaultGmumParams>(3, kspherical, krandom), 20),
 
     TestsFixtureParam(ClusterReader("EllipseGauss"), boost::make_shared<DefaultGmumParams>(4, kstandard, kkmeanspp), 20),
     TestsFixtureParam(ClusterReader("EllipseGauss"), boost::make_shared<DefaultGmumParams>(4, kstandard, krandom), 20),

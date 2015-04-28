@@ -16,7 +16,7 @@ test_that("EllipseGauss: energy is correct", {
         energy_func_value <- cec_energy(dataset = dataset_points, clustering = c$clustering(), entropy_func = standard_entropy)
         expect_equal(expected=c$energy(),  object=energy_func_value, tolerance=.000001)        
         
-        c <- CEC(k=nclusters, x=dataset_points, method.init='random', method.type='sphere')
+        c <- CEC(k=nclusters, x=dataset_points, method.init='random', method.type='spherical')
         energy_func_value <- cec_energy(dataset = dataset_points, clustering = c$clustering(), entropy_func = sphere_entropy)
         expect_equal(expected=c$energy(),  object=energy_func_value, tolerance=.000001)
         
@@ -40,7 +40,7 @@ test_that("mouse_1: energy is correct", {
         energy_func_value <- cec_energy(dataset = dataset_points, clustering = c$clustering(), entropy_func = standard_entropy)
         expect_equal(expected=c$energy(),  object=energy_func_value, tolerance=.000001)
         
-        c <- CEC(k=nclusters, x=dataset_points, method.init='random', method.type='sphere')
+        c <- CEC(k=nclusters, x=dataset_points, method.init='random', method.type='spherical')
         energy_func_value <- cec_energy(dataset = dataset_points, clustering = c$clustering(), entropy_func = sphere_entropy)
         expect_equal(expected=c$energy(),  object=energy_func_value, tolerance=.000001)
         
@@ -65,7 +65,7 @@ test_that("mouse_1_spherical: energy is correct", {
         energy_func_value <- cec_energy(dataset = dataset_points, clustering = c$clustering(), entropy_func = standard_entropy)
         expect_equal(expected=c$energy(),  object=energy_func_value, tolerance=.000001)
         
-        c <- CEC(k=nclusters, x=dataset_points, method.init='random', method.type='sphere')
+        c <- CEC(k=nclusters, x=dataset_points, method.init='random', method.type='spherical')
         energy_func_value <- cec_energy(dataset = dataset_points, clustering = c$clustering(), entropy_func = sphere_entropy)
         expect_equal(expected=c$energy(),  object=energy_func_value, tolerance=.000001)
         

@@ -28,20 +28,20 @@ Cluster* CecModel::create_cluster(ClusterParams* cluster_params, int i) {
     case kstandard:
         cluster = new ClusterStandard(i, m_assignment, params.dataset);
         break;
-    case kfull: {
-        ClusterFullParams *ptr = dynamic_cast<ClusterFullParams*>(cluster_params);
-        cluster = new ClusterCovMat(ptr->cov_mat, i, m_assignment, params.dataset);
+    case kcovariance: {
+        ClusterCovarianceParams *ptr = dynamic_cast<ClusterCovarianceParams *>(cluster_params);
+        cluster = new ClusterCovariance(ptr->cov_mat, i, m_assignment, params.dataset);
         break;
     }
     case kdiagonal:
         cluster = new ClusterDiagonal(i, m_assignment, params.dataset);
         break;
-    case ksphere:
+    case kspherical:
         cluster = new ClusterSpherical(i, m_assignment, params.dataset);
         break;
-    case kfsphere: {
-        ClusterFsphereParams* ptr = dynamic_cast<ClusterFsphereParams*>(cluster_params);
-        cluster = new ClusterConstRadius(ptr->radius, i, m_assignment, params.dataset);
+    case kspherical_fixed_r: {
+        ClusterSphericalFixedRParams * ptr = dynamic_cast<ClusterSphericalFixedRParams *>(cluster_params);
+        cluster = new ClusterSphericalFixedR(ptr->radius, i, m_assignment, params.dataset);
         break;
     }
 #ifdef RCPP_INTERFACE
@@ -101,11 +101,11 @@ void CecModel::init_clusters(std::vector<unsigned int>& assignment) {
         //TODO: why pointer?
         boost::scoped_ptr<ClusterParams> cluster;
         switch (params.cluster_type) {
-        case kfsphere:
-            cluster.reset(new ClusterFsphereParams(params.radius));
+        case kspherical_fixed_r:
+            cluster.reset(new ClusterSphericalFixedRParams(params.radius));
             break;
-        case kfull:
-            cluster.reset(new ClusterFullParams(params.cov_mat));
+        case kcovariance:
+            cluster.reset(new ClusterCovarianceParams(params.cov_mat));
             break;
 #ifdef RCPP_INTERFACE
         case kcustom:
@@ -115,7 +115,7 @@ void CecModel::init_clusters(std::vector<unsigned int>& assignment) {
         default:
             /*case standard:
              case diagonal:
-             case sphere:*/
+             case spherical:*/
             cluster.reset(new ClusterParams(params.cluster_type));
             break;
         }
