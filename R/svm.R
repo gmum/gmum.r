@@ -499,9 +499,9 @@ evalqOnLoad({
   }
   
   summary.MultiClassSVM <<- function(object) {
-    print(sprintf("Support Vector Machine, multiclass.type: %s, library: %s, kernel: %s",
+    print(sprintf("Support Vector Machine, multiclass.type: %s, core: %s, kernel: %s",
                   object$class.type, 
-                  object$lib, 
+                  object$core, 
                   object$kernel))
     print(sprintf("%d classes", 
                   length(object$levels)))
@@ -512,7 +512,7 @@ evalqOnLoad({
   }
   
   summary.svm <<- function(object) {
-    print(sprintf("Support Vector Machine, library: %s, kernel: %s, preprocess: %s",
+    print(sprintf("Support Vector Machine, core: %s, kernel: %s, preprocess: %s",
                   object$getLibrary(), 
                   object$getKernel(), 
                   object$getPreprocess()))
