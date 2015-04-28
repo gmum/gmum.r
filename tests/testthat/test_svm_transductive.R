@@ -8,14 +8,11 @@ library(gmum.r)
 
 
 test_that("Transduction and factors work as in respectively svmlight and libsvm", {
-  load(system.file("data_sets", "svm", 
-                   "transduction.test.data.RData", mustWork=TRUE, package="gmum.r"))
+  data(svm.transduction)
   
-  
-  
-  train.transduction <- transduction.test.data$tr
-  train.induction <- transduction.test.data$ind
-  test <-transduction.test.data$test
+  train.transduction <- svm.transduction$tr
+  train.induction <- svm.transduction$ind
+  test <-svm.transduction$test
   test$x <- train.transduction$x[11:610, ]
   
   

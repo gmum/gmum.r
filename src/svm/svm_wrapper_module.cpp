@@ -64,6 +64,7 @@ RCPP_MODULE(svm_wrapper) {
       		.method(".setNumberClass", &SVMClient::setNumberClass)
 
 			.method(".getX", &SVMClient::getX)
+			.method(".getSparseX", &SVMClient::getSparseX)
 			.method(".getY", &SVMClient::getY)
 			.method("getPrediction", &SVMClient::getPrediction)
 			.method("getDecisionFunction", &SVMClient::getDecisionFunction)

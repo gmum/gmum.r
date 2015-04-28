@@ -9,6 +9,6 @@ svm <- SVM(X1 ~ ., svm.breastcancer.dataset, lib="libsvm", kernel="linear", C=10
 
 pred <- predict(svm, svm.breastcancer.dataset[,-1])
 
-plot(svm, cols=c(2,3))
+plot(svm, mode="pca")
 
 

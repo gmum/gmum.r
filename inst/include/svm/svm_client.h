@@ -40,6 +40,7 @@ public:
 
     // data getters
     arma::mat getX();
+    arma::sp_mat getSparseX();
     arma::vec getY();
     arma::vec getPrediction();
     arma::vec getDecisionFunction();

@@ -92,6 +92,9 @@ void  SVMClient::setAlpha(arma::vec new_alpha){
 arma::mat SVMClient::getX(){
     return config.data;
 }
+arma::sp_mat SVMClient::getSparseX(){
+    return config.sparse_data;
+}
 arma::vec SVMClient::getY(){
     return config.target;
 }

@@ -537,12 +537,19 @@ evalqOnLoad({
     }
     if(obj$isSparse()){
       library(SparseM)
+      library(Matrix)
+      library(e1071)
     }
     
     
     #1. Get X and Y
     if(is.null(X)){
-      X <- obj$.getX()
+      if(obj$isSparse()){
+        X <- Matrix::t(obj$.getSparseX())
+      }else{
+        X <- obj$.getX()
+      }
+      
       if(class(x) == "MultiClassSVM"){
         t <- predict(x, X)
       }else{
@@ -554,6 +561,7 @@ evalqOnLoad({
     labels <- levels(as.factor(t))
     
     #2. Do some checking
+
     if (ncol(X) > 2){
       warning("Only 2 dimension plotting is supported for multiclass. Plotting using cols parameter")
     }   
@@ -565,9 +573,10 @@ evalqOnLoad({
     }
     
     #3. Prepare df. This is ugly copy so that we can do whatever we want
-    df <- data.frame( as.matrix(X[,cols] ))
+    df <- data.frame(SparseM::as.matrix(X[,cols]))
     colnames(df) <- c("X1", "X2") # This is even worse
     df['class'] <- as.factor(t)
+  
     
     #4. Prepare data for plotting
     if (obj$areExamplesWeighted()) {
@@ -595,7 +604,7 @@ evalqOnLoad({
       if (mode == "pca") {
         w <- c(obj$getW())
         w <- w %*% pca_data$rotation
-      }else{
+      }else if(ncol(X)==2){
         w <- c(obj$getW())
       }
     }
