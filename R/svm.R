@@ -15,18 +15,18 @@ library(ggplot2)
 #'  \code{data.frame}, \code{data.matrix}
 #' @param formula can be passed with \code{data}  instead of \code{x}, \code{y} pair, 
 #'  formula needs to point to lables column, for example: \code{target~.}
-#' @param lib support Vector Machine library to use in traning, available are: 
+#' @param core Support Vector Machine library to use in traning, available are: 
 #'  \code{'libsvm'}, \code{'svmlight'}; default: \code{'libsvm'} 
-#' @param kernel kernel type as string, avialable are: \code{'linear'}, \code{'poly'},
+#' @param kernel kernel type as string, available are: \code{'linear'}, \code{'poly'},
 #' \code{'rbf'}, \code{'sigmoid'}; 
 #' default: \code{'linear'}
 #' \itemize{
 #' \item \code{linear}: \eqn{x'*w}
-#' \item \code{poly}: \eqn{(gamma*x'*w + coef0)^degree}
+#' \item \code{poly}: \eqn{(gamma*x'*w + coef0)^{degree}}
 #' \item \code{rbf}: \eqn{exp(-gamma*|x-w|^2)}
 #' \item \code{sigmoid}: \eqn{tanh(gamma*x'*w + coef0)}
 #' }
-#' @param prep preprocess method as string, avialable are: \code{'none'}, \code{'2e'}; 
+#' @param prep preprocess method as string, available are: \code{'none'}, \code{'2e'}; 
 #' default: \code{'none'}. For more information on \code{2eSVM} see:
 #' \url{http://www.sciencedirect.com/science/article/pii/S0957417414004138}
 #' @param C cost/complexity parameter, default: \code{1}
@@ -60,11 +60,35 @@ library(ggplot2)
 #' @return SVM model object
 #' @examples 
 #' # train SVM from data in x and labels in y 
-#' svm <- SVM(x, y, lib = "libsvm", kernel = "linear", C = 1)
-#' # train SVM usind dataset with both data and lables and a formula pointing to labels
-#' formula <- target ~ . 
-#' svm <- SVM(formula, data, lib = "svmlight", kernel = "rbf", gamma = 1e3)
+#' svm <- SVM(x, y, core="libsvm", kernel="linear", C=1)
 #' 
+#' # train SVM using a dataset with both data and lables and a formula pointing to labels
+#' formula <- target ~ . 
+#' svm <- SVM(formula, data, core="svmlight", kernel="rbf", gamma=1e3)
+#' 
+#' # train a model with 2eSVM algorithm
+#' data(svm_breast_cancer_dataset)
+#' ds <- svm.breastcancer.dataset
+#' svm.2e <- SVM(x=ds[,-1], y=ds[,1], core="libsvm", kernel="linear", prep = "2e", C=10);
+#' # more at <link to the 2e sample>
+#' 
+#' # train SVM on a multiclass data set
+#' data(iris)
+#' # with "one vs rest" strategy
+#' svm.ova <- SVM(Species ~ ., data=iris, class.type="one.versus.all", verbosity=0)
+#' # or with "one vs one" strategy
+#' svm.ovo <- SVM(x=iris[,1:4], y=iris[,5], class.type="one.versus.one", verbosity=0)
+#' 
+#' # we can use svmlights sample weighting feature, suppose we have weights vector 
+#' # with a weight for every sample in the traning data
+#' weighted.svm <- SVM(formula=y~., data=df, core="svmlight", kernel="rbf", C=1.0, 
+#'                     gamma=0.5, example.weights=weights)
+#'                     
+#' # svmlight alows us to determine missing labels from a dataset   
+#' # suppose we have a labels y with missing labels marked as zeros
+#' svm.transduction <- SVM(x, y, transductive.learning=TRUE, core="svmlight")
+#' 
+#' # for more in-depth examples visit <link to samples on the website>                       
 SVM <- NULL
 
 .createMultiClassSVM <- NULL
@@ -251,11 +275,14 @@ evalqOnLoad({
       models[[j]] <- do.call(SVM, p[2:length(p)])
     }
     call[[1]] <- as.name("SVM")
-    lib <- as.list(call)$lib
+    core <- as.list(call)$core
     kernel <- as.list(call)$kernel
-    if (is.null(lib)) lib <- "libsvm"
+    if (is.null(core)) core <- "libsvm"
     if (is.null(kernel)) kernel <- "linear"
-    obj <- list(models=models, class.type=class.type, X=x, pick=pick, levels=lev, call=call, lib=lib, kernel=kernel)
+
+    obj <- list(models=models, 
+                class.type=class.type, X=x, pick=pick, levels=lev, call=call, core=core, kernel=kernel)
+
     class(obj) <- "MultiClassSVM"
     obj
   }
@@ -263,7 +290,7 @@ evalqOnLoad({
   SVM.default <<- 
   function(x,
            y,
-           lib         = "libsvm",             
+           core         = "libsvm",             
            kernel      = "linear",
            prep        = "none",
            transductive.learning = FALSE,
@@ -309,9 +336,9 @@ evalqOnLoad({
     call[[1]] <- as.name("SVM")
 
     # check for errors
-    if ( lib != "libsvm" && lib != "svmlight") 
+    if ( core != "libsvm" && core != "svmlight") 
       stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" ))  
-    if ( lib != "svmlight" && transductive.learning) 
+    if ( core != "svmlight" && transductive.learning) 
       stop(paste(GMUM_WRONG_LIBRARY, ": bad library, transductive learning is supported only by svmlight" ))  
     if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") 
       stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
@@ -428,7 +455,7 @@ evalqOnLoad({
     if(!is.null(seed)){
       config$setSeed(seed)
     }
-    config$setLibrary(lib)
+    config$setLibrary(core)
     config$setKernel(kernel)
     config$setPreprocess(prep)
     config$set_verbosity(verbosity)
@@ -498,9 +525,9 @@ evalqOnLoad({
   }
   
   summary.MultiClassSVM <<- function(object) {
-    print(sprintf("Support Vector Machine, multiclass.type: %s, library: %s, kernel: %s",
+    print(sprintf("Support Vector Machine, multiclass.type: %s, core: %s, kernel: %s",
                   object$class.type, 
-                  object$lib, 
+                  object$core, 
                   object$kernel))
     print(sprintf("%d classes", 
                   length(object$levels)))
@@ -511,7 +538,7 @@ evalqOnLoad({
   }
   
   summary.svm <<- function(object) {
-    print(sprintf("Support Vector Machine, library: %s, kernel: %s, preprocess: %s",
+    print(sprintf("Support Vector Machine, core: %s, kernel: %s, preprocess: %s",
                   object$getLibrary(), 
                   object$getKernel(), 
                   object$getPreprocess()))

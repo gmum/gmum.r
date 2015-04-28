@@ -13,11 +13,11 @@ data(svm_breast_cancer_dataset)
 ds <- svm.breastcancer.dataset
 
 # We can trigger 2e by passing prep parameter. It can work with either of the libraries
-svm.2e <- SVM(x=ds[,-1], y=ds[,1], lib="libsvm", kernel="linear", prep = "2e", C=10);
+svm.2e <- SVM(x=ds[,-1], y=ds[,1], core="libsvm", kernel="linear", prep = "2e", C=10);
 acc.2e <- svm.accuracy(prediction=predict(svm.2e, ds[,-1]), target=ds[,1])
 
 
-svm <- SVM(x=ds[,-1], y=ds[,1], lib="libsvm", kernel="linear", C=10);
+svm <- SVM(x=ds[,-1], y=ds[,1], core="libsvm", kernel="linear", C=10);
 acc <- svm.accuracy(prediction=predict(svm, ds[,-1]), target=ds[,1])
 
 # Seems that 2e preprocessing helps! 
@@ -50,7 +50,7 @@ fit.results <- train(X1 ~ ., data = training,
                      seed = 777,
                      trControl = fitControl,
                      tuneGrid = expand.grid(C=10^(c(-3:3))),
-                     lib = "libsvm", # gmum.R parameter - pick library
+                     core = "libsvm", # gmum.R parameter - pick library
                      verbosity = 0 # no outputs
 )
 
@@ -62,7 +62,7 @@ fit.results.2e <- train(X1 ~ ., data = training,
                         trControl = fitControl,
                         seed = 777,
                         tuneGrid = expand.grid(C=10^(c(-3:3))),
-                        lib = "libsvm", # gmum.R parameter - pick library
+                        core = "libsvm", # gmum.R parameter - pick library
                         verbosity = 0, # no outputs
                         prep = "2e" # Use 2e preprocessing
 )

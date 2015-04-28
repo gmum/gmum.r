@@ -27,8 +27,8 @@ weights <- c(1.04855297,  1.42001794,  1.70627019,  1.9507754,   0.50965218,  0.
 
 df <- data.frame(x, y)
 
-svm.rbf <- SVM(formula=y~., data=df, lib="libsvm", kernel="rbf", C=1.0, gamma=0.5)
-weighted.svm.rbf <- SVM(formula=y~., data=df, lib="svmlight", kernel="rbf", C=1.0, 
+svm.rbf <- SVM(formula=y~., data=df, core="libsvm", kernel="rbf", C=1.0, gamma=0.5)
+weighted.svm.rbf <- SVM(formula=y~., data=df, core="svmlight", kernel="rbf", C=1.0, 
                         gamma=0.5, example.weights=weights)
 
 # Plot to see how decision boundary is affected

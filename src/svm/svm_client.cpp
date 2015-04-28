@@ -105,7 +105,7 @@ arma::vec SVMClient::getDecisionFunction() {
     return SVMClient::config.decision_function;
 }
 std::string SVMClient::getLibrary(){
-    switch(config.svm_type) {
+    switch(config.library) {
     case LIBSVM : return "libsvm";
     case SVMLIGHT : return "svmlight";
     default : return "error"; 

@@ -21,7 +21,7 @@ for (lib_i in libs) {
   for (kernel_i in kernels) {
     
     train_start <- Sys.time()
-    svm <- SVM(x=x, y=y, lib=lib_i, kernel=kernel_i, C=1, gamma=1, verbosity=0)
+    svm <- SVM(x=x, y=y, core=lib_i, kernel=kernel_i, C=1, gamma=1, verbosity=0)
     gmum_train_time <- Sys.time() - train_start
     
     test_time <- Sys.time()

@@ -21,20 +21,20 @@ column, supported formats are:
 \item{formula}{can be passed with \code{data}  instead of \code{x}, \code{y} pair,
 formula needs to point to lables column, for example: \code{target~.}}
 
-\item{lib}{support Vector Machine library to use in traning, available are:
+\item{core}{Support Vector Machine library to use in traning, available are:
 \code{'libsvm'}, \code{'svmlight'}; default: \code{'libsvm'}}
 
-\item{kernel}{kernel type as string, avialable are: \code{'linear'}, \code{'poly'},
+\item{kernel}{kernel type as string, available are: \code{'linear'}, \code{'poly'},
 \code{'rbf'}, \code{'sigmoid'};
 default: \code{'linear'}
 \itemize{
 \item \code{linear}: \eqn{x'*w}
-\item \code{poly}: \eqn{(gamma*x'*w + coef0)^degree}
+\item \code{poly}: \eqn{(gamma*x'*w + coef0)^{degree}}
 \item \code{rbf}: \eqn{exp(-gamma*|x-w|^2)}
 \item \code{sigmoid}: \eqn{tanh(gamma*x'*w + coef0)}
 }}
 
-\item{prep}{preprocess method as string, avialable are: \code{'none'}, \code{'2e'};
+\item{prep}{preprocess method as string, available are: \code{'none'}, \code{'2e'};
 default: \code{'none'}. For more information on \code{2eSVM} see:
 \url{http://www.sciencedirect.com/science/article/pii/S0957417414004138}}
 
@@ -86,9 +86,34 @@ Create and train SVM model object.
 }
 \examples{
 # train SVM from data in x and labels in y
-svm <- SVM(x, y, lib = "libsvm", kernel = "linear", C = 1)
-# train SVM usind dataset with both data and lables and a formula pointing to labels
+svm <- SVM(x, y, core="libsvm", kernel="linear", C=1)
+
+# train SVM using a dataset with both data and lables and a formula pointing to labels
 formula <- target ~ .
-svm <- SVM(formula, data, lib = "svmlight", kernel = "rbf", gamma = 1e3)
+svm <- SVM(formula, data, core="svmlight", kernel="rbf", gamma=1e3)
+
+# train a model with 2eSVM algorithm
+data(svm_breast_cancer_dataset)
+ds <- svm.breastcancer.dataset
+svm.2e <- SVM(x=ds[,-1], y=ds[,1], core="libsvm", kernel="linear", prep = "2e", C=10);
+# more at <link to the 2e sample>
+
+# train SVM on a multiclass data set
+data(iris)
+# with "one vs rest" strategy
+svm.ova <- SVM(Species ~ ., data=iris, class.type="one.versus.all", verbosity=0)
+# or with "one vs one" strategy
+svm.ovo <- SVM(x=iris[,1:4], y=iris[,5], class.type="one.versus.one", verbosity=0)
+
+# we can use svmlights sample weighting feature, suppose we have weights vector
+# with a weight for every sample in the traning data
+weighted.svm <- SVM(formula=y~., data=df, core="svmlight", kernel="rbf", C=1.0,
+                    gamma=0.5, example.weights=weights)
+
+# svmlight alows us to determine missing labels from a dataset
+# suppose we have a labels y with missing labels marked as zeros
+svm.transduction <- SVM(x, y, transductive.learning=TRUE, core="svmlight")
+
+# for more in-depth examples visit <link to samples on the website>
 }
 

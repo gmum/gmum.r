@@ -11,7 +11,7 @@ library(gmum.r)
 data(svm_breast_cancer_dataset)
 
 # We can pass either formula or explicitly X and Y
-svm <- SVM(X1 ~ ., svm.breastcancer.dataset, lib="libsvm", kernel="linear", C=10)
+svm <- SVM(X1 ~ ., svm.breastcancer.dataset, core="libsvm", kernel="linear", C=10)
 
 pred <- predict(svm, svm.breastcancer.dataset[,-1])
 

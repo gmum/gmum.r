@@ -38,7 +38,7 @@ model <- train(Class ~ ., data = training,
                tuneLength = 8,             
                trControl = fitControl,
                tuneGrid = expand.grid(C=10^(c(-4:4)), gamma=10^(c(-4:4))),
-               lib = "libsvm", # gmum.R parameter - pick library
+               core = "libsvm", # gmum.R parameter - pick library
                verbosity = 0 # no outputs
                )
 

@@ -21,7 +21,7 @@ test_that("Transduction and factors work as in respectively svmlight and libsvm"
   svm.induction.e <- svm(x=train.induction$x, y=train.induction$y, kernel='linear')
   svm.induction.e.pred <- predict(svm.induction.e, test$x[,1:9253])
   
-  svm.induction <- SVM(x=train.induction$x, y=train.induction$y, lib="svmlight", verbosity=1)
+  svm.induction <- SVM(x=train.induction$x, y=train.induction$y, core="svmlight", verbosity=1)
   svm.induction.pred <- predict(svm.induction, test$x[,1:9253])
   
   
@@ -51,12 +51,12 @@ test_that("Transduction and factors work as in respectively svmlight and libsvm"
   test$y <- as.factor(test$y)
   
   svm.transduction <- SVM(x=train.transduction$x, y=train.transduction$y, 
-                          lib="svmlight",
+                          core="svmlight",
                           transductive.learning=TRUE)
   svm.transduction.pred <- predict(svm.transduction, test$x)
   
   
-  svm.induction <- SVM(x=train.induction$x, y=train.induction$y, lib="svmlight", verbosity=1)
+  svm.induction <- SVM(x=train.induction$x, y=train.induction$y, core="svmlight", verbosity=1)
   svm.induction.pred <- predict(svm.induction, test$x[,1:9253])
   
   # This is exactly what svm_learn and svm_classify return on this dataset
@@ -66,7 +66,7 @@ test_that("Transduction and factors work as in respectively svmlight and libsvm"
   
   # Check if we pass posratio correctly
   svm.transduction <- SVM(x=train.transduction$x, y=train.transduction$y, 
-                          lib="svmlight",
+                          core="svmlight",
                           transductive.learning=TRUE,
                           transductive.posratio=0.001)
   svm.transduction.pred <- predict(svm.transduction, test$x)
@@ -105,11 +105,11 @@ test_that("Transduction improves score", {
   NmK <- length(i) - K
   
   
-  svm.1 <- SVM(X.train, Y.train, lib="svmlight", kernel="linear")
+  svm.1 <- SVM(X.train, Y.train, core="svmlight", kernel="linear")
   svm.2a <- SVM(X.train.tr1, Y.train.tr1, 
-                transductive.learning = TRUE, lib="svmlight", kernel="linear", verbosity=1)
+                transductive.learning = TRUE, core="svmlight", kernel="linear", verbosity=1)
   sample1 <- sample(1:nrow(X.train), NmK, replace=FALSE)
-  svm.3a <- SVM(X.train[sample1,],as.factor(Y.train[sample1]), lib="svmlight", kernel="linear")
+  svm.3a <- SVM(X.train[sample1,],as.factor(Y.train[sample1]), core="svmlight", kernel="linear")
   
   
   svm.1.acc <- svm.accuracy(predict(svm.1, X.test), Y.test)

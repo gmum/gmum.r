@@ -17,7 +17,7 @@ train.induction <- svm.transduction$ind
 test <-svm.transduction$test
 test$x <- train.transduction$x[11:610, ] # Saves some space :)
 
-svm.induction <- SVM(x=train.induction$x, y=train.induction$y, lib="svmlight")
+svm.induction <- SVM(x=train.induction$x, y=train.induction$y, core="svmlight")
 svm.induction.pred <- predict(svm.induction, test$x)
 
 # We pass special labels for transductive learning
@@ -26,7 +26,7 @@ train.transduction$y[10:12]
 # Train transductive, it takes longer as it uses much more data
 svm.transduction <- SVM(x=train.transduction$x, y=train.transduction$y,
                         transductive.learning=TRUE,
-                        lib="svmlight")
+                        core="svmlight")
 svm.transduction.pred <- predict(svm.transduction, test$x)
 
 # As expected - transductively trained model performs much better on test data
