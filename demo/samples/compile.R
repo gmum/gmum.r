@@ -1,11 +1,18 @@
 library(rmarkdown)
 
-render("svm.2e.R")
-render("svm.basic.R")
-render("svm.caret.R")
-render("svm.multiclass.R")
-render("svm.transductive.R")
+# Note: rmarkdown has some bugs, so I cannot do here loop, and also
+# sometimes you have to terminate R and restart to compile successfuly ;)
 
-render("gng.online.R")
-render("gng.wine.R")
-render("gng.optimized.R")
+highlighting <- "zenburn"
+
+render("svm.2e.R", output_options=c(highlight=highlighting))
+render("svm.basic.R", output_options=c(highlight=highlighting))
+render("svm.caret.R", output_options=c(highlight=highlighting))
+render("svm.multiclass.R", output_options=c(highlight=highlighting))
+render("svm.transductive.R", output_options=c(highlight=highlighting))
+render("svm.example.weights.R", output_options=c(highlight=highlighting))
+
+render("gng.online.R", output_options=c(highlight=highlighting))
+render("gng.wine.R", output_options=c(highlight=highlighting))
+render("gng.optimized.R", output_options=c(highlight=highlighting))
+render("gng.mouse.R", output_options=c(highlight=highlighting))
