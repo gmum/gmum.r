@@ -1,41 +1,20 @@
 library(gmum.r)
 library(caret)
 
-data_file <- system.file("data_sets", "svm", "large", "news20.binary", mustWork=TRUE, package="gmum.r")
+data_file <- system.file("data_sets", "svm", "large", "news20.RData", mustWork=TRUE, package="gmum.r")
 
-
-
-if (!file.exists(x_file) || !file.exists(y_file)) {
-  stop("Missing dataset file")
+if (!file.exists(data_file) || !file.exists(y_file)) {
+  stop("Missing dataset file, get it here https://www.dropbox.com/s/i4onf215j95a3iq/news20.RData?dl=0")
 }
 
-data <- read.matrix.csr(data_file)
-x <- data$x
-y <- data$y
-
-i <- as.integer(createDataPartition(y, p=0.25, list=FALSE))
-
-news20.part.x <- x[i]
-news20.part.y <- y[i]
-
-news20.part <- list(x=news20.part.x, y=news20.part.y)
-save(news20.part, file="news20_part.RData", compress = TRUE)
-
-### After saving data
-
-data_file <- system.file("inst", "data_sets", "svm", "large", "news20_part.RData", mustWork=TRUE, package="gmum.r")
 load(data_file)
 
-
-library(gmum.r)
-library(caret)
-load("~/Downloads/news20_part.RData")
-x <- news20.part$x
-y <- news20.part$y
+x <- news20$x
+y <- news20$y
 
 library(caret)
-set.seed(777)
-train <- as.integer(createDataPartition(y, p=0.1, list=FALSE))
+set.seed(666)
+train <- as.integer(createDataPartition(y, p=0.5, list=FALSE))
 
 core <- "svmlight"
 kernel <- "linear"
@@ -74,10 +53,3 @@ print(sprintf("e1071 train time: %.4f", e_train))
 
 print(sprintf("gmum  test time: %.4f", gmum_test))
 print(sprintf("e1071 test time: %.4f", e_test))
-
-
-
-
-
-
-
