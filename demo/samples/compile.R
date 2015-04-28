@@ -11,6 +11,7 @@ render("svm.caret.R", output_options=c(highlight=highlighting))
 render("svm.multiclass.R", output_options=c(highlight=highlighting))
 render("svm.transductive.R", output_options=c(highlight=highlighting))
 render("svm.example.weights.R", output_options=c(highlight=highlighting))
+render("svm.news20.times.R", output_options=c(highlight=highlighting))
 
 render("gng.online.R", output_options=c(highlight=highlighting))
 render("gng.wine.R", output_options=c(highlight=highlighting))
