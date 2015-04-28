@@ -222,7 +222,6 @@ evalqOnLoad({
     }else{
       stop("Incorrect class.type")
     }
-    
     # Get number of subproblems
     if(is.matrix(ymat)){ 
       J <- 1:ncol(ymat)               
@@ -256,7 +255,7 @@ evalqOnLoad({
     kernel <- as.list(call)$kernel
     if (is.null(lib)) lib <- "libsvm"
     if (is.null(kernel)) kernel <- "linear"
-    obj <- list(models=models, class.type=class.type, pick=pick, levels=lev, call=call, lib=lib, kernel=kernel)
+    obj <- list(models=models, class.type=class.type, X=x, pick=pick, levels=lev, call=call, lib=lib, kernel=kernel)
     class(obj) <- "MultiClassSVM"
     obj
   }
@@ -297,7 +296,7 @@ evalqOnLoad({
       levels <- levels(y)
       warning("It is recommended to pass y as factor")
     }
-
+  
     # We don't support transductive multiclass, because it is bazinga
     if((length(levels) > 2 && !transductive.learning)){
       params <- as.list(match.call(expand.dots=TRUE))
@@ -544,17 +543,18 @@ evalqOnLoad({
     
     #1. Get X and Y
     if(is.null(X)){
-      if(obj$isSparse()){
-        X <- Matrix::t(obj$.getSparseX())
+      if(class(x) == "MultiClassSVM"){
+         X <- x$X
       }else{
-        X <- obj$.getX()
+        if(obj$isSparse()){
+          X <- Matrix::t(obj$.getSparseX())
+        }else{
+          X <- obj$.getX()
+        }
       }
       
-      if(class(x) == "MultiClassSVM"){
-        t <- predict(x, X)
-      }else{
-        t <- obj$.getY()
-      }
+      t <- predict(x, X)
+      
     }else{
       t <- predict(x, X)
     }
@@ -798,9 +798,10 @@ evalqOnLoad({
                                    param$coef0 = 0
                                  }
                                  
-                                 return(gmum.r::SVM(
-                                   x,
-                                   y,
+                                 
+                                 sv <- gmum.r::SVM(
+                                   x=x,
+                                   y=y,
                                    C = param$C,
                                    gamma = param$gamma,
                                    degree = param$degree,
@@ -808,7 +809,9 @@ evalqOnLoad({
                                    probability = classProbs,
                                    kernel = param$kernel,
                                    ...
-                                 ))
+                                 )
+                                 
+                                 return(sv)
                                },
                                predict = function(modelFit, newdata, submodels = NULL) {  
                                  as.factor(predict(modelFit, newdata))
