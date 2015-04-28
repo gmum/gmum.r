@@ -573,7 +573,11 @@ evalqOnLoad({
     }
     
     #3. Prepare df. This is ugly copy so that we can do whatever we want
-    df <- data.frame(SparseM::as.matrix(X[,cols]))
+    if(obj$isSparse()){
+      df <- data.frame(SparseM::as.matrix(X[,cols]))
+    }else{
+      df <- data.frame(X[,cols])
+    }
     colnames(df) <- c("X1", "X2") # This is even worse
     df['class'] <- as.factor(t)
   
