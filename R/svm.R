@@ -246,7 +246,6 @@ evalqOnLoad({
     }else{
       stop("Incorrect class.type")
     }
-    
     # Get number of subproblems
     if(is.matrix(ymat)){ 
       J <- 1:ncol(ymat)               
@@ -280,7 +279,10 @@ evalqOnLoad({
     kernel <- as.list(call)$kernel
     if (is.null(core)) core <- "libsvm"
     if (is.null(kernel)) kernel <- "linear"
-    obj <- list(models=models, class.type=class.type, pick=pick, levels=lev, call=call, core=core, kernel=kernel)
+
+    obj <- list(models=models, 
+                class.type=class.type, X=x, pick=pick, levels=lev, call=call, core=core, kernel=kernel)
+
     class(obj) <- "MultiClassSVM"
     obj
   }
@@ -321,7 +323,7 @@ evalqOnLoad({
       levels <- levels(y)
       warning("It is recommended to pass y as factor")
     }
-
+  
     # We don't support transductive multiclass, because it is bazinga
     if((length(levels) > 2 && !transductive.learning)){
       params <- as.list(match.call(expand.dots=TRUE))
@@ -561,23 +563,32 @@ evalqOnLoad({
     }
     if(obj$isSparse()){
       library(SparseM)
+      library(Matrix)
+      library(e1071)
     }
     
     
     #1. Get X and Y
     if(is.null(X)){
-      X <- obj$.getX()
       if(class(x) == "MultiClassSVM"){
-        t <- predict(x, X)
+         X <- x$X
       }else{
-        t <- obj$.getY()
+        if(obj$isSparse()){
+          X <- Matrix::t(obj$.getSparseX())
+        }else{
+          X <- obj$.getX()
+        }
       }
+      
+      t <- predict(x, X)
+      
     }else{
       t <- predict(x, X)
     }
     labels <- levels(as.factor(t))
     
     #2. Do some checking
+
     if (ncol(X) > 2){
       warning("Only 2 dimension plotting is supported for multiclass. Plotting using cols parameter")
     }   
@@ -589,9 +600,14 @@ evalqOnLoad({
     }
     
     #3. Prepare df. This is ugly copy so that we can do whatever we want
-    df <- data.frame( as.matrix(X[,cols] ))
+    if(obj$isSparse()){
+      df <- data.frame(SparseM::as.matrix(X[,cols]))
+    }else{
+      df <- data.frame(X[,cols])
+    }
     colnames(df) <- c("X1", "X2") # This is even worse
     df['class'] <- as.factor(t)
+  
     
     #4. Prepare data for plotting
     if (obj$areExamplesWeighted()) {
@@ -619,7 +635,7 @@ evalqOnLoad({
       if (mode == "pca") {
         w <- c(obj$getW())
         w <- w %*% pca_data$rotation
-      }else{
+      }else if(ncol(X)==2){
         w <- c(obj$getW())
       }
     }
@@ -809,9 +825,10 @@ evalqOnLoad({
                                    param$coef0 = 0
                                  }
                                  
-                                 return(gmum.r::SVM(
-                                   x,
-                                   y,
+                                 
+                                 sv <- gmum.r::SVM(
+                                   x=x,
+                                   y=y,
                                    C = param$C,
                                    gamma = param$gamma,
                                    degree = param$degree,
@@ -819,7 +836,9 @@ evalqOnLoad({
                                    probability = classProbs,
                                    kernel = param$kernel,
                                    ...
-                                 ))
+                                 )
+                                 
+                                 return(sv)
                                },
                                predict = function(modelFit, newdata, submodels = NULL) {  
                                  as.factor(predict(modelFit, newdata))
