@@ -89,7 +89,7 @@ RCPP_MODULE(svm_wrapper) {
 	      	.method("getNumberSV", &SVMClient::getNumberSV)
 	      	.method("getNumberClass", &SVMClient::getNumberClass)
 	      	.method("getSV", &SVMClient::getSV)
-
+	      	.method("getIterations", &SVMClient::getIterations)
 			.method("train", &SVMClient::train)
 			.method("predict", &SVMClient::predict)
 			.method("sparse_predict", &SVMClient::sparse_predict)

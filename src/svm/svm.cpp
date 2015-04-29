@@ -384,6 +384,7 @@ public:
 		double upper_bound_p;
 		double upper_bound_n;
 		bool solve_timed_out; // gmum.r modification for reaching mac_iter
+		int iter;
 		double r;	// for Solver_NU
 	};
 
@@ -749,6 +750,8 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 	si->upper_bound_p = Cp;
 	si->upper_bound_n = Cn;
 
+  //gmum.r -> sacherus
+	si->iter =iter;
 	LOG(log, LogLevel::INFO, "optimization finished, #iter = " + to_string(iter));
 
 	delete[] p;
@@ -1624,7 +1627,7 @@ struct decision_function
 
 static decision_function svm_train_one(
 	const svm_problem *prob, const svm_parameter *param,
-	double Cp, double Cn, Logger &log)
+	double Cp, double Cn, Logger &log, int &iter)
 {
 	double *alpha = Malloc(double,prob->l);
 	Solver::SolutionInfo si;
@@ -1673,6 +1676,8 @@ static decision_function svm_train_one(
 
 	LOG(log, LogLevel::DEBUG, "nSV = " + to_string(nSV) + ", nBSV = " + to_string(nBSV));
 
+	//gmum.r
+	iter = si.iter;
 	decision_function f;
 	f.alpha = alpha;
 	f.rho = si.rho;
@@ -2073,6 +2078,8 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 	svm_model *model = Malloc(svm_model,1);
 	model->param = *param;
 	model->free_sv = 0;	// XXX
+	//gmum.r
+	int iter;
 
 	if(param->svm_type == ONE_CLASS ||
 	   param->svm_type == EPSILON_SVR ||
@@ -2093,7 +2100,8 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 			model->probA[0] = svm_svr_probability(prob,param, log);
 		}
 
-		decision_function f = svm_train_one(prob,param,0,0, log);
+
+		decision_function f = svm_train_one(prob,param,0,0, log, iter);
 		model->rho = Malloc(double,1);
 		model->rho[0] = f.rho;
 
@@ -2193,7 +2201,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 				if(param->probability)
 					svm_binary_svc_probability(&sub_prob,param,weighted_C[i],weighted_C[j],probA[p],probB[p],log);
 
-				f[p] = svm_train_one(&sub_prob,param,weighted_C[i],weighted_C[j], log);
+				f[p] = svm_train_one(&sub_prob,param,weighted_C[i],weighted_C[j], log, iter);
 				for(k=0;k<ci;k++)
 					if(!nonzero[si+k] && fabs(f[p].alpha[k]) > 0)
 						nonzero[si+k] = true;
@@ -2206,7 +2214,8 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 			}
 
 		// build output
-
+		//gmum.r
+		model->iter = iter;
 		model->nr_class = nr_class;
 		
 		model->label = Malloc(int,nr_class);

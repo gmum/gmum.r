@@ -92,6 +92,7 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 	}
 
 	config.b = -model->rho[0];
+	config.iter = model->iter;
 	// memcpy(config.rho, ,
 	// 		config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
 
