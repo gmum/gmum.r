@@ -2,6 +2,9 @@
 #' title: "OVA and OVR multiclass classification"
 #' author: ""
 #' date: ""
+#' output:
+#'  html_document:
+#'    self_contained: false
 #' ---
 
 

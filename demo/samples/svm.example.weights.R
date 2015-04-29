@@ -2,6 +2,9 @@
 #' title: "Example weight support in gmum.R"
 #' author: ""
 #' date: ""
+#' output:
+#'  html_document:
+#'    self_contained: false
 #' ---
 
 library(gmum.r)

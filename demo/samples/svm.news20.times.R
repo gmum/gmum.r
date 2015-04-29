@@ -2,6 +2,9 @@
 #' title: "Comparing times of gmum.r SVM and e1071 on large data"
 #' author: ""
 #' date: ""
+#' output:
+#'  html_document:
+#'    self_contained: false
 #' ---
 #' 
 library(gmum.r)

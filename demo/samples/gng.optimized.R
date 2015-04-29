@@ -2,6 +2,9 @@
 #' title: "Optimized version of GNG"
 #' author: ""
 #' date: ""
+#' output:
+#'  html_document:
+#'    self_contained: false
 #' ---
 
 # For advanced used you might want to consider using OptimizedGNG

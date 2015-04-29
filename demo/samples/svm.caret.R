@@ -2,6 +2,9 @@
 #' title: "Caret support in gmum.R"
 #' author: ""
 #' date: ""
+#' output:
+#'  html_document:
+#'    self_contained: false
 #' ---
 
 

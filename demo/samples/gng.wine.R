@@ -2,6 +2,9 @@
 #' title: "GNG igraph integration on wine dataset"
 #' author: ""
 #' date: ""
+#' output:
+#'  html_document:
+#'    self_contained: false
 #' ---
 #' 
 library(gmum.r)
