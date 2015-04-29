@@ -93,7 +93,7 @@ plot.gng <- NULL
 #' @description Writes model to a disk space efficient binary format. 
 #' 
 #' @usage
-#' gngSave(gng)
+#' gngSave(gng, file.name)
 #' 
 #' @export
 #' 
@@ -103,9 +103,6 @@ plot.gng <- NULL
 #' 
 #' @docType methods
 #'
-#' @examples
-#' gngSave(gng, 'graph.bin')
-#' 
 #' @aliases gngSave
 #'
 gngSave <- NULL
@@ -119,7 +116,7 @@ gngSave <- NULL
 #' @description Writes model to a disk space efficient binary format. 
 #' 
 #' @usage
-#' gngLoad(gng)
+#' gngLoad(file.name)
 #' 
 #' @export
 #' 
@@ -129,9 +126,6 @@ gngSave <- NULL
 #' 
 #' @docType methods
 #'
-#' @examples
-#' gngLoad('model.bin')
-#' 
 #' @aliases gngLoad
 #'
 gngLoad <- NULL
@@ -333,8 +327,6 @@ meanError.gng <- NULL
 #' 
 #' @docType methods
 #'
-#' @examples
-#' errorStatistics(gng)
 #' 
 #' @aliases errorStatistics
 #'
@@ -399,9 +391,6 @@ OptimizedGNG <- NULL
 #' 
 #' @docType methods
 #'
-#' @examples
-#' clustering(gng)
-#' 
 #' @aliases clustering
 #'
 clustering.gng <- NULL
@@ -486,10 +475,12 @@ summary.gng <- NULL
 
 #' @title convertToGraph
 #' 
-#' @description Converts to igraph (O(n) method, writing intermediately to disk)
+#' @description Converts GNG to igraph object.
 #' 
 #' @usage
 #' convertToGraph(gng)
+#' 
+#' @param gng Learned GNG object
 #' 
 #' @export
 #' 
@@ -497,9 +488,6 @@ summary.gng <- NULL
 #' 
 #' @docType methods
 #'
-#' @examples
-#' convertToGraph(gng)
-#' 
 #' @aliases convertToGraph
 #'
 convertToGraph.gng <- NULL
@@ -509,8 +497,7 @@ generateExamples <- NULL
 
 #' @title insertExamples
 #' 
-#' @description Insert (inefficiently) examples to algorithm dataset. For
-#' efficient insertion use gng$inser_examples
+#' @description Insert examples with optional labels.
 #' 
 #' @usage
 #' insertExamples(gng, M, L=c())

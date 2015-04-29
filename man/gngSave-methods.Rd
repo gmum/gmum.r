@@ -5,7 +5,7 @@
 \alias{gngSave}
 \title{gngSave}
 \usage{
-gngSave(gng)
+gngSave(gng, file.name)
 }
 \arguments{
 \item{filename}{File where binary will be saved}
@@ -15,8 +15,5 @@ Writes model to a disk space efficient binary format.
 }
 \details{
 Save model to binary format
-}
-\examples{
-gngSave(gng, 'graph.bin')
 }
 

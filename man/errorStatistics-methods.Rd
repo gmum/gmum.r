@@ -17,6 +17,5 @@ Gets vector with errors for every second of execution
 }
 \examples{
 errorStatistics(gng)
-errorStatistics(gng)
 }
 
