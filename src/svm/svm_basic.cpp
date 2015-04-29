@@ -225,5 +225,6 @@ void SVMConfiguration::setDefaultParams() {
     debug_library_predict = false;
 
     max_iter = 10000000;
+    iter = -1;
 }
 
