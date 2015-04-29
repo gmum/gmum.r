@@ -15,22 +15,18 @@ save(svm.breastcancer.dataset, file="svm_breast_cancer_dataset.RData", compress=
 
 # Transduction
 
+library(SparseM)
+library(e1071)
 system(system.file("data_sets", "svm", "download_transduction.sh",
                    mustWork=TRUE, package="gmum.r"))
 
-train.transduction <- read.matrix.csr(system.file("data_sets", "svm", 
-                                                  "transductive", "train_transduction.dat",
-                                                  mustWork=TRUE, package="gmum.r"))
-train.induction <- read.matrix.csr(system.file("data_sets", "svm", 
-                                               "transductive", "train_induction.dat",
-                                               mustWork=TRUE, package="gmum.r"))
+train.transduction <- read.matrix.csr("transductive/train_transduction.dat")
+train.induction <- read.matrix.csr("transductive/train_induction.dat")
+test <- read.matrix.csr("transductive/test.dat")
 
 # Rest zeros out
 train.transduction$x <- train.transduction$x[,1:9253]
 train.induction$x <- train.induction$x[,1:9253]
-test <- read.matrix.csr(system.file("data_sets", "svm", 
-                                    "transductive", "test.dat",
-                                    mustWork=TRUE, package="gmum.r"))
 
 # Now standarize labels (this ugly code is because read.matrix.csr fails)
 train.induction$y <- as.factor(as.numeric(train.induction$y))
@@ -46,7 +42,7 @@ test$y <- as.factor(test$y)
 # Save on space
 test$x <- NULL
 
-transduction.test.data <- list(tr=train.transduction, ind=train.induction, test=test)
+svm.transduction <- list(tr=train.transduction, ind=train.induction, test=test)
 
-save(transduction.test.data, file="transduction.test.data.RData")
+save(svm.transduction, file="svm.transduction.RData")
 

@@ -9,7 +9,11 @@
 insertExamples(gng, M, L=c())
 }
 \arguments{
-\item{examples}{Matrix with examples}
+\item{examples}{\code{matrix} or \code{data.frame} with rows as examples. Note: if training online make sure
+number of columns matches dim parameter passed to GNG constructor.}
+
+\item{labels}{\code{vector} of labels, that will be associated with nodes in the graph. GNG will assign to each
+node a mean of labels of closest examples.}
 }
 \description{
 Insert (inefficiently) examples to algorithm dataset. For

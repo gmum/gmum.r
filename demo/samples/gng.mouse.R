@@ -1,8 +1,15 @@
+#' ---
+#' title: "Predicting closest centroid in GNG"
+#' author: ""
+#' date: ""
+#' ---
+
 library(gmum.r)
 library(ggplot2)
 
 # Load our library dataset
-data(cec.mouse.1.spherical)
+data(cec_mouse_1_spherical)
+cec.mouse.1.spherical <- input
 
 # Train GNG model and find centroids of the resulting graph
 g <- GNG(cec.mouse.1.spherical, max.nodes=50)

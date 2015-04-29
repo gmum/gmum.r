@@ -93,6 +93,9 @@ void  SVMClient::setAlpha(arma::vec new_alpha){
 arma::mat SVMClient::getX(){
     return config.data;
 }
+arma::sp_mat SVMClient::getSparseX(){
+    return config.sparse_data;
+}
 arma::vec SVMClient::getY(){
     return config.target;
 }
@@ -103,7 +106,7 @@ arma::vec SVMClient::getDecisionFunction() {
     return SVMClient::config.decision_function;
 }
 std::string SVMClient::getLibrary(){
-    switch(config.svm_type) {
+    switch(config.library) {
     case LIBSVM : return "libsvm";
     case SVMLIGHT : return "svmlight";
     default : return "error"; 
@@ -227,12 +230,13 @@ void SVMClient::train() {
 }
 
 void SVMClient::predict( arma::mat problem ) {
-    
-    // Just like in requestPredict()
+    //FIXME: wtf!! - why I do I have to make 4 copies just to make a prediction.. seriously
+    //#466 and #465..
+
+    arma::mat previous_data = std::move(config.data);
     config.setData(problem);
-
     predictFromConfig();
-
+    config.setData(std::move(previous_data));
 }
 
 void SVMClient::predictFromConfig() {
@@ -406,8 +410,9 @@ void SVMClient::sparse_predict(
     size_t n_rows,
     size_t n_cols
 ) {
-    LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".sparse_predict() Started.");
-
+    //FIXME: wtf!! - why I do I have to make 4 copies just to make a prediction.. seriously
+    //#466 and #465..
+    arma::sp_mat previous_data = std::move(config.sparse_data);
     config.setSparseData(
         rowptr,
         colind,
@@ -423,8 +428,7 @@ void SVMClient::sparse_predict(
     } else {
         predictFromConfig();
     }
-
-    LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".sparse_predict() Done.");
+    config.sparse_data = std::move(previous_data);
 }
 
 void SVMClient::requestPredict() {

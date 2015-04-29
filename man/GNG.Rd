@@ -2,7 +2,7 @@
 % Please edit documentation in R/gng.R
 \name{GNG}
 \alias{GNG}
-\title{Constructor of GrowingNeuralGas object. Can be used to train offline, or online.}
+\title{Constructor of GrowingNeuralGas object.}
 \usage{
 GNG(x = NULL, labels = c(), beta = 0.99, alpha = 0.5,
   max.nodes = 1000, eps.n = 6e-04, eps.w = 0.05, max.edge.age = 200,
@@ -11,28 +11,35 @@ GNG(x = NULL, labels = c(), beta = 0.99, alpha = 0.5,
   k = NULL)
 }
 \arguments{
-\item{beta}{coefficient. Decrease the error variables of all node nodes by this fraction. Forgetting rate. Default 0.99}
+\item{beta}{Decrease the error variables of all node
+nodes by this fraction (forgetting rate). Default 0.99}
 
-\item{alpha}{Alpha coefficient. Decrease the error variables of the nodes neighboring to the newly inserted node by this fraction. Default 0.5}
+\item{alpha}{Decrease the error variables of the nodes neighboring to
+the newly inserted node by this fraction. Default 0.5}
 
-\item{max.nodes}{Maximum number of nodes (after reaching this size it will continue running, but won't add new nodes)}
+\item{max.nodes}{Maximum number of nodes
+(after reaching this size it will continue running, but won't add new nodes)}
 
-\item{eps.n}{Default 0.0006. How strongly adapt neighbour node}
+\item{eps.n}{How strongly adapt neighbour node. Default \code{0.0006}}
 
-\item{eps.w}{Default 0.05. How strongly adapt winning node}
+\item{eps.w}{How strongly adapt winning node. Default \code{0.05}}
 
-\item{train.online}{Default FALSE. If used will run in online fashion}
+\item{train.online}{default FALSE. If used will run in online fashion}
 
-\item{max.iter}{Default 200. Used for offline (default) training}
+\item{max.iter}{Uf training offline will stop if exceedes max.iter iterations. Default \code{200}}
 
-\item{min.improvement}{Used for offline (default) training. Controls stopping criterion, decrease if training stops too early. Default 1e-3.}
+\item{dim}{Used for training online, specifies training example size}
+
+\item{min.improvement}{Used for offline (default) training.
+Controls stopping criterion, decrease if training stops too early. Default \code{1e-3}}
 
 \item{lambda}{Every lambda iteration is added new vertex. Default 200}
 
-\item{k}{Utility constant, by default turned off. Good value is 1.3. Constant controlling speed of erasing obsolete nodes, see http://sund.de/netze/applets/gng/full/tex/DemoGNG/node20.html}
+\item{k}{Utility constant, by default turned off. Good value is 1.3. Constant controlling speed of erasing obsolete nodes,
+see \url{http://sund.de/netze/applets/gng/full/tex/DemoGNG/node20.html}}
 }
 \description{
-Construct GNG object
+Construct GNG object. Can be used to train offline, or online.
 }
 \examples{
 data(wine, package="rattle")

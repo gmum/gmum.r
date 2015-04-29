@@ -6,7 +6,7 @@ test_that("svmlight works" , {
   ds <- svm.twoellipsoids.dataset
   ds[,'V3'] <- as.factor(ds[,'V3'])
   formula <- V3 ~ .
-  svm <- SVM(formula, ds, lib="svmlight", kernel="linear", C=10, verbosity = 3);
+  svm <- SVM(formula, ds, core="svmlight", kernel="linear", C=10, verbosity = 3);
   
   x <- ds[,-3]
   target <- ds[,3]
@@ -26,7 +26,7 @@ test_that('accuracy is calculated', {
   ds <- svm.breastcancer.dataset
   ds[,'X1'] <- as.factor(ds[,'X1'])
   formula <- X1 ~ .
-  svm <- SVM(formula, ds, lib="svmlight", kernel="linear", C=100);
+  svm <- SVM(formula, ds, core="svmlight", kernel="linear", C=100);
   
   x <- ds[,-1]
   target <- ds[,1]

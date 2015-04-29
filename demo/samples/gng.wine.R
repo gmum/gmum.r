@@ -1,14 +1,19 @@
-# It is very easy to work with graphs in GNG
-
+#' ---
+#' title: "GNG igraph integration on wine dataset"
+#' author: ""
+#' date: ""
+#' ---
+#' 
 library(gmum.r)
 library(caret) # For ConfusionMatrix
 library(rattle) # For dataset
 
-data(wine)
-scaled.wine <- scale(wine[-1])
+# Prepare data
+scaled.wine <- as.matrix(scale(wine[-1]))
 
 # Train in an offline manner
-gng <- GNG(scaled.wine, labels=as.integer(wine$Type), max.nodes=20, max.iter=10000, min.improvement=1e-1)
+gng <- GNG(scaled.wine, labels=as.integer(wine$Type), max.nodes=20, 
+           max.iter=10000, min.improvement=1e-1)
 
 # Print number of nodes
 numberNodes(gng)

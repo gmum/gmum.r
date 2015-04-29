@@ -9,8 +9,8 @@ formula <- V3 ~ .
 ########## two elipsoids plots #########
 ds_2e <- svm.twoellipsoids.dataset
 
-svm_2e <- SVM(formula, ds_2e, lib="libsvm", kernel="linear", prep = "2e", C=10);
-svm <- SVM(formula, ds_2e, lib="libsvm", kernel="linear", prep = "none", C=10);
+svm_2e <- SVM(formula, ds_2e, core="libsvm", kernel="linear", prep = "2e", C=10);
+svm <- SVM(formula, ds_2e, core="libsvm", kernel="linear", prep = "none", C=10);
 
 plot(svm, mode="normal")
 plot(svm_2e, mode="normal")
@@ -19,8 +19,8 @@ plot(svm_2e, mode="contour")
 ########## circles plots #########
 ds_circles <- svm.twocircles.dataset
 
-svm_2e <- SVM(formula, ds_circles, lib="libsvm", kernel="linear", prep = "2e", C=10);
-svm <- SVM(formula, ds_circles, lib="libsvm", kernel="linear", prep = "none", C=10);
+svm_2e <- SVM(formula, ds_circles, core="libsvm", kernel="linear", prep = "2e", C=10);
+svm <- SVM(formula, ds_circles, core="libsvm", kernel="linear", prep = "none", C=10);
 
 plot(svm, mode="normal") 
 plot(svm_2e, mode="normal")

@@ -1,5 +1,8 @@
-# GNG unique capability is online training
-
+#' ---
+#' title: "Online training in GNG"
+#' author: ""
+#' date: ""
+#' ---
 library(gmum.r)
 
 # If you decide to use this advanced feature, pass dimensionality of the data
