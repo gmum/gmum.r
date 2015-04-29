@@ -221,7 +221,7 @@ ClusterStandard::ClusterStandard(unsigned int id,
         return m_cov_mat;
     }
 
-ClusterCovariance::ClusterCovariance(const arma::mat & sigma, unsigned int id,
+ClusterFixedCovariance::ClusterFixedCovariance(const arma::mat & sigma, unsigned int id,
 		const std::vector<unsigned int> &assignment, const arma::mat &points) :
 		ClusterUseCovMat(id, assignment, points) {
 	m_sigma_det = arma::det(sigma);
@@ -229,19 +229,19 @@ ClusterCovariance::ClusterCovariance(const arma::mat & sigma, unsigned int id,
 	m_entropy = calculate_entropy(m_n, m_cov_mat);
 }
 
-ClusterCovariance::ClusterCovariance(const arma::mat& inv_sigma, double sigma_det,
+ClusterFixedCovariance::ClusterFixedCovariance(const arma::mat& inv_sigma, double sigma_det,
 		int count, const arma::rowvec & mean, const arma::mat & cov_mat) :
 		ClusterUseCovMat(count, mean, cov_mat), m_inv_sigma(inv_sigma), m_sigma_det(
 				sigma_det) {
 	m_entropy = calculate_entropy(m_n, cov_mat);
 }
 
-double ClusterCovariance::calculate_entropy(int n, const arma::mat &cov_mat) {
+double ClusterFixedCovariance::calculate_entropy(int n, const arma::mat &cov_mat) {
 	return n * log(2 * M_PI) / 2 + arma::trace(m_inv_sigma * cov_mat) / 2
 			+ log(m_sigma_det) / 2;
 }
 
-    arma::mat ClusterCovariance::get_cov_mat(unsigned int id,
+    arma::mat ClusterFixedCovariance::get_cov_mat(unsigned int id,
                                            const std::vector<unsigned int> &assignment, const arma::mat &points) {
         return arma::inv(m_inv_sigma);
     }
@@ -318,8 +318,8 @@ double ClusterDiagonal::calculate_entropy(int n, const arma::mat &cov_mat) {
 		return m_cov_mat;
 	}
 
-ClusterCovariance *ClusterCovariance::clone() {
-	return new ClusterCovariance(m_inv_sigma, m_sigma_det, m_count, m_mean,
+ClusterFixedCovariance *ClusterFixedCovariance::clone() {
+	return new ClusterFixedCovariance(m_inv_sigma, m_sigma_det, m_count, m_mean,
 			m_cov_mat);
 }
 

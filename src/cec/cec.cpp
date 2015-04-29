@@ -28,9 +28,9 @@ Cluster* CecModel::create_cluster(ClusterParams* cluster_params, int i) {
     case kstandard:
         cluster = new ClusterStandard(i, m_assignment, params.dataset);
         break;
-    case kcovariance: {
-        ClusterCovarianceParams *ptr = dynamic_cast<ClusterCovarianceParams *>(cluster_params);
-        cluster = new ClusterCovariance(ptr->cov_mat, i, m_assignment, params.dataset);
+    case kfixed_covariance: {
+        ClusterFixedCovarianceParams *ptr = dynamic_cast<ClusterFixedCovarianceParams *>(cluster_params);
+        cluster = new ClusterFixedCovariance(ptr->cov_mat, i, m_assignment, params.dataset);
         break;
     }
     case kdiagonal:
@@ -39,7 +39,7 @@ Cluster* CecModel::create_cluster(ClusterParams* cluster_params, int i) {
     case kspherical:
         cluster = new ClusterSpherical(i, m_assignment, params.dataset);
         break;
-    case kspherical_fixed_r: {
+    case kfixed_spherical: {
         ClusterSphericalFixedRParams * ptr = dynamic_cast<ClusterSphericalFixedRParams *>(cluster_params);
         cluster = new ClusterSphericalFixedR(ptr->radius, i, m_assignment, params.dataset);
         break;
@@ -101,11 +101,11 @@ void CecModel::init_clusters(std::vector<unsigned int>& assignment) {
         //TODO: why pointer?
         boost::scoped_ptr<ClusterParams> cluster;
         switch (params.cluster_type) {
-        case kspherical_fixed_r:
+        case kfixed_spherical:
             cluster.reset(new ClusterSphericalFixedRParams(params.radius));
             break;
-        case kcovariance:
-            cluster.reset(new ClusterCovarianceParams(params.cov_mat));
+        case kfixed_covariance:
+            cluster.reset(new ClusterFixedCovarianceParams(params.cov_mat));
             break;
 #ifdef RCPP_INTERFACE
         case kcustom:

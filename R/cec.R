@@ -15,8 +15,8 @@
 #' @param method.type Type of clustering (Gauss family).
 #' \enumerate{
 #' \item diagonal Gaussians with diagonal covariance. The clustering will try to divide the data into ellipsoid with radiuses parallel to coordinate axes
-#' \item spherical_fixed_r Spherical (radial) Gaussian densities (additional parameter - radius)
-#' \item covariance The clustering will have the tendency to divide the data into clusters resembling the unit circles in the Mahalanobis distance (additional parameter - covaraince matrix required)
+#' \item fixed_spherical Spherical (radial) Gaussian densities (additional parameter - radius)
+#' \item fixed_covariance The clustering will have the tendency to divide the data into clusters resembling the unit circles in the Mahalanobis distance (additional parameter - covaraince matrix required)
 #' \item func Own function dependent on m and sigma (additional parameter)
 #' \item mix Mix of others Gaussian types.
 #' \item standard We divide dataset into ellipsoid-like clusters without any preferences (default)
@@ -39,12 +39,12 @@
 #' @usage CEC(k=3, x=dataset)
 #' @usage CEC(k=3, x=dataset, control.nstart=10, method.type='spherical', control.eps=0.05)
 #' @usage CEC(k=2, x=dataset, method.type='spherical', method.init='centroids', params.centroids=list(c(-0.5,0.5),c(0,0)))
-#' @usage CEC(k=5, x=dataset, method.type='spherical_fixed_r', params.r=0.01, control.nstart=10, control.eps=0.07)
-#' @usage CEC(k=5, x=dataset, method.type='covariance', params.cov=matrix(c(0.03,0,0,0.01),2), control.nstart=10, control.eps=0.06)
+#' @usage CEC(k=5, x=dataset, method.type='fixed_spherical', params.r=0.01, control.nstart=10, control.eps=0.07)
+#' @usage CEC(k=5, x=dataset, method.type='fixed_covariance', params.cov=matrix(c(0.03,0,0,0.01),2), control.nstart=10, control.eps=0.06)
 #' @usage CEC(k=1, x=dataset, method.type='func', params.function='name_of_my_own_function')
-#' @usage  spherical_fixed_r_cluster_param = list(method.type = 'spherical_fixed_r', params.r = 0.001)
-#' covariance_cluster_param = list(method.type = 'covariance', params.cov=matrix(c(0.05, 0, 0, 0.001), 2))
-#' CEC(x = dataset, k = 5, params.mix = list(covariance_cluster_param, spherical_fixed_r_cluster_param, spherical_fixed_r_cluster_param, spherical_fixed_r_cluster_param, spherical_fixed_r_cluster_param), control.nstart = 10)
+#' @usage fixed_spherical_cluster_param = list(method.type = 'fixed_spherical', params.r = 0.001)
+#' covariance_cluster_param = list(method.type = 'fixed_covariance', params.cov=matrix(c(0.05, 0, 0, 0.001), 2))
+#' CEC(x = dataset, k = 5, params.mix = list(covariance_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param), control.nstart = 10)
 
 CEC <- NULL
 

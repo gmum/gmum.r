@@ -21,8 +21,8 @@ private:
 	// Rcpp::Function func;
 #ifdef RCPP_INTERFACE
 	void set_mix_handle_standard_cluster(Rcpp::List& list);
-	void set_mix_handle_covariance_cluster(Rcpp::List &list);
-	void set_mix_handle_spherical_fixed_r_cluster(Rcpp::List &list);
+	void set_mix_handle_fixed_covariance_cluster(Rcpp::List &list);
+	void set_mix_handle_fixed_spherical_cluster(Rcpp::List &list);
 	void set_mix_handle_spherical_cluster(Rcpp::List &list);
 	void set_mix_handle_diagonal_cluster(Rcpp::List& list);
 	void set_mix_handle_custom_cluster(Rcpp::List& list);

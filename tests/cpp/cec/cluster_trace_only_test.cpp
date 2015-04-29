@@ -46,7 +46,7 @@ TEST(CEC_TraceOnly,AddPoint) {
         ClusterStandard tmp(id,fits,tmp_matrix);
         arma::rowvec mean_online_difference = upref->get_mean() - real_m;
         float trace_diff = upref->get_cov_mat_trace() - arma::trace(covariance);
-        // float relative_error = std::abs(trace_diff/arma::trace(covariance));
+        // float relative_error = std::abs(trace_diff/arma::trace(fixed_covariance));
 
         EXPECT_EQ(m->size(),tmp.size());
         EXPECT_LT(std::abs(trace_diff),acceptable_difference);
@@ -98,7 +98,7 @@ TEST(CEC_TraceOnly,removePoint) {
         ClusterOnlyTrace * upref = dynamic_cast<ClusterOnlyTrace*>(m.get());
         arma::rowvec mean_online_difference = upref->get_mean() - real_m;
         float trace_diff = upref->get_cov_mat_trace() - arma::trace(covariance);
-        // float relative_error = std::abs(trace_diff/arma::trace(covariance));
+        // float relative_error = std::abs(trace_diff/arma::trace(fixed_covariance));
         // std::cout << i << " " << relative_error << std::endl;
         EXPECT_EQ(m->size(),tmp.size());
         EXPECT_LT(std::abs(trace_diff), acceptable_difference);

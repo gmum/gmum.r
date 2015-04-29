@@ -122,20 +122,20 @@ public:
                                   const arma::mat &points);
 };
 
-class ClusterCovariance : public ClusterUseCovMat {
+class ClusterFixedCovariance : public ClusterUseCovMat {
 private:
 	arma::mat m_inv_sigma;
 	double m_sigma_det;
 
 	double calculate_entropy(int n, const arma::mat &cov_mat);
 public:
-	ClusterCovariance(const arma::mat& inv_sigma, double sigma_det, int count,
+	ClusterFixedCovariance(const arma::mat& inv_sigma, double sigma_det, int count,
 			const arma::rowvec & mean, const arma::mat & cov_mat);
-	ClusterCovariance(const arma::mat & sigma, unsigned int id,
+	ClusterFixedCovariance(const arma::mat & sigma, unsigned int id,
 			const std::vector<unsigned int> &assignment,
 			const arma::mat &points);
-	virtual ClusterCovariance * clone();
-    virtual ~ClusterCovariance() { }
+	virtual ClusterFixedCovariance * clone();
+    virtual ~ClusterFixedCovariance() { }
 
     virtual arma::mat get_cov_mat(unsigned int id,
                                   const std::vector<unsigned int> &assignment,
