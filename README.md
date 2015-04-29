@@ -11,6 +11,8 @@ Package includes three subpackages:
 
 For installation see [https://github.com/gmum/gmum.r/tree/dev/src/README.md](https://github.com/gmum/gmum.r/tree/dev/src/README.md)
 
+See list of samples here [http://r.gmum.net/getting_started.html](http://r.gmum.net/getting_started.html)
+
 ## SVM
 
 SVM Wrapper is a part of the gmum.R project which provides a popular Support Vector Machine inplementations wrapped in the R package.
