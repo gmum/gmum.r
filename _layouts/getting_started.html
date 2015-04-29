@@ -13,85 +13,53 @@
 
     <div class="col-sm-8 col-sm-offset-2">
         <p class="lead">
-            We would like to help you get started. At first, for the purpose of this presentation, we need to include
-            some required packages:
+            We would like to help you get started as quickly as possible. Pick any of the following samples:
+
+            <ul>
+<li><a href="samples/svm.news20.times.html" class="link">Speed comparison of gmum.R and e1071 on News20 dataset</a>      </li>
+
+<li><a href="samples/gng.online.html" class="link">Online cluster learning in Growing Neural Gas</a>      </li>
+                <li><a href="samples/gng.wine.html" class="link">Growing Neural Gas wine dataset classification</a>      </li>
+                <li><a href="samples/gng.mouse.html" class="link">Working with igraph in Growing Neural Gas</a>      </li>
+                <li><a href="samples/svm.basic.html" class="link">Basic classification on breast cancer dataset</a>      </li>
+                <li><a href="samples/gng.optimized.html" class="link">Running Growing Neural Gas with optimizations</a>      </li>
+                <li><a href="samples/svm.2e.html" class="link">Two ellipsoid SVM on breast cancer</a>      </li>
+                <li><a href="samples/svm.caret.html" class="link">Caret support in gmum.R</a>      </li>
+                <li><a href="samples/svm.example.weights.html" class="link">Example weights in SVM</a>      </li>
+ <li><a href="samples/svm.multiclass.html" class="link">Multiclass classification (OVA and OVR schemes)</a>      </li>
+ <li><a href="samples/svm.transductive.html" class="link">Transductive learning in SVM</a>      </li>
+
+            <ul>
+            
+                
+      
+            <div id="example"></div>
         </p>
-
-        <pre><code class="r">library(gmum.r)<br>library(ggplot2)</code></pre>
-
-        <h2>Clustering data set</h2>
-
-        <p class="lead">
-            Now we might prepare two simple ellipsoids, which act as a data set for further computation:
-        </p>
-
-        <pre><code class="r">dataset <- svm.dataset.2e()</code></pre>
-
-        <p class="lead">
-            It is good to make the column names be more descriptive and drop them with class labels:
-        </p>
-
-        <pre><code class="r">colnames(dataset) <- c("X", "Y", "Target")<br>dataset <- dataset[c("X", "Y")]</code></pre>
-
-        <p class="lead">
-            If we plot this data set, we should see something like this:
-        </p>
-
-        <img src="http://gmum.net/files/gmum.r/img/page/svm-sample-plot.png">
-
-        <p class="lead">
-            Such data set can be easily clustered. We would like to create two clusters from the data set, so we set
-            <i>k</i> to be equal to 2:
-        </p>
-
-        <pre><code class="r">clusters <- CEC(x=dataset, k=2)</code></pre>
-
-        <p class="lead">
-            The clusters appear in the plot as follows:
-        </p>
-
-        <img src="http://gmum.net/files/gmum.r/img/page/cec-sample-plot.png">
-
-        <h2>Building classifier</h2>
-
-        <p class="lead">
-            The clusters have been created, therefore we may build a classifier. At first, we have to add labels to the
-            data set since they are required for training SVM. We need to add one label in our case:
-        </p>
-
-        <pre><code class="r">target <- clusters$y()<br>dataset["Target"] = target</code></pre>
-
-        <p class="lead">
-            Below is a complete set of commands which trains SVM:
-        </p>
-
-        <pre><code class="r">formula <- Target ~ .<br>svm <- SVM(formula, data=dataset, lib="libsvm", kernel="linear", C=10)</code></pre>
-
-        <p class="lead">
-            The decision boundary should be as follows:
-        </p>
-
-        <img src="http://gmum.net/files/gmum.r/img/page/svm-decision-boundary-plot.png">
-
-        <p class="lead">
-            The SVM has been trained. Next we may test the SVM using some sample data. For this purpose, we may pick a
-            sample matrix:
-        </p>
-
-        <pre><code class="r">test <- matrix(rnorm(200, mean=0, sd=2), , 2)</code></pre>
-
-        <p class="lead">
-            And run prediction:
-        </p>
-
-        <pre><code class="r">prediction <- predict(svm, test)<br>df <- data.frame(X=test[,1], Y=test[,2], Target=prediction)<br>result <- ggplot() + geom_point(data=df, mapping=aes(X,Y), colour=factor(df$Target + 1))</code></pre>
-
-        <p class="lead">
-            Finally, we can plot the result and see effects of our prediction:
-        </p>
-
-        <img src="http://gmum.net/files/gmum.r/img/page/result-plot.png">
     </div>
 </section>
 
 {% include footer.html %}
+
+
+<script>
+    $(document).ready( function() {
+        function goToByScroll(id){
+              // Remove "link" from the ID
+            id = id.replace("link", "");
+              // Scroll
+            $('html,body').animate({
+                scrollTop: $("#"+id).offset().top},
+                'slow');
+        }
+
+        $.ajaxSetup ({
+            cache: false
+        });
+
+        $(".link").click( function(e) {
+            e.preventDefault(); 
+            $("#example").html("<p>loading...</p>").load($(this).attr("href"));
+            goToByScroll("example");
+        });
+    });
+</script>

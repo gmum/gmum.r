@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<title>Caret support in gmum.R</title>
+
+<script src="http://gmum.net/files/gmum.r/sample/svm.caret_files/jquery-1.11.0/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="http://gmum.net/files/gmum.r/sample/svm.caret_files/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" />
+<script src="http://gmum.net/files/gmum.r/sample/svm.caret_files/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="http://gmum.net/files/gmum.r/sample/svm.caret_files/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="http://gmum.net/files/gmum.r/sample/svm.caret_files/bootstrap-3.3.1/shim/respond.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<link rel="stylesheet"
+      href="http://gmum.net/files/gmum.r/sample/svm.caret_files/highlight/default.css"
+      type="text/css" />
+<script src="http://gmum.net/files/gmum.r/sample/svm.caret_files/highlight/highlight.js"></script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img { 
+  max-width:100%; 
+  height: auto; 
+}
+</style>
+<div class="container-fluid main-container">
+
+
+<div id="header">
+<h1 class="title">Caret support in gmum.R</h1>
+</div>
+
+
+<pre class="r"><code># We support caret, so that you can construct
+# easily complex experiments using gmum.R
+library(gmum.r)
+library(caret)
+library(mlbench) # For Sonar dataset
+set.seed(777)
+
+# Task to discriminate between sonar signals
+# bounced off a metal cylinder or rougly cylindrical rock
+data(Sonar)
+
+inTraining &lt;- createDataPartition(Sonar$Class, p = .75, list = FALSE)
+training &lt;- Sonar[ inTraining,]
+testing  &lt;- Sonar[-inTraining,]
+
+fitControl &lt;- trainControl(method = &quot;cv&quot;,
+                           ## 10-fold CV...
+                           number = 10,
+                           ## repeated 2 times
+                           repeats = 1,
+                           verboseIter=FALSE
+)
+
+
+# Caret support is provided by a set of care methods
+# You can choose between: caret.gmumSvmRadial, caret.gmumSvmLinear
+# and caret.gmumSvmPoly
+model &lt;- train(Class ~ ., data = training,
+               method = caret.gmumSvmRadial,
+               preProc = c(&quot;center&quot;, &quot;scale&quot;),
+               tuneLength = 8,             
+               trControl = fitControl,
+               tuneGrid = expand.grid(C=10^(c(-4:4)), gamma=10^(c(-4:4))),
+               core = &quot;libsvm&quot;, # gmum.R parameter - pick library
+               verbosity = 0 # no outputs
+               )
+
+# Print 10-fold CV experiment results 
+print(model)</code></pre>
+<pre><code>## gmum.r.svmRadial 
+## 
+## 157 samples
+##  60 predictors
+## 
+## Pre-processing: centered, scaled 
+## Resampling: Cross-Validated (10 fold) 
+## 
+## Summary of sample sizes: 141, 142, 141, 141, 141, 141, ... 
+## 
+## Resampling results across tuning parameters:
+## 
+##   C      gamma  Accuracy   Kappa      Accuracy SD  Kappa SD 
+##   1e-04  1e-04  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-04  1e-03  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-04  1e-02  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-04  1e-01  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-04  1e+00  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-04  1e+01  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-04  1e+02  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-04  1e+03  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-04  1e+04  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-03  1e-04  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-03  1e-03  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-03  1e-02  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-03  1e-01  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-03  1e+00  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-03  1e+01  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-03  1e+02  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-03  1e+03  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-03  1e+04  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-02  1e-04  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-02  1e-03  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-02  1e-02  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-02  1e-01  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-02  1e+00  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-02  1e+01  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-02  1e+02  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-02  1e+03  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-02  1e+04  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-01  1e-04  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-01  1e-03  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-01  1e-02  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-01  1e-01  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-01  1e+00  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-01  1e+01  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-01  1e+02  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-01  1e+03  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e-01  1e+04  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+00  1e-04  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+00  1e-03  0.7470833  0.4971591  0.11245798   0.2239178
+##   1e+00  1e-02  0.8162500  0.6349055  0.13200218   0.2620185
+##   1e+00  1e-01  0.7387500  0.4593132  0.06961230   0.1378890
+##   1e+00  1e+00  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+00  1e+01  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+00  1e+02  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+00  1e+03  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+00  1e+04  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+01  1e-04  0.7279167  0.4595733  0.12079421   0.2403596
+##   1e+01  1e-03  0.7712500  0.5435713  0.11943556   0.2367969
+##   1e+01  1e-02  0.8145833  0.6273372  0.09558644   0.1864919
+##   1e+01  1e-01  0.7516667  0.4860843  0.06267568   0.1262153
+##   1e+01  1e+00  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+01  1e+01  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+01  1e+02  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+01  1e+03  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+01  1e+04  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+02  1e-04  0.7841667  0.5682603  0.11845195   0.2355814
+##   1e+02  1e-03  0.7650000  0.5298041  0.08947722   0.1747195
+##   1e+02  1e-02  0.8150000  0.6285964  0.09998457   0.1956155
+##   1e+02  1e-01  0.7516667  0.4860843  0.06267568   0.1262153
+##   1e+02  1e+00  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+02  1e+01  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+02  1e+02  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+02  1e+03  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+02  1e+04  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+03  1e-04  0.7587500  0.5159227  0.11702079   0.2332765
+##   1e+03  1e-03  0.7395833  0.4760859  0.08494393   0.1646249
+##   1e+03  1e-02  0.8150000  0.6285964  0.09998457   0.1956155
+##   1e+03  1e-01  0.7516667  0.4860843  0.06267568   0.1262153
+##   1e+03  1e+00  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+03  1e+01  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+03  1e+02  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+03  1e+03  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+03  1e+04  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+04  1e-04  0.7529167  0.4995132  0.11189050   0.2312109
+##   1e+04  1e-03  0.7395833  0.4760859  0.08494393   0.1646249
+##   1e+04  1e-02  0.8150000  0.6285964  0.09998457   0.1956155
+##   1e+04  1e-01  0.7516667  0.4860843  0.06267568   0.1262153
+##   1e+04  1e+00  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+04  1e+01  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+04  1e+02  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+04  1e+03  0.5350000  0.0000000  0.02730147   0.0000000
+##   1e+04  1e+04  0.5350000  0.0000000  0.02730147   0.0000000
+## 
+## Accuracy was used to select the optimal model using  the largest value.
+## The final values used for the model were C = 1 and gamma = 0.01.</code></pre>
+<pre class="r"><code># Seems that gamma=0.01 and and C=100 was best choice
+plot(model)</code></pre>
+<p><img src="http://gmum.net/files/gmum.r/sample/svm.caret_files/figure-html/unnamed-chunk-1-1.png" title="" alt="" width="672" /></p>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<title>Example weight support in gmum.R</title>
+
+<script src="http://gmum.net/files/gmum.r/sample/svm.example.weights_files/jquery-1.11.0/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="http://gmum.net/files/gmum.r/sample/svm.example.weights_files/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" />
+<script src="http://gmum.net/files/gmum.r/sample/svm.example.weights_files/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="http://gmum.net/files/gmum.r/sample/svm.example.weights_files/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="http://gmum.net/files/gmum.r/sample/svm.example.weights_files/bootstrap-3.3.1/shim/respond.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<link rel="stylesheet"
+      href="http://gmum.net/files/gmum.r/sample/svm.example.weights_files/highlight/default.css"
+      type="text/css" />
+<script src="http://gmum.net/files/gmum.r/sample/svm.example.weights_files/highlight/highlight.js"></script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img { 
+  max-width:100%; 
+  height: auto; 
+}
+</style>
+<div class="container-fluid main-container">
+
+
+<div id="header">
+<h1 class="title">Example weight support in gmum.R</h1>
+</div>
+
+
+<pre class="r"><code>library(gmum.r)
+library(ggplot2)
+library(SparseM)
+library(Matrix)
+
+# Initialize exemplary data
+x &lt;- cbind(c(2.76405235,  1.97873798,  2.86755799,  1.95008842,  0.89678115,  1.14404357,
+             1.76103773,  1.44386323,  2.49407907,  1.3130677,  -2.55298982,  0.8644362,
+             2.26975462,  0.04575852,  1.53277921,  0.15494743, -0.88778575, -0.34791215,
+             1.23029068, -0.38732682),
+           c(1.40015721,  3.2408932,   0.02272212,  0.84864279,  1.4105985,   2.45427351,
+             1.12167502,  1.33367433,  0.79484174,  0.14590426,  0.6536186,  -0.74216502,
+             -1.45436567, -0.18718385,  1.46935877,  0.37816252, -1.98079647,  0.15634897,
+             1.20237985, -0.30230275))
+y &lt;- c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)
+weights &lt;- c(1.04855297,  1.42001794,  1.70627019,  1.9507754,   0.50965218,  0.4380743,
+             1.25279536,  0.77749036,  1.61389785,  3.1911042,   0.89546656,  0.3869025,
+             0.51080514,  1.18063218,  0.02818223,  2.14165935,  0.33258611,  1.51235949,
+             3.17161047,  1.81370583)
+
+
+df &lt;- data.frame(x, y)
+
+svm.rbf &lt;- SVM(formula=y~., data=df, core=&quot;libsvm&quot;, kernel=&quot;rbf&quot;, C=1.0, gamma=0.5)</code></pre>
+<pre><code>## Warning in SVM.default(x, y, ...): It is recommended to pass y as factor</code></pre>
+<pre class="r"><code>weighted.svm.rbf &lt;- SVM(formula=y~., data=df, core=&quot;svmlight&quot;, kernel=&quot;rbf&quot;, C=1.0, 
+                        gamma=0.5, example.weights=weights)</code></pre>
+<pre><code>## Warning in SVM.default(x, y, ...): It is recommended to pass y as factor</code></pre>
+<pre class="r"><code># Plot to see how decision boundary is affected
+plot(svm.rbf, mode=&quot;contour&quot;)</code></pre>
+<p><img src="http://gmum.net/files/gmum.r/sample/svm.example.weights_files/figure-html/unnamed-chunk-1-1.png" title="" alt="" width="672" /></p>
+<pre class="r"><code>plot(weighted.svm.rbf, mode=&quot;contour&quot;, radius.max=10)</code></pre>
+<p><img src="http://gmum.net/files/gmum.r/sample/svm.example.weights_files/figure-html/unnamed-chunk-1-2.png" title="" alt="" width="672" /></p>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

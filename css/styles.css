@@ -110,6 +110,14 @@ hr.primary {
     margin: 30px auto;
 }
 
+h1.title {
+    text-align: center;
+}
+
+li {
+    font-size: 1.6em;
+}
+
 .fa.title-decoration {
     display: inline-block;
     padding: 0 7px;
@@ -118,6 +126,7 @@ hr.primary {
     font-family: 'FontAwesome';
     text-align: center;
 }
+
 
 .italic {
     font-style: italic;

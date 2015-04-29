@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<title>Basic classification on breast cancer dataset</title>
+
+<script src="http://gmum.net/files/gmum.r/sample/svm.basic_files/jquery-1.11.0/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="http://gmum.net/files/gmum.r/sample/svm.basic_files/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" />
+<script src="http://gmum.net/files/gmum.r/sample/svm.basic_files/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="http://gmum.net/files/gmum.r/sample/svm.basic_files/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="http://gmum.net/files/gmum.r/sample/svm.basic_files/bootstrap-3.3.1/shim/respond.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<link rel="stylesheet"
+      href="http://gmum.net/files/gmum.r/sample/svm.basic_files/highlight/default.css"
+      type="text/css" />
+<script src="http://gmum.net/files/gmum.r/sample/svm.basic_files/highlight/highlight.js"></script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img { 
+  max-width:100%; 
+  height: auto; 
+}
+</style>
+<div class="container-fluid main-container">
+
+
+<div id="header">
+<h1 class="title">Basic classification on breast cancer dataset</h1>
+</div>
+
+
+<pre class="r"><code>library(gmum.r)
+
+# We will perform basic classification on breast cancer dataset 
+# using LIBSVM with linear kernel
+data(svm_breast_cancer_dataset)
+
+# We can pass either formula or explicitly X and Y
+svm &lt;- SVM(X1 ~ ., svm.breastcancer.dataset, core=&quot;libsvm&quot;, kernel=&quot;linear&quot;, C=10)</code></pre>
+<pre><code>## Warning in SVM.default(x, y, ...): It is recommended to pass y as factor</code></pre>
+<pre class="r"><code>pred &lt;- predict(svm, svm.breastcancer.dataset[,-1])
+
+plot(svm, mode=&quot;pca&quot;)</code></pre>
+<pre><code>## Warning in .local(x, ...): Only 2 dimension plotting is supported for
+## multiclass. Plotting using cols parameter</code></pre>
+<pre><code>## Warning in .local(x, ...): Only limited plotting is currently supported
+## for multidimensional data</code></pre>
+<p><img src="http://gmum.net/files/gmum.r/sample/svm.basic_files/figure-html/unnamed-chunk-1-1.png" title="" alt="" width="672" /></p>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
