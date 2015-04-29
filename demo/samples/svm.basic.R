@@ -2,6 +2,9 @@
 #' title: "Basic classification on breast cancer dataset"
 #' author: ""
 #' date: ""
+#' output:
+#'  html_document:
+#'    self_contained: false
 #' ---
 
 library(gmum.r)

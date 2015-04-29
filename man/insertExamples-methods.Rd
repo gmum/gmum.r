@@ -16,8 +16,7 @@ number of columns matches dim parameter passed to GNG constructor.}
 node a mean of labels of closest examples.}
 }
 \description{
-Insert (inefficiently) examples to algorithm dataset. For
-efficient insertion use gng$inser_examples
+Insert examples with optional labels.
 }
 \examples{
 #Add preset examples

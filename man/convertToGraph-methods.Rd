@@ -10,11 +10,11 @@
 \usage{
 convertToGraph(gng)
 }
-\description{
-Converts to igraph (O(n) method, writing intermediately to disk)
+\arguments{
+\item{gng}{Learned GNG object}
 }
-\examples{
-convertToGraph(gng)
+\description{
+Converts GNG to igraph object.
 }
 \keyword{datasets}
 

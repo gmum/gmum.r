@@ -11,7 +11,4 @@ clustering(gng)
 \description{
 Gets vector with node indexes assigned to examples in the dataset
 }
-\examples{
-clustering(gng)
-}
 

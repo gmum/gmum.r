@@ -5,7 +5,7 @@
 \alias{gngLoad}
 \title{gngLoad}
 \usage{
-gngLoad(gng)
+gngLoad(file.name)
 }
 \arguments{
 \item{filename}{Binary file location}
@@ -15,8 +15,5 @@ Writes model to a disk space efficient binary format.
 }
 \details{
 Load model from binary format
-}
-\examples{
-gngLoad('model.bin')
 }
 

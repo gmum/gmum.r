@@ -2,6 +2,9 @@
 #' title: "Online training in GNG"
 #' author: ""
 #' date: ""
+#' output:
+#'  html_document:
+#'    self_contained: false
 #' ---
 library(gmum.r)
 

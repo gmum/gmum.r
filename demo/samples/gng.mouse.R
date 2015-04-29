@@ -2,6 +2,9 @@
 #' title: "Predicting closest centroid in GNG"
 #' author: ""
 #' date: ""
+#' output:
+#'  html_document:
+#'    self_contained: false
 #' ---
 
 library(gmum.r)

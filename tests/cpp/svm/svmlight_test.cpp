@@ -258,8 +258,8 @@ TEST_F(SVMLightRunnerTest, integration_svmclient_sparse_predict) {
     ASSERT_EQ(svm_client->isSparse(), true);
 
     svm_client->sparse_predict(
-        sparse_matrix_csc_01_row_indices,
         sparse_matrix_csc_01_column_pointers,
+        sparse_matrix_csc_01_row_indices,
         sparse_matrix_csc_01_values,
         sparse_matrix_csc_01_nrow,
         sparse_matrix_csc_01_ncol

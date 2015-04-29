@@ -15,8 +15,8 @@ For installation see [https://github.com/gmum/gmum.r/tree/dev/src/README.md](htt
 
 SVM Wrapper is a part of the gmum.R project which provides a popular Support Vector Machine inplementations wrapped in the R package.
 
-<small>2e Iris example</small>
-<center><img src="./doc/svm/img/2e.png" width="100%"></img></center>
+<small>SVM Iris and sample weights examples</small>
+<center><img src="./doc/img/svm_readme.png" width="100%"></img></center>
 
 
 ### Example usage

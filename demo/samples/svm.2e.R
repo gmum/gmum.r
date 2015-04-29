@@ -2,6 +2,9 @@
 #' title: "Two Ellipsoid SVM preprocessing technique"
 #' author: ""
 #' date: ""
+#' output:
+#'  html_document:
+#'    self_contained: false
 #' ---
 
 # For linear kernel gmum.R provides new preprocessing technique
