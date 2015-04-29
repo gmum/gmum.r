@@ -84,7 +84,7 @@ test_that("mouse_1_spherical random assignment is correct", {
   npoints <- dim(dataset_points)[1]
   for(i in 1:t)
   {
-    c <- CEC(k=nclusters, x=dataset_points, method.type='sphere', method.init='random')
+    c <- CEC(k=nclusters, x=dataset_points, method.type='spherical', method.init='random')
     plot(c)
     correct_percentage <- correctness(dataset_clusters, c$clustering(), npoints, nclusters)
     if(isTRUE(all.equal(current = c$energy(), target=expected_energy, tolerance=0.2))  | (correct_percentage >= 0.9) ) {

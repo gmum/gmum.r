@@ -15,12 +15,12 @@ CEC(k=3, x=dataset)
 \item{method.type}{Type of clustering (Gauss family).
 \enumerate{
 \item diagonal Gaussians with diagonal covariance. The clustering will try to divide the data into ellipsoid with radiuses parallel to coordinate axes
-\item fsphere Spherical (radial) Gaussian densities (additional parameter - radius)
-\item full The clustering will have the tendency to divide the data into clusters resembling the unit circles in the Mahalanobis distance (additional parameter - covaraince matrix required)
+\item spherical_fixed_r Spherical (radial) Gaussian densities (additional parameter - radius)
+\item covariance The clustering will have the tendency to divide the data into clusters resembling the unit circles in the Mahalanobis distance (additional parameter - covaraince matrix required)
 \item func Own function dependent on m and sigma (additional parameter)
 \item mix Mix of others Gaussian types.
 \item standard We divide dataset into ellipsoid-like clusters without any preferences (default)
-\item sphere The clustering will try to divide the data into circles of arbitrary sizes}}
+\item spherical The clustering will try to divide the data into circles of arbitrary sizes}}
 
 \item{method.init}{Method to initialize clusters.
 \enumerate{

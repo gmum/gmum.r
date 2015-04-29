@@ -1,7 +1,7 @@
 library(gmum.r)
 library(CEC)
 
-method_types = list(gmum=c('standard', 'sphere', 'diagonal'), cran=c('all', 'spherical', 'diagonal'))
+method_types = list(gmum=c('standard', 'spherical', 'diagonal'), cran=c('all', 'spherical', 'diagonal'))
 nmethod_types = length(method_types$gmum)
 
 load_dataset <- function(data_path) {

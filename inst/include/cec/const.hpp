@@ -19,10 +19,10 @@ struct CONST {
 	struct CLUSTERS {
 		static const char* type;
 		static const char* standard;
-		static const char* full;
+		static const char* fixed_covariance;
 		static const char* diagonal;
-		static const char* sphere;
-		static const char* fsphere;
+		static const char* spherical;
+		static const char* fixed_spherical;
 		static const char* custom;
 
 		static const char* init;
@@ -61,10 +61,10 @@ const char* CONST::log_clusters = "log.ncluster";
 
 const char* CONST::CLUSTERS::type = "method.type";
 const char* CONST::CLUSTERS::standard = "standard";
-const char* CONST::CLUSTERS::full = "full";
+const char* CONST::CLUSTERS::fixed_covariance = "fixed_covariance";
 const char* CONST::CLUSTERS::diagonal = "diagonal";
-const char* CONST::CLUSTERS::sphere = "sphere";
-const char* CONST::CLUSTERS::fsphere = "fsphere";
+const char* CONST::CLUSTERS::spherical = "spherical";
+const char* CONST::CLUSTERS::fixed_spherical = "fixed_spherical";
 const char* CONST::CLUSTERS::custom = "func";
 
 const char* CONST::CLUSTERS::init = "method.init";
