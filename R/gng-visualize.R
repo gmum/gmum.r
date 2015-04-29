@@ -75,7 +75,7 @@ library(igraph)
         warning("Please install rgl package to plot 3d graph")
     }
   }
-.gng.plot2d.errors<-function(gngServer, vertex.color, layout){
+.gng.plot2d.errors<-function(gngServer, vertex.color, layout, vertex.size=3){
   ig <- convertToGraph(gngServer)
   
   if(length(V(ig))==0){
@@ -91,10 +91,10 @@ library(igraph)
     vertex.color = cols[as.double(lapply(V(ig)$label, round))]
   }
   
-  .visualizeIGraph2dWithErrors(ig, vertex.color, layout, gngServer)
+  .visualizeIGraph2dWithErrors(ig, vertex.color, layout, gngServer, vertex.size=3)
 }
 
-.gng.plot2d<-function(gngServer, vertex.color, layout){
+.gng.plot2d<-function(gngServer, vertex.color, layout, vertex.size=3){
   ig <- convertToGraph(gngServer)
   
   if(length(V(ig))==0){
@@ -110,13 +110,13 @@ library(igraph)
     vertex.color = cols[as.double(lapply(V(ig)$label, round))]
   }
   
-  .visualizeIGraph2d(ig, vertex.color, layout)
+  .visualizeIGraph2d(ig, vertex.color, layout, vertex.size=vertex.size)
 }
 
 #' Visualize igraph using igraph plot
 #' It will layout graph using v0 and v1 coordinates
 #' @note It is quite slow, works for graphs < 2000 nodes, and for graphs <400 when using layout
-.visualizeIGraph2d<-function(g, vertex.color, layout){
+.visualizeIGraph2d<-function(g, vertex.color, layout, vertex.size=3){
   L<-layout(g)
   if(vertex.color == 'cluster'){   
     communities <- infomap.community(g)
@@ -136,13 +136,13 @@ library(igraph)
     # Passed something else as vector
   }
     
-  plot.igraph(g,vertex.size=3.0,vertex.label=NA,vertex.color=vertex.color,layout=L)
+  plot.igraph(g,vertex.size=vertex.size,vertex.label=NA,vertex.color=vertex.color,layout=L)
 }
 
-.visualizeIGraph2dWithErrors<-function(ig, vertex.color, layout_2d, gng){
+.visualizeIGraph2dWithErrors<-function(ig, vertex.color, layout_2d, gng,vertex.size=3){
   plot.new()
   par(mfrow=c(1,2))
-  .visualizeIGraph2d(ig, vertex.color, layout_2d)
+  .visualizeIGraph2d(ig, vertex.color, layout_2d,vertex.size=vertex.size)
   title("Graph visualization")
   errors_raw = gng$getErrorStatistics()
   errors_raw = errors_raw[5:length(errors_raw)]

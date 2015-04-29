@@ -383,12 +383,13 @@ public:
 		double rho;
 		double upper_bound_p;
 		double upper_bound_n;
+		bool solve_timed_out; // gmum.r modification for reaching mac_iter
 		double r;	// for Solver_NU
 	};
 
 	void Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 		   double *alpha_, double Cp, double Cn, double eps,
-		   SolutionInfo* si, int shrinking, Logger &log);
+		   SolutionInfo* si, int shrinking, Logger &log, int max_iter);
 protected:
 	int active_size;
 	schar *y;
@@ -486,7 +487,7 @@ void Solver::reconstruct_gradient(Logger &log)
 
 void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 		   double *alpha_, double Cp, double Cn, double eps,
-		   SolutionInfo* si, int shrinking, Logger &log)
+		   SolutionInfo* si, int shrinking, Logger &log, int max_iter)
 {
 	this->l = l;
 	this->Q = &Q;
@@ -541,11 +542,19 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 	// optimization step
 
 	int iter = 0;
-	int max_iter = max(10000000, l>INT_MAX/100 ? INT_MAX : 100*l);
+	// int max_iter = max(10000000, l>INT_MAX/100 ? INT_MAX : 100*l);
 	int counter = min(l,1000)+1;
 	
-	while(iter < max_iter)
+	while(1)
 	{
+
+		// set max_iter to -1 to disable the mechanism
+        if ((max_iter != -1) && (iter >= max_iter)) {
+            LOG(log, LogLevel::WARNING, "WARNING: reaching max number of iterations");
+            si->solve_timed_out = true;
+            break;
+        
+        }
 		// show progress and do shrinking
 
 		if(--counter == 0)
@@ -707,18 +716,6 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 						G_bar[k] += C_j * Q_j[k];
 			}
 		}
-	}
-
-	if(iter >= max_iter)
-	{
-		if(active_size < l)
-		{
-			// reconstruct the whole gradient to calculate objective value
-			reconstruct_gradient(log);
-			active_size = l;
-		}
-		LOG(log, LogLevel::WARNING, "WARNING: reaching max number of iterations");
-
 	}
 
 	// calculate rho
@@ -992,10 +989,10 @@ public:
 	Solver_NU() {}
 	void Solve(int l, const QMatrix& Q, const double *p, const schar *y,
 		   double *alpha, double Cp, double Cn, double eps,
-		   SolutionInfo* si, int shrinking, Logger &log)
+		   SolutionInfo* si, int shrinking, Logger &log, int max_iter)
 	{
 		this->si = si;
-		Solver::Solve(l,Q,p,y,alpha,Cp,Cn,eps,si,shrinking,log);
+		Solver::Solve(l,Q,p,y,alpha,Cp,Cn,eps,si,shrinking,log, max_iter);
 	}
 private:
 	SolutionInfo *si;
@@ -1436,7 +1433,7 @@ static void solve_c_svc(
 
 	Solver s;
 	s.Solve(l, SVC_Q(*prob,*param,y), minus_ones, y,
-		alpha, Cp, Cn, param->eps, si, param->shrinking, log);
+		alpha, Cp, Cn, param->eps, si, param->shrinking, log, param->max_iter);
 
 	double sum_alpha=0;
 	for(i=0;i<l;i++)
@@ -1490,7 +1487,7 @@ static void solve_nu_svc(
 
 	Solver_NU s;
 	s.Solve(l, SVC_Q(*prob,*param,y), zeros, y,
-		alpha, 1.0, 1.0, param->eps, si,  param->shrinking, log);
+		alpha, 1.0, 1.0, param->eps, si,  param->shrinking, log, param->max_iter);
 	double r = si->r;
 
 	LOG(log, LogLevel::DEBUG, "C = " + to_string(1/r));
@@ -1533,7 +1530,7 @@ static void solve_one_class(
 
 	Solver s;
 	s.Solve(l, ONE_CLASS_Q(*prob,*param), zeros, ones,
-		alpha, 1.0, 1.0, param->eps, si, param->shrinking, log);
+		alpha, 1.0, 1.0, param->eps, si, param->shrinking, log, param->max_iter);
 
 	delete[] zeros;
 	delete[] ones;
@@ -1562,7 +1559,7 @@ static void solve_epsilon_svr(
 
 	Solver s;
 	s.Solve(2*l, SVR_Q(*prob,*param), linear_term, y,
-		alpha2, param->C, param->C, param->eps, si, param->shrinking, log);
+		alpha2, param->C, param->C, param->eps, si, param->shrinking, log, param->max_iter);
 
 	double sum_alpha = 0;
 	for(i=0;i<l;i++)
@@ -1604,7 +1601,7 @@ static void solve_nu_svr(
 
 	Solver_NU s;
 	s.Solve(2*l, SVR_Q(*prob,*param), linear_term, y,
-		alpha2, C, C, param->eps, si, param->shrinking, log);
+		alpha2, C, C, param->eps, si, param->shrinking, log, param->max_iter);
 
 	LOG(log, LogLevel::DEBUG, "epsilon = " + to_string(-si->r));
 
@@ -2299,7 +2296,9 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 				++p;
 			}
 		
-		free(label);
+		LOG(log, LogLevel::TRACE, "Written SV");
+		
+        free(label);
 		free(probA);
 		free(probB);
 		free(count);
@@ -2314,6 +2313,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 		free(nz_count);
 		free(nz_start);
 	}
+	LOG(log, LogLevel::TRACE, "Finished fitting");
 	return model;
 }
 
@@ -3071,6 +3071,10 @@ const char *svm_check_parameter(const svm_problem *prob, const svm_parameter *pa
 	if(param->probability == 1 &&
 	   svm_type == ONE_CLASS)
 		return "one-class SVM probability output not supported yet";
+
+	// gmum.r modificatipn
+	if(param->max_iter < -1)
+		return "max_iter < -1";
 
 
 	// check whether nu-svc is feasible

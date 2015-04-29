@@ -1,7 +1,7 @@
 library(gmum.r)
 library(testthat)
 
-lib <- "svmlight"
+core <- "svmlight"
 
 x <- cbind(c(2.76405234597, 1.97873798411, 2.86755799015, 1.95008841753, 0.896781148206, 1.14404357116, 
              1.76103772515, 1.44386323275, 2.49407907316, 1.31306770165, -2.55298981583, 0.86443619886, 
@@ -12,7 +12,7 @@ x <- cbind(c(2.76405234597, 1.97873798411, 2.86755799015, 1.95008841753, 0.89678
              -1.4543656746, -0.187183850026, 1.4693587699, 0.378162519602, -1.98079646822, 0.156348969104, 
              1.20237984878, -0.302302750575))
 
-y <- c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)
+y <- as.factor(c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1))
 
 ex_weights <- c(1.04855297,  1.42001794,  1.70627019,  1.9507754,   0.50965218,  0.4380743,
                 1.25279536,  0.77749036,  1.61389785,  3.1911042,   0.89546656,  0.3869025,
@@ -24,14 +24,14 @@ sk_ex_SV <- cbind(c(0.86443619886, 2.26975462399, 1.53277921436, 0.154947425697,
                   c(-0.742165020406, -1.4543656746, 1.4693587699, 0.378162519602, 1.20237984878, 
                     1.41059850194, 2.45427350696, 1.12167501649, 1.33367432737, 0.145904260698))
 
-cl_weights <- c(1, 10)
+cl_weights <- c("1"=1, "-1"=10)
 df <- data.frame(x, y)
 
-ex_weights_svm <- SVM(formula=y~., data=df, lib="svmlight", kernel="linear", C=1.0, example.weights=ex_weights)
-cl_weights_svm <- SVM(formula=y~., data=df, lib="svmlight", kernel="linear", C=1.0, class.weights=cl_weights)
-ex_cl_weights_svm <- SVM(formula=y~., data=df, lib="svmlight", kernel="linear", C=1.0, class.weights=cl_weights, example.weights=ex_weights)
+ex_weights_svm <- SVM(formula=y~., data=df, core="svmlight", kernel="linear", C=1.0, example.weights=ex_weights)
+cl_weights_svm <- SVM(formula=y~., data=df, core="svmlight", kernel="linear", C=1.0, class.weights=cl_weights)
+ex_cl_weights_svm <- SVM(formula=y~., data=df, core="svmlight", kernel="linear", C=1.0, class.weights=cl_weights, example.weights=ex_weights)
 
-ex_SV <- ex_weights_svm$get_SV()
+ex_SV <- ex_weights_svm$getSV()
 
 print(length(ex_SV))
 print(length(sk_ex_SV))

@@ -7,75 +7,77 @@
 
 class SVMClient {
 private:
-	std::vector<SVMHandler*> SVMHandlers;
-	SVMConfiguration &config;
-	void createFlow();
+    std::vector<SVMHandler*> SVMHandlers;
+    SVMConfiguration &config;
+    void createFlow();
 
     double kernel(size_t data_i, size_t sv_j);
 
 public:
-	//constructors
-	SVMClient(SVMConfiguration*);
+    //constructors
+    SVMClient(SVMConfiguration*);
 
-	// data setters
-	void setX( arma::mat );
-	void setY( arma::vec );
+    // params setter
+    void setLibrary(std::string);
+    void setKernel(std::string);
+    void setPreprocess(std::string);
 
-	// params setter
-	void setLibrary(std::string);
-	void setKernel(std::string);
-	void setPreprocess(std::string);
-
-	void setCacheSize(double);
-	void setDegree(int);
-	void setGamma(double);
-	void setCoef0(double);
-	void setC(double);
-	void setEps(double);
-	void setShrinking(int);
-	void setProbability(int);
+    void setCacheSize(double);
+    void setDegree(int);
+    void setGamma(double);
+    void setCoef0(double);
+    void setC(double);
+    void setEps(double);
+    void setShrinking(int);
+    void setProbability(int);
     void setBias(double);
-    // void setAlpha(double*);
+    void setW(arma::vec);
+    void setAlpha(arma::vec);
+    void setNumberClass(int);
 
     // additional setters
     void setConfiguration(SVMConfiguration *);
 
-	// data getters
-	arma::mat getX();
-	arma::vec getY();
-	arma::vec getPrediction();
+    // data getters
+    arma::mat getX();
+    arma::sp_mat getSparseX();
+    arma::vec getY();
+    arma::vec getPrediction();
+    arma::vec getDecisionFunction();
 
-	// params getters
-	std::string getLibrary();
-	std::string getKernel();
-	std::string getPreprocess();
+    // params getters
+    std::string getLibrary();
+    std::string getKernel();
+    std::string getPreprocess();
 
-	double getCacheSize();
-	int getDegree();
-	double getGamma();
-	double getCoef0();
-	double getC();
-	double getEps();
-	bool isShrinking();
-	bool isProbability();
-	bool isSparse();
-	bool areExamplesWeighted();
-	arma::vec getExampleWeights();
+    double getCacheSize();
+    int getDegree();
+    double getGamma();
+    double getCoef0();
+    double getC();
+    double getEps();
+    bool isShrinking();
+    bool isProbability();
+    bool isSparse();
+    bool areExamplesWeighted();
+    arma::vec getExampleWeights();
+    arma::vec getClassWeights();
 
-	// model getters
+
+    // model getters
     // double** getSV(); // double**, std::vector, arma:mat ?
-    int get_number_sv();
-    int get_number_class();
+    int getNumberSV();
+    int getNumberClass();
     arma::vec getAlpha();
     double getBias();
     arma::vec getW();
-    arma::mat getSV();
+    arma::sp_mat getSV();
 
     // additional getters
     SVMConfiguration &getConfiguration();
 
-	// runners
-	void run();
+    // runners
+    void run();
     // Prediction independent of SVMHandlers
     void predict(arma::mat);
     void predictFromConfig();
@@ -88,8 +90,8 @@ public:
     );
 
     /// Process a request of prediction with a SVMHandlers implementations
-	void requestPredict(arma::mat);
-	void train();
+    void requestPredict();
+    void train();
 
 };
 
