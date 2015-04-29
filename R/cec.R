@@ -14,13 +14,13 @@
 #' @param k Initial number of clusters.
 #' @param method.type Type of clustering (Gauss family).
 #' \enumerate{
-#' \item diagonal Gaussians with diagonal covariance. The clustering will try to divide the data into ellipsoid with radiuses parallel to coordinate axes
-#' \item fixed_spherical Spherical (radial) Gaussian densities (additional parameter - radius)
-#' \item fixed_covariance The clustering will have the tendency to divide the data into clusters resembling the unit circles in the Mahalanobis distance (additional parameter - covaraince matrix required)
-#' \item func Own function dependent on m and sigma (additional parameter)
-#' \item mix Mix of others Gaussian types.
-#' \item standard We divide dataset into ellipsoid-like clusters without any preferences (default)
-#' \item spherical The clustering will try to divide the data into circles of arbitrary sizes}
+#' \item "diagonal" Gaussians with diagonal covariance. The clustering will try to divide the data into ellipsoid with radiuses parallel to coordinate axes
+#' \item "fixed_spherical" Spherical (radial) Gaussian densities (additional parameter - radius)
+#' \item "fixed_covariance" The clustering will have the tendency to divide the data into clusters resembling the unit circles in the Mahalanobis distance (additional parameter - covaraince matrix required)
+#' \item "func" Own function dependent on m and sigma (additional parameter)
+#' \item "mix" Mix of others Gaussian types.
+#' \item "standard" We divide dataset into ellipsoid-like clusters without any preferences (default)
+#' \item "spherical" The clustering will try to divide the data into circles of arbitrary sizes}
 #' @param method.init Method to initialize clusters.
 #' \enumerate{
 #' \item centroids
