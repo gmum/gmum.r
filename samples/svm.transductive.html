@@ -68,14 +68,9 @@ img {
 
 <pre class="r"><code># We enable different unique features, for instance transductive learning in SVMLight 
 library(gmum.r)
-library(e1071)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;e1071&#39;
-## 
-## The following object is masked from &#39;package:gmum.r&#39;:
-## 
-##     read.matrix.csr</code></pre>
-<pre class="r"><code>data(svm.transduction)
+library(e1071)
+
+data(svm.transduction)
 
 # Prepare data
 train.transduction &lt;- svm.transduction$tr
@@ -83,14 +78,8 @@ train.induction &lt;- svm.transduction$ind
 test &lt;-svm.transduction$test
 test$x &lt;- train.transduction$x[11:610, ] # Saves some space :)
 
-svm.induction &lt;- SVM(x=train.induction$x, y=train.induction$y, core=&quot;svmlight&quot;)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;SparseM&#39;
-## 
-## The following object is masked from &#39;package:base&#39;:
-## 
-##     backsolve</code></pre>
-<pre class="r"><code>svm.induction.pred &lt;- predict(svm.induction, test$x)
+svm.induction &lt;- SVM(x=train.induction$x, y=train.induction$y, core=&quot;svmlight&quot;)
+svm.induction.pred &lt;- predict(svm.induction, test$x)
 
 # We pass special labels for transductive learning
 train.transduction$y[10:12]</code></pre>
@@ -109,16 +98,8 @@ svm.accuracy(svm.induction.pred, test$y)</code></pre>
 <pre><code>## [1] 0.96</code></pre>
 <pre class="r"><code># Plot projection of data onto first 2 dimensions
 plot(svm.transduction, X=test$x)</code></pre>
-<pre><code>## Warning in .local(x, ...): Only 2 dimension plotting is supported for
-## multiclass. Plotting using cols parameter</code></pre>
-<pre><code>## Warning in .local(x, ...): Only limited plotting is currently supported
-## for multidimensional data</code></pre>
 <p><img src="http://gmum.net/files/gmum.r/sample/svm.transductive_files/figure-html/unnamed-chunk-1-1.png" title="" alt="" width="672" /></p>
 <pre class="r"><code>plot(svm.induction, X=test$x)</code></pre>
-<pre><code>## Warning in .local(x, ...): Only 2 dimension plotting is supported for
-## multiclass. Plotting using cols parameter</code></pre>
-<pre><code>## Warning in .local(x, ...): Only limited plotting is currently supported
-## for multidimensional data</code></pre>
 <p><img src="http://gmum.net/files/gmum.r/sample/svm.transductive_files/figure-html/unnamed-chunk-1-2.png" title="" alt="" width="672" /></p>
 
 

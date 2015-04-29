@@ -82,22 +82,10 @@ preds &lt;- predict(sv.ovo, iris[,1:4])
 acc.ovo &lt;- sum(diag(table(preds, iris$Species)))/sum(table(preds, iris$Species))
 
 plot(sv.ova)</code></pre>
-<pre><code>## Warning in plot.svm(x, X = X, cols = cols, radius = radius, radius.max =
-## radius.max): Only 2 dimension plotting is supported for multiclass.
-## Plotting using cols parameter</code></pre>
-<pre><code>## Warning in plot.svm(x, X = X, cols = cols, radius = radius, radius.max =
-## radius.max): Only limited plotting is currently supported for
-## multidimensional data</code></pre>
 <p><img src="http://gmum.net/files/gmum.r/sample/svm.multiclass_files/figure-html/unnamed-chunk-1-1.png" title="" alt="" width="672" /></p>
 <pre class="r"><code># OVO schemes gets 2 more examples from
 # training set classified correctly
 plot(sv.ovo)</code></pre>
-<pre><code>## Warning in plot.svm(x, X = X, cols = cols, radius = radius, radius.max =
-## radius.max): Only 2 dimension plotting is supported for multiclass.
-## Plotting using cols parameter</code></pre>
-<pre><code>## Warning in plot.svm(x, X = X, cols = cols, radius = radius, radius.max =
-## radius.max): Only limited plotting is currently supported for
-## multidimensional data</code></pre>
 <p><img src="http://gmum.net/files/gmum.r/sample/svm.multiclass_files/figure-html/unnamed-chunk-1-2.png" title="" alt="" width="672" /></p>
 
 

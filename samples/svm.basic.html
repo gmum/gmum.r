@@ -73,15 +73,11 @@ img {
 data(svm_breast_cancer_dataset)
 
 # We can pass either formula or explicitly X and Y
-svm &lt;- SVM(X1 ~ ., svm.breastcancer.dataset, core=&quot;libsvm&quot;, kernel=&quot;linear&quot;, C=10)</code></pre>
-<pre><code>## Warning in SVM.default(x, y, ...): It is recommended to pass y as factor</code></pre>
-<pre class="r"><code>pred &lt;- predict(svm, svm.breastcancer.dataset[,-1])
+svm &lt;- SVM(X1 ~ ., svm.breastcancer.dataset, core=&quot;libsvm&quot;, kernel=&quot;linear&quot;, C=10)
+
+pred &lt;- predict(svm, svm.breastcancer.dataset[,-1])
 
 plot(svm, mode=&quot;pca&quot;)</code></pre>
-<pre><code>## Warning in .local(x, ...): Only 2 dimension plotting is supported for
-## multiclass. Plotting using cols parameter</code></pre>
-<pre><code>## Warning in .local(x, ...): Only limited plotting is currently supported
-## for multidimensional data</code></pre>
 <p><img src="http://gmum.net/files/gmum.r/sample/svm.basic_files/figure-html/unnamed-chunk-1-1.png" title="" alt="" width="672" /></p>
 
 

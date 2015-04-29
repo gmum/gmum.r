@@ -75,16 +75,12 @@ data(svm_breast_cancer_dataset)
 ds &lt;- svm.breastcancer.dataset
 
 # We can trigger 2e by passing prep parameter. It can work with either of the libraries
-svm.2e &lt;- SVM(x=ds[,-1], y=ds[,1], core=&quot;libsvm&quot;, kernel=&quot;linear&quot;, prep = &quot;2e&quot;, C=10);</code></pre>
-<pre><code>## Warning in SVM.default(x = ds[, -1], y = ds[, 1], core = &quot;libsvm&quot;, kernel
-## = &quot;linear&quot;, : It is recommended to pass y as factor</code></pre>
-<pre class="r"><code>acc.2e &lt;- svm.accuracy(prediction=predict(svm.2e, ds[,-1]), target=ds[,1])
+svm.2e &lt;- SVM(x=ds[,-1], y=ds[,1], core=&quot;libsvm&quot;, kernel=&quot;linear&quot;, prep = &quot;2e&quot;, C=10);
+acc.2e &lt;- svm.accuracy(prediction=predict(svm.2e, ds[,-1]), target=ds[,1])
 
 
-svm &lt;- SVM(x=ds[,-1], y=ds[,1], core=&quot;libsvm&quot;, kernel=&quot;linear&quot;, C=10);</code></pre>
-<pre><code>## Warning in SVM.default(x = ds[, -1], y = ds[, 1], core = &quot;libsvm&quot;, kernel
-## = &quot;linear&quot;, : It is recommended to pass y as factor</code></pre>
-<pre class="r"><code>acc &lt;- svm.accuracy(prediction=predict(svm, ds[,-1]), target=ds[,1])
+svm &lt;- SVM(x=ds[,-1], y=ds[,1], core=&quot;libsvm&quot;, kernel=&quot;linear&quot;, C=10);
+acc &lt;- svm.accuracy(prediction=predict(svm, ds[,-1]), target=ds[,1])
 
 # Seems that 2e preprocessing helps! 
 
@@ -93,16 +89,8 @@ print(paste(&quot;LIBSVM + linear kernel accuracy: &quot;, round(acc,3), sep=&qu
 <pre class="r"><code>print(paste(&quot;LIBSVM + linear kernel + 2e accuracy: &quot;, round(acc.2e,3), sep=&quot;&quot;))</code></pre>
 <pre><code>## [1] &quot;LIBSVM + linear kernel + 2e accuracy: 0.975&quot;</code></pre>
 <pre class="r"><code>plot(svm.2e, mode=&quot;pca&quot;)</code></pre>
-<pre><code>## Warning in .local(x, ...): Only 2 dimension plotting is supported for
-## multiclass. Plotting using cols parameter</code></pre>
-<pre><code>## Warning in .local(x, ...): Only limited plotting is currently supported
-## for multidimensional data</code></pre>
 <p><img src="http://gmum.net/files/gmum.r/sample/svm.2e_files/figure-html/unnamed-chunk-1-1.png" title="" alt="" width="672" /></p>
 <pre class="r"><code>plot(svm, mode=&quot;pca&quot;)</code></pre>
-<pre><code>## Warning in .local(x, ...): Only 2 dimension plotting is supported for
-## multiclass. Plotting using cols parameter</code></pre>
-<pre><code>## Warning in .local(x, ...): Only limited plotting is currently supported
-## for multidimensional data</code></pre>
 <p><img src="http://gmum.net/files/gmum.r/sample/svm.2e_files/figure-html/unnamed-chunk-1-2.png" title="" alt="" width="672" /></p>
 <pre class="r"><code># We can also perform rigorous CV on breast cancer dataset
 
@@ -147,9 +135,9 @@ acc &lt;- svm.accuracy(predict(fit.results$finalModel, testing[,-1]), testing[,1
 acc.2e &lt;- svm.accuracy(predict(fit.results.2e$finalModel, testing[,-1]), testing[,1])
 
 print(paste(&quot;LIBSVM + linear kernel 8 CV accuracy: &quot;, round(acc,3), sep=&quot;&quot;))</code></pre>
-<pre><code>## [1] &quot;LIBSVM + linear kernel 8 CV accuracy: 0.853&quot;</code></pre>
+<pre><code>## [1] &quot;LIBSVM + linear kernel 8 CV accuracy: 0.882&quot;</code></pre>
 <pre class="r"><code>print(paste(&quot;LIBSVM + linear kernel + 2e 8 CV accuracy: &quot;, round(acc.2e,3), sep=&quot;&quot;))</code></pre>
-<pre><code>## [1] &quot;LIBSVM + linear kernel + 2e 8 CV accuracy: 0.929&quot;</code></pre>
+<pre><code>## [1] &quot;LIBSVM + linear kernel + 2e 8 CV accuracy: 0.947&quot;</code></pre>
 
 
 </div>
