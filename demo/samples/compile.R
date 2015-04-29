@@ -23,16 +23,23 @@ render("gng.mouse.R", output_options=c(highlight=highlighting))
 
 scripts <- list.files(".", pattern = glob2rx("*.R"), full.names = FALSE)
 # TO RUN FOR PART REPLACE SCRIPTS WITH LIST OF FILES YOU WISH TO UPDATE
-
-create.sed.cmd <- function(script.name){
-  file.folder <- substr(script.name, 1, nchar(script.name)-2)
-  replace_command = 
+run.cmds <- function(script.name){
+  file.folder <- paste(substr(script.name, 1, nchar(script.name)-2), "_files", sep="")
+  replace_command <-
     paste("sed -i 's/",file.folder,
-        "/http:\\/\\/gmum.net\\/files\\/gmum.r\\/",file.folder,"/g' *.html", sep="")
+        "/http:\\/\\/gmum.net\\/files\\/gmum.r\\/sample\\/",file.folder,"/g' *.html", sep="")
+  system(replace_command)
+  rem_command <- paste("rm -r -f ", file.folder, "/boot*", sep="")
+  system(rem_command)
+  rem_command <- paste("rm -r -f ", file.folder, "/jquery*", sep="")
+  system(rem_command)
 }
-cmds <- lapply(scripts, create.sed.cmd)
-for(cmd in cmds){
-  system(cmd)
+
+system.file("sed -i '/.*boot.*/d' *.html")
+system.file("sed -i '/.*jquery.*/d' *.html")
+
+for(script in scripts){
+  run.cmds(script)
 }
 
 
