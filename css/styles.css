@@ -114,7 +114,7 @@ h1.title {
     text-align: center;
 }
 
-li {
+li:not(ul.nav li) {
     font-size: 1.6em;
 }
 
