@@ -68,15 +68,18 @@ img {
 
 <pre class="r"><code>library(gmum.r)
 library(caret) # For ConfusionMatrix
-library(rattle) # For dataset
-
-# Prepare data
+library(rattle) # For dataset</code></pre>
+<pre><code>## Rattle: A free graphical interface for data mining with R.
+## Version 3.4.1 Copyright (c) 2006-2014 Togaware Pty Ltd.
+## Type &#39;rattle()&#39; to shake, rattle, and roll your data.</code></pre>
+<pre class="r"><code># Prepare data
 scaled.wine &lt;- as.matrix(scale(wine[-1]))
 
 # Train in an offline manner
 gng &lt;- GNG(scaled.wine, labels=as.integer(wine$Type), max.nodes=20, 
            max.iter=10000, min.improvement=1e-1)</code></pre>
 <pre><code>## [1] &quot;Training offline&quot;
+## [1] &quot;Iteration 8200&quot;
 ## [1] &quot;Iteration 10000&quot;
 ## [1] &quot;Iteration 10000&quot;</code></pre>
 <pre class="r"><code># Print number of nodes
@@ -87,10 +90,10 @@ ig = convertToGraph(gng)
 
 # Print mean degree of the network
 mean(degree(ig))</code></pre>
-<pre><code>## [1] 5.1</code></pre>
+<pre><code>## [1] 4.9</code></pre>
 <pre class="r"><code># You can access different attributes of the nodes
 V(ig)$error[1]</code></pre>
-<pre><code>## [1] 3449.899</code></pre>
+<pre><code>## [1] 199.0219</code></pre>
 <pre class="r"><code># Plot using igraph layout
 plot(gng, mode = gng.plot.2d, 
      vertex.color=gng.plot.color.label, layout=igraph::layout.fruchterman.reingold, 
@@ -99,11 +102,11 @@ plot(gng, mode = gng.plot.2d,
 <pre class="r"><code># Print summary of trained object
 summary(gng)</code></pre>
 <pre><code>## [1] &quot;Growing Neural Gas&quot;
-## [1] &quot;20 nodes with mean error 3.559056&quot;
+## [1] &quot;20 nodes with mean error 3.294466&quot;
 ## [1] &quot;Trained 10000 iterations&quot;
 ## [1] &quot;Mean errors[s]: &quot;
-##  [1] 3.542998 3.433719 3.490505 3.467821 3.590873 3.553686 3.434852
-##  [8] 3.487270 3.478223 3.380261 3.559056</code></pre>
+##  [1] 3.424075 3.486507 3.707606 3.594809 3.388828 3.511841 3.330704
+##  [8] 3.357618 3.508416 3.419095 3.294466</code></pre>
 <pre class="r"><code># You can use graph to predict new samples 
 # (in a closest neighbour way)
 preds &lt;- c()
@@ -117,31 +120,31 @@ confusionMatrix(table(preds, wine$Type))</code></pre>
 ## 
 ##      
 ## preds  1  2  3
-##     1 58  3  0
-##     2  1 60  0
+##     1 56  2  0
+##     2  3 61  0
 ##     3  0  8 48
 ## 
 ## Overall Statistics
 ##                                           
-##                Accuracy : 0.9326          
-##                  95% CI : (0.8852, 0.9647)
+##                Accuracy : 0.927           
+##                  95% CI : (0.8783, 0.9605)
 ##     No Information Rate : 0.3989          
 ##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
 ##                                           
-##                   Kappa : 0.8986          
+##                   Kappa : 0.89            
 ##  Mcnemar&#39;s Test P-Value : NA              
 ## 
 ## Statistics by Class:
 ## 
 ##                      Class: 1 Class: 2 Class: 3
-## Sensitivity            0.9831   0.8451   1.0000
-## Specificity            0.9748   0.9907   0.9385
-## Pos Pred Value         0.9508   0.9836   0.8571
-## Neg Pred Value         0.9915   0.9060   1.0000
+## Sensitivity            0.9492   0.8592   1.0000
+## Specificity            0.9832   0.9720   0.9385
+## Pos Pred Value         0.9655   0.9531   0.8571
+## Neg Pred Value         0.9750   0.9123   1.0000
 ## Prevalence             0.3315   0.3989   0.2697
-## Detection Rate         0.3258   0.3371   0.2697
-## Detection Prevalence   0.3427   0.3427   0.3146
-## Balanced Accuracy      0.9789   0.9179   0.9692</code></pre>
+## Detection Rate         0.3146   0.3427   0.2697
+## Detection Prevalence   0.3258   0.3596   0.3146
+## Balanced Accuracy      0.9662   0.9156   0.9692</code></pre>
 
 
 </div>
