@@ -29,7 +29,7 @@ get.results <- function(name, data, class.column.name, params, model, seed=777, 
   testing  <- data[-inTraining,]
   
   params <- params$C
-  models <- sapply(params, function(x) SVM(formula(paste(class.column.name,"~ .", sep=" ")), prep="2e", training, lib="libsvm", kernel="linear", C=x, verbosity = 1))
+  models <- sapply(params, function(x) SVM(formula(paste(class.column.name,"~ .", sep=" ")), prep="2e", training, kernel="linear", C=x, ...))
   
   l <-c()
   row_length <- 0
