@@ -10,11 +10,11 @@ predict(svm, x)
 \arguments{
 \item{object}{Trained SVM object.}
 
-\item{x}{unlabeled data, in one of the following formats:
+\item{x}{Unlabeled data, in one of the following formats:
 \code{data.frame}, \code{data.matrix}, \code{SparseM::matrix.csr}, \code{Matrix::Matrix},
 \code{slam::simple_triplet_matrix}}
 
-\item{decision.function}{if \code{TRUE} returns SVMs decision function
+\item{decision.function}{Uf \code{TRUE} returns SVMs decision function
 (distance of a point from discriminant) instead of predicted labels, default: \code{FALSE}}
 }
 \description{

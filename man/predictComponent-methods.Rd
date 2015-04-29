@@ -8,7 +8,7 @@
 predictComponent(gng, c(1,1,1))
 }
 \arguments{
-\item{x}{Can be either vector or data.frame.}
+\item{x}{Can be either \code{vector} or \code{data.frame}.}
 }
 \description{
 Finds connected component closest to given vector(s).

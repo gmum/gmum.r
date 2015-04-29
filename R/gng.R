@@ -60,14 +60,16 @@ gng.type.utility<- function(k=1.3){
 #' 
 #' @docType methods
 #'
-#' @param mode gng.plot.3d (3d plot), gng.plot.2d (igraph plot) or
-#' gng.plot.2d.errors (igraph plot with mean error log plot)
+#' @param mode \code{gng.plot.3d} (3d plot), \code{gng.plot.2d} (igraph plot)
+#' \code{gng.plot.2d.errors} (igraph plot with mean error log plot)
 #' 
-#' @param layout layout to be used when plotting. Possible values: gng.plot.layour.igraph.v2d (first two dimensions),
-#' gng.plot.layout.igraph.auto (auto layout from igraph) gng.plot.layout.igraph.fruchterman.fast (fast fruchterman reingold layout),or any function accepting igraph graph and returning layout
+#' @param layout Layout to be used when plotting. Possible values: \code{gng.plot.layour.igraph.v2d} (first two dimensions),
+#' \code{gng.plot.layout.igraph.auto} (auto layout from igraph)  \code{gng.plot.layout.igraph.fruchterman.fast} (fast fruchterman reingold layout),or any function accepting igraph graph and returning layout
 #' 
-#' @param vertex.color how to color vertexes. Possible values: gng.plot.color.cluster(vertex color is set to fastgreedy.community clustering),
-#' gng.plot.color.label(rounds to integer label if present), gng.plot.color.none(every node is white),
+#' @param vertex.color How to color vertexes. Possible values: \code{gng.plot.color.cluster} (vertex color is set to fastgreedy.community clustering),
+#' \code{gng.plot.color.label} (rounds to integer label if present), \code{gng.plot.color.none} (every node is white),
+#' 
+#' @param vertex.size Size of plotted vertices
 #' 
 #' @note If you want to "power-use" plotting and plot for instance a subgraph, you might be interested in
 #' exporting igraph with convertToGraph function 
@@ -95,8 +97,7 @@ plot.gng <- NULL
 #' 
 #' @export
 #' 
-#' @param
-#' filename Dump destination
+#' @param filename File where binary will be saved
 #' 
 #' @rdname gngSave-methods
 #' 
@@ -122,8 +123,7 @@ gngSave <- NULL
 #' 
 #' @export
 #' 
-#' @param
-#' filename Dump location
+#' @param filename Binary file location
 #' 
 #' @rdname gngLoad-methods
 #' 
@@ -178,7 +178,7 @@ centroids.gng <- NULL
 #' Will assign each point to one of indexes from centroids. 
 #' Can be found using centroids.gng function.
 #' 
-#' @param x Can be either vector or data.frame.
+#' @param x Can be either \code{vector} or \code{data.frame.}
 #' 
 #' @examples
 #' # Find closest centroid to c(1,1,1)
@@ -205,7 +205,7 @@ predictCentroid <- NULL
 #' 
 #' @docType methods
 #'
-#' @param x Can be either vector or data.frame.
+#' @param x Can be either \code{vector} or \code{data.frame}.
 #' 
 #' @examples
 #' # Find closest component to c(1,1,1)
@@ -248,7 +248,6 @@ node.gng <- NULL
 #' 
 #' @export
 #' 
-#' 
 #' @rdname run-methods
 #' 
 #' @docType methods
@@ -269,7 +268,6 @@ run.gng <- NULL
 #' 
 #' @export
 #' 
-#' 
 #' @rdname pause-methods
 #' 
 #' @docType methods
@@ -289,7 +287,6 @@ pause.gng <- NULL
 #' terminate(gng)
 #' 
 #' @export
-#' 
 #' 
 #' @rdname terminate-methods
 #' 
@@ -349,29 +346,34 @@ errorStatistics.gng <- NULL
 #' @export 
 #' 
 #' @description Construct simplified and optimized GNG object. Can be used to train offline, or online. Data dimensionality shouldn't be too big, if
-#' it is consider using dimensionality reduction (for instance PCA). Cannot use utility.
+#' it is consider using dimensionality reduction techniques.
 #'
-#' @param beta coefficient. Decrease the error variables of all node nodes by this fraction. Forgetting rate. Default 0.99
+#' @param beta Decrease the error variables of all node 
+#' nodes by this fraction (forgetting rate). Default 0.99
 #' 
-#' @param alpha Alpha coefficient. Decrease the error variables of the nodes neighboring to the newly inserted node by this fraction. Default 0.5
+#' @param alpha Decrease the error variables of the nodes neighboring to 
+#' the newly inserted node by this fraction. Default 0.5
 #' 
 #' @param lambda Every lambda iteration is added new vertex. Default 200
 #' 
-#' @param max.nodes Maximum number of nodes (after reaching this size it will continue running, but won't add new nodes)
+#' @param max.nodes Maximum number of nodes 
+#' (after reaching this size it will continue running, but won't add new nodes)
 #' 
-#' @param eps.n Default 0.0006. How strongly adapt neighbour node
+#' @param eps.n How strongly adapt neighbour node. Default \code{0.0006}
 #' 
-#' @param eps.w Default 0.05. How strongly adapt winning node
+#' @param eps.w How strongly adapt winning node. Default \code{0.05}
 #' 
-#' @param max.iter Default 200. If training offline will stop if exceedes max.iter iterations
+#' @param max.iter If training offline will stop if exceedes max.iter iterations. Default \code{200}
 #'
-#' @param train.online Default FALSE. If used will run in online fashion
+#' @param train.online If used will run in online fashion. Default \code{FALSE}
 #'
-#' @param min.improvement Used for offline (default) training. Controls stopping criterion, decrease if training stops too early. Default 1e-3.
+#' @param min.improvement Used for offline (default) training. 
+#' Controls stopping criterion, decrease if training stops too early. Default \code{1e-3}
 #'
-#' @param dim If training online specifies training example size
+#' @param dim Used for training online, specifies training example size
 #'
-#' @param value.range Default [0,1]. All example features should be in this range, needed for optimized version of the algorithm
+#' @param value.range All example features should be in this range, needed for optimized version of the algorithm. Default \code{(0,1)} 
+#' 
 #' @examples
 #' 
 #' # Train online optimizedGNG. All values in this dataset are in the range (-4.3, 4.3)
@@ -424,31 +426,38 @@ clustering.gng <- NULL
 #'
 errorStatistics.gng <- NULL
 
-#' @title Constructor of GrowingNeuralGas object. Can be used to train offline, or online.
+#' @title Constructor of GrowingNeuralGas object. 
 #' 
 #' @export 
 #' 
-#' @description Construct GNG object
+#' @description Construct GNG object. Can be used to train offline, or online.
 #' 
-#' @param beta coefficient. Decrease the error variables of all node nodes by this fraction. Forgetting rate. Default 0.99
+#' @param beta Decrease the error variables of all node 
+#' nodes by this fraction (forgetting rate). Default 0.99
 #' 
-#' @param alpha Alpha coefficient. Decrease the error variables of the nodes neighboring to the newly inserted node by this fraction. Default 0.5
+#' @param alpha Decrease the error variables of the nodes neighboring to 
+#' the newly inserted node by this fraction. Default 0.5
 #' 
 #' @param lambda Every lambda iteration is added new vertex. Default 200
 #' 
-#' @param max.nodes Maximum number of nodes (after reaching this size it will continue running, but won't add new nodes)
+#' @param max.nodes Maximum number of nodes 
+#' (after reaching this size it will continue running, but won't add new nodes)
 #' 
-#' @param eps.n Default 0.0006. How strongly adapt neighbour node
+#' @param eps.n How strongly adapt neighbour node. Default \code{0.0006}
 #' 
-#' @param eps.w Default 0.05. How strongly adapt winning node
+#' @param eps.w How strongly adapt winning node. Default \code{0.05}
 #' 
-#' @param max.iter Default 200. Used for offline (default) training
+#' @param max.iter Uf training offline will stop if exceedes max.iter iterations. Default \code{200}
 #'
-#' @param train.online Default FALSE. If used will run in online fashion
+#' @param train.online default FALSE. If used will run in online fashion
 #'
-#' @param min.improvement Used for offline (default) training. Controls stopping criterion, decrease if training stops too early. Default 1e-3.
+#' @param min.improvement Used for offline (default) training. 
+#' Controls stopping criterion, decrease if training stops too early. Default \code{1e-3}
 #'
-#' @param k Utility constant, by default turned off. Good value is 1.3. Constant controlling speed of erasing obsolete nodes, see http://sund.de/netze/applets/gng/full/tex/DemoGNG/node20.html
+#' @param dim Used for training online, specifies training example size
+#'
+#' @param k Utility constant, by default turned off. Good value is 1.3. Constant controlling speed of erasing obsolete nodes, 
+#' see \url{http://sund.de/netze/applets/gng/full/tex/DemoGNG/node20.html}
 #' 
 #'
 #' @examples
@@ -496,11 +505,6 @@ summary.gng <- NULL
 convertToGraph.gng <- NULL
 
 
-
-
-
-
-
 generateExamples <- NULL
 
 #' @title insertExamples
@@ -513,8 +517,11 @@ generateExamples <- NULL
 #' 
 #' @export
 #' 
-#' @param examples Matrix with examples 
+#' @param examples \code{matrix} or \code{data.frame} with rows as examples. Note: if training online make sure
+#' number of columns matches dim parameter passed to GNG constructor.
 #' 
+#' @param labels \code{vector} of labels, that will be associated with nodes in the graph. GNG will assign to each
+#' node a mean of labels of closest examples.
 #' 
 #' @rdname insertExamples-methods
 #' 

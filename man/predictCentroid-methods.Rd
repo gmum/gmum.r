@@ -12,7 +12,7 @@ predictCentroid(gng, centroids(gng), c(1,1,1))
 Will assign each point to one of indexes from centroids.
 Can be found using centroids.gng function.}
 
-\item{x}{Can be either vector or data.frame.}
+\item{x}{Can be either \code{vector} or \code{data.frame.}}
 }
 \description{
 Finds closest centroid from given list

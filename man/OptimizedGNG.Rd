@@ -11,31 +11,35 @@ OptimizedGNG(x = NULL, labels = c(), beta = 0.99, alpha = 0.5,
   value.range = c(0, 1))
 }
 \arguments{
-\item{beta}{coefficient. Decrease the error variables of all node nodes by this fraction. Forgetting rate. Default 0.99}
+\item{beta}{Decrease the error variables of all node
+nodes by this fraction (forgetting rate). Default 0.99}
 
-\item{alpha}{Alpha coefficient. Decrease the error variables of the nodes neighboring to the newly inserted node by this fraction. Default 0.5}
+\item{alpha}{Decrease the error variables of the nodes neighboring to
+the newly inserted node by this fraction. Default 0.5}
 
-\item{max.nodes}{Maximum number of nodes (after reaching this size it will continue running, but won't add new nodes)}
+\item{max.nodes}{Maximum number of nodes
+(after reaching this size it will continue running, but won't add new nodes)}
 
-\item{eps.n}{Default 0.0006. How strongly adapt neighbour node}
+\item{eps.n}{How strongly adapt neighbour node. Default \code{0.0006}}
 
-\item{eps.w}{Default 0.05. How strongly adapt winning node}
+\item{eps.w}{How strongly adapt winning node. Default \code{0.05}}
 
-\item{train.online}{Default FALSE. If used will run in online fashion}
+\item{train.online}{If used will run in online fashion. Default \code{FALSE}}
 
-\item{max.iter}{Default 200. If training offline will stop if exceedes max.iter iterations}
+\item{max.iter}{If training offline will stop if exceedes max.iter iterations. Default \code{200}}
 
-\item{dim}{If training online specifies training example size}
+\item{dim}{Used for training online, specifies training example size}
 
-\item{min.improvement}{Used for offline (default) training. Controls stopping criterion, decrease if training stops too early. Default 1e-3.}
+\item{min.improvement}{Used for offline (default) training.
+Controls stopping criterion, decrease if training stops too early. Default \code{1e-3}}
 
 \item{lambda}{Every lambda iteration is added new vertex. Default 200}
 
-\item{value.range}{Default [0,1]. All example features should be in this range, needed for optimized version of the algorithm}
+\item{value.range}{All example features should be in this range, needed for optimized version of the algorithm. Default \code{(0,1)}}
 }
 \description{
 Construct simplified and optimized GNG object. Can be used to train offline, or online. Data dimensionality shouldn't be too big, if
-it is consider using dimensionality reduction (for instance PCA). Cannot use utility.
+it is consider using dimensionality reduction techniques.
 }
 \examples{
 # Train online optimizedGNG. All values in this dataset are in the range (-4.3, 4.3)

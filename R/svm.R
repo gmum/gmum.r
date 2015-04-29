@@ -5,19 +5,19 @@ library(ggplot2)
 #' 
 #' @description Create and train SVM model object. 
 #' 
-#' @param x training data without labels in one of the following formats:
+#' @param x Training data without labels in one of the following formats:
 #'  \code{data.frame}, \code{data.matrix}, \code{SparseM::matrix.csr}, \code{Matrix::Matrix},
 #'  \code{slam::simple_triplet_matrix}
-#' @param y labels in one of the followinf formts: \code{factor}, \code{vector}. 
+#' @param y Labels in one of the followinf formts: \code{factor}, \code{vector}. 
 #'  Recommended type is \code{factor}
-#' @param data can be passed instead of \code{x,} \code{y} pair with \code{formula} to mark the labels 
+#' @param data Can be passed instead of \code{x,} \code{y} pair with \code{formula} to mark the labels 
 #'  column, supported formats are:
 #'  \code{data.frame}, \code{data.matrix}
-#' @param formula can be passed with \code{data}  instead of \code{x}, \code{y} pair, 
+#' @param formula Can be passed with \code{data}  instead of \code{x}, \code{y} pair, 
 #'  formula needs to point to lables column, for example: \code{target~.}
 #' @param core Support Vector Machine library to use in traning, available are: 
 #'  \code{'libsvm'}, \code{'svmlight'}; default: \code{'libsvm'} 
-#' @param kernel kernel type as string, available are: \code{'linear'}, \code{'poly'},
+#' @param kernel Kernel type as string, available are: \code{'linear'}, \code{'poly'},
 #' \code{'rbf'}, \code{'sigmoid'}; 
 #' default: \code{'linear'}
 #' \itemize{
@@ -26,36 +26,36 @@ library(ggplot2)
 #' \item \code{rbf}: \eqn{exp(-gamma*|x-w|^2)}
 #' \item \code{sigmoid}: \eqn{tanh(gamma*x'*w + coef0)}
 #' }
-#' @param prep preprocess method as string, available are: \code{'none'}, \code{'2e'}; 
+#' @param prep Preprocess method as string, available are: \code{'none'}, \code{'2e'}; 
 #' default: \code{'none'}. For more information on \code{2eSVM} see:
 #' \url{http://www.sciencedirect.com/science/article/pii/S0957417414004138}
-#' @param C cost/complexity parameter, default: \code{1}
-#' @param gamma parameter for \code{poly}, \code{rbf} and \code{sigmoid} kernels, 
+#' @param C Cost/complexity parameter, default: \code{1}
+#' @param gamma Parameter for \code{poly}, \code{rbf} and \code{sigmoid} kernels, 
 #'  default: \code{1/n_features}
-#' @param coef0 for \code{poly} and \code{sigmoid} kernels, default: \code{0}
-#' @param degree for \code{poly} kernel, default: \code{3}
-#' @param cache_size cache memory size in MB, default: \code{100}
-#' @param tol tolerance of termination criterion, default: \code{1e-3}
-#' @param max.iter depending on library:
+#' @param coef0 For \code{poly} and \code{sigmoid} kernels, default: \code{0}
+#' @param degree For \code{poly} kernel, default: \code{3}
+#' @param cache_size Cache memory size in MB, default: \code{100}
+#' @param tol Tolerance of termination criterion, default: \code{1e-3}
+#' @param max.iter Depending on library:
 #' \itemize{
 #'  \item libsvm: number of iterations after which the training porcess is killed 
 #'  (it can end earlier is desired tolerance is met), default: \code{1e6}
 #'  \item svmlight: number of iterations after which if there is no progress traning is killed, 
 #'  default: \code{-1} (no limit)
 #'  }  
-#' @param transductive.learning option got SVM model to deduce missing labels from the dataset, 
+#' @param transductive.learning Option got SVM model to deduce missing labels from the dataset, 
 #'  default: \code{FALSE}
 #'  NOTE: this feature is only available with svmlight library, missing labels are marked as 
 #'  \code{'TR'}, if none are found and transductive to \code{TRUE}, label \code{0} will be 
 #'  interpreted as missing
-#' @param transductive.posratio fraction of unlabeled examples to be classified into the positive class 
+#' @param transductive.posratio Fraction of unlabeled examples to be classified into the positive class 
 #'  as float from \eqn{[0,1]}, default: the ratio of positive and negative examples in the training data
-#' @param class.weights named vector with weight fir each class, default: \code{NULL}
-#' @param example.weights vector of the same length as training data with weights for each traning example,
+#' @param class.weights Named vector with weight fir each class, default: \code{NULL}
+#' @param example.weights Vector of the same length as training data with weights for each traning example,
 #'  default: \code{NULL} NOTE: this feature is only supported with svmlight library
-#' @param class.type multiclass algorithm type as string, 
+#' @param class.type Multiclass algorithm type as string, 
 #' available are: \code{'one.versus.all', 'one.versus.one'}; default: \code{'one.versus.one'}
-#' @param verbosity how verbose should the process be, as integer from \eqn{[1,6]}, default: \code{4}
+#' @param verbosity How verbose should the process be, as integer from \eqn{[1,6]}, default: \code{4}
 #'  
 #' @return SVM model object
 #' @examples 
@@ -106,10 +106,10 @@ predict.MultiClassSVM <- NULL
 #' @usage predict(svm, x)
 #' 
 #' @param object Trained SVM object.
-#' @param x unlabeled data, in one of the following formats:
+#' @param x Unlabeled data, in one of the following formats:
 #'  \code{data.frame}, \code{data.matrix}, \code{SparseM::matrix.csr}, \code{Matrix::Matrix},
 #'  \code{slam::simple_triplet_matrix}
-#' @param decision.function if \code{TRUE} returns SVMs decision function 
+#' @param decision.function Uf \code{TRUE} returns SVMs decision function 
 #' (distance of a point from discriminant) instead of predicted labels, default: \code{FALSE}
 #' 
 #' @docType methods
@@ -135,10 +135,10 @@ print.svm <- NULL
 #' 
 #' @export
 #' 
-#' @param x trained svm object
-#' @param X optional new data points to be predicted and plotted in one of the following formats:
+#' @param x Trained svm object
+#' @param X Optional new data points to be predicted and plotted in one of the following formats:
 #'  \code{data.frame}, \code{data.matrix}; default: \code{NULL}
-#' @param mode which plotting mode to use as string, available are: 
+#' @param mode Which plotting mode to use as string, available are: 
 #'  \itemize{
 #'  \item \code{'normal'} - default mode, plots data in cols argument and a linear decision 
 #'    boundry in available
@@ -146,9 +146,9 @@ print.svm <- NULL
 #'  from the PCA 
 #'  \item \code{'contour'} - countour plot for non-linear kernels
 #'  }
-#' @param cols data dimensions to be plotted as vector of length 2, default: \code{c(1,2)}
-#' @param radius radius of the plotted data points as float, default: \code{3}
-#' @param radius.max maximum radius of data points can be plotted, when model is trained 
+#' @param cols Data dimensions to be plotted as vector of length 2, default: \code{c(1,2)}
+#' @param radius Radius of the plotted data points as float, default: \code{3}
+#' @param radius.max Maximum radius of data points can be plotted, when model is trained 
 #'  with example weights as float, default: \code{10}
 #' 
 #' @usage plot(svm)

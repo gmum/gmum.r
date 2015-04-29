@@ -8,7 +8,7 @@
 gngSave(gng)
 }
 \arguments{
-\item{filename}{Dump destination}
+\item{filename}{File where binary will be saved}
 }
 \description{
 Writes model to a disk space efficient binary format.

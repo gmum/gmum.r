@@ -7,12 +7,12 @@
 plot(svm)
 }
 \arguments{
-\item{x}{trained svm object}
+\item{x}{Trained svm object}
 
-\item{X}{optional new data points to be predicted and plotted in one of the following formats:
+\item{X}{Optional new data points to be predicted and plotted in one of the following formats:
 \code{data.frame}, \code{data.matrix}; default: \code{NULL}}
 
-\item{mode}{which plotting mode to use as string, available are:
+\item{mode}{Which plotting mode to use as string, available are:
 \itemize{
 \item \code{'normal'} - default mode, plots data in cols argument and a linear decision
   boundry in available
@@ -21,11 +21,11 @@ from the PCA
 \item \code{'contour'} - countour plot for non-linear kernels
 }}
 
-\item{cols}{data dimensions to be plotted as vector of length 2, default: \code{c(1,2)}}
+\item{cols}{Data dimensions to be plotted as vector of length 2, default: \code{c(1,2)}}
 
-\item{radius}{radius of the plotted data points as float, default: \code{3}}
+\item{radius}{Radius of the plotted data points as float, default: \code{3}}
 
-\item{radius.max}{maximum radius of data points can be plotted, when model is trained
+\item{radius.max}{Maximum radius of data points can be plotted, when model is trained
  with example weights as float, default: \code{10}}
 }
 \description{

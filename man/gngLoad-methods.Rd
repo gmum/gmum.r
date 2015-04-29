@@ -8,7 +8,7 @@
 gngLoad(gng)
 }
 \arguments{
-\item{filename}{Dump location}
+\item{filename}{Binary file location}
 }
 \description{
 Writes model to a disk space efficient binary format.
