@@ -281,7 +281,14 @@ evalqOnLoad({
     if (is.null(kernel)) kernel <- "linear"
 
     obj <- list(models=models, 
-                class.type=class.type, X=x, pick=pick, levels=lev, call=call, core=core, kernel=kernel)
+                class.type=class.type, 
+                X=x,
+                Y=y,
+                pick=pick, 
+                levels=lev, 
+                call=call, 
+                core=core, 
+                kernel=kernel)
 
     class(obj) <- "MultiClassSVM"
     obj
@@ -567,12 +574,13 @@ evalqOnLoad({
       library(e1071)
     }
     
-    
     #1. Get X and Y
     if(is.null(X)){
       if(class(x) == "MultiClassSVM"){
          X <- x$X
+         true_target <- x$Y
       }else{
+        true_target <- as.factor(x$.getY())
         if(obj$isSparse()){
           X <- Matrix::t(obj$.getSparseX())
         }else{
@@ -606,9 +614,10 @@ evalqOnLoad({
       df <- data.frame(X[,cols])
     }
     colnames(df) <- c("X1", "X2") # This is even worse
-    df['class'] <- as.factor(t)
+    df['prediction'] <- as.factor(t)
+    levels(true_target) <- x$levels
+    df['label'] <- true_target
   
-    
     #4. Prepare data for plotting
     if (obj$areExamplesWeighted()) {
       df['sizes'] <- obj$getExampleWeights()
@@ -623,7 +632,8 @@ evalqOnLoad({
     
     
     if(mode == "pca"){
-      pca_data = prcomp(X, scale=TRUE)
+      mx <- colMeans(X)
+      pca_data <- prcomp(X, scale=FALSE)
       # Transform data
       df$X1 <- pca_data$x[,1]
       df$X2 <- pca_data$x[,2]
@@ -634,7 +644,7 @@ evalqOnLoad({
       # W will be used only for binary model
       if (mode == "pca") {
         w <- c(obj$getW())
-        w <- w %*% pca_data$rotation
+        w <- (w - mx) %*% pca_data$rotation
       }else if(ncol(X)==2){
         w <- c(obj$getW())
       }
@@ -657,15 +667,17 @@ evalqOnLoad({
       grid <- data.frame(x_axis,y_axis)
       grid <- expand.grid(x=x_axis,y=y_axis)
       
-      target <- predict(x, grid)
-      grid['target'] <- target
+      prediction <- predict(x, grid)
+      grid['prediction'] <- prediction
+      
+      
       
       pl <- ggplot()+ 
-        geom_tile(data=grid, aes(x=x,y=y, fill=target, alpha=.5)) + 
+        geom_tile(data=grid, aes(x=x,y=y, fill=prediction, alpha=.5)) + 
         theme(legend.position="none") + 
         scale_fill_brewer(palette="Set1") + 
         scale_alpha_identity() + 
-        geom_point(data=df, aes(X1, X2, size=sizes, colour=class)) + 
+        geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label)) + 
         scale_colour_brewer(palette="Set1") + 
         scale_size
       
@@ -673,15 +685,15 @@ evalqOnLoad({
       warning("Only limited plotting is currently supported for multidimensional data")
       
       pl <- ggplot()+ 
-        geom_point(data=df, aes(X1, X2, size=sizes, colour=class)) + 
+        geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label)) + 
         scale_colour_brewer(palette="Set1") + 
         scale_size
     }
     
     # Add line
-    if(!is.null(w)){
+    if(!is.null(w) && ncol(X) && mode != "pca"){
       s <- -w[1]/w[2]
-      int <- obj$getBias()/w[2]
+      int <- -obj$getBias()/w[2]
       pl <- pl + geom_abline(slope=s, intercept=int)
     }
     
