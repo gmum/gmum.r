@@ -272,6 +272,13 @@ evalqOnLoad({
       p <- as.list(match.call(expand.dots=TRUE))
       p$x <- x.model
       p$y <- as.factor(y.model)
+      # class weights
+      w <- p$class.weights
+      if (!is.null(w) && class.type == "one.versus.one") {
+        weight.pos <- w[lev[pick[1][j]]]
+        weight.neg <- w[lev[pick[2][j]]]
+        p$class.weights <- c("1"=weight.pos, "-1"=weight.neg)
+      }
       models[[j]] <- do.call(SVM, p[2:length(p)])
     }
     call[[1]] <- as.name("SVM")
@@ -335,6 +342,7 @@ evalqOnLoad({
     if((length(levels) > 2 && !transductive.learning)){
       params <- as.list(match.call(expand.dots=TRUE))
       #skipping first param which is function itself
+      params$class.weights <- class.weights
       return(do.call(.createMultiClassSVM, as.list(params[2:length(params)])))
     }
     
