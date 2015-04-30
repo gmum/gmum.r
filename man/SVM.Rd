@@ -96,7 +96,7 @@ svm <- SVM(formula, data, core="svmlight", kernel="rbf", gamma=1e3)
 data(svm_breast_cancer_dataset)
 ds <- svm.breastcancer.dataset
 svm.2e <- SVM(x=ds[,-1], y=ds[,1], core="libsvm", kernel="linear", prep = "2e", C=10);
-# more at <link to the 2e sample>
+# more at \\url{http://r.gmum.net/samples/svm.2e.html}
 
 # train SVM on a multiclass data set
 data(iris)
@@ -114,6 +114,6 @@ weighted.svm <- SVM(formula=y~., data=df, core="svmlight", kernel="rbf", C=1.0,
 # suppose we have a labels y with missing labels marked as zeros
 svm.transduction <- SVM(x, y, transductive.learning=TRUE, core="svmlight")
 
-# for more in-depth examples visit <link to samples on the website>
+# for more in-depth examples visit \\url{http://r.gmum.net/getting_started.html}
 }
 
