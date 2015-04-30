@@ -12,18 +12,18 @@
 
 <title>Predicting closest centroid in GNG</title>
 
-<script src="http://gmum.net/files/gmum.r/sample/http://gmum.net/files/gmum.r/sample/gng.mouse_files/jquery-1.11.0/jquery.min.js"></script>
+<script src="http://gmum.net/files/gmum.r/sample/gng.mouse_files/jquery-1.11.0/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="http://gmum.net/files/gmum.r/sample/http://gmum.net/files/gmum.r/sample/gng.mouse_files/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" />
-<script src="http://gmum.net/files/gmum.r/sample/http://gmum.net/files/gmum.r/sample/gng.mouse_files/bootstrap-3.3.1/js/bootstrap.min.js"></script>
-<script src="http://gmum.net/files/gmum.r/sample/http://gmum.net/files/gmum.r/sample/gng.mouse_files/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
-<script src="http://gmum.net/files/gmum.r/sample/http://gmum.net/files/gmum.r/sample/gng.mouse_files/bootstrap-3.3.1/shim/respond.min.js"></script>
+<link href="http://gmum.net/files/gmum.r/sample/gng.mouse_files/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" />
+<script src="http://gmum.net/files/gmum.r/sample/gng.mouse_files/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="http://gmum.net/files/gmum.r/sample/gng.mouse_files/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="http://gmum.net/files/gmum.r/sample/gng.mouse_files/bootstrap-3.3.1/shim/respond.min.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <link rel="stylesheet"
-      href="http://gmum.net/files/gmum.r/sample/http://gmum.net/files/gmum.r/sample/gng.mouse_files/highlight/default.css"
+      href="http://gmum.net/files/gmum.r/sample/gng.mouse_files/highlight/default.css"
       type="text/css" />
-<script src="http://gmum.net/files/gmum.r/sample/http://gmum.net/files/gmum.r/sample/gng.mouse_files/highlight/highlight.js"></script>
+<script src="http://gmum.net/files/gmum.r/sample/gng.mouse_files/highlight/highlight.js"></script>
 <style type="text/css">
   pre:not([class]) {
     background-color: white;
@@ -71,10 +71,9 @@ library(ggplot2)
 
 # Load our library dataset
 data(cec_mouse_1_spherical)
-cec.mouse.1.spherical &lt;- input
 
 # Train GNG model and find centroids of the resulting graph
-g &lt;- GNG(cec.mouse.1.spherical, max.nodes=50)</code></pre>
+g &lt;- GNG(cec.mouse1spherical, max.nodes=50)</code></pre>
 <pre><code>## [1] &quot;Training offline&quot;
 ## [1] &quot;Iteration 200&quot;
 ## [1] &quot;Iteration 200&quot;</code></pre>
@@ -83,11 +82,11 @@ g &lt;- GNG(cec.mouse.1.spherical, max.nodes=50)</code></pre>
 mouse.centr &lt;- centroids(g)
 
 # Now we can plot results to see decision boundary for assigning node to centroid
-m = as.data.frame(cec.mouse.1.spherical)
+m = as.data.frame(cec.mouse1spherical)
 colnames(m) = c(&quot;x&quot;, &quot;y&quot;)
 
-x_col &lt;- cec.mouse.1.spherical[,1]
-y_col &lt;- cec.mouse.1.spherical[,2]
+x_col &lt;- cec.mouse1spherical[,1]
+y_col &lt;- cec.mouse1spherical[,2]
 
 x_max &lt;- max(x_col)
 x_min &lt;- min(x_col) 
@@ -107,7 +106,7 @@ pl &lt;- ggplot()+
   geom_tile(data=grid, aes(x=x,y=y, fill=factor(target))) + theme(legend.position=&quot;none&quot;) +
   geom_point(data=m, aes(x,y), color=&#39;white&#39;) + scale_size_continuous(range = c(3, 6))
 plot(pl)</code></pre>
-<p><img src="http://gmum.net/files/gmum.r/sample/http://gmum.net/files/gmum.r/sample/gng.mouse_files/figure-html/unnamed-chunk-1-1.png" title="" alt="" width="672" /></p>
+<p><img src="http://gmum.net/files/gmum.r/sample/gng.mouse_files/figure-html/unnamed-chunk-1-1.png" title="" alt="" width="672" /></p>
 
 
 </div>

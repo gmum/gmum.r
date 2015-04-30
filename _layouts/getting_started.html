@@ -16,12 +16,14 @@
             We would like to help you get started as quickly as possible. Pick any of the following samples:
 
             <ul>
-<li><a href="samples/svm.news20.times.html" class="link">Speed comparison of gmum.R and e1071 on News20 dataset</a>      </li>
 
+                <li><a href="samples/svm.basic.html" class="link">Basic classification of breast cancer dataset using SVM</a>      </li>
+                <li><a href="samples/cec.basic.html" class="link">Basic clustering of mouse dataset using Cross Entropy Clustering</a>      </li>
+                <li><a href="samples/cec.T.dataset.html" class="link">Clustering with predefined cluster types using Cross Entropy Clustering</a>      </li>
+                <li><a href="samples/gng.wine.html" class="link">Basic clustering of wine dataset using Growing Neural Gas</a>      </li>
+<li><a href="samples/svm.news20.times.html" class="link">Speed comparison of gmum.R and e1071 on News20 dataset</a>      </li>
 <li><a href="samples/gng.online.html" class="link">Online cluster learning in Growing Neural Gas</a>      </li>
-                <li><a href="samples/gng.wine.html" class="link">Growing Neural Gas wine dataset classification</a>      </li>
-                <li><a href="samples/gng.mouse.html" class="link">Working with igraph in Growing Neural Gas</a>      </li>
-                <li><a href="samples/svm.basic.html" class="link">Basic classification on breast cancer dataset</a>      </li>
+                <li><a href="samples/gng.mouse.html" class="link">Predict graph component in Growing Neural Gas</a>      </li>
                 <li><a href="samples/gng.optimized.html" class="link">Running Growing Neural Gas with optimizations</a>      </li>
                 <li><a href="samples/svm.2e.html" class="link">Two ellipsoid SVM on breast cancer</a>      </li>
                 <li><a href="samples/svm.caret.html" class="link">Caret support in gmum.R</a>      </li>
@@ -30,7 +32,8 @@
  <li><a href="samples/svm.transductive.html" class="link">Transductive learning in SVM</a>      </li>
 
             <ul>
-            
+                <br> 
+            You can also access man page here: <a href="http://gmum.net/files/gmum.r/gmum.R.pdf">gmum.R.pdf</a>.
                 
       
             <div id="example"></div>
@@ -58,8 +61,12 @@
 
         $(".link").click( function(e) {
             e.preventDefault(); 
-            $("#example").html("<p>loading...</p>").load($(this).attr("href"));
-            goToByScroll("example");
+            $("#example").html("<p>loading...</p>").load($(this).attr("href"),
+                function(){
+                    goToByScroll("example");
+                    $(".main-container").width("80%");
+                }
+            );
         });
     });
 </script>

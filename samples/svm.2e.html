@@ -70,9 +70,8 @@ img {
 # called Two Ellipsoid SVM, which accounts for different covariances
 # of classes
 library(gmum.r)
-library(caret)</code></pre>
-<pre><code>## Loading required package: lattice</code></pre>
-<pre class="r"><code>data(svm_breast_cancer_dataset)
+library(caret)
+data(svm_breast_cancer_dataset)
 ds &lt;- svm.breastcancer.dataset
 
 # We can trigger 2e by passing prep parameter. It can work with either of the libraries
