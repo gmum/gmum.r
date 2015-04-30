@@ -12,21 +12,20 @@ library(ggplot2)
 
 # Load our library dataset
 data(cec_mouse_1_spherical)
-cec.mouse.1.spherical <- input
 
 # Train GNG model and find centroids of the resulting graph
-g <- GNG(cec.mouse.1.spherical, max.nodes=50)
+g <- GNG(cec.mouse1spherical, max.nodes=50)
 
 # GNG aims at making it easy to work with its graph.
 # Here we will predict closest centroid 
 mouse.centr <- centroids(g)
 
 # Now we can plot results to see decision boundary for assigning node to centroid
-m = as.data.frame(cec.mouse.1.spherical)
+m = as.data.frame(cec.mouse1spherical)
 colnames(m) = c("x", "y")
 
-x_col <- cec.mouse.1.spherical[,1]
-y_col <- cec.mouse.1.spherical[,2]
+x_col <- cec.mouse1spherical[,1]
+y_col <- cec.mouse1spherical[,2]
 
 x_max <- max(x_col)
 x_min <- min(x_col) 

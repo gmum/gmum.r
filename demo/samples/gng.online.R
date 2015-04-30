@@ -18,6 +18,7 @@ labels <- round(runif(10000)*3)
 # Insert dataset with labels
 insertExamples(gng, ex, labels)
 
+
 # Run algorithm in parallel 
 # (GNG will be running in separate thread!)
 run(gng)

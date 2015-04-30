@@ -592,6 +592,7 @@ evalqOnLoad({
       
     }else{
       t <- predict(x, X)
+      true_target <- NULL
     }
     labels <- levels(as.factor(t))
     
@@ -615,8 +616,11 @@ evalqOnLoad({
     }
     colnames(df) <- c("X1", "X2") # This is even worse
     df['prediction'] <- as.factor(t)
-    levels(true_target) <- x$levels
-    df['label'] <- true_target
+    
+    if(!is.null(true_target)){
+      levels(true_target) <- x$levels
+      df['label'] <- true_target
+    }
   
     #4. Prepare data for plotting
     if (obj$areExamplesWeighted()) {
@@ -671,23 +675,39 @@ evalqOnLoad({
       grid['prediction'] <- prediction
       
       
-      
-      pl <- ggplot()+ 
-        geom_tile(data=grid, aes(x=x,y=y, fill=prediction, alpha=.5)) + 
-        theme(legend.position="none") + 
-        scale_fill_brewer(palette="Set1") + 
-        scale_alpha_identity() + 
-        geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label)) + 
-        scale_colour_brewer(palette="Set1") + 
-        scale_size
-      
+      if(!is.null(true_target)){
+        pl <- ggplot()+ 
+          geom_tile(data=grid, aes(x=x,y=y, fill=prediction, alpha=.5)) + 
+          theme(legend.position="none") + 
+          scale_fill_brewer(palette="Set1") + 
+          scale_alpha_identity() + 
+          geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label)) + 
+          scale_colour_brewer(palette="Set1") + 
+          scale_size
+      }
+      else{
+        pl <- ggplot()+ 
+          geom_tile(data=grid, aes(x=x,y=y, fill=prediction, alpha=.5)) + 
+          theme(legend.position="none") + 
+          scale_fill_brewer(palette="Set1") + 
+          scale_alpha_identity() + 
+          geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction)) + 
+          scale_colour_brewer(palette="Set1") + 
+          scale_size
+      }  
     }else{
       warning("Only limited plotting is currently supported for multidimensional data")
-      
-      pl <- ggplot()+ 
-        geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label)) + 
-        scale_colour_brewer(palette="Set1") + 
-        scale_size
+      if(!is.null(true_target)){
+        pl <- ggplot()+ 
+          geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label)) + 
+          scale_colour_brewer(palette="Set1") + 
+          scale_size
+      }else{
+        pl <- ggplot()+ 
+          geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction)) + 
+          scale_colour_brewer(palette="Set1") + 
+          scale_size
+      }
     }
     
     # Add line

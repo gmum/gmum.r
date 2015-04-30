@@ -18,10 +18,17 @@ render("gng.wine.R", output_options=c(highlight=highlighting))
 render("gng.optimized.R", output_options=c(highlight=highlighting))
 render("gng.mouse.R", output_options=c(highlight=highlighting))
 
+
+render("cec.basic.R", output_options=c(highlight=highlighting))
+render("cec.ellipse.R", output_options=c(highlight=highlighting))
+render("cec.T.dataset.R", output_options=c(highlight=highlighting))
+
 # THIS IS REALLY TRICKY - we generate not self contained files
 # and then link them to gmum.r FTP server 
 
 scripts <- list.files(".", pattern = glob2rx("*.R"), full.names = FALSE)
+# NOTE: Run once for each script online!
+
 # TO RUN FOR PART REPLACE SCRIPTS WITH LIST OF FILES YOU WISH TO UPDATE
 run.cmds <- function(script.name){
   file.folder <- paste(substr(script.name, 1, nchar(script.name)-2), "_files", sep="")
