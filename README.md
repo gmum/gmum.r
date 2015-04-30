@@ -9,9 +9,13 @@ Package includes three subpackages:
 * Cross Entropy Clustering (CEC) clustering algorithm
 * Growing Neural Gas clustering algorithm
 
-For installation see [src/README.md](src/README.md)
+## Links
 
-See list of samples here [http://r.gmum.net/getting_started.html](http://r.gmum.net/getting_started.html)
+* Documentation: [http://gmum.net/files/gmum.r/gmum.R.pdf](gmum.R.pdf)
+
+* Installation: [src/README.md](src/README.md)
+
+* Samples: [http://r.gmum.net/getting_started.html](http://r.gmum.net/getting_started.html)
 
 ## SVM
 
