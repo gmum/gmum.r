@@ -11,7 +11,7 @@ Package includes three subpackages:
 
 ## Links
 
-* Documentation: [http://gmum.net/files/gmum.r/gmum.R.pdf](gmum.R.pdf)
+* Documentation: [gmum.R.pdf](http://gmum.net/files/gmum.r/gmum.R.pdf)
 
 * Installation: [src/README.md](src/README.md)
 
