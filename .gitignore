@@ -10,6 +10,8 @@
 *.dylib
 *.dll
 
+# Co
+
 # Compiled Static libraries
 *.lai
 *.la
@@ -163,3 +165,5 @@ data/
 
 .idea/
 
+# compiled samples
+demo/samples/*.html

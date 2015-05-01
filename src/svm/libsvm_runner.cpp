@@ -31,9 +31,9 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 
 //	Training
 	if (!config.isPrediction()) {
-		svm_node** node;
+		svm_node** node = 0;
 		if(config.isSparse()) {
-			node = SparseToSVMNode(config.sp_data, config.dim, config.row, config.col);
+            node = ArmaSpMatToSvmNode(config.sparse_data);
 		} else {
 			node = armatlib(config.data);
 		}
@@ -42,18 +42,15 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 		prob.y = vectlib(config.target);
 		prob.x = node;
 		save_model_to_config(config, param, prob);
-		//Xk is already transposed
-		//examples x dim
-		//config.alpha_y = SvmUtils::arrtoarmavec(config.sv_coef, config.l);
-		//DIM W: (nsv x 1)^T x nsv x dim = 1 x dim
-		config.w = (config.alpha_y.t() * config.support_vectors).t();
+		config.w = (config.support_vectors * config.alpha_y);
+
 	} else {
 		arma_prediction(config);
 	}
 }
 
 bool LibSVMRunner::canHandle(SVMConfiguration& config) {
-    if (config.use_cost) {
+    if (config.use_example_weights) {
         return false;
     }
 	return config.library == LIBSVM;
@@ -77,25 +74,24 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 	//*nr = config.support_vectors.n_rows; //support vectors
 	*nclasses = model->nr_class;
 	config.nr_class = model->nr_class;
+	LOG(config.log, LogLevel::TRACE, "save_model_to_config writing down alphas, nclasses= " + svm_to_str(config.nr_class));
 
 	int nr_support_vectors = model->l;
-	//config.sv_coef = (double **) malloc(model->nr_class * sizeof(double*));
-	for (int i = 0; i < config.nr_class - 1; i++) {
-		//config.sv_coef[i] = (double *) malloc(nr_support_vectors * sizeof(double));
-		//memcpy(config.sv_coef[i * nr_support_vectors], model->sv_coef[i],
-				//nr_support_vectors * sizeof(double*));
-		
-		arma::vec alpha_y_copy(model->sv_coef[i], nr_support_vectors);
-		config.alpha_y = alpha_y_copy;
-		// std::vector<double> alpha_y(config.alpha_y.begin(), config.alpha_y.end());
-		// memcpy(model->sv_coef[i * config.l], &alpha_y[0] ,config.l * sizeof(double*));
-	}
+    //conversion vec->SpCol
+    arma::vec alpha_y_tmp = arma::vec(model->sv_coef[0], nr_support_vectors);
+    //not my fault. Arma fault :)
+	config.alpha_y = arma::zeros(nr_support_vectors);
+    for(int i=0;i<nr_support_vectors;++i){
+        if(alpha_y_tmp(i) != 0){
+            config.alpha_y(i) = alpha_y_tmp(i);
+        }
+    }
 
 	if(config.nr_class != 2) {
 		throw std::invalid_argument( "Code is not implemented for more than 2 classes right now");
 	}
 
-	config.threshold_b = -model->rho[0];
+	config.b = -model->rho[0];
 	// memcpy(config.rho, ,
 	// 		config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
 
@@ -104,13 +100,12 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 
 	int dim = config.getDataDim();
 	ASSERT(dim > 0);
-	config.support_vectors = SvmUtils::libtoarma(model->SV, nr_support_vectors, dim);
-
-	// config.SV = (svm_node **) malloc(config.l * sizeof(svm_node*));
-	// for (int i = 0; i < config.l; i++) {
-	// 	config.SV[i] = (svm_node*) malloc(sizeof(svm_node));
-	// 	memcpy(config.SV, model->SV, sizeof(svm_node));
-	// }
+	//config.support_vectors = SvmUtils::libtoarma(model->SV, nr_support_vectors, dim);
+    //
+	LOG(config.log, LogLevel::TRACE, "save_model_to_config writing down SV, n_SV = " + svm_to_str(nr_support_vectors));
+	config.support_vectors = SvmUtils::SvmNodeToArmaSpMat(model->SV, nr_support_vectors, dim);
+	LOG(config.log, LogLevel::TRACE, "save_model_to_config wrote down SV, n_SV = " + svm_to_str(config.support_vectors.n_cols));
+	LOG(config.log, LogLevel::TRACE, "save_model_to_config wrote down SV, dim = " + svm_to_str(config.support_vectors.n_rows));
 
 	//	TODO: WTF!!!!!???
 	if (config.svm_type < 2) {
@@ -119,6 +114,7 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 		memcpy(config.label, model->label, *nclasses * sizeof(int));
 		memcpy(config.nSV, model->nSV, *nclasses * sizeof(int));
 	}
+
     config.neg_target = model->label[1];
     config.pos_target = model->label[0];
 
@@ -141,23 +137,25 @@ svm_model* LibSVMRunner::load_model_from_config(SVMConfiguration& config,
 
 	model = Malloc(svm_model, 1);
 
-	model->l =  config.support_vectors.n_rows; //support vectors number
+	model->l =  config.getSVCount(); //support vectors number
 	model->nr_class = config.nr_class;
 	model->param = *param;
 
 	model->sv_coef = (double **) malloc(model->nr_class * sizeof(double*));
 	for (int i = 0; i < config.nr_class - 1; i++) {
-		model->sv_coef[i] = (double *) malloc(config.support_vectors.n_rows * sizeof(double));
-		std::copy(config.alpha_y.begin(), config.alpha_y.end(), model->sv_coef[i *  config.support_vectors.n_rows]);
+		model->sv_coef[i] = (double *) malloc(config.getSVCount() * sizeof(double));
+		std::copy(config.alpha_y.begin(), config.alpha_y.end(), model->sv_coef[i *  config.getSVCount()]);
 	}
 
-	model->SV = armatlib(config.support_vectors);
+    model->SV = armatlib(arma::mat(config.support_vectors.t()));
+	// FIXME: Why below is not working?
+    //model->SV = ArmaSpMatToSvmNode(config.support_vectors);
 
 	model->rho = (double *) malloc(
 			config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
 
 	//i need change sign in b
-	double local_rho = -config.threshold_b;
+	double local_rho = -config.b;
 	
 	if(config.nr_class != 2) {
 		throw std::invalid_argument( "Code is not implemented for more than 2 classes right now");
@@ -195,9 +193,10 @@ svm_parameter* LibSVMRunner::configuration_to_problem(
 	param->p = config.p;
 	param->shrinking = config.shrinking;
 	param->probability = config.probability;
-	param->nr_weight = config.nr_weight;
-	param->weight_label = config.weight_label;
-	param->weight = config.weight;
+	param->nr_weight = config.class_weight_length;
+	param->weight_label = config.libsvm_class_weights_labels;
+	param->weight = config.libsvm_class_weights;
+	param->max_iter = config.max_iter;
 
 	if ( config.kernel_type == _LINEAR ) {
 			param->kernel_type = LINEAR;
@@ -314,7 +313,7 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 
 //	TODO: READ MODEL FROM PARAMETERS
 	if(config.isSparse()) {
-		train= SparseToSVMNode(config.sp_data, config.dim, config.row, config.col);
+        train = ArmaSpMatToSvmNode(config.sparse_data);
 	} else {
 		train = armatlib(config.data);
 	}
@@ -337,5 +336,31 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 //	svm_free_and_destroy_model(&m);
 	svm_destroy_param(params,config.log);
 	free(ret);
+}
+
+svm_node **LibSVMRunner::ArmaSpMatToSvmNode(arma::sp_mat & sparse_data) {
+    int max_rows = sparse_data.n_rows + 1;
+    svm_node **sn = new svm_node*[sparse_data.n_cols + 1];
+    svm_node * tmp_col = new svm_node[max_rows];
+    long int current_col_counter;
+    long int row;
+    for (unsigned int col = 0; col < sparse_data.n_cols; ++col) {
+        current_col_counter = 0;
+        row = -1;
+
+        for (
+            arma::sp_mat::iterator it = sparse_data.begin_col(col);
+            it != sparse_data.end_col(col); ++it
+        ) {
+            tmp_col[current_col_counter].value = *it;
+            tmp_col[current_col_counter++].index = it.row() + 1;
+        }
+        
+        sn[col] = new svm_node[current_col_counter + 1];
+        memcpy(sn[col], tmp_col, current_col_counter * sizeof(svm_node));
+        sn[col][current_col_counter].index = -1.0;
+    }
+    delete [] tmp_col;
+    return sn;
 }
 

@@ -10,14 +10,18 @@
 plot(gng)
 }
 \arguments{
-\item{mode}{gng.plot.3d (3d plot), gng.plot.2d (igraph plot) or
-gng.plot.2d.errors (igraph plot with mean error log plot)}
 
-\item{layout}{layout to be used when plotting. Possible values: gng.plot.layour.igraph.v2d (first two dimensions),
-gng.plot.layout.igraph.auto (auto layout from igraph) gng.plot.layout.igraph.fruchterman.fast (fast fruchterman reingold layout),or any function accepting igraph graph and returning layout}
+\item{vertex.color}{How to color vertexes. Possible values: \code{gng.plot.color.cluster} (vertex color is set to fastgreedy.community clustering),
+\code{gng.plot.color.label} (rounds to integer label if present), \code{gng.plot.color.none} (every node is white),}
 
-\item{vertex.color}{how to color vertexes. Possible values: gng.plot.color.cluster(vertex color is set to fastgreedy.community clustering),
-gng.plot.color.label(rounds to integer label if present), gng.plot.color.none(every node is white),}
+\item{layout}{Layout to be used when plotting. Possible values: \code{gng.plot.layour.igraph.v2d} (first two dimensions),
+\code{gng.plot.layout.igraph.auto} (auto layout from igraph)  \code{gng.plot.layout.igraph.fruchterman.fast} (fast fruchterman reingold layout),or any function accepting igraph graph and returning layout}
+
+\item{mode}{\code{gng.plot.3d} (3d plot), \code{gng.plot.2d} (igraph plot)
+\code{gng.plot.2d.errors} (igraph plot with mean error log plot)}
+
+\item{vertex.size}{Size of plotted vertices}
+
 }
 \description{
 Plot resulting graph using igraph plotting, or using rgl 3d engine.
