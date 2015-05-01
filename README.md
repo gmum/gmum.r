@@ -53,7 +53,7 @@ Subpackage containing **efficient**, **online** GNG algorithm. It produces topol
 dump your model to optimized binary file and load it later on.
 
 <small>Clustering of the UCI wine dataset</small>
-<center><img src="./doc/img/gng_readme.png" width="100%"></img></center>
+<center><img src="./doc/gng/img/gng_readme.png" width="100%"></img></center>
 
 ### Example: cluster wine dataset
 
@@ -86,7 +86,7 @@ CEC aims to efficiently implement Cross Entropy Clustering Algorithm as R extens
 Cross-entropy clustering (shortly CEC) joins advantages of classical k-means with those of EM. Moreover, contrary to k-means and EM, CEC **finds the optimal number of clusters** by automatically removing redundant ones.
 
 <small>CEC clustering</small>
-<center><img src="./doc/img/cec_mouse.png" width="60%"></img></center>
+<center><img src="./doc/cec/img/cec_mouse.png" width="60%"></img></center>
 
 
 ### Example usage
