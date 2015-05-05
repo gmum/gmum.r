@@ -16,13 +16,13 @@ set(TEST_DATA_PATH ${PROJECT_SOURCE_DIR}/inst/data_sets)
 
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${R_LD_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${R_LD_FLAGS_ONLY_LIBS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${R_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${R_CXX_FLAGS} -std=c++0x")
 
 include_directories(${INCLUDE_DIR} ${INCLUDE_DIR}/cec ${INCLUDE_DIR}/gng ${INCLUDE_DIR}/svm ${INCLUDE_DIR}/svmlight ${INCLUDE_DIR}/utils)
 include_directories(${R_INCLUDE_DIR})
 include_directories(${RCPP_INCLUDE_PATHS})
 
-add_definitions(-DARMA_DONT_USE_CXX11 -DRCPP_INTERFACE)
+add_definitions(-DRCPP_INTERFACE)
 add_definitions(-DTEST_DATA_PATH="${TEST_DATA_PATH}")
 
 add_subdirectory(${SRC_DIR})
