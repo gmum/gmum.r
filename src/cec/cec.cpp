@@ -158,11 +158,20 @@ void CecModel::find_best_cec() {
             init_clusters(assignment);
             loop();
 
+            if(!std::isnormal(m_result.energy))
+            {
+                continue;
+            }
+            
             if (m_result.energy < best_cec.get_result().energy) {
                 best_cec = *this;
             }
         }
         *this = best_cec;
+        if(!std::isnormal(m_result.energy))
+        {
+            GMUM_WARNING("There are degenerated clusters! You should try run CEC with other parameters")
+        }
     } catch (std::exception &e) {
 #ifdef RCPP_INTERFACE
         Rcpp::stop(std::string("exception ") + e.what() + " caught in CEC_new");
