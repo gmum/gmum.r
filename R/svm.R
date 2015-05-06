@@ -690,7 +690,7 @@ evalqOnLoad({
         scale_size
       
     }else{
-      warning("Only limited plotting is currently supported for multidimensional data")
+      if (ncol(X) > 2) warning("Only limited plotting is currently supported for multidimensional data")
       
       pl <- ggplot()+ 
         geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label)) + 
@@ -747,11 +747,16 @@ evalqOnLoad({
   }
   
   predict.svm.gmum <<- function(object, x, decision.function=FALSE) {
-    if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric") && !is(x,"matrix.csr") ) {
+    if ( !is(x, "data.frame") && 
+         !is(x, "matrix") && 
+         !is(x,"numeric") && 
+         !is(x,"matrix.csr")) {
       stop("Wrong target class, please provide data.frame, matrix or numeric vector")
     }
     if (!object$isSparse()) {
-      if (!is(x, "matrix") && !is(x, "data.frame")) {
+      if (!is(x, "matrix") && 
+          !is(x, "data.frame") &&
+          !is.vector(x)) {
         stop("Please provide matrix or data.frame")
       }
       if (!is(x, "matrix")) {
