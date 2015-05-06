@@ -26,6 +26,9 @@ gng <- OptimizedGNG(sphere.dataset, max.nodes=1000, max.iter=10000, dim=3,
 # GNG would much longer, you can check it yourself
 # gng <- GNG(sphere.dataset, max.nodes=1000, max.iter=10000, dim=3)
 
+predictCentroid(gng, centroids(gng), sphere.dataset)
+
+
 
 # Plot results
 plot(gng, vertex.size=6)

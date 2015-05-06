@@ -797,7 +797,18 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     object$components.membership[predict(object, x)]
   }
 
-  plot.gng <<- function(x, vertex.color=gng.plot.color.cluster, layout=gng.plot.layout.v2d, mode=gng.plot.2d, vertex.size=3){
+  plot.gng <<- function(x, vertex.color=gng.plot.color.cluster, 
+                        layout=gng.plot.layout.v2d, mode=gng.plot.2d, 
+                        vertex.size=3){
+    if(vertex.size <= 0){
+       stop("Please pass positivie vertex.size")
+    }
+    
+    if(!(vertex.color %in% c(gng.plot.color.cluster, 
+                             gng.plot.color.fast.cluster, gng.plot.color.label, gng.plot.color.none))){
+      stop("Please pass correct vertex.color")
+    }
+    
     
     if(x$getNumberNodes() > 4000){
       warning("Trying to plot very large graph (>4000 nodes). It might take a while.")
@@ -820,6 +831,8 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
     }
     else if(mode == gng.plot.2d.errors){
       .gng.plot2d.errors(x, vertex.color, layout, vertex.size=vertex.size)
+    }else{
+      stop("Unrecognized mode")
     }
   }
   
@@ -829,7 +842,11 @@ eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min
   }
   
   summary.gng <<- function(object){
-    print("Growing Neural Gas")
+    if(object$.getConfiguration$.uniformgrid_optimization){
+      print("(Optimized) Growing Neural Gas")
+    }else{
+      print("Growing Neural Gas")
+    }
     if(exists("object$call")){
         print(object$call)
     }
