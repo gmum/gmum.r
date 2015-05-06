@@ -553,7 +553,10 @@ evalqOnLoad({
 
     config$seed = seed
     
-    
+    if(is.data.frame(X)){
+       warning("Converting data.frame to matrix. Please make sure you pass only numerics to GNG.")
+       X <- as.matrix(X)
+    }
 
     # Fill in configuration
     if(train.online){
