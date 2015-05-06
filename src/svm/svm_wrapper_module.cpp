@@ -66,8 +66,8 @@ RCPP_MODULE(svm_wrapper) {
 			.method(".getX", &SVMClient::getX)
 			.method(".getSparseX", &SVMClient::getSparseX)
 			.method(".getY", &SVMClient::getY)
-			.method("getPrediction", &SVMClient::getPrediction)
-			.method("getDecisionFunction", &SVMClient::getDecisionFunction)
+			.method(".getPrediction", &SVMClient::getPrediction)
+			.method(".getDecisionFunction", &SVMClient::getDecisionFunction)
 			.method("getLibrary", &SVMClient::getLibrary)
 			.method("getKernel", &SVMClient::getKernel)
 			.method("getPreprocess", &SVMClient::getPreprocess)
@@ -91,8 +91,8 @@ RCPP_MODULE(svm_wrapper) {
 	      	.method("getSV", &SVMClient::getSV)
 	      	.method("getIterations", &SVMClient::getIterations)
 			.method("train", &SVMClient::train)
-			.method("predict", &SVMClient::predict)
-			.method("sparse_predict", &SVMClient::sparse_predict)
+			.method(".predict", &SVMClient::predict)
+			.method(".sparse_predict", &SVMClient::sparse_predict)
 			;
 
 }

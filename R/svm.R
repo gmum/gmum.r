@@ -760,21 +760,26 @@ evalqOnLoad({
         stop("Please provide matrix or data.frame")
       }
       if (!is(x, "matrix")) {
-        x <- data.matrix(x)
+        if (is.vector(x)){
+          x <- t(as.matrix(x))
+        } 
+        else {
+          x <- data.matrix(x)
+        }
       }
-      object$predict(x)
+      object$.predict(x)
     }
     else {
       if (!is(x, "matrix.csr")) {
         stop("Please provide sparse matrix")
       }
-      object$sparse_predict(x@ia, x@ja, x@ra, nrow(x), ncol(x))
+      object$.sparse_predict(x@ia, x@ja, x@ra, nrow(x), ncol(x))
     }
     
     if(decision.function){
-      return(object$getDecisionFunction())
+      return(object$.getDecisionFunction())
     }else{
-      prediction <- object$getPrediction()
+      prediction <- object$.getPrediction()
       
       if(any(prediction == 0) || length(unique(prediction)) > length(object$levels)){
         stop("Failed prediction, returned too many unique labels from library.")
