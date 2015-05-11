@@ -33,7 +33,13 @@ public:
     bool canHandle(SVMConfiguration &);
 
     // Documented in the parent class
-    void processRequest(SVMConfiguration &);
+    void processRequest(
+        SVMConfiguration &
+    );
+
+    void processRequest(
+        SVMConfiguration &, int argc, char** argv
+    );
 
 protected:
     
