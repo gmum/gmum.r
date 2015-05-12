@@ -171,4 +171,11 @@ static vector<double> _load_bin_vector(istream & in) {
 	return x;
 }
 
+int check_argc(const char*);
+int check_argc(const std::string);
+char** to_argv(const char*);
+char** to_argv(const std::string);
+/// Free `char**` allocated by `to_argv()` function
+char** free_argv(int argc, char** argv);
+
 #endif	/* UTILS_H */

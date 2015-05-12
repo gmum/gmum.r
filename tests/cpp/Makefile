@@ -19,7 +19,7 @@ ROOT_TEST_PATH := .
 
 # Branches that will be compiled
 GMUMR_BRANCHES := cec gng svm utils
-TEST_BRANCHES := cec gng svm
+TEST_BRANCHES := cec gng svm utils
 
 # Additional cleaning paths
 ADDITIONAL_CLEANING := *.graphml *.bin

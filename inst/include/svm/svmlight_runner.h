@@ -37,10 +37,6 @@ public:
         SVMConfiguration &
     );
 
-    void processRequest(
-        SVMConfiguration &, int argc, char** argv
-    );
-
 protected:
     
     /**

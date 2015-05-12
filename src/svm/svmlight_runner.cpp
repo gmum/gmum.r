@@ -37,16 +37,13 @@ bool SVMLightRunner::canHandle(SVMConfiguration &config) {
 }
 
 
-void SVMLightRunner::processRequest(SVMConfiguration &config) {
-    SVMLightRunner::processRequest(config, 0, 0);
-}
-
-
 void SVMLightRunner::processRequest(
-    SVMConfiguration &config, int argc, char** argv
+    SVMConfiguration &config
 ) {
-    arma::mat unique_labels = arma::unique(config.target);
+    int argc = 0;
+    char** argv = 0;
 
+    arma::mat unique_labels = arma::unique(config.target);
 
     if(unique_labels.size() !=2 && !config.use_transductive_learning){
     	printf("Passed 3 labels to svmlight without use_transductive_learning\n");
@@ -74,13 +71,17 @@ void SVMLightRunner::processRequest(
     config.neg_target = -1;
     config.pos_target = 1;
 
+    if (!config.svm_options.empty()) {
+        //TODO
+    }
+
     if (!config.isPrediction()) {
         // Learning
         librarySVMLearnMain(argc, argv, true, config);
 
     } else {
         // Predict
-        librarySVMClassifyMain(0, argv, true, config);
+        librarySVMClassifyMain(argc, argv, true, config);
         // Convert sign to label
         resultsToLabels(config);
     }
@@ -99,7 +100,6 @@ void SVMLightRunner::resultsToLabels(SVMConfiguration &config) {
     for (int i=0; i < n_docs; ++i) {
         doc_result = config.result[i];
 
-        // Store only a class label
         //arma::vec doc_result_vec;
         //doc_result_vec << doc_result << arma::endr;
         //arma::vec result_sign_vec = arma::sign(doc_result_vec);

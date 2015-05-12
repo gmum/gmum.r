@@ -84,6 +84,7 @@ public:
     arma::mat data;     // armadillo matrix and vector (double)
     arma::vec target;
     arma::vec result, decision_function;
+    std::string svm_options;    ///< SVMLight command line parameters
 
     // Sparse data
     bool sparse;

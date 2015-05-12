@@ -322,7 +322,8 @@ evalqOnLoad({
            max.iter    = -1,
            verbosity   = 4,
            class.type = 'one.versus.all',
-           seed = NULL) {
+           seed = NULL,
+           svm.options = '') {
     # First check if we have binary or multiclass case
     if (!is.vector(y) && !is.factor(y)) {
       stop("y is of a wrong class, please provide vector or factor")
