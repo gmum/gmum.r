@@ -21,24 +21,27 @@ protected:
     virtual void TearDown() {}
 
     /* Objects declared here can be used by all tests in the test case */
-    std::string sample_args[4] {
+    std::string sample_args[5] {
         std::string(""),
         std::string("-a"),
         std::string("-d 4.51"),
-        std::string("filename1 filename2 -a 1 -b 0 -c")
+        std::string("filename1 filename2 -a 1 -b 0 -c"),
+        std::string("filename1 filename2   -a \t 1   -b  0\t\t-c")
     };
 
-    int sample_args_count[4] {
+    int sample_args_count[5] {
         0,
         1,
         2,
+        7,
         7
     };
 
-    char sample_args_argv[4][7][10] = {
+    char sample_args_argv[5][7][10] = {
         {},
         {"-a"},
         {"-d", "4.51"},
+        {"filename1", "filename2", "-a", "1", "-b", "0", "-c"},
         {"filename1", "filename2", "-a", "1", "-b", "0", "-c"}
     };
 

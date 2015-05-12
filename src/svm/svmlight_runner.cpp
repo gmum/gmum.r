@@ -14,8 +14,9 @@
 #include <cassert>
 
 #include "svmlight_runner.h"
-#include "svm/log.h"
+#include "utils/log.hpp"
 #include "svm_basic.h"
+#include "utils/utils.h"
 
 const std::string __file__ = "svmlight_runner.cpp";
 const std::string __runner_class__ = "SVMLightRunner";
@@ -72,7 +73,8 @@ void SVMLightRunner::processRequest(
     config.pos_target = 1;
 
     if (!config.svm_options.empty()) {
-        //TODO
+        argc = check_argc(config.svm_options);
+        argv = to_argv(config.svm_options);
     }
 
     if (!config.isPrediction()) {

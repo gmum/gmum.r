@@ -33,12 +33,12 @@ typedef vector<int> VI;
 #include <stdlib.h>
 #include <time.h>
 
-#include <utils/logger.h>
+#include <utils/log.hpp>
 
-#define LOG(logger, level, text) logger->log(level, text);
+#define LOG(logger, level, text) logger.log(level, text);
 
 #ifdef DEBUG
-	#define DBG(logger, level, text) logger->log(level, text);
+	#define DBG(logger, level, text) logger.log(level, text);
 	#define REPORT(x) cout<<#x<<"="<<(x)<<endl<<std::flush;
 #else
 	#define DBG(verbosity, level, text)

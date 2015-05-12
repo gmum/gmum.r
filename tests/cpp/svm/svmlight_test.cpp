@@ -4,10 +4,10 @@
 #include "gtest/gtest.h"
 
 #include "svm_helpers.h"
-#include "svm/log.h"
 #include "svmlight_runner.h"
 #include "svm_basic.h"
 #include "svm_client.h"
+#include "utils/log.hpp"
 
 namespace {
 
