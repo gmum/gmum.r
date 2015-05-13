@@ -580,6 +580,7 @@ evalqOnLoad({
     
     #1. Get X and Y
     if(is.null(X)){
+      new_data <- FALSE
       if(class(x) == "MultiClassSVM"){
          X <- x$X
          true_target <- as.factor(x$Y)
@@ -591,10 +592,10 @@ evalqOnLoad({
           X <- obj$.getX()
         }
       }
-      
       t <- predict(x, X)
       
     }else{
+      new_data <- TRUE
       t <- predict(x, X)
     }
     labels <- levels(as.factor(t))
@@ -620,13 +621,15 @@ evalqOnLoad({
     colnames(df) <- c("X1", "X2") # This is even worse
     df['prediction'] <- as.factor(t)
     
-    if(length(levels(true_target)) > length(x$levels)){
-      levels(true_target) <- c(x$levels, "0") 
+    if(!new_data){
+      if(length(levels(true_target)) > length(x$levels)){
+        levels(true_target) <- c(x$levels, "0") 
+      }
+      else {
+        levels(true_target) <- x$levels
+      }
+      df['label'] <- true_target
     }
-    else {
-      levels(true_target) <- x$levels
-    }
-    df['label'] <- true_target
   
     #4. Prepare data for plotting
     if (obj$areExamplesWeighted()) {
@@ -660,7 +663,7 @@ evalqOnLoad({
       }
     }
     
-    
+    points <- NULL
     
     #6. PLOT
     if(ncol(X) == 2 && mode == "contour"){
@@ -691,19 +694,29 @@ evalqOnLoad({
       
       
       
+      if(new_data)
+        points <- geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction))
+      else
+        points <- geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label))
+      
       pl <- ggplot()+ 
         geom_tile(data=grid, aes(x=x,y=y, fill=prediction, alpha=.5)) + 
         scale_fill_brewer(palette="Set1") + 
         scale_alpha_identity() + 
-        geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label)) + 
+        points + 
         scale_colour_brewer(palette="Set1") + 
         scale_size
       
     }else{
       if (ncol(X) > 2) warning("Only limited plotting is currently supported for multidimensional data")
       
+      if(new_data)
+        points <- geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction))
+      else
+        points <- geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label))
+      
       pl <- ggplot()+ 
-        geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label)) + 
+        points + 
         scale_colour_brewer(palette="Set1") + 
         scale_size
     }
