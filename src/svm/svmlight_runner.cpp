@@ -73,8 +73,8 @@ void SVMLightRunner::processRequest(
     config.pos_target = 1;
 
     if (!config.svm_options.empty()) {
-        argc = check_argc(config.svm_options);
-        argv = to_argv(config.svm_options);
+        argc = check_argc(std::string("gmum ") + config.svm_options);
+        argv = to_argv(std::string("gmum ") + config.svm_options);
     }
 
     if (!config.isPrediction()) {
