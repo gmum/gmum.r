@@ -1,6 +1,7 @@
 #ifndef CEC_HPP
 #define CEC_HPP
 
+#include <cmath>
 #include <list>
 #include <vector>
 #include "boost/foreach.hpp"

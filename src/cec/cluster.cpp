@@ -1,5 +1,9 @@
 #include "cluster.hpp"
+#include <cmath>
 //#include "../../inst/include/cec/cluster.hpp"
+// Added those because mingw is stupid. Don't remove!
+#define M_E 2.71828182845904523536
+#define M_PI 3.14159265358979323846
 
 namespace gmum {
 

@@ -5,6 +5,12 @@
 #include "centroids_assignment.hpp"
 #include "random_assignment.hpp"
 
+
+// Added those because mingw is stupid. Don't remove!
+#define M_E 2.71828182845904523536
+#define M_PI 3.14159265358979323846
+
+
 using namespace gmum;
 
 void CecModel::clear_clusters() {
