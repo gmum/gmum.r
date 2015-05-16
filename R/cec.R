@@ -204,7 +204,7 @@ evalqOnLoad({
       x = data.matrix(x);
     }
     
-    if (k <= 0)
+    if (is.null(params.mix) && k <= 0)
       stop("Number of clusters should be a positive integer!");
     
     if (control.nstart <= 0)
@@ -224,13 +224,16 @@ evalqOnLoad({
     config <- new(CecConfiguration)
     config$setDataSet(x)
     config$setEps(control.eps)      
-    config$setMix(params.mix) 
+    config$setNrOfClusters(k)
+
+    if(is.null(params.mix) == FALSE) {
+        config$setMix(params.mix) 
+    }
     
     if(is.null(params.function) == FALSE) {
         config$setFunction(params.function)
     }
     
-    config$setNrOfClusters(k)
     config$setLogEnergy(log.energy)
     config$setLogCluster(log.ncluster)      
     config$setNstart(control.nstart)

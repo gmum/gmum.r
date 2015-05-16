@@ -49,7 +49,7 @@ test_that("mix works", {
   data(cec_t_set)
   fixed_spherical_cluster_param = list(method.type = 'fixed_spherical', params.r = 0.001)
   fixed_covariance_cluster_param = list(method.type = 'fixed_covariance', params.cov=matrix(c(0.05, 0, 0, 0.001), 2))
-  c <- CEC(x = Tset, k = 4, params.mix = list(fixed_covariance_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param,
+  c <- CEC(x = Tset, params.mix = list(fixed_covariance_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param,
    fixed_spherical_cluster_param), control.nstart = 100, control.eps=0.09)
   plot(c, ellipses = TRUE, centers = TRUE)
   
