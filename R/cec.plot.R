@@ -28,7 +28,7 @@ evalqOnLoad({
     }
     
     if (length(slice)==2) {
-      plot(d[,slice], col = (x$clustering() + 1), pch=19)
+      plot(d[,slice], col = (x$clustering() + 1), pch=20)
     }
     else{
       pairs(d[,slice], col = (x$clustering()+1))
