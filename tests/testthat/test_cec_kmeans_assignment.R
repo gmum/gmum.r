@@ -17,11 +17,11 @@ test_that("correctness works", {
 })
 
 test_that("mouse_1_spherical kmeans coverage is correct", {
-  data(cec_mouse_1_spherical)
+  data(cec.mouse1.spherical)
   
-  expected_energy <- cec.mouse1spherical.extra[["energy"]]  
-  dataset_clusters <- cec.mouse1spherical.extra[["cluster"]]
-  dataset_points <- cec.mouse1spherical
+  expected_energy <- cec.mouse1.spherical.extra[["energy"]]  
+  dataset_clusters <- cec.mouse1.spherical.extra[["cluster"]]
+  dataset_points <- cec.mouse1.spherical
   
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
   
@@ -43,11 +43,11 @@ test_that("mouse_1_spherical kmeans coverage is correct", {
 })
 
 test_that("mouse_1_spherical kmeans energy is correct", {
-    data(cec_mouse_1_spherical)
+    data(cec.mouse1.spherical)
         
-    expected_energy <- cec.mouse1spherical.extra[["energy"]]  
-    dataset_clusters <- cec.mouse1spherical.extra[["cluster"]]
-    dataset_points <- cec.mouse1spherical
+    expected_energy <- cec.mouse1.spherical.extra[["energy"]]  
+    dataset_clusters <- cec.mouse1.spherical.extra[["cluster"]]
+    dataset_points <- cec.mouse1.spherical
     
     dataset_clusters <- dataset_clusters - min(dataset_clusters)
     

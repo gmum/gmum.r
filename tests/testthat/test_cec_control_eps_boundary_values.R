@@ -2,8 +2,8 @@ library(testthat)
 library('gmum.r')
 
 test_that("mouse_1_spherical kmeans test control eps boundary values", {
-          data(cec_mouse_1_spherical)
-          dataset_points <- cec.mouse1spherical
+          data(cec.mouse1.spherical)
+          dataset_points <- cec.mouse1.spherical
           nclusters <- 3
           npoints = dim(dataset_points)[1]
           c <- CEC(k=nclusters, x=dataset_points, control.nstart=1, method.init='kmeans++', control.eps=((npoints - 1) / npoints))
@@ -13,8 +13,8 @@ test_that("mouse_1_spherical kmeans test control eps boundary values", {
 })
 
 test_that("mouse_1_spherical random test control eps boundary values", {
-          data(cec_mouse_1_spherical)
-          dataset_points <- cec.mouse1spherical
+          data(cec.mouse1.spherical)
+          dataset_points <- cec.mouse1.spherical
           nclusters <- 3
           npoints = dim(dataset_points)[1]
           c <- CEC(k=nclusters, x=dataset_points, control.nstart=1, method.init='random', control.eps=((npoints - 1) / npoints))
@@ -24,7 +24,7 @@ test_that("mouse_1_spherical random test control eps boundary values", {
 })
 
 test_that("EllipseGauss kmeans test control eps boundary values", {
-          data(cec_ellipse_gauss)
+          data(cec.ellipsegauss)
           dataset_points <- cec.ellipsegauss
           nclusters <- 4
           npoints = dim(dataset_points)[1]
@@ -35,7 +35,7 @@ test_that("EllipseGauss kmeans test control eps boundary values", {
 })
 
 test_that("EllipseGauss random test control eps boundary values", {
-          data(cec_ellipse_gauss)
+          data(cec.ellipsegauss)
           dataset_points <- cec.ellipsegauss
           nclusters <- 4
           npoints = dim(dataset_points)[1]
@@ -46,7 +46,7 @@ test_that("EllipseGauss random test control eps boundary values", {
 })
 
 test_that("mouse_1 kmeans test control eps boundary values", {
-          data(cec_mouse_1)
+          data(cec.mouse1)
           dataset_points <- cec.mouse1
           nclusters <- 3
           npoints = dim(dataset_points)[1]
@@ -57,7 +57,7 @@ test_that("mouse_1 kmeans test control eps boundary values", {
 })
 
 test_that("mouse_1 random test control eps boundary values", {
-          data(cec_mouse_1)
+          data(cec.mouse1)
           dataset_points <- cec.mouse1
           nclusters <- 3
           npoints = dim(dataset_points)[1]
