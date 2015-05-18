@@ -14,6 +14,7 @@
 #include "libsvm_runner.h"
 #include "svm_basic.h"
 #include "svm_utils.h"
+#include "utils/utils.h"
 
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 svm_parameter get_default_params();
@@ -38,6 +39,8 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 			node = armatlib(config.data);
 		}
 		svm_parameter* param = configuration_to_problem(config);
+        parseCommandLine(config, *param);
+        std::cout << param->C << std::endl << std::flush;
 		prob.l = config.target.n_rows;
 		prob.y = vectlib(config.target);
 		prob.x = node;
@@ -339,7 +342,7 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 	free(ret);
 }
 
-svm_node **LibSVMRunner::ArmaSpMatToSvmNode(arma::sp_mat & sparse_data) {
+svm_node** LibSVMRunner::ArmaSpMatToSvmNode(arma::sp_mat & sparse_data) {
     int max_rows = sparse_data.n_rows + 1;
     svm_node **sn = new svm_node*[sparse_data.n_cols + 1];
     svm_node * tmp_col = new svm_node[max_rows];
@@ -365,3 +368,157 @@ svm_node **LibSVMRunner::ArmaSpMatToSvmNode(arma::sp_mat & sparse_data) {
     return sn;
 }
 
+void LibSVMRunner::parseCommandLine(
+    SVMConfiguration& config, svm_parameter& param
+) {
+    int argc = 0;
+    char** argv = 0;
+
+    if (!config.svm_options.empty()) {
+        argc = check_argc(std::string("gmum ") + config.svm_options);
+        argv = to_argv(std::string("gmum ") + config.svm_options);
+        char input_file_name[1024];
+        char model_file_name[1024];
+
+        LibSVMRunner::libraryParseCommandLine(
+            config, param, argc, argv, input_file_name, model_file_name);
+    }
+}
+
+void LibSVMRunner::libraryParseCommandLine(
+    SVMConfiguration& config,
+    svm_parameter& param,
+    int argc,
+    char** argv,
+    char* input_file_name,
+    char* model_file_name
+) {
+	int i;
+	void (*print_func)(const char*) = NULL;	// default printing to stdout
+
+	// default values
+    /* These are being handled in SVMClient
+	param.svm_type = C_SVC;
+	param.kernel_type = RBF;
+	param.degree = 3;
+	param.gamma = 0;	// 1/num_features
+	param.coef0 = 0;
+	param.nu = 0.5;
+	param.cache_size = 100;
+	param.C = 1;
+	param.eps = 1e-3;
+	param.p = 0.1;
+	param.shrinking = 1;
+	param.probability = 0;
+	param.nr_weight = 0;
+	param.weight_label = NULL;
+	param.weight = NULL;
+	cross_validation = 0;
+    */
+
+	// parse options
+	for(i=1;i<argc;i++)
+	{
+		if(argv[i][0] != '-') break;
+		if(++i>=argc)
+            break;
+			//exit_with_help();
+		switch(argv[i-1][1])
+		{
+			case 's':
+				param.svm_type = atoi(argv[i]);
+				break;
+			case 't':
+				param.kernel_type = atoi(argv[i]);
+				break;
+			case 'd':
+				param.degree = atoi(argv[i]);
+				break;
+			case 'g':
+				param.gamma = atof(argv[i]);
+				break;
+			case 'r':
+				param.coef0 = atof(argv[i]);
+				break;
+			case 'n':
+				param.nu = atof(argv[i]);
+				break;
+			case 'm':
+				param.cache_size = atof(argv[i]);
+				break;
+			case 'c':
+				param.C = atof(argv[i]);
+				break;
+			case 'e':
+				param.eps = atof(argv[i]);
+				break;
+			case 'p':
+				param.p = atof(argv[i]);
+				break;
+			case 'h':
+				param.shrinking = atoi(argv[i]);
+				break;
+			case 'b':
+				param.probability = atoi(argv[i]);
+				break;
+			case 'q':
+				//print_func = &print_null;
+				i--;
+				break;
+			case 'v':
+                // TODO: We need to wrap more functions from svm-train.c
+                LOG(
+                    config.log,
+                    LogLevel::ERR,
+                    "-v n: n-fold cross validation mode: not implemented."
+                );
+                break;
+                /*
+				cross_validation = 1;
+				nr_fold = atoi(argv[i]);
+				if(nr_fold < 2)
+				{
+					fprintf(stderr,"n-fold cross validation: n must >= 2\n");
+					//exit_with_help();
+				}
+				break;
+                */
+			case 'w':
+				++param.nr_weight;
+				param.weight_label = (int *)realloc(
+                    param.weight_label,sizeof(int)*param.nr_weight);
+				param.weight = (double *)realloc(
+                    param.weight,sizeof(double)*param.nr_weight);
+				param.weight_label[param.nr_weight-1] = atoi(&argv[i-1][2]);
+				param.weight[param.nr_weight-1] = atof(argv[i]);
+				break;
+			default:
+				fprintf(stderr,"Unknown option: -%c\n", argv[i-1][1]);
+				//exit_with_help();
+		}
+	}
+
+	//svm_set_print_string_function(print_func);
+
+	// determine filenames
+    // FIXME: Decide what TODO with this code
+
+    /*
+	if(i>=argc)
+		exit_with_help();
+
+	strcpy(input_file_name, argv[i]);
+
+	if(i<argc-1)
+		strcpy(model_file_name,argv[i+1]);
+	else
+	{
+		char *p = strrchr(argv[i],'/');
+		if(p==NULL)
+			p = argv[i];
+		else
+			++p;
+		sprintf(model_file_name,"%s.model",p);
+	}
+    */
+}
