@@ -344,18 +344,19 @@ evalqOnLoad({
       params <- as.list(match.call(expand.dots=TRUE))
       #skipping first param which is function itself
       params$class.weights <- class.weights
+      params$class.type <- class.type
       return(do.call(.createMultiClassSVM, as.list(params[2:length(params)])))
     }
     
+    if ( core != "svmlight" && transductive.learning) 
+      core <- "svmlight"
     
     call <- match.call(expand.dots = TRUE)
     call[[1]] <- as.name("SVM")
 
     # check for errors
     if ( core != "libsvm" && core != "svmlight") 
-      stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" ))  
-    if ( core != "svmlight" && transductive.learning) 
-      stop(paste(GMUM_WRONG_LIBRARY, ": bad library, transductive learning is supported only by svmlight" ))  
+      stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" ))   
     if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") 
       stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
     if (prep != "2e" && prep != "none") stop(paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
@@ -413,7 +414,6 @@ evalqOnLoad({
 
     # Decide what label is used for unlabeled examples
     unlabeled.level = "TR"
-    unlabeled.level = "TR"
     if(transductive.learning){
       if(! ("TR" %in% levels || "0" %in% levels ) ){
         stop("Please include TR or 0 factor in levels for transductive learning")
@@ -432,7 +432,7 @@ evalqOnLoad({
     # Contribution to simplifying this are welcome :)
     if(transductive.learning){
       # Erasing TR from levels. We will never return it
-      levels = levels[levels != unlabeled.level] 
+      levels <- levels[levels != unlabeled.level] 
       indexes.unlabeled <- y == unlabeled.level  
       z <- y[!indexes.unlabeled]
       z <- as.integer(factor(z, levels=levels))
@@ -444,15 +444,15 @@ evalqOnLoad({
       y[!indexes.unlabeled] <- z
     }else{
       y <- as.integer(y) # Standarization, omits 0!
-      y[y==1] = -1 # Standarize it further!
-      y[y==2] = 1
+      y[y==1] <- -1 # Standarize it further!
+      y[y==2] <- 1
     }
     
     config <- new(SVMConfiguration)
     config$y <- data.matrix(y)
     
-    config$use_transductive_learning = transductive.learning
-    config$transductive_posratio = transductive.posratio
+    config$use_transductive_learning <- transductive.learning
+    config$transductive_posratio <- transductive.posratio
     
     # sparse 
     if (sparse) {
@@ -468,9 +468,6 @@ evalqOnLoad({
       config$x <- x
     }
     
-    if(!is.null(seed)){
-      config$setSeed(seed)
-    }
     config$setLibrary(core)
     config$setKernel(kernel)
     config$setPreprocess(prep)
@@ -563,8 +560,8 @@ evalqOnLoad({
                   object$getNumberSV()))
   }
   
-  plot.MultiClassSVM <<- function(x, X=NULL, cols=c(1,2), radius=3, radius.max=10) {
-    plot.svm(x, X=X, cols=cols, radius=radius, radius.max=radius.max)
+  plot.MultiClassSVM <<- function(x, X=NULL, mode="normal", cols=c(1,2), radius=3, radius.max=10) {
+    plot.svm(x, X=X, cols=cols, mode=mode, radius=radius, radius.max=radius.max)
   }
   
   plot.svm <<- function(x, X=NULL, mode="normal", cols=c(1,2), radius=3, radius.max=10) {
@@ -585,9 +582,10 @@ evalqOnLoad({
     
     #1. Get X and Y
     if(is.null(X)){
+      new_data <- FALSE
       if(class(x) == "MultiClassSVM"){
          X <- x$X
-         true_target <- x$Y
+         true_target <- as.factor(x$Y)
       }else{
         true_target <- as.factor(x$.getY())
         if(obj$isSparse()){
@@ -596,10 +594,10 @@ evalqOnLoad({
           X <- obj$.getX()
         }
       }
-      
       t <- predict(x, X)
       
     }else{
+      new_data <- TRUE
       t <- predict(x, X)
     }
     labels <- levels(as.factor(t))
@@ -624,8 +622,16 @@ evalqOnLoad({
     }
     colnames(df) <- c("X1", "X2") # This is even worse
     df['prediction'] <- as.factor(t)
-    levels(true_target) <- x$levels
-    df['label'] <- true_target
+    
+    if(!new_data){
+      if(length(levels(true_target)) > length(x$levels)){
+        levels(true_target) <- c(x$levels, "0") 
+      }
+      else {
+        levels(true_target) <- x$levels
+      }
+      df['label'] <- true_target
+    }
   
     #4. Prepare data for plotting
     if (obj$areExamplesWeighted()) {
@@ -659,10 +665,11 @@ evalqOnLoad({
       }
     }
     
-    
+    points <- NULL
     
     #6. PLOT
     if(ncol(X) == 2 && mode == "contour"){
+
       x_col <- df$X1
       y_col <- df$X2
       
@@ -670,6 +677,14 @@ evalqOnLoad({
       x_min <- min(x_col) 
       y_max <- max(y_col)
       y_min <- min(y_col)
+      
+      x_margin <- (x_max - x_min) / 10
+      y_margin <- (y_max - y_min) / 10
+      
+      x_max <- x_max + x_margin
+      x_min <- x_min - x_margin
+      y_max <- y_max + y_margin
+      y_min <- y_min - y_margin
       
       x_axis <- seq(from=x_min, to=x_max, length.out=300)
       y_axis <- seq(from=y_min, to=y_max, length.out=300)
@@ -681,26 +696,35 @@ evalqOnLoad({
       
       
       
+      if(new_data)
+        points <- geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction))
+      else
+        points <- geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label))
+      
       pl <- ggplot()+ 
         geom_tile(data=grid, aes(x=x,y=y, fill=prediction, alpha=.5)) + 
-        theme(legend.position="none") + 
         scale_fill_brewer(palette="Set1") + 
         scale_alpha_identity() + 
-        geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label)) + 
+        points + 
         scale_colour_brewer(palette="Set1") + 
         scale_size
       
     }else{
       if (ncol(X) > 2) warning("Only limited plotting is currently supported for multidimensional data")
       
+      if(new_data)
+        points <- geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction))
+      else
+        points <- geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label))
+      
       pl <- ggplot()+ 
-        geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label)) + 
+        points + 
         scale_colour_brewer(palette="Set1") + 
         scale_size
     }
     
     # Add line
-    if(!is.null(w) && ncol(X) && mode != "pca"){
+    if(!is.null(w) && ncol(X) && mode != "pca" && mode != "contour"){
       s <- -w[1]/w[2]
       int <- -obj$getBias()/w[2]
       pl <- pl + geom_abline(slope=s, intercept=int)
