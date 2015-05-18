@@ -186,8 +186,8 @@ void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
             if(assignment[j] == source)
             {
                 clusters[0]->add_point(points.row(j));
-                assignment[j] = 0;
             }
+            assignment[j] = 0;
         }
         return;
     }

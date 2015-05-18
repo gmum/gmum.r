@@ -2,13 +2,22 @@ standard_entropy <- function(cluster_points)
 {
     dimension <- dim(cluster_points)[2]
     cluster_cov_mat <- cov_mat(cluster_points)
-    return( dimension/2 * log(2 * pi * exp(1)) + log(det(cluster_cov_mat)) / 2 )
+    det_cluster_cov_mat <- det(cluster_cov_mat)
+    if(det_cluster_cov_mat == 0)
+    {
+        det_cluster_cov_mat <- 1.0e-32
+    }
+    return( dimension/2 * log(2 * pi * exp(1)) + log(det_cluster_cov_mat) / 2 )
 }
 
 sphere_entropy <- function(cluster_points)
 {
     dimension <- dim(cluster_points)[2]
     cluster_cov_mat_trace <- cov_mat_trace(cluster_points)
+    if(cluster_cov_mat_trace == 0)
+    {
+        cluster_cov_mat_trace <- 1.0e-32
+    }
     return ( dimension/2 * log(2 * pi * exp(1) / dimension) + dimension / 2 * log(cluster_cov_mat_trace) )
 }
 
@@ -16,7 +25,12 @@ diagonal_entropy <- function(cluster_points)
 {
     dimension <- dim(cluster_points)[2]
     cluster_cov_mat <- cov_mat(cluster_points)
-    return ( dimension/2 * log(2 * pi * exp(1)) + log(prod(diag(cluster_cov_mat))) / 2 )
+    det_cluster_cov_mat <- prod(diag(cluster_cov_mat))
+    if(det_cluster_cov_mat == 0)
+    {
+        det_cluster_cov_mat <- 1.0e-32
+    }    
+    return ( dimension/2 * log(2 * pi * exp(1)) + log(det_cluster_cov_mat) / 2 )
 }
 
 cluster_energy <- function(cluster_entropy, cluster_npoints, npoints)
@@ -43,7 +57,7 @@ cov_mat_trace <- function(cluster_points)
 {
     npoints <- dim(cluster_points)[1]
     mean <- as.vector(colMeans(cluster_points))
-    result <- 0
+    result <- 0.0
     for(i in 1:npoints)
     {
         p <- cluster_points[i, ] - mean
