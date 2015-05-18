@@ -44,7 +44,7 @@ test_that("EllipseGauss random assignment is correct", {
 })
 
 test_that("mouse_1 random assignment is correct", {
-  data(cec_mouse_1)
+  data(cec.mouse1)
   
   expected_energy <- cec.mouse1.extra[["energy"]]    
   dataset_clusters <- cec.mouse1.extra[["cluster"]]
@@ -70,11 +70,11 @@ test_that("mouse_1 random assignment is correct", {
 })
 
 test_that("mouse_1_spherical random assignment is correct", {
-  data(cec_mouse_1_spherical)
+  data(cec.mouse1.spherical)
   
-  expected_energy <- cec.mouse1spherical.extra[["energy"]]    
-  dataset_clusters <- cec.mouse1spherical.extra[["cluster"]]
-  dataset_points <- cec.mouse1spherical 
+  expected_energy <- cec.mouse1.spherical.extra[["energy"]]    
+  dataset_clusters <- cec.mouse1.spherical.extra[["cluster"]]
+  dataset_points <- cec.mouse1.spherical 
   
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
   

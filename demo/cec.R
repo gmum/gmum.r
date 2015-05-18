@@ -1,7 +1,7 @@
 library(gmum.r)
 
-data(cec_mouse_1_spherical)
-dataset = cec.mouse1spherical
+data(cec.mouse1.spherical)
+dataset = cec.mouse1.spherical
 
 # That is the dataset we want to cluster:
 plot(dataset, main="Mouse-like dataset")
