@@ -138,7 +138,7 @@ protected:
      * Convert SVMConfiguration to one line of SVMLight's `svm_classify` input
      * of every Support Vector in one line (starting with alpha*y)
      */
-    char * SVMConfigurationToSVMLightModelSVLine(
+     char * SVMConfigurationToSVMLightModelSVLine(
         SVMConfiguration &config, long int line_num
     );
 

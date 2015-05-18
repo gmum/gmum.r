@@ -667,7 +667,7 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 				accumulated_error_count > 15 * m_g.get_number_nodes()) {
 			gmum::scoped_lock<gmum::fast_mutex> stat_lock(m_statistics_mutex);
 
-			m_mean_error.push_back(make_pair<double, double>(time_elapsed,
+			m_mean_error.push_back(make_pair(time_elapsed,
 					accumulated_error/(double)accumulated_error_count
 					));
 

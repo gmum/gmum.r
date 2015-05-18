@@ -1,7 +1,7 @@
 library(gmum.r)
 library(CEC)
 source('../../../../../R/R_scripts/energy.R')
-method_types = list(gmum=c('standard', 'sphere', 'diagonal'), cran=c('all', 'spherical', 'diagonal'))
+method_types = list(gmum=c('standard', 'spherical', 'diagonal'), cran=c('all', 'spherical', 'diagonal'))
 entropy_func_map = list(standard_entropy, sphere_entropy, diagonal_entropy)
 nmethod_types = length(method_types$gmum)
 

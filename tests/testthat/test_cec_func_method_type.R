@@ -3,10 +3,10 @@ library('gmum.r')
 
 source("cec_function.R")
 
-data(cec_simple_1)
+data(cec.simple1)
 
-expected_energy <- cec_simple_1.energy
-dataset_points <- cec_simple_1.input
+expected_energy <- cec.simple1.extra[["energy"]]
+dataset_points <- cec.simple1
 
 test_that("Entropy is correct", {  
   c1 <- CEC(k=1, x=dataset_points, method.type='func', params.function=f_standard)

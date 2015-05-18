@@ -5,8 +5,8 @@ source('combinations.R')
 test_that("correctness works", {
   data(cec_ellipse_gauss)
   
-  dataset_clusters <- cec_ellipse_gauss.cluster[,1]
-  dataset_points <- cec_ellipse_gauss.input
+  dataset_clusters <- cec.ellipsegauss.extra[["cluster"]]
+  dataset_points <- cec.ellipsegauss
   
   nclusters <- 4
   npoints <- dim(dataset_points)[1]
@@ -17,11 +17,11 @@ test_that("correctness works", {
 })
 
 test_that("mouse_1_spherical kmeans coverage is correct", {
-  data(cec_mouse_1_spherical)
+  data(cec.mouse1.spherical)
   
-  expected_energy <- cec_mouse_1_spherical.energy
-  dataset_clusters <- cec_mouse_1_spherical.cluster[,1]
-  dataset_points <- cec_mouse_1_spherical.input
+  expected_energy <- cec.mouse1.spherical.extra[["energy"]]  
+  dataset_clusters <- cec.mouse1.spherical.extra[["cluster"]]
+  dataset_points <- cec.mouse1.spherical
   
   dataset_clusters <- dataset_clusters - min(dataset_clusters)
   
@@ -31,7 +31,7 @@ test_that("mouse_1_spherical kmeans coverage is correct", {
   npoints = dim(dataset_points)[1]
   for(i in 1:t)
   {
-    c <- CEC(k=3, x=dataset_points, control.nstart=1, method.type='sphere', method.init='kmeans++')
+    c <- CEC(k=3, x=dataset_points, control.nstart=1, method.type='spherical', method.init='kmeans++')
     plot(c)
     correct_percentage <- correctness(dataset_clusters, c$clustering(), npoints, nclusters)
     if(correct_percentage == 1) {
@@ -43,11 +43,11 @@ test_that("mouse_1_spherical kmeans coverage is correct", {
 })
 
 test_that("mouse_1_spherical kmeans energy is correct", {
-    data(cec_mouse_1_spherical)
-    
-    expected_energy <- cec_mouse_1_spherical.energy
-    dataset_clusters <- cec_mouse_1_spherical.cluster[,1]
-    dataset_points <- cec_mouse_1_spherical.input
+    data(cec.mouse1.spherical)
+        
+    expected_energy <- cec.mouse1.spherical.extra[["energy"]]  
+    dataset_clusters <- cec.mouse1.spherical.extra[["cluster"]]
+    dataset_points <- cec.mouse1.spherical
     
     dataset_clusters <- dataset_clusters - min(dataset_clusters)
     
@@ -57,7 +57,7 @@ test_that("mouse_1_spherical kmeans energy is correct", {
     npoints = dim(dataset_points)[1]
     for(i in 1:t)
     {
-        c <- CEC(k=3, x=dataset_points, control.nstart=1, method.type='sphere', method.init='kmeans++')
+        c <- CEC(k=3, x=dataset_points, control.nstart=1, method.type='spherical', method.init='kmeans++')
         plot(c)
         actual_energy <- c$energy()
         

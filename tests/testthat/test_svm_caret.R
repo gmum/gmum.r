@@ -37,4 +37,5 @@ test_that("Basic caret support for SVM works ", {
 
   expect_that(max(model$results$Accuracy) > 0.7, is_true())
 })
+print("test::svm caret")
 

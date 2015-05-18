@@ -10,6 +10,8 @@
 *.dylib
 *.dll
 
+# Co
+
 # Compiled Static libraries
 *.lai
 *.la
@@ -148,6 +150,7 @@ tests/testthat/Rplots.pdf
 
 #svm big data
 inst/data_sets/svm/colon-cancer
+inst/data_sets/svm
 
 .depend/
 build/
@@ -162,3 +165,5 @@ data/
 
 .idea/
 
+# compiled samples
+demo/samples/*.html

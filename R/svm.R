@@ -1,55 +1,124 @@
 library(ggplot2)
 
 #' @title SVM
-#' 
 #' @export
 #' 
-#' @description Create and train SVM model object. If any parameter will be omitted a default value will be used
+#' @description Create and train SVM model object. 
 #' 
-#' @param x Dataset without labels
-#' @param y Labels
-#' @param lib Desired SVM Library, avialable are: libsvm
-#' @param kernel Kernel type, avialable are: linear, poly, rbf, sigmoid
-#' @param prep Preprocess method, avialable are: none, 2e
-#' @param mclass Multiclass wariant, avialable are: none
-#' @param C Cost/Complexity parameter
-#' @param gamma Gamma parameter for poly, rbf and sigmoid kernels
-#' @param coef0 Coef0 for poly and sigmoid kernels
-#' @param degree Degree for poly kernel
-#' @param shrinking Whether to use shrinking heuristics
-#' @param probability Whether to train a model for probability estimates 
-#' @param cache_size Cache size
-#' @param tol Tolerance of termination criterion
-#' 
+#' @param x Training data without labels in one of the following formats:
+#'  \code{data.frame}, \code{data.matrix}, \code{SparseM::matrix.csr}, \code{Matrix::Matrix},
+#'  \code{slam::simple_triplet_matrix}
+#' @param y Labels in one of the followinf formts: \code{factor}, \code{vector}. 
+#'  Recommended type is \code{factor}
+#' @param data Can be passed instead of \code{x,} \code{y} pair with \code{formula} to mark the labels 
+#'  column, supported formats are:
+#'  \code{data.frame}, \code{data.matrix}
+#' @param formula Can be passed with \code{data}  instead of \code{x}, \code{y} pair, 
+#'  formula needs to point to lables column, for example: \code{target~.}
+#' @param core Support Vector Machine library to use in traning, available are: 
+#'  \code{'libsvm'}, \code{'svmlight'}; default: \code{'libsvm'} 
+#' @param kernel Kernel type as string, available are: \code{'linear'}, \code{'poly'},
+#' \code{'rbf'}, \code{'sigmoid'}; 
+#' default: \code{'linear'}
+#' \itemize{
+#' \item \code{linear}: \eqn{x'*w}
+#' \item \code{poly}: \eqn{(gamma*x'*w + coef0)^{degree}}
+#' \item \code{rbf}: \eqn{exp(-gamma*|x-w|^2)}
+#' \item \code{sigmoid}: \eqn{tanh(gamma*x'*w + coef0)}
+#' }
+#' @param prep Preprocess method as string, available are: \code{'none'}, \code{'2e'}; 
+#' default: \code{'none'}. For more information on \code{2eSVM} see:
+#' \url{http://www.sciencedirect.com/science/article/pii/S0957417414004138}
+#' @param C Cost/complexity parameter, default: \code{1}
+#' @param gamma Parameter for \code{poly}, \code{rbf} and \code{sigmoid} kernels, 
+#'  default: \code{1/n_features}
+#' @param coef0 For \code{poly} and \code{sigmoid} kernels, default: \code{0}
+#' @param degree For \code{poly} kernel, default: \code{3}
+#' @param cache_size Cache memory size in MB, default: \code{100}
+#' @param tol Tolerance of termination criterion, default: \code{1e-3}
+#' @param max.iter Depending on library:
+#' \itemize{
+#'  \item libsvm: number of iterations after which the training porcess is killed 
+#'  (it can end earlier is desired tolerance is met), default: \code{1e6}
+#'  \item svmlight: number of iterations after which if there is no progress traning is killed, 
+#'  default: \code{-1} (no limit)
+#'  }  
+#' @param transductive.learning Option got SVM model to deduce missing labels from the dataset, 
+#'  default: \code{FALSE}
+#'  NOTE: this feature is only available with svmlight library, missing labels are marked as 
+#'  \code{'TR'}, if none are found and transductive to \code{TRUE}, label \code{0} will be 
+#'  interpreted as missing
+#' @param transductive.posratio Fraction of unlabeled examples to be classified into the positive class 
+#'  as float from \eqn{[0,1]}, default: the ratio of positive and negative examples in the training data
+#' @param class.weights Named vector with weight fir each class, default: \code{NULL}
+#' @param example.weights Vector of the same length as training data with weights for each traning example,
+#'  default: \code{NULL} NOTE: this feature is only supported with svmlight library
+#' @param class.type Multiclass algorithm type as string, 
+#' available are: \code{'one.versus.all', 'one.versus.one'}; default: \code{'one.versus.one'}
+#' @param verbosity How verbose should the process be, as integer from \eqn{[1,6]}, default: \code{4}
+#'  
 #' @return SVM model object
 #' @examples 
-#' svm <- SVM(lib = "libsvm", kernel = "linear", C = 1, gamma = 0.01, coef0 = 0,degree = 3)
+#' # train SVM from data in x and labels in y 
+#' svm <- SVM(x, y, core="libsvm", kernel="linear", C=1)
 #' 
+#' # train SVM using a dataset with both data and lables and a formula pointing to labels
+#' formula <- target ~ . 
+#' svm <- SVM(formula, data, core="svmlight", kernel="rbf", gamma=1e3)
+#' 
+#' # train a model with 2eSVM algorithm
+#' data(svm_breast_cancer_dataset)
+#' ds <- svm.breastcancer.dataset
+#' svm.2e <- SVM(x=ds[,-1], y=ds[,1], core="libsvm", kernel="linear", prep = "2e", C=10);
+#' # more at <link to the 2e sample>
+#' 
+#' # train SVM on a multiclass data set
+#' data(iris)
+#' # with "one vs rest" strategy
+#' svm.ova <- SVM(Species ~ ., data=iris, class.type="one.versus.all", verbosity=0)
+#' # or with "one vs one" strategy
+#' svm.ovo <- SVM(x=iris[,1:4], y=iris[,5], class.type="one.versus.one", verbosity=0)
+#' 
+#' # we can use svmlights sample weighting feature, suppose we have weights vector 
+#' # with a weight for every sample in the traning data
+#' weighted.svm <- SVM(formula=y~., data=df, core="svmlight", kernel="rbf", C=1.0, 
+#'                     gamma=0.5, example.weights=weights)
+#'                     
+#' # svmlight alows us to determine missing labels from a dataset   
+#' # suppose we have a labels y with missing labels marked as zeros
+#' svm.transduction <- SVM(x, y, transductive.learning=TRUE, core="svmlight")
+#' 
+#' # for more in-depth examples visit <link to samples on the website>                       
 SVM <- NULL
+
+.createMultiClassSVM <- NULL
+summary.MultiClassSVM <- NULL
+show.MultiClassSVM <- NULL
+plot.MulticlassSVM <- NULL
+predict.MultiClassSVM <- NULL
 
 #' @title Predict
 #' 
-#' @description Returns predicted classes for provided test examples.
-#' 
-#' @rdname svm-predict-methods
+#' @description Returns predicted classes or distance to discriminative for provided test examples.
 #' 
 #' @export
 #' 
 #' @usage predict(svm, x)
 #' 
 #' @param object Trained SVM object.
-#' @param x unlabeled data, note that each entry needs to be the same dimentionality as training examples.
+#' @param x Unlabeled data, in one of the following formats:
+#'  \code{data.frame}, \code{data.matrix}, \code{SparseM::matrix.csr}, \code{Matrix::Matrix},
+#'  \code{slam::simple_triplet_matrix}
+#' @param decision.function Uf \code{TRUE} returns SVMs decision function 
+#' (distance of a point from discriminant) instead of predicted labels, default: \code{FALSE}
 #' 
 #' @docType methods
 #' 
-#' @aliases test
 predict.svm.gmum <- NULL
 
 #' @title print
 #' 
 #' @description Prints short summary of the SVM object and its parameters.
-#' 
-#' @rdname svm-print-methods
 #' 
 #' @export
 #' 
@@ -58,24 +127,33 @@ predict.svm.gmum <- NULL
 #' @param object SVM object
 #' 
 #' @docType methods
-#' @aliases summary
 print.svm <- NULL
 
 #' @title plot
 #' 
-#' @description Draws choosen dimenstions from a dataset on 2D plot coloring by class. NOTE: This function will be change to a package default function.
+#' @description Plots trained svm data and models disciriminative
 #' 
 #' @export
 #' 
-#' @usage plot(svm, pca=TRUE, log="x")
-#' @usage plot(svm, dim1=3, dim2=4)
+#' @param x Trained svm object
+#' @param X Optional new data points to be predicted and plotted in one of the following formats:
+#'  \code{data.frame}, \code{data.matrix}; default: \code{NULL}
+#' @param mode Which plotting mode to use as string, available are: 
+#'  \itemize{
+#'  \item \code{'normal'} - default mode, plots data in cols argument and a linear decision 
+#'    boundry in available
+#'  \item \code{'pca'} - preforms PCA decomposition and draws data in a subspace of first 2 dimensions 
+#'  from the PCA 
+#'  \item \code{'contour'} - countour plot for non-linear kernels
+#'  }
+#' @param cols Data dimensions to be plotted as vector of length 2, default: \code{c(1,2)}
+#' @param radius Radius of the plotted data points as float, default: \code{3}
+#' @param radius.max Maximum radius of data points can be plotted, when model is trained 
+#'  with example weights as float, default: \code{10}
 #' 
-#' @param pca Bool, use Principal Component Analysis for plot
-#' @param dim1 (optional) Dimension of dataset to plot on x axis, by default 1
-#' @param dim2 (optional) Dimension of dataset to plot on y axis, by default 2
-#' @param log (optional) Use logarthic transformation for an axis, "x", "y", or "xy"
-#' 
-#' @rdname plot-dataset-methods
+#' @usage plot(svm)
+#' @usage plot(svm, X=x, cols=c(1,3))
+#' @usage plot(svm, mode="pca", radius=5)
 #' 
 plot.svm <- NULL
 
@@ -88,8 +166,6 @@ plot.svm <- NULL
 #' @usage summary(svm)
 #' 
 #' @param svm SVM object 
-#' 
-#' @rdname svm-summary-method
 #' 
 summary.svm <- NULL
 
@@ -132,19 +208,100 @@ evalqOnLoad({
     if (is.data.frame(x)) x <- data.matrix(x)
 
     ret <- SVM.default(x, y, ...)
+    
     call[[1]] <- as.name("SVM")
     assign("call", call, ret)
     
     return(ret)
   }
   
+  .createMultiClassSVM <<- function(x, y, class.type, ...){
+    call <- match.call(expand.dots=TRUE)
+    ys <- as.factor(y)
+    tys <- table(ys)
+    lev <- levels(ys)
+    pick <- rbind(c(1),c(2))
+    if (class.type == 'one.versus.all'){
+      ymat <- matrix(-1, nrow = nrow(x), ncol = length(tys))
+      ymat[cbind(seq(along = ys), sapply(ys, function(x) which(x == lev)))] <- 1
+      # Result: ymat - dummy matrix where ymat[, i] is matrix for problem i
+    } else if(class.type == 'one.versus.one') { 
+      ## Classification: one against one
+      nclass <- length(tys)
+      m <- (nclass - 1)
+      minus <- nclass + 1 - sequence(m:1)
+      plus <- rep(1:m, m:1)
+      pick <- rbind(plus, minus)
+      xsplit <- split(data.frame(x), ys)
+      ymat <- list()
+      xlist <- list()
+      for(k in 1:ncol(pick)){
+        ymat[[k]] <- c(rep(1, nrow(xsplit[[ pick[1, k] ]])), rep(-1, nrow(xsplit[[ pick[2, k] ]])))
+        xlist[[k]] <- rbind(xsplit[[ pick[1, k] ]], xsplit[[ pick[2, k] ]])
+      }
+      
+      
+      # Result: ymat[[i]] - classes for problem i
+      # Result: xlist[[i]] - dataset for problem i
+    }else{
+      stop("Incorrect class.type")
+    }
+    # Get number of subproblems
+    if(is.matrix(ymat)){ 
+      J <- 1:ncol(ymat)               
+    }else if(is.list(ymat)){
+      J <- 1:length(ymat)
+    }
+    
+    models <- list()
+    
+    # Fit one model after another
+    for (j in J){
+      x.model <- NULL
+      y.model <- NULL
+      
+      if (class.type == "one.versus.all"){
+        x.model <- x
+        y.model <- ymat[,j]
+      }else if(class.type == "one.versus.one"){
+        # Note: it could be improved, but not so easily in R (all is copy)
+        x.model <- xlist[[j]]
+        y.model <- ymat[[j]]
+      }  
+      #TODO: uncomment
+      p <- as.list(match.call(expand.dots=TRUE))
+      p$x <- x.model
+      p$y <- as.factor(y.model)
+      models[[j]] <- do.call(SVM, p[2:length(p)])
+    }
+    call[[1]] <- as.name("SVM")
+    core <- as.list(call)$core
+    kernel <- as.list(call)$kernel
+    if (is.null(core)) core <- "libsvm"
+    if (is.null(kernel)) kernel <- "linear"
+
+    obj <- list(models=models, 
+                class.type=class.type, 
+                X=x,
+                Y=y,
+                pick=pick, 
+                levels=lev, 
+                call=call, 
+                core=core, 
+                kernel=kernel)
+
+    class(obj) <- "MultiClassSVM"
+    obj
+  }
+  
   SVM.default <<- 
   function(x,
            y,
-           lib         = "libsvm",             
+           core         = "libsvm",             
            kernel      = "linear",
            prep        = "none",
-           mclass      = "none",
+           transductive.learning = FALSE,
+           transductive.posratio = -1.,
            C           = 1,
            gamma       = if (is.vector(x)) 1 else 1 / ncol(x),
            coef0       = 0,
@@ -153,22 +310,52 @@ evalqOnLoad({
            probability = FALSE,
            class.weights    = NULL,
            example.weights    = NULL,
-           cache_size  = 200,
+           cache_size  = 100,
            tol         = 1e-3,
-           verbosity   = 4) {
+           max.iter    = -1,
+           verbosity   = 4,
+           class.type = 'one.versus.all',
+           seed = NULL) {
+    # First check if we have binary or multiclass case
+    if (!is.vector(y) && !is.factor(y)) {
+      stop("y is of a wrong class, please provide vector or factor")
+    }
+    
+    levels <- NULL
+    if (is.factor(y)){
+      levels <- levels(y)
+    }else{
+      # Standarizing, easier for library
+      y <- as.factor(y)
+      levels <- levels(y)
+      warning("It is recommended to pass y as factor")
+    }
+  
+    # We don't support transductive multiclass, because it is bazinga
+    if((length(levels) > 2 && !transductive.learning)){
+      params <- as.list(match.call(expand.dots=TRUE))
+      #skipping first param which is function itself
+      return(do.call(.createMultiClassSVM, as.list(params[2:length(params)])))
+    }
+    
     
     call <- match.call(expand.dots = TRUE)
     call[[1]] <- as.name("SVM")
 
     # check for errors
-    if ( lib != "libsvm" && lib != "svmlight") stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" ))  
-    if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
+    if ( core != "libsvm" && core != "svmlight") 
+      stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" ))  
+    if ( core != "svmlight" && transductive.learning) 
+      stop(paste(GMUM_WRONG_LIBRARY, ": bad library, transductive learning is supported only by svmlight" ))  
+    if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") 
+      stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
     if (prep != "2e" && prep != "none") stop(paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
-    if (mclass != "none") stop(paste(GMUM_NOT_SUPPORTED, ": multiclass" ))
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
     if (C < 0 || gamma < 0 || degree < 1) stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
-      
+    if ((transductive.posratio < 0 && transductive.posratio != -1) || transductive.posratio > 1)
+      stop("Please pass transductive.posratio in range [0,1]")  
+    
     # check data
     if(nrow(x) != length(y)) stop("x and y have different lengths")
     if(inherits(x, "Matrix")) {
@@ -206,39 +393,76 @@ evalqOnLoad({
       }
     }
     
-    if (!is.vector(y) && !is.factor(y)) stop("y is of a wrong class, please provide vector or factor")
     
-    levels <- NULL
-    if (is.factor(y)){
-      levels <- levels(y)
+
+    
+    # Binary classification or 2 classes + unlabeled (for transductive learning)
+    if( (length(levels) != 2 && !transductive.learning) || 
+         (length(levels) != 3 && transductive.learning)){
+      stop("Please pass correct (binary) number of classes or 3 for transductive")
+    }
+
+    # Decide what label is used for unlabeled examples
+    unlabeled.level = "TR"
+    unlabeled.level = "TR"
+    if(transductive.learning){
+      if(! ("TR" %in% levels || "0" %in% levels ) ){
+        stop("Please include TR or 0 factor in levels for transductive learning")
+      }
+      if("TR" %in% levels && "0" %in% levels ){
+        stop("Couldn't deduce which label to use for transductive learning")
+      }
+      
+      if("TR" %in% levels){
+        unlabeled.level <- "TR"
+      }else{
+        unlabeled.level <- "0"
+      }
+    }
+    # This ugly block of code ensures -1, 1 and 0 classes.
+    # Contribution to simplifying this are welcome :)
+    if(transductive.learning){
+      # Erasing TR from levels. We will never return it
+      levels = levels[levels != unlabeled.level] 
+      indexes.unlabeled <- y == unlabeled.level  
+      z <- y[!indexes.unlabeled]
+      z <- as.integer(factor(z, levels=levels))
+      z[z==1] = -1
+      z[z==2] = 1
+      
       y <- as.integer(y)
+      y[indexes.unlabeled] <- 0
+      y[!indexes.unlabeled] <- z
+    }else{
+      y <- as.integer(y) # Standarization, omits 0!
+      y[y==1] = -1 # Standarize it further!
+      y[y==2] = 1
     }
     
     config <- new(SVMConfiguration)
     config$y <- data.matrix(y)
     
+    config$use_transductive_learning = transductive.learning
+    config$transductive_posratio = transductive.posratio
+    
     # sparse 
     if (sparse) {
       config$sparse <- 1
       
-      # OLD (for our conversion) TODO: Delete after rewrite in LibSVMRunner
-      config$sp_x <- x@ra
-      config$sp_row <- x@ia
-      config$sp_col <- x@ja
-      config$dim <- nrow(x)
-      config$data_dim <- ncol(x)
-
-      # NEW (for arma::sp_mat)  
-      x <- as.matrix.csc(x)
-      config$set_sparse_data(x@ja, x@ia, x@ra, nrow(x), ncol(x))
+      #x@ia - rowptr 
+      #x@ja - colind
+      #x@ra - values
+      config$set_sparse_data(x@ia, x@ja, x@ra, nrow(x), ncol(x), TRUE)
     }
     else {
       config$sparse <- 0
       config$x <- x
     }
     
-    
-    config$setLibrary(lib)
+    if(!is.null(seed)){
+      config$setSeed(seed)
+    }
+    config$setLibrary(core)
     config$setKernel(kernel)
     config$setPreprocess(prep)
     config$set_verbosity(verbosity)
@@ -249,17 +473,32 @@ evalqOnLoad({
     config$degree <- degree
     config$eps <- tol
     config$cache_size <- cache_size
+    config$max_iter <- max.iter
     
-    
-    if(!is.null(class.weights) && !is.logical(class.weights)) {
+    if (!is.null(class.weights) && !is.logical(class.weights)) {
+      
+      if(is.null(names(class.weights)) && class.weights != 'auto'){
+          stop("Please provide class.weights as named (by classes) list or vector or 'auto'")
+      }
+      
       if (is.character(class.weights) && class.weights == "auto") {
+        # sklearns heuristic automatic class weighting
         counts <- hist(y, breaks=2, plot=FALSE)$counts
         inv_freq <- 1 / counts
         weights <- inv_freq / mean(inv_freq)
-        config$setWeights(weights)
+        config$setClassWeights(weights)
       }
       else {
-        config$setWeights(class.weights)
+        # Maps name -> index that is feed into SVM
+        # Note: factor is transformed such that class -> index in levels of factor
+        class.labels.indexes <- sapply(names(class.weights), function(cls){ which(levels== cls)[1] })
+        # Standarize for all libraries (so if passed list("2"=1, "1"=3) it is reversed)
+        class.weights <- class.weights[order(class.labels.indexes)] 
+        # We always pass numeric, so it will work if it is the case
+        if(!is.numeric(y)){
+          stop("[DEV] breaking change, please fix")
+        }
+        config$setClassWeights(as.numeric(class.weights))
       }
     }
     
@@ -289,76 +528,138 @@ evalqOnLoad({
   } 
 
   print.svm <- function(x) {
-    print(sprintf("SVM object with: library: %s, kernel: %s, preprocess: %s, C: %.1f, gamma: %.3f, coef0: %.3f, degree: %d",
-                  x$getLibrary(),
-                  x$getKernel(),
-                  x$getPreprocess(),
-                  x$getC(),
-                  x$getGamma(),
-                  x$getCoef0(),
-                  x$getDegree() ))
+    summary(x)
+  }
+  
+  summary.MultiClassSVM <<- function(object) {
+    print(sprintf("Support Vector Machine, multiclass.type: %s, core: %s, kernel: %s",
+                  object$class.type, 
+                  object$core, 
+                  object$kernel))
+    print(sprintf("%d classes", 
+                  length(object$levels)))
+  }
+  
+  print.MultiClassSVM <<- function(object) {
+    summary.MultiClassSVM(object)
   }
   
   summary.svm <<- function(object) {
-    print(sprintf("Support Vector Machine, library: %s, kernel: %s, preprocess: %s",
+    print(sprintf("Support Vector Machine, core: %s, kernel: %s, preprocess: %s",
                   object$getLibrary(), 
                   object$getKernel(), 
                   object$getPreprocess()))
     print(sprintf("%d classes with %d support vectors", 
-                  object$get_number_class(), 
-                  object$get_number_sv()))
+                  object$getNumberClass(), 
+                  object$getNumberSV()))
   }
   
-  plot.svm <<- function(x, mode="normal", dim1 = 1, dim2 = 2, log="") {
-    if (x$isSparse()) {
-      stop("Data is sparse")
-    }
+  plot.MultiClassSVM <<- function(x, X=NULL, cols=c(1,2), radius=3, radius.max=10) {
+    plot.svm(x, X=X, cols=cols, radius=radius, radius.max=radius.max)
+  }
+  
+  plot.svm <<- function(x, X=NULL, mode="normal", cols=c(1,2), radius=3, radius.max=10) {
+    #0. Some initial preparing
     if (mode != "pca" && mode != "normal" && mode != "contour" ) {
       stop("Wrong mode!") 
     }
-    kernel <- x$getKernel()
-    df <- data.frame( x$getX() )
-    t <- x$getY()
-    if (mode != "contour" && kernel == "linear") {
-      w <- c(x$getW())
+    if(class(x) == "MultiClassSVM"){
+      obj <- x$models[[1]]
+    }else{
+      obj <- x
     }
-    if (mode == "pca" && kernel == "linear") {
-      pca_data = prcomp(df, scale=TRUE)
-      scores = data.frame(df, pca_data$x[,1:2])
-      w <- w %*% pca_data$rotation
-      A <- w[1]
-      B <- w[2]
-      C <- x$getBias()
-      
-      s <- -A/B
-      int <- -C/B
-      
-      pl <- ggplot() +
-        geom_point(data=scores, aes(PC1, PC2), colour=factor(t+2)) + geom_abline(slope=s, intercept=int)
-      plot(pl)
+    if(obj$isSparse()){
+      library(SparseM)
+      library(Matrix)
+      library(e1071)
     }
-    else if (mode == "normal" && kernel == "linear") { 
-      if (dim1 > ncol(df) || dim2 > ncol(df)) {
-        stop("Too large dimensions")
-      }
-      A <- w[1]
-      B <- w[2]
-      C <- x$getBias()      
-      s <- -A/B
-      int <- -C/B
     
-      t <- replace(t, t==1, 'blue')
-      t <- replace(t, t==-1, 'red')
+    #1. Get X and Y
+    if(is.null(X)){
+      if(class(x) == "MultiClassSVM"){
+         X <- x$X
+         true_target <- x$Y
+      }else{
+        true_target <- as.factor(x$.getY())
+        if(obj$isSparse()){
+          X <- Matrix::t(obj$.getSparseX())
+        }else{
+          X <- obj$.getX()
+        }
+      }
       
-      pl <- ggplot() + geom_point(data=df, aes(X1, X2), colour=t)  +
-        geom_abline(slope=s, intercept=int)
-      plot(pl)
+      t <- predict(x, X)
+      
+    }else{
+      t <- predict(x, X)
+      true_target <- NULL
     }
-    else if (mode == "contour" || kernel != "linear") {    # test mode
-      warning("This is experimental mode, it will change your SVM's data!")
-      temp_target <- x$getY()
-      x_col <- df[colnames(df)[1]]
-      y_col <- df[colnames(df)[2]]
+    labels <- levels(as.factor(t))
+    
+    #2. Do some checking
+
+    if (ncol(X) > 2){
+      warning("Only 2 dimension plotting is supported for multiclass. Plotting using cols parameter")
+    }   
+    if (ncol(X) > 2 && mode == "contour"){
+      stop("Contour mode is supported only for 2 dimensional data")
+    }
+    if (ncol(X) == 1){
+      stop("Plotting is not supported for 1 dimensional data")
+    }
+    
+    #3. Prepare df. This is ugly copy so that we can do whatever we want
+    if(obj$isSparse()){
+      df <- data.frame(SparseM::as.matrix(X[,cols]))
+    }else{
+      df <- data.frame(X[,cols])
+    }
+    colnames(df) <- c("X1", "X2") # This is even worse
+    df['prediction'] <- as.factor(t)
+    
+    if(!is.null(true_target)){
+      levels(true_target) <- x$levels
+      df['label'] <- true_target
+    }
+  
+    #4. Prepare data for plotting
+    if (obj$areExamplesWeighted()) {
+      df['sizes'] <- obj$getExampleWeights()
+      scale_size <- scale_size_continuous(range = c(radius,radius.max))
+    }else {
+      df['sizes'] <- radius
+      scale_size <- scale_size_identity()
+    }
+    
+    #5. Support parameters
+    kernel <- obj$getKernel()
+    
+    
+    if(mode == "pca"){
+      mx <- colMeans(X)
+      pca_data <- prcomp(X, scale=FALSE)
+      # Transform data
+      df$X1 <- pca_data$x[,1]
+      df$X2 <- pca_data$x[,2]
+    }
+    
+    w <- NULL
+    if (kernel == "linear" && class(x) != "MultiClassSVM") {
+      # W will be used only for binary model
+      if (mode == "pca") {
+        w <- c(obj$getW())
+        w <- (w - mx) %*% pca_data$rotation
+      }else if(ncol(X)==2){
+        w <- c(obj$getW())
+      }
+    }
+    
+    
+    
+    #6. PLOT
+    if(ncol(X) == 2 && mode == "contour"){
+      x_col <- df$X1
+      y_col <- df$X2
       
       x_max <- max(x_col)
       x_min <- min(x_col) 
@@ -369,27 +670,95 @@ evalqOnLoad({
       y_axis <- seq(from=y_min, to=y_max, length.out=300)
       grid <- data.frame(x_axis,y_axis)
       grid <- expand.grid(x=x_axis,y=y_axis)
-      target <- predict(x, grid)
       
-      if (x$areExamplesWeighted()) {
-        df['sizes'] <- x$getExampleWeights()
+      prediction <- predict(x, grid)
+      grid['prediction'] <- prediction
+      
+      
+      if(!is.null(true_target)){
+        pl <- ggplot()+ 
+          geom_tile(data=grid, aes(x=x,y=y, fill=prediction, alpha=.5)) + 
+          theme(legend.position="none") + 
+          scale_fill_brewer(palette="Set1") + 
+          scale_alpha_identity() + 
+          geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label)) + 
+          scale_colour_brewer(palette="Set1") + 
+          scale_size
       }
-      else {
-        df['sizes'] <- 0.1
+      else{
+        pl <- ggplot()+ 
+          geom_tile(data=grid, aes(x=x,y=y, fill=prediction, alpha=.5)) + 
+          theme(legend.position="none") + 
+          scale_fill_brewer(palette="Set1") + 
+          scale_alpha_identity() + 
+          geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction)) + 
+          scale_colour_brewer(palette="Set1") + 
+          scale_size
+      }  
+    }else{
+      warning("Only limited plotting is currently supported for multidimensional data")
+      if(!is.null(true_target)){
+        pl <- ggplot()+ 
+          geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label)) + 
+          scale_colour_brewer(palette="Set1") + 
+          scale_size
+      }else{
+        pl <- ggplot()+ 
+          geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction)) + 
+          scale_colour_brewer(palette="Set1") + 
+          scale_size
       }
-      
-      t <- replace(t, t==1, 'blue')
-      t <- replace(t, t==-1, 'red')
-      grid["target"] <- target
-      
-      pl <- ggplot()+ 
-        geom_tile(data=grid, aes(x=x,y=y, fill=factor(target))) + theme(legend.position="none") +
-        geom_point(data=df, aes(X1, X2, size=sizes), colour=t) + scale_size_continuous(range = c(3, 6))
-      plot(pl)
     }
+    
+    # Add line
+    if(!is.null(w) && ncol(X) && mode != "pca"){
+      s <- -w[1]/w[2]
+      int <- -obj$getBias()/w[2]
+      pl <- pl + geom_abline(slope=s, intercept=int)
+    }
+    
+    plot(pl)
   }
   
-  predict.svm.gmum <<- function(object, x) {
+  predict.MultiClassSVM <<- function(object, x){
+    # Sums votes
+    prediction.row.oao <- function(r){
+      object$levels[which.max(sapply(1:length(object$levels), function(cl){ sum(r==cl)}))]
+    }
+    # Argmax of decision function
+    prediction.row.oaa <- function(r){
+      object$levels[which.max(r)]
+    }
+    ymat <- c()
+    for(i in 1:length(object$models)){
+      model <- object$models[[i]]
+
+      if(object$class.type == "one.versus.one"){
+        pick <- as.integer(object$pick[,i])
+        pick = pick[c(2,1)] # Reverse order
+        # Predict
+        prediction <- predict(model, x)
+        
+        # Replace labels
+        votes <- pick[as.integer(prediction)]
+        ymat <- cbind(ymat, votes)
+      }else{
+        # Predict
+        prediction <- predict(model, x, decision.function=TRUE)
+        ymat <- cbind(ymat, prediction)    
+      }
+    }
+    if(object$class.type == "one.versus.one"){
+      ymat.preds <- apply(ymat, 1, prediction.row.oao)
+    }else if(object$class.type == "one.versus.all"){
+      ymat.preds <- apply(ymat, 1, prediction.row.oaa)
+    }else{
+      stop("Unrecognized class.type")
+    }
+    return(factor(ymat.preds, levels=object$levels))
+  }
+  
+  predict.svm.gmum <<- function(object, x, decision.function=FALSE) {
     if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric") && !is(x,"matrix.csr") ) {
       stop("Wrong target class, please provide data.frame, matrix or numeric vector")
     }
@@ -406,16 +775,33 @@ evalqOnLoad({
       if (!is(x, "matrix.csr")) {
         stop("Please provide sparse matrix")
       }
-      x <- as.matrix.csc(x)
-      object$sparse_predict(x@ja, x@ia, x@ra, nrow(x), ncol(x))
-    }
-    prediction <- object$getPrediction()
-    
-    if(!is.null(object$levels)){
-      prediction <- factor(object$levels[prediction], levels = object$levels)
+      object$sparse_predict(x@ia, x@ja, x@ra, nrow(x), ncol(x))
     }
     
-    prediction
+    if(decision.function){
+      return(object$getDecisionFunction())
+    }else{
+      prediction <- object$getPrediction()
+      
+      if(any(prediction == 0) || length(unique(prediction)) > length(object$levels)){
+        stop("Failed prediction, returned too many unique labels from library.")
+      }
+      
+      
+      if(!is.null(object$levels)){
+        # This line works because we do as.numeric() which transforms into 1 and 2
+        # And we expect SVM to return same labels as passed
+        if(length(object$levels) == 2){
+          # Binary case
+          prediction <- factor(object$levels[(prediction+1)/2 + 1], levels = object$levels)
+        }else{
+          prediction <- factor(object$levels[prediction], levels = object$levels)
+        }
+        
+      }
+      
+      prediction
+    }
   }
 
   setMethod("print", "Rcpp_SVMClient", print.svm)
@@ -424,7 +810,8 @@ evalqOnLoad({
   setMethod("summary", "Rcpp_SVMClient", summary.svm)
   setMethod("show", "Rcpp_SVMClient", summary.svm)
 
-  # Add (very basic) support for caret
+
+# Add (very basic) support for caret
   
   copy <- function(x) x
   
@@ -470,9 +857,10 @@ evalqOnLoad({
                                    param$coef0 = 0
                                  }
                                  
-                                 return(gmum.r::SVM(
-                                   x,
-                                   y,
+                                 
+                                 sv <- gmum.r::SVM(
+                                   x=x,
+                                   y=y,
                                    C = param$C,
                                    gamma = param$gamma,
                                    degree = param$degree,
@@ -480,7 +868,9 @@ evalqOnLoad({
                                    probability = classProbs,
                                    kernel = param$kernel,
                                    ...
-                                 ))
+                                 )
+                                 
+                                 return(sv)
                                },
                                predict = function(modelFit, newdata, submodels = NULL) {  
                                  as.factor(predict(modelFit, newdata))
@@ -489,7 +879,7 @@ evalqOnLoad({
                                  predict(modelFit, newdata)
                                },
                                varImp = NULL,
-                               levels = function(x) {levels(x$getY())},
+                               levels = function(x) {levels(x$.getY())},
                                sort = function(x) x[order(x[,1]),]
   )
   

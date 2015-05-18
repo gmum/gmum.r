@@ -1,7 +1,7 @@
 library(gmum.r)
 
-data(cec_mouse_1_spherical)
-dataset = cec_mouse_1_spherical.input
+data(cec.mouse1.spherical)
+dataset = cec.mouse1.spherical
 
 # That is the dataset we want to cluster:
 plot(dataset, main="Mouse-like dataset")
@@ -15,7 +15,7 @@ c <- CEC(k=3, x=dataset, control.nstart=10)
 plot(c)
 
 # Better than before, however, we know that clusters are spherical; let's inform CEC about that.
-c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere')
+c <- CEC(k=3, x=dataset, control.nstart=10, method.type='spherical')
 plot(c)
 # Ain't that great? :D
 
@@ -30,5 +30,5 @@ predict(c, c(1,1))
 plot(c, ellipses=TRUE)
 
 # Try the same with random assignment.
-c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere', method.init='random')
+c <- CEC(k=3, x=dataset, control.nstart=10, method.type='spherical', method.init='random')
 plot(c)
