@@ -197,6 +197,7 @@ int SVMLightRunner::librarySVMLearnMain(
       svm_learn_optimization(docs,target,totdoc,totwords,&learn_parm,
 			   &kernel_parm,kernel_cache,model,alpha_in);
     }
+    config.iter = learn_parm.iterations;
 
     if(kernel_cache) {
       /* Free the memory used for the cache. */

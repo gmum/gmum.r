@@ -21,9 +21,29 @@
 # include "svm_learn.h"
 
 
+// // gmum.r
+// extern smallroundcount;
+// extern roundnumber;
+// extern precision_violations;
+// extern *primal=0,*dual=0;
+// long   precision_violations=0;
+// double opt_precision=DEF_PRECISION;
+// long   maxiter=DEF_MAX_ITERATIONS;
+// double lindep_sensitivity=DEF_LINDEP_SENSITIVITY;
+// double *buffer;
+// long   *nonoptimal;
+
+// void init_global_params_QP() {
+//     smallroundcount = 0;
+//     roundnumber = 0;
+//     precision_violations = 0;
+// }
+// // gmum.r
+
+
 /* interface to QP-solver */
 double *optimize_qp(QP *, double *, long, double *, LEARN_PARM *);
-
+void init_global_params_QP();
 /*---------------------------------------------------------------------------*/
 
 /* Learns an SVM classification model based on the training data in
@@ -51,6 +71,8 @@ void svm_learn_classification(DOC **docs, double *class, long int
 	             pointer. The new alpha values are returned after 
 		     optimization if not NULL. Array must be of size totdoc. */
 {
+  init_global_params_QP();
+
   long *inconsistent,i,*label;
   long inconsistentnum;
   long misclassified,upsupvecnum;
@@ -252,6 +274,8 @@ void svm_learn_classification(DOC **docs, double *class, long int
 				     &maxdiff,(long)-1,
 				     (long)1);
   
+  learn_parm->iterations=iterations;
+
   if(verbosity>=1) {
     if(verbosity==1) printf("done. (%ld iterations)\n",iterations);
 
@@ -483,6 +507,7 @@ void svm_learn_regression(DOC **docs, double *value, long int totdoc,
                      linear. Note that it will be free'd and reassigned */
      /* model:       Returns learning result (assumed empty before called) */
 {
+  init_global_params_QP();
   long *inconsistent,i,j;
   long inconsistentnum;
   long upsupvecnum;
@@ -610,7 +635,8 @@ void svm_learn_regression(DOC **docs, double *value, long int totdoc,
 				     model,inconsistent,unlabeled,a,lin,c,
 				     &timing_profile,&maxdiff,(long)-1,
 				     (long)1);
-  
+  learn_parm->iterations=iterations;
+
   if(verbosity>=1) {
     if(verbosity==1) printf("done. (%ld iterations)\n",iterations);
 
@@ -716,6 +742,7 @@ void svm_learn_ranking(DOC **docs, double *rankvalue, long int totdoc,
                      getting reinitialized in this function */
      /* model:       Returns learning result (assumed empty before called) */
 {
+  init_global_params_QP();
   DOC **docdiff;
   long i,j,k,totpair,kernel_cache_size;
   double *target,*alpha,cost;
@@ -878,6 +905,7 @@ void svm_learn_optimization(DOC **docs, double *rhs, long int
 	             pointer. The new alpha values are returned after 
 		     optimization if not NULL. Array must be of size totdoc. */
 {
+  init_global_params_QP();
   long i,*label;
   long misclassified,upsupvecnum;
   double loss,model_length,example_length;
@@ -1048,6 +1076,8 @@ void svm_learn_optimization(DOC **docs, double *rhs, long int
 				     a,lin,c,&timing_profile,
 				     &maxdiff,(long)-1,(long)1);
   
+  learn_parm->iterations=iterations;
+
   if(verbosity>=1) {
     if(verbosity==1) printf("done. (%ld iterations)\n",iterations);
 

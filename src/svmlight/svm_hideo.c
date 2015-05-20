@@ -62,6 +62,21 @@ long   *nonoptimal;
 long  smallroundcount=0;
 long  roundnumber=0;
 
+
+void init_global_params_QP() {
+    primal=0,dual=0;
+    lindep_sensitivity=DEF_LINDEP_SENSITIVITY;
+    maxiter=DEF_MAX_ITERATIONS;
+    opt_precision=DEF_PRECISION;
+    buffer = 0;
+    nonoptimal = 0;
+    smallroundcount = 0;
+    roundnumber = 0;
+    precision_violations = 0;
+}
+// gmum.r
+
+
 /* /////////////////////////////////////////////////////////////// */
 
 void *my_malloc();
