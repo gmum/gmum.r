@@ -27,7 +27,7 @@ test_that("Basic saving/loading works", {
 test_that("predictCluster returns sensible results", {
   data(cec_mouse_1_spherical)
   g <- GNG(cec.mouse1spherical, max.nodes=50)
-  mouse_centr <- centroids(g)
+  mouse_centr <- predictCentroids(g)
   
   m = as.data.frame(cec.mouse1spherical)
   colnames(m) = c("x", "y")
@@ -44,8 +44,8 @@ test_that("predictCluster returns sensible results", {
   y_axis <- seq(from=y_min, to=y_max, length.out=30)
   grid <- data.frame(x_axis,y_axis)
   grid <- expand.grid(x=x_axis,y=y_axis)
-  target <- predictCentroid(g, centroids=mouse_centr, x=grid)
-  target_loopy <- apply(grid, 1, function(x) predictCentroid(g, centroids=mouse_centr, x=x))
+  target <- findClosests(g, node.ids=mouse_centr, x=grid)
+  target_loopy <- apply(grid, 1, function(x) findClosests(g, node.ids=mouse_centr, x=x))
   
   grid["target"] <- target
   library(ggplot2)

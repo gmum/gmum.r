@@ -632,6 +632,7 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 				gmum::scoped_lock<GNGDataset> db_lock(*g_db);
 				ex = g_db->drawExample();
 
+                LOG(m_logger, 8, to_str(ex));
 
 				position = g_db->getPosition(ex);
 				vertex_data = g_db->getExtraData(ex);

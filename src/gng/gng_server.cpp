@@ -31,16 +31,17 @@ GNGServer::GNGServer(GNGConfiguration configuration,
 void GNGServer::init(GNGConfiguration configuration,
 		std::istream * input_graph) {
 
-    if(configuration.seed != -1){
-        srand(configuration.seed);
-    }
-
 	m_index = gng_server_count++;
 
 	algorithm_thread = 0;
 	m_running_thread_created = false;
 
 	m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity));
+
+    if(configuration.seed != -1){
+        LOG(m_logger, 5, "GNGServer()::seeding to "+to_str(configuration.seed));
+        srand(configuration.seed);
+    }
 
 	LOG(m_logger,5, "GNGServer()::constructing GNGServer");
 

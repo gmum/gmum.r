@@ -180,7 +180,7 @@ SVM.default <- NULL
 
 loadModule('svm_wrapper', TRUE)
 
-evalqOnLoad({
+evalqOnLoad( with(asNamespace("gmum.r"), {
 
   SVM <<- function(x, ...)
     UseMethod("SVM")
@@ -907,6 +907,6 @@ evalqOnLoad({
   caret.gmumSvmPoly <<- caret.gmumSvmPoly.loc
   caret.gmumSvmLinear <<- caret.gmumSvmLinear.loc
   
-})
+}), where=asNamespace("gmum.r"))
 
 

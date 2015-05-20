@@ -178,7 +178,7 @@ nstart.cec <- NULL
 
 loadModule('cec', TRUE)
 
-evalqOnLoad({
+evalqOnLoad( with(asNamespace("gmum.r"), {
   CEC <<- function(x = NULL,
                    k = 0,
                    method.type = "standard",
@@ -331,4 +331,4 @@ evalqOnLoad({
       })
       
     })
-})
+}), where=asNamespace("gmum.r"))
