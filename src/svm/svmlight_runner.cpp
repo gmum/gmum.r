@@ -14,7 +14,7 @@
 #include <cassert>
 
 #include "svmlight_runner.h"
-#include "utils/log.hpp"
+#include "utils/logger.h"
 #include "svm_basic.h"
 #include "utils/utils.h"
 

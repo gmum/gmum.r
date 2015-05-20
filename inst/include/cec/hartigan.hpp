@@ -6,7 +6,7 @@
 #include <vector>
 #include "algorithm.hpp"
 #include "cluster.hpp"
-#include "../utils/log.hpp"
+#include "../utils/logger.h"
 #include <sstream>
 
 namespace gmum {

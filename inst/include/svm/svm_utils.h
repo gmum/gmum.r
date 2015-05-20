@@ -20,7 +20,7 @@
 using namespace std;
 
 //TODO: clean after consolidating svm_utils.h
-//and log.h with utils/log.hpp and utils/utils.h
+//and log.h with utils/logger.h and utils/utils.h
 template<class T>
 std::string svm_to_str(const T& x) {
 	stringstream ss;

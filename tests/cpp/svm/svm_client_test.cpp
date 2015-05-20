@@ -4,7 +4,7 @@
 
 #include "svm_helpers.h"
 #include "svm_client.h"
-#include "utils/log.hpp"
+#include "utils/logger.h"
 
 namespace {
 

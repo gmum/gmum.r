@@ -33,7 +33,7 @@ typedef vector<int> VI;
 #include <stdlib.h>
 #include <time.h>
 
-#include <utils/log.hpp>
+#include <utils/logger.h>
 
 #define LOG(logger, level, text) logger.log(level, text);
 

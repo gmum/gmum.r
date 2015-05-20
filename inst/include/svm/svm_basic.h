@@ -8,7 +8,7 @@
 #include <RcppArmadillo.h>
 #endif
 
-#include "utils/log.hpp"
+#include "utils/logger.h"
 
 enum KernelType {
     _LINEAR, _POLY, _RBF, _SIGMOID // _PRECOMPUTED

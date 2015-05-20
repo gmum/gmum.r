@@ -7,7 +7,7 @@
 #include "svmlight_runner.h"
 #include "svm_basic.h"
 #include "svm_client.h"
-#include "utils/log.hpp"
+#include "utils/logger.h"
 
 namespace {
 
