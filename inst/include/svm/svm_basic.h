@@ -1,6 +1,7 @@
 #ifndef SVM_BASIC_H
 #define SVM_BASIC_H
 
+#include <armadillo>
 #include <string>
 #include <cstdlib>
 

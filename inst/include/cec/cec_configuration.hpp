@@ -1,6 +1,8 @@
 #ifndef CECCONFIGURATION_HPP
 #define CECCONFIGURATION_HPP
 
+#include <armadillo>
+
 #include "params.hpp"
 
 #ifdef RCPP_INTERFACE

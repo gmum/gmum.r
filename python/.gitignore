@@ -1,0 +1,5 @@
+# SWIG-generated files
+swig
+
+# Compiled library
+gmumpy
