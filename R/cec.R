@@ -14,21 +14,21 @@
 #' @param k Initial number of clusters.
 #' @param method.type Type of clustering (Gauss family).
 #' \enumerate{
-#' \item "diagonal" Gaussians with diagonal covariance. The clustering will try to divide the data into ellipsoid with radiuses parallel to coordinate axes
-#' \item "fixed_spherical" Spherical (radial) Gaussian densities (additional parameter - radius)
-#' \item "fixed_covariance" The clustering will have the tendency to divide the data into clusters resembling the unit circles in the Mahalanobis distance (additional parameter - covaraince matrix required)
-#' \item "func" Own function dependent on m and sigma (additional parameter)
-#' \item "mix" Mix of others Gaussian types.
-#' \item "standard" We divide dataset into ellipsoid-like clusters without any preferences (default)
-#' \item "spherical" The clustering will try to divide the data into circles of arbitrary sizes}
+#' \item \code{"diagonal"} Gaussians with diagonal covariance. The clustering will try to divide the data into ellipsoid with radiuses parallel to coordinate axes
+#' \item \code{"fixed_spherical"} Spherical (radial) Gaussian densities (additional parameter - radius)
+#' \item \code{"fixed_covariance"} The clustering will have the tendency to divide the data into clusters resembling the unit circles in the Mahalanobis distance (additional parameter - covaraince matrix required)
+#' \item \code{"func"} Own function dependent on m and sigma (additional parameter)
+#' \item \code{"standard"} We divide dataset into ellipsoid-like clusters without any preferences (default)
+#' \item \code{"spherical"} The clustering will try to divide the data into circles of arbitrary sizes}
 #' @param method.init Method to initialize clusters.
 #' \enumerate{
-#' \item centroids
-#' \item kmeans++
-#' \item random}
+#' \item \code{"centroids"}
+#' \item \code{"kmeans++"}
+#' \item \code{"random"}}
 #' @param params.r Radius for spherical family.
 #' @param params.cov Covariance matrix for covariance family.
 #' @param params.centroids List of centroids.
+#' @param params.mix List of cluster with mixed Gaussian types.
 #' @param control.nstart How many times to perform algorithm.
 #' @param control.eps What change of value should terminate algorithm.
 #' @param control.itmax Maximum number of iterations at each start.
@@ -36,15 +36,19 @@
 #' @param log.ncluster Records number of clusters in each iteration.
 #' @param log.iters Records number of iterations.
 #' 
-#' @usage CEC(k=3, x=dataset)
-#' @usage CEC(k=3, x=dataset, control.nstart=10, method.type='spherical', control.eps=0.05)
-#' @usage CEC(k=2, x=dataset, method.type='spherical', method.init='centroids', params.centroids=list(c(-0.5,0.5),c(0,0)))
-#' @usage CEC(k=5, x=dataset, method.type='fixed_spherical', params.r=0.01, control.nstart=10, control.eps=0.07)
-#' @usage CEC(k=5, x=dataset, method.type='fixed_covariance', params.cov=matrix(c(0.03,0,0,0.01),2), control.nstart=10, control.eps=0.06)
-#' @usage CEC(k=1, x=dataset, method.type='func', params.function='name_of_my_own_function')
-#' @usage fixed_spherical_cluster_param = list(method.type = 'fixed_spherical', params.r = 0.001)
+#' @usage
+#' CEC
+#' 
+#' @examples
+#' CEC(k=3, x=dataset)
+#' CEC(k=3, x=dataset, control.nstart=10, method.type='spherical', control.eps=0.05)
+#' CEC(k=2, x=dataset, method.type='spherical', method.init='centroids', params.centroids=list(c(-0.5,0.5),c(0,0)))
+#' CEC(k=5, x=dataset, method.type='fixed_spherical', params.r=0.01, control.nstart=10, control.eps=0.07)
+#' CEC(k=5, x=dataset, method.type='fixed_covariance', params.cov=matrix(c(0.03,0,0,0.01),2), control.nstart=10, control.eps=0.06)
+#' CEC(k=1, x=dataset, method.type='func', params.function='name_of_my_own_function')
+#' fixed_spherical_cluster_param = list(method.type = 'fixed_spherical', params.r = 0.001)
 #' covariance_cluster_param = list(method.type = 'fixed_covariance', params.cov=matrix(c(0.05, 0, 0, 0.001), 2))
-#' CEC(x = dataset, k = 5, params.mix = list(covariance_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param), control.nstart = 10)
+#' CEC(x = dataset, params.mix = list(covariance_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param), control.nstart = 10)
 
 CEC <- NULL
 

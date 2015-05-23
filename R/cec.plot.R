@@ -13,10 +13,11 @@
 #' @param ellipses Outline clusters.
 #' @param centers Marks center of every cluster.
 #' 
-#' @examples plot(cec)
-#' @examples plot(cec, slice=c(1,3), ellipses=TRUE)
-#' @examples plot(cec, slice=c(1,2,3))
-#' @examples plot(cec, ellipses=TRUE, centers=FALSE)
+#' @examples
+#' plot(cec)
+#' plot(cec, slice=c(1,3), ellipses=TRUE)
+#' plot(cec, slice=c(1,2,3))
+#' plot(cec, ellipses=TRUE, centers=FALSE)
 
 plot.cec <- NULL
 
