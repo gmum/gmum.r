@@ -14,6 +14,8 @@
 #' @param centers Marks center of every cluster.
 #' 
 #' @examples plot(cec)
+#' @examples plot(cec, slice=c(1,3), ellipses=TRUE)
+#' @examples plot(cec, slice=c(1,2,3))
 #' @examples plot(cec, ellipses=TRUE, centers=FALSE)
 
 plot.cec <- NULL
@@ -23,15 +25,15 @@ evalqOnLoad({
   plot.cec <- function(x, slice = c(), ellipses = FALSE, centers = FALSE) {
     
     d = x$x()
-    if (length(slice)==0) {
+    if (length(slice) == 0) {
       slice = c(1:(dim(d)[2]))
+      plot(d[,slice], col = (x$clustering() + 1), pch=20)
     }
-    
-    if (length(slice)==2) {
+    else if (length(slice) == 1 || length(slice) == 2) {
       plot(d[,slice], col = (x$clustering() + 1), pch=20)
     }
     else{
-      pairs(d[,slice], col = (x$clustering()+1))
+      pairs(d[,slice], col = (x$clustering() + 1))
     }
     
     if (ellipses || centers) {
