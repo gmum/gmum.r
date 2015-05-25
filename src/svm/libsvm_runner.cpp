@@ -40,7 +40,6 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 		}
 		svm_parameter* param = configuration_to_problem(config);
         parseCommandLine(config, *param);
-        std::cout << param->C << std::endl << std::flush;
 		prob.l = config.target.n_rows;
 		prob.y = vectlib(config.target);
 		prob.x = node;

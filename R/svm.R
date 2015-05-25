@@ -480,6 +480,7 @@ evalqOnLoad({
     config$eps <- tol
     config$cache_size <- cache_size
     config$max_iter <- max.iter
+    config$svm_options <- svm.options
     
     if (!is.null(class.weights) && !is.logical(class.weights)) {
       
