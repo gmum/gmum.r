@@ -23,6 +23,35 @@ const std::string __runner_class__ = "SVMLightRunner";
 const std::string __debug_prefix__ = __file__ + "." + __runner_class__;
 
 
+extern long smallroundcount;
+extern long roundnumber;
+extern long precision_violations;
+extern double *primal;
+extern double *dual;
+extern long precision_violations;
+extern double opt_precision;
+extern long maxiter;
+extern double lindep_sensitivity;
+extern double* buffer;
+extern long* nonoptimal;
+
+# define DEF_PRECISION          1E-5
+# define DEF_MAX_ITERATIONS     200
+# define DEF_LINDEP_SENSITIVITY 1E-8
+
+void init_global_params_QP() {
+    primal=0;
+    dual=0;
+    lindep_sensitivity=DEF_LINDEP_SENSITIVITY;
+    maxiter=DEF_MAX_ITERATIONS;
+    opt_precision=DEF_PRECISION;
+    buffer = 0;
+    nonoptimal = 0;
+    smallroundcount = 0;
+    roundnumber = 0;
+    precision_violations = 0;
+}
+
 SVMLightRunner::SVMLightRunner() {
 }
 
@@ -188,6 +217,9 @@ int SVMLightRunner::librarySVMLearnMain(
       kernel_cache=kernel_cache_init(totdoc,learn_parm.kernel_cache_size);
     }
 
+    //gmum.r
+    init_global_params_QP();
+
     if(learn_parm.type == CLASSIFICATION) {
       svm_learn_classification(docs,target,totdoc,totwords,&learn_parm,
 			     &kernel_parm,kernel_cache,model,alpha_in);
@@ -204,6 +236,8 @@ int SVMLightRunner::librarySVMLearnMain(
       svm_learn_optimization(docs,target,totdoc,totwords,&learn_parm,
 			   &kernel_parm,kernel_cache,model,alpha_in);
     }
+    //gmum.r
+    config.iter = learn_parm.iterations;
 
     if(kernel_cache) {
       /* Free the memory used for the cache. */
