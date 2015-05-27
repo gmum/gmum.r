@@ -28,6 +28,9 @@ evalqOnLoad({
     
     d <- x$x()
     if(method == 'pca'){
+      if(ncol(d) <= 2){
+        stop("CEC dataset should have dimension > 2 to use PCA")
+      }
       mx <- colMeans(d)
       pca_data <- prcomp(d, scale=FALSE)
       v <- pca_data$rotation
