@@ -49,7 +49,9 @@
 #' fixed_spherical_cluster_param = list(method.type = 'fixed_spherical', params.r = 0.001)
 #' covariance_cluster_param = list(method.type = 'fixed_covariance', params.cov=matrix(c(0.05, 0, 0, 0.001), 2))
 #' CEC(x = dataset, params.mix = list(covariance_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param), control.nstart = 10)
-
+#' p1 = list(method.type='spherical', k=3)
+#' p2 = list(method.type='diagonal', k=2)
+#' CEC(x=dataset, params.mix=list(p1, p2))
 CEC <- NULL
 
 #' @title runAll

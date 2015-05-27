@@ -29,6 +29,7 @@ plot(cec)
 plot(cec, slice=c(1,3), ellipses=TRUE)
 plot(cec, slice=c(1,2,3))
 plot(cec, ellipses=TRUE, centers=FALSE)
+plot(cec, method='pca', ellipses=TRUE, centers=FALSE)
 }
 \keyword{datasets}
 
