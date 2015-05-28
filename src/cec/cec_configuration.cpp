@@ -93,6 +93,7 @@ void CecConfiguration::set_mix_handle_diagonal_cluster(Rcpp::List &list)
 void CecConfiguration::set_mix(const Rcpp::List clusters)
 {
     if (Rf_isNull(clusters)) { return; }
+    m_params.nclusters = 0;
 
     Rcpp::List desc = Rcpp::as < Rcpp::List > (clusters);
     for (Rcpp::List::iterator it = desc.begin(); it != desc.end(); ++it)
@@ -104,23 +105,42 @@ void CecConfiguration::set_mix(const Rcpp::List clusters)
         }
 
         std::string typeStr = Rcpp::as < std::string > (list[CONST::CLUSTERS::type]);
-
-        if (typeStr.compare(CONST::CLUSTERS::standard) == 0)
+        
+        int count = 1;
+        if(list.containsElementNamed(CONST::nclusters))
         {
-            set_mix_handle_standard_cluster(list);
-        } else if (typeStr.compare(CONST::CLUSTERS::fixed_covariance) == 0) {
-            set_mix_handle_fixed_covariance_cluster(list);
-        } else if (typeStr.compare(CONST::CLUSTERS::fixed_spherical) == 0) {
-            set_mix_handle_fixed_spherical_cluster(list);
-        } else if (typeStr.compare(CONST::CLUSTERS::spherical) == 0) {
-            set_mix_handle_spherical_cluster(list);
-        } else if (typeStr.compare(CONST::CLUSTERS::diagonal) == 0) {
-            set_mix_handle_diagonal_cluster(list);
-        } else if (typeStr.compare(CONST::CLUSTERS::custom) == 0) {
-            set_mix_handle_custom_cluster(list);
-        } else {
-            GMUM_ERROR(typeStr + ": unknown method.type");
+            count = Rcpp::as<int>(list[CONST::nclusters]);
+            if(count <= 0)
+            {
+                GMUM_ERROR("k must be greater or equal 1");
+            }
         }
+        m_params.nclusters += count;
+        
+        for(int i = 0; i < count; ++i)
+        {
+            if (typeStr.compare(CONST::CLUSTERS::standard) == 0)
+            {
+                set_mix_handle_standard_cluster(list);
+            } else if (typeStr.compare(CONST::CLUSTERS::fixed_covariance) == 0) {
+                set_mix_handle_fixed_covariance_cluster(list);
+            } else if (typeStr.compare(CONST::CLUSTERS::fixed_spherical) == 0) {
+                set_mix_handle_fixed_spherical_cluster(list);
+            } else if (typeStr.compare(CONST::CLUSTERS::spherical) == 0) {
+                set_mix_handle_spherical_cluster(list);
+            } else if (typeStr.compare(CONST::CLUSTERS::diagonal) == 0) {
+                set_mix_handle_diagonal_cluster(list);
+            } else if (typeStr.compare(CONST::CLUSTERS::custom) == 0) {
+                set_mix_handle_custom_cluster(list);
+            } else {
+                GMUM_ERROR(typeStr + ": unknown method.type");
+            }
+        }
+    }
+    
+    if(m_params.nclusters <= 0)
+    {
+        GMUM_ERROR("method type mix require at least one cluster parameter (params.mix)");
     }
 }
 
