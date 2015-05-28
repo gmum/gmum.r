@@ -189,7 +189,7 @@ arma::vec SVMClient::getW() {
         return arma::vec(config.w);
     }
     else {
-    	LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundary is not available with non-linear kernel"));
+    	LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("w is not available with non-linear kernel"));
         return 0;
     }
 }

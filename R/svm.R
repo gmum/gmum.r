@@ -254,6 +254,7 @@ evalqOnLoad({
     }
     
     models <- list()
+    call[[1]] <- as.name("SVM")
     
     # Fit one model after another
     for (j in J){
@@ -280,22 +281,26 @@ evalqOnLoad({
         p$class.weights <- c("1"=weight.pos, "-1"=weight.neg)
       }
       models[[j]] <- do.call(SVM, p[2:length(p)])
+      assign("call", call, models[[j]])
     }
-    call[[1]] <- as.name("SVM")
+    
     core <- as.list(call)$core
     kernel <- as.list(call)$kernel
+    prep <- as.list(call)$prep
     if (is.null(core)) core <- "libsvm"
     if (is.null(kernel)) kernel <- "linear"
+    if (is.null(prep)) prep <- "none"
 
     obj <- list(models=models, 
                 class.type=class.type, 
                 X=x,
                 Y=y,
-                pick=pick, 
+                .pick=pick, 
                 levels=lev, 
                 call=call, 
                 core=core, 
-                kernel=kernel)
+                kernel=kernel,
+                prep=prep)
 
     class(obj) <- "MultiClassSVM"
     obj
@@ -347,6 +352,9 @@ evalqOnLoad({
       params$class.type <- class.type
       return(do.call(.createMultiClassSVM, as.list(params[2:length(params)])))
     }
+    else if(length(levels) > 3 && transductive.learning){ # 3 or more classes + TR class
+      stop("Multiclass transductive learning is not supported!")
+    }
     
     if ( core != "svmlight" && transductive.learning) 
       core <- "svmlight"
@@ -355,13 +363,21 @@ evalqOnLoad({
     call[[1]] <- as.name("SVM")
 
     # check for errors
-    if ( core != "libsvm" && core != "svmlight") 
-      stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" ))   
+    if (core != "libsvm" && core != "svmlight") 
+      stop(sprintf("bad core: %s, available are: libsvm, svmlight", core))   
     if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") 
-      stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
-    if (prep != "2e" && prep != "none") stop(paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
+      stop("bad kernel: %s" )
+    if (prep != "2e" && prep != "none") stop(sprintf("bad preprocess: %s", prep ))
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
-    if (C < 0 || gamma < 0 || degree < 1) stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
+    # if (C < 0 || gamma < 0 || degree < 1) stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
+    if (C == 0 && core == "libsvm"){ # libsvm does not handle C=0, svmlight does
+      warning("libsvm doesn't support C=0, switching to svmlight")
+      core <- "svmlight"
+    }
+    else if (C < 0) stop(sprintf("C parameter can't be negative: %f", C))
+    if (gamma <= 0) stop(sprintf("gamma parameter must be positive: %f", gamma))
+    if (degree < 1 || degree %% 1 != 0) stop(sprintf("degree parameter must be positive integer: %.2f", degree))
+    
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
     if ((transductive.posratio < 0 && transductive.posratio != -1) || transductive.posratio > 1)
       stop("Please pass transductive.posratio in range [0,1]")  
@@ -539,12 +555,31 @@ evalqOnLoad({
   }
   
   summary.MultiClassSVM <<- function(object) {
-    print(sprintf("Support Vector Machine, multiclass.type: %s, core: %s, kernel: %s",
+    print(sprintf("Support Vector Machine, multiclass.type: %s, core: %s, preprocess: %s",
                   object$class.type, 
                   object$core, 
-                  object$kernel))
+                  object$kernel,
+                  object$prep))
     print(sprintf("%d classes", 
                   length(object$levels)))
+    object <- object$models[[1]]
+    print(sprintf("Parameters: kernel: %s, C: %f", object$kernel(), object$C()))
+    
+    if (object$kernel() == "rbf"){
+      print(sprintf("Kernel parameters: gamma: %f", 
+                    object$gamma()))
+    }
+    else if (object$kernel() == "poly"){
+      print(sprintf("Kernel parameters: gamma: %f, degree: %d, coef0: %f", 
+                    object$gamma(),
+                    object$degree(),
+                    object$coef0()))
+    }
+    else if (object$kernel() == "sigmoid"){
+      print(sprintf("Kernel parameters: gamma: %f, coef0: %f", 
+                    object$gamma(),
+                    object$coef0()))
+    }
   }
   
   print.MultiClassSVM <<- function(object) {
@@ -552,10 +587,27 @@ evalqOnLoad({
   }
   
   summary.svm <<- function(object) {
-    print(sprintf("Support Vector Machine, core: %s, kernel: %s, preprocess: %s",
-                  object$getLibrary(), 
-                  object$getKernel(), 
-                  object$getPreprocess()))
+    print(sprintf("Support Vector Machine, core: %s, preprocess: %s",
+                  object$core(), 
+                  object$kernel(), 
+                  object$prep()))
+    print(sprintf("Parameters: kernel: %s, C: %f", object$kernel(), object$C()))
+
+    if (object$kernel() == "rbf"){
+      print(sprintf("Kernel parameters: gamma: %f", 
+                    object$gamma()))
+    }
+    else if (object$kernel() == "poly"){
+      print(sprintf("Kernel parameters: gamma: %f, degree: %d, coef0: %f", 
+                    object$gamma(),
+                    object$degree(),
+                    object$coef0()))
+    }
+    else if (object$kernel() == "sigmoid"){
+      print(sprintf("Kernel parameters: gamma: %f, coef0: %f", 
+                    object$gamma(),
+                    object$coef0()))
+    }
     print(sprintf("%d classes with %d support vectors", 
                   object$getNumberClass(), 
                   object$getNumberSV()))
@@ -644,7 +696,7 @@ evalqOnLoad({
     }
     
     #5. Support parameters
-    kernel <- obj$getKernel()
+    kernel <- obj$kernel()
     
     
     if(mode == "pca"){
@@ -659,10 +711,10 @@ evalqOnLoad({
     if (kernel == "linear" && class(x) != "MultiClassSVM") {
       # W will be used only for binary model
       if (mode == "pca") {
-        w <- c(obj$getW())
+        w <- c(obj$w())
         w <- (w - mx) %*% pca_data$rotation
       }else if(ncol(X)==2){
-        w <- c(obj$getW())
+        w <- c(obj$w())
       }
     }
     
@@ -727,7 +779,7 @@ evalqOnLoad({
     # Add line
     if(!is.null(w) && ncol(X) && mode != "pca" && mode != "contour"){
       s <- -w[1]/w[2]
-      int <- -obj$getBias()/w[2]
+      int <- -obj$bias()/w[2]
       pl <- pl + geom_abline(slope=s, intercept=int)
     }
     
@@ -748,8 +800,8 @@ evalqOnLoad({
       model <- object$models[[i]]
 
       if(object$class.type == "one.versus.one"){
-        pick <- as.integer(object$pick[,i])
-        pick = pick[c(2,1)] # Reverse order
+        pick <- as.integer(object$.pick[,i])
+        pick <- pick[c(2,1)] # Reverse order
         # Predict
         prediction <- predict(model, x)
         
