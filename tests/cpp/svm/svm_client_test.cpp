@@ -3,8 +3,8 @@
 #include "gtest/gtest.h"
 
 #include "svm_helpers.h"
-#include "svm/log.h"
 #include "svm_client.h"
+#include "utils/logger.h"
 
 namespace {
 

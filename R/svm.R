@@ -321,7 +321,9 @@ evalqOnLoad({
            tol         = 1e-3,
            max.iter    = -1,
            verbosity   = 4,
-           class.type = 'one.versus.all') {
+           class.type = 'one.versus.all',
+           seed = NULL,
+           svm.options = '') {
     # First check if we have binary or multiclass case
     if (!is.vector(y) && !is.factor(y)) {
       stop("y is of a wrong class, please provide vector or factor")
@@ -478,6 +480,7 @@ evalqOnLoad({
     config$eps <- tol
     config$cache_size <- cache_size
     config$max_iter <- max.iter
+    config$svm_options <- svm.options
     
     if (!is.null(class.weights) && !is.logical(class.weights)) {
       

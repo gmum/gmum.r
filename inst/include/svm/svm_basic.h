@@ -8,7 +8,7 @@
 #include <RcppArmadillo.h>
 #endif
 
-#include "log.h"
+#include "utils/logger.h"
 
 enum KernelType {
     _LINEAR, _POLY, _RBF, _SIGMOID // _PRECOMPUTED
@@ -84,6 +84,7 @@ public:
     arma::mat data;     // armadillo matrix and vector (double)
     arma::vec target;
     arma::vec result, decision_function;
+    std::string svm_options;    ///< SVMLight command line parameters
 
     // Sparse data
     bool sparse;

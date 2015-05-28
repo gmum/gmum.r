@@ -35,10 +35,10 @@ typedef vector<int> VI;
 
 #include <utils/logger.h>
 
-#define LOG(logger, level, text) logger->log(level, text);
+#define LOG(logger, level, text) logger.log(level, text);
 
 #ifdef DEBUG
-	#define DBG(logger, level, text) logger->log(level, text);
+	#define DBG(logger, level, text) logger.log(level, text);
 	#define REPORT(x) cout<<#x<<"="<<(x)<<endl<<std::flush;
 #else
 	#define DBG(verbosity, level, text)
@@ -170,5 +170,12 @@ static vector<double> _load_bin_vector(istream & in) {
 	}
 	return x;
 }
+
+int check_argc(const char*);
+int check_argc(const std::string);
+char** to_argv(const char*);
+char** to_argv(const std::string);
+/// Free `char**` allocated by `to_argv()` function
+char** free_argv(int argc, char** argv);
 
 #endif	/* UTILS_H */

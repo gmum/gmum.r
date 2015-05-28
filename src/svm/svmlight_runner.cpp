@@ -14,10 +14,9 @@
 #include <cassert>
 
 #include "svmlight_runner.h"
-#include "svm/log.h"
+#include "utils/logger.h"
 #include "svm_basic.h"
-//#include "../svmlight/svm_hideo.h"
-
+#include "utils/utils.h"
 
 const std::string __file__ = "svmlight_runner.cpp";
 const std::string __runner_class__ = "SVMLightRunner";
@@ -68,11 +67,13 @@ bool SVMLightRunner::canHandle(SVMConfiguration &config) {
 }
 
 
-void SVMLightRunner::processRequest(SVMConfiguration &config) {
-    char **argv;
+void SVMLightRunner::processRequest(
+    SVMConfiguration &config
+) {
+    int argc = 0;
+    char** argv = 0;
 
     arma::mat unique_labels = arma::unique(config.target);
-
 
     if(unique_labels.size() !=2 && !config.use_transductive_learning){
     	printf("Passed 3 labels to svmlight without use_transductive_learning\n");
@@ -100,13 +101,18 @@ void SVMLightRunner::processRequest(SVMConfiguration &config) {
     config.neg_target = -1;
     config.pos_target = 1;
 
+    if (!config.svm_options.empty()) {
+        argc = check_argc(std::string("gmum ") + config.svm_options);
+        argv = to_argv(std::string("gmum ") + config.svm_options);
+    }
+
     if (!config.isPrediction()) {
         // Learning
-        librarySVMLearnMain(0, argv, true, config);
+        librarySVMLearnMain(argc, argv, true, config);
 
     } else {
         // Predict
-        librarySVMClassifyMain(0, argv, true, config);
+        librarySVMClassifyMain(argc, argv, true, config);
         // Convert sign to label
         resultsToLabels(config);
     }
@@ -125,7 +131,6 @@ void SVMLightRunner::resultsToLabels(SVMConfiguration &config) {
     for (int i=0; i < n_docs; ++i) {
         doc_result = config.result[i];
 
-        // Store only a class label
         //arma::vec doc_result_vec;
         //doc_result_vec << doc_result << arma::endr;
         //arma::vec result_sign_vec = arma::sign(doc_result_vec);
@@ -353,6 +358,42 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     //However in general we should do things like that
     learn_parm->epsilon_crit=config.eps;
 
+    for(i=1;(i<argc) && ((argv[i])[0] == '-');i++) {
+      switch ((argv[i])[1])
+        {
+        case '?': libraryPrintHelp(); exit(0);
+        case 'z': i++; strcpy(type,argv[i]); break;
+        case 'v': i++; (*verbosity)=atol(argv[i]); break;
+        case 'b': i++; learn_parm->biased_hyperplane=atol(argv[i]); break;
+        case 'i': i++; learn_parm->remove_inconsistent=atol(argv[i]); break;
+        case 'f': i++; learn_parm->skip_final_opt_check=!atol(argv[i]); break;
+        case 'q': i++; learn_parm->svm_maxqpsize=atol(argv[i]); break;
+        case 'n': i++; learn_parm->svm_newvarsinqp=atol(argv[i]); break;
+        case '#': i++; learn_parm->maxiter=atol(argv[i]); break;
+        case 'h': i++; learn_parm->svm_iter_to_shrink=atol(argv[i]); break;
+        case 'm': i++; learn_parm->kernel_cache_size=atol(argv[i]); break;
+        case 'c': i++; learn_parm->svm_c=atof(argv[i]); break;
+        case 'w': i++; learn_parm->eps=atof(argv[i]); break;
+        case 'p': i++; learn_parm->transduction_posratio=atof(argv[i]); break;
+        case 'j': i++; learn_parm->svm_costratio=atof(argv[i]); break;
+        case 'e': i++; learn_parm->epsilon_crit=atof(argv[i]); break;
+        case 'o': i++; learn_parm->rho=atof(argv[i]); break;
+        case 'k': i++; learn_parm->xa_depth=atol(argv[i]); break;
+        case 'x': i++; learn_parm->compute_loo=atol(argv[i]); break;
+        case 't': i++; kernel_parm->kernel_type=atol(argv[i]); break;
+        case 'd': i++; kernel_parm->poly_degree=atol(argv[i]); break;
+        case 'g': i++; kernel_parm->rbf_gamma=atof(argv[i]); break;
+        case 's': i++; kernel_parm->coef_lin=atof(argv[i]); break;
+        case 'r': i++; kernel_parm->coef_const=atof(argv[i]); break;
+        case 'u': i++; strcpy(kernel_parm->custom,argv[i]); break;
+        case 'l': i++; strcpy(learn_parm->predfile,argv[i]); break;
+        case 'a': i++; strcpy(learn_parm->alphafile,argv[i]); break;
+        case 'y': i++; strcpy(restartfile,argv[i]); break;
+        default: printf("\n[SVMLight] Unrecognized option %s!\n\n",argv[i]);
+	         libraryPrintHelp();
+	         exit(0);
+        }
+    }
 
     // GMUM.R changes }
     if(!use_gmumr) {
