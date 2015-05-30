@@ -14,11 +14,10 @@ SWIG_OUTPUT_PATH := swig
 # GMUM paths
 SRC_PATH := src
 
-GMUM_INCLUDES := -I include -I include/svm -I include/cec
-
+GMUM_INCLUDES := -I include -I include/svm -I include/cec 
 PYTHON_INCLUDES := -I /usr/include/python2.7
 
-CEC_SOURCES := cec/cec_configuration.cpp cec/hartigan.cpp
+CEC_SOURCES := cec/cec_configuration.cpp cec/hartigan.cpp cec/cluster.cpp 
 SVM_SOURCES := svm/svm_basic.cpp
 
 INCLUDES := $(PYTHON_INCLUDES) $(GMUM_INCLUDES)
@@ -30,17 +29,16 @@ all: cec svm
 .PHONY: all
 
 cec: cec.py $(CEC_OBJECTS)
-	g++ -shared $(CEC_OBJECTS) $(SWIG_OUTPUT_PATH)/$@_wrap.o -o $(PYTHON_MODULES_PATH)/_$@.so
-
+	g++ -shared $(CEC_OBJECTS) $(SWIG_OUTPUT_PATH)/$@_wrap.o -o $(PYTHON_MODULES_PATH)/_$@.so -llapack -lblas -larmadillo 
 svm: svm.py $(SVM_OBJECTS)
 	g++ -shared $(SVM_OBJECTS) $(SWIG_OUTPUT_PATH)/$@_wrap.o -o $(PYTHON_MODULES_PATH)/_$@.so
 
 swig/%.o:
-	g++ -O2 -fPIC -larmadillo -c $(SRC_PATH)/$*.cpp -o $(SWIG_OUTPUT_PATH)/$*.o $(GMUM_INCLUDES)
+	g++ -O2 -fPIC -c $(SRC_PATH)/$*.cpp -o $(SWIG_OUTPUT_PATH)/$*.o $(GMUM_INCLUDES)
 
 %.py: init
 	swig -c++ -outdir $(PYTHON_MODULES_PATH) -python -o $(SWIG_OUTPUT_PATH)/$*_wrap.cxx $(INTERFACE_PATH)/$*.i
-	g++ -O2 -fPIC -larmadillo -c $(SWIG_OUTPUT_PATH)/$*_wrap.cxx -o $(SWIG_OUTPUT_PATH)/$*_wrap.o $(INCLUDES)
+	g++ -O2 -fPIC -c $(SWIG_OUTPUT_PATH)/$*_wrap.cxx -o $(SWIG_OUTPUT_PATH)/$*_wrap.o $(INCLUDES)
 
 init:
 	mkdir -p swig/cec swig/gng swig/svm
