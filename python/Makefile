@@ -11,6 +11,9 @@ PYTHON_MODULES_PATH := gmumpy
 # Path for SWIG-generated sources and objects
 SWIG_OUTPUT_PATH := swig
 
+# GMUM paths
+SRC_PATH := src
+
 GMUM_INCLUDES := -I include -I include/svm -I include/cec
 
 PYTHON_INCLUDES := -I /usr/include/python2.7
@@ -20,8 +23,8 @@ SVM_SOURCES := svm/svm_basic.cpp
 
 INCLUDES := $(PYTHON_INCLUDES) $(GMUM_INCLUDES)
 
-CEC_OBJECTS := $(patsubst %.cpp, src/%.o, $(CEC_SOURCES))
-SVM_OBJECTS := $(patsubst %.cpp, src/%.o, $(SVM_SOURCES))
+CEC_OBJECTS := $(patsubst %.cpp, swig/%.o, $(CEC_SOURCES))
+SVM_OBJECTS := $(patsubst %.cpp, swig/%.o, $(SVM_SOURCES))
 
 all: cec svm
 .PHONY: all
@@ -32,8 +35,8 @@ cec: cec.py $(CEC_OBJECTS)
 svm: svm.py $(SVM_OBJECTS)
 	g++ -shared $(SVM_OBJECTS) $(SWIG_OUTPUT_PATH)/$@_wrap.o -o $(PYTHON_MODULES_PATH)/_$@.so
 
-%.o:
-	g++ -O2 -fPIC -larmadillo -c $*.cpp -o $*.o $(GMUM_INCLUDES)
+swig/%.o:
+	g++ -O2 -fPIC -larmadillo -c $(SRC_PATH)/$*.cpp -o $(SWIG_OUTPUT_PATH)/$*.o $(GMUM_INCLUDES)
 
 %.py: init
 	swig -c++ -outdir $(PYTHON_MODULES_PATH) -python -o $(SWIG_OUTPUT_PATH)/$*_wrap.cxx $(INTERFACE_PATH)/$*.i
