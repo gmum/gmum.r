@@ -3,6 +3,7 @@
 
 #include <armadillo>
 
+#include "hartigan.hpp"
 #include "params.hpp"
 
 #ifdef RCPP_INTERFACE
@@ -15,6 +16,13 @@
 #else
 #define GMUM_ERROR(x) throw x;
 #define GMUM_WARNING(x) std::cerr << x;
+#endif
+
+#ifdef SWIG
+%{
+#define SWIG_FILE_WITH_INIT
+#include "cec_configuration.hpp"
+%}
 #endif
 
 class CecConfiguration {
