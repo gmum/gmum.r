@@ -17,7 +17,7 @@ SRC_PATH := src
 GMUM_INCLUDES := -I include -I include/svm -I include/cec 
 PYTHON_INCLUDES := -I /usr/include/python2.7
 
-CEC_SOURCES := cec/cec_configuration.cpp cec/hartigan.cpp cec/cluster.cpp 
+CEC_SOURCES := cec/assignment.cpp cec/cec_configuration.cpp cec/centroids_assignment.cpp cec/hartigan.cpp cec/cluster.cpp cec/cec.cpp cec/kmeanspp_assignment.cpp cec/random_assignment.cpp
 SVM_SOURCES := svm/svm_basic.cpp
 
 INCLUDES := $(PYTHON_INCLUDES) $(GMUM_INCLUDES) -I interface

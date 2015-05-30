@@ -2,6 +2,7 @@
 %{
 #define SWIG_FILE_WITH_INIT
 #include "cec_configuration.hpp"
+#include "cec.hpp"
 %}
 
 %include "std_string.i"
@@ -26,3 +27,9 @@ public:
     void set_algorithm(std::string algorithm);
 };
 
+class CecModel {
+public:
+	~CecModel();
+	CecModel(CecConfiguration* cfg);
+	double get_energy() const;
+};
