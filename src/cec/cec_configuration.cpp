@@ -26,6 +26,11 @@ void CecConfiguration::set_params(Params params)
     this->m_params = params;
 }
 
+void CecConfiguration::set_data_set(arma::mat dataset)
+{
+    this->m_params.dataset = dataset;
+}
+
 #ifdef RCPP_INTERFACE
 void CecConfiguration::set_data_set(const Rcpp::NumericMatrix proxy_dataset)
 {

@@ -20,7 +20,7 @@ PYTHON_INCLUDES := -I /usr/include/python2.7
 CEC_SOURCES := cec/cec_configuration.cpp cec/hartigan.cpp cec/cluster.cpp 
 SVM_SOURCES := svm/svm_basic.cpp
 
-INCLUDES := $(PYTHON_INCLUDES) $(GMUM_INCLUDES)
+INCLUDES := $(PYTHON_INCLUDES) $(GMUM_INCLUDES) -I interface
 
 CEC_OBJECTS := $(patsubst %.cpp, swig/%.o, $(CEC_SOURCES))
 SVM_OBJECTS := $(patsubst %.cpp, swig/%.o, $(SVM_SOURCES))

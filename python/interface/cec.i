@@ -1,18 +1,19 @@
-
 %module cec
-%include "std_string.i"
 %{
 #define SWIG_FILE_WITH_INIT
 #include "cec_configuration.hpp"
 %}
+
+%include "std_string.i"
+%include "armanpy.i"
+%include <boost_shared_ptr.i>
 
 class CecConfiguration {
 public:
     CecConfiguration();
     ~CecConfiguration();
 
-    gmum::Params& get_params();
-    void set_params(gmum::Params params);
+    void set_data_set(arma::mat dataset);
     void set_eps(double kill_threshold);
     void set_nclusters(unsigned int nclusters);
     void set_log_energy(bool log_energy);
@@ -23,7 +24,5 @@ public:
     void set_r(double radius);
     void set_it_max(int it_max);
     void set_algorithm(std::string algorithm);
-private:
-    gmum::Params m_params;
 };
 

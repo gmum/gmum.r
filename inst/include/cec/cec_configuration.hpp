@@ -36,6 +36,7 @@ public:
 
     gmum::Params& get_params();
 	void set_params(gmum::Params params);
+    void set_data_set(arma::mat dataset);
     void set_eps(double kill_threshold);
     void set_nclusters(unsigned int nclusters);
 	void set_log_energy(bool log_energy);
