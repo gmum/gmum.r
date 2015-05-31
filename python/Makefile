@@ -15,14 +15,13 @@ LIB_OUTPUT_PATH := lib
 SRC_PATH := src
 INCLUDE_PATH := include
 
-GMUM_INCLUDES := -I include -I include/svm -I include/cec
-
+GMUM_INCLUDES := -I include -I include/svm -I include/cec 
 PYTHON_INCLUDES := -I /usr/include/python2.7
 
-CEC_SOURCES := cec/cec_configuration.cpp cec/hartigan.cpp
+CEC_SOURCES := cec/assignment.cpp cec/cec_configuration.cpp cec/centroids_assignment.cpp cec/hartigan.cpp cec/cluster.cpp cec/cec.cpp cec/kmeanspp_assignment.cpp cec/random_assignment.cpp
 SVM_SOURCES := svm/svm_basic.cpp
 
-INCLUDES := $(PYTHON_INCLUDES) $(GMUM_INCLUDES)
+INCLUDES := $(PYTHON_INCLUDES) $(GMUM_INCLUDES) -I interface
 
 CEC_OBJECTS := $(patsubst %.cpp, $(LIB_OUTPUT_PATH)/%.o, $(CEC_SOURCES))
 SVM_OBJECTS := $(patsubst %.cpp, $(LIB_OUTPUT_PATH)/%.o, $(SVM_SOURCES))
@@ -42,36 +41,17 @@ SVM_PYTHON := $(patsubst %.cpp, $(GMUMPY_CORE_PATH)/%.py, $(SVM_SOURCES))
 all: cec svm
 .PHONY: all
 
-cec: $(CEC_SHARED_OBJECTS)
-	@echo "Make cec..."
+cec: cec.py $(CEC_OBJECTS)
+	g++ -shared $(CEC_OBJECTS) $(SWIG_OUTPUT_PATH)/$@_wrap.o -o $(PYTHON_MODULES_PATH)/_$@.so -llapack -lblas -larmadillo 
+svm: svm.py $(SVM_OBJECTS)
+	g++ -shared $(SVM_OBJECTS) $(SWIG_OUTPUT_PATH)/$@_wrap.o -o $(PYTHON_MODULES_PATH)/_$@.so
 
-svm: $(SVM_SHARED_OBJECTS)
-	@echo "Make svm..."
+swig/%.o:
+	g++ -O2 -fPIC -std=c++0x -c $(SRC_PATH)/$*.cpp -o $(SWIG_OUTPUT_PATH)/$*.o $(GMUM_INCLUDES)
 
-$(GMUMPY_CORE_PATH)/%.so: $(LIB_OUTPUT_PATH)/%.o $(SWIG_OUTPUT_PATH)/%_wrap.o
-	@echo "Make" $@ "..." $*
-	$(eval branch := $(word 1, $(subst /, ,$*)))
-	$(eval filename := $(word 2, %/$(subst /, ,$*)))
-	$(eval result_so := $(GMUMPY_CORE_PATH)/_$(branch)_$(filename).so)
-	g++ -shared $(LIB_OUTPUT_PATH)/$*.o $(SWIG_OUTPUT_PATH)/$*_wrap.o -o $(result_so)
-
-$(LIB_OUTPUT_PATH)/%.o:
-	@echo "Make" $@ "..."
-	g++ -O2 -fPIC -larmadillo -c $(SRC_PATH)/$*.cpp -o $(LIB_OUTPUT_PATH)/$*.o $(GMUM_INCLUDES)
-
-$(SWIG_OUTPUT_PATH)/%_wrap.o: $(GMUMPY_CORE_PATH)/%.py
-	@echo "Make" $@ "..."
-	g++ -O2 -fPIC -larmadillo -c $(SWIG_OUTPUT_PATH)/$*_wrap.cpp -o $(SWIG_OUTPUT_PATH)/$*_wrap.o $(INCLUDES)
-
-# TODO: Standarize headers to *.hpp...
-
-$(GMUMPY_CORE_PATH)/%.py: init $(INCLUDE_PATH)/%.h
-	@echo Make $@ AND $(SWIG_OUTPUT_PATH)/$*_wrap.cpp...
-	swig -c++ -module $(subst /,_,$*) -outdir $(GMUMPY_CORE_PATH) -python -o $(SWIG_OUTPUT_PATH)/$*_wrap.cpp $(INCLUDE_PATH)/$*.h
-
-$(GMUMPY_CORE_PATH)/%.py: init $(INCLUDE_PATH)/%.hpp
-	@echo Make $@ AND $(SWIG_OUTPUT_PATH)/$*_wrap.cpp...
-	swig -c++ -module $(subst /,_,$*) -outdir $(GMUMPY_CORE_PATH) -python -o $(SWIG_OUTPUT_PATH)/$*_wrap.cpp $(INCLUDE_PATH)/$*.hpp
+%.py: init
+	swig -c++ -outdir $(PYTHON_MODULES_PATH) -python -o $(SWIG_OUTPUT_PATH)/$*_wrap.cxx $(INTERFACE_PATH)/$*.i
+	g++ -O2 -fPIC -c $(SWIG_OUTPUT_PATH)/$*_wrap.cxx -o $(SWIG_OUTPUT_PATH)/$*_wrap.o $(INCLUDES)
 
 init:
 	@echo Variables: $(GMUMPY_PATH)
