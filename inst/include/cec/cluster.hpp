@@ -10,6 +10,14 @@
 #include "boost/smart_ptr.hpp"
 #include "exceptions.hpp"
 
+#ifdef SWIG
+%{
+#define SWIG_FILE_WITH_INIT
+#include "cluster.hpp"
+using namespace gmum;
+%}
+#endif
+
 namespace gmum {
 
 /**

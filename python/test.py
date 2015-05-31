@@ -1,20 +1,19 @@
 #!/usr/bin/env python2
 
-from gmumpy.core import svm_svm_basic as svm_basic
+from gmumpy import core
 
-print dir(svm_basic)
+print dir(core)
 
-sc = svm_basic.SVMConfiguration()
-print dir(sc)
+print core.Algorithm
+print dir(core.CecModel)
 
-kt = svm_basic.SVMLIGHT
-print kt
+print ''
+cc = core.CecConfiguration()
+print cc
 
-from gmumpy.core import cec_hartigan as hartigan
+# FIXME
+cec = core.CecModel(cc)
+print cec
 
-print dir(hartigan)
-
-from gmumpy.core import cec_cec_configuration as cec_configuration
-
-print dir(cec_configuration)
+exit(0)
 

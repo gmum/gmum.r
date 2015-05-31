@@ -2,9 +2,6 @@
 # GMUM Library SWIG Makefile sketch
 ##
 
-# Path to .i files
-INTERFACE_PATH := interface
-
 # Path to our python interface
 GMUMPY_PATH := gmumpy
 # Path for compiled gmumpy .so and .py library files

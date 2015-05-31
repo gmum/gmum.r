@@ -1,7 +1,6 @@
 #ifndef SVM_BASIC_H
 #define SVM_BASIC_H
 
-#include <armadillo>
 #include <string>
 #include <cstdlib>
 
@@ -14,7 +13,6 @@
 #ifdef SWIG
 %{
 #define SWIG_FILE_WITH_INIT
-#include "svm_basic.h"
 %}
 #endif
 

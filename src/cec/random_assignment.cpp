@@ -6,6 +6,11 @@
 
 namespace gmum {
 
+void init_assign_random(std::vector<unsigned int> &assignment,
+		const arma::mat &points, unsigned int nclusters) {
+    /* TODO */
+}
+
 void RandomAssignment::operator()(std::vector<unsigned int> &assignment) {
 
     std::vector<unsigned int> centers;

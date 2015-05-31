@@ -14,6 +14,14 @@
 #include "exceptions.hpp"
 #include "params.hpp"
 
+#ifdef SWIG
+%{
+#define SWIG_FILE_WITH_INIT
+#include "cec.hpp"
+using namespace gmum;
+%}
+#endif
+
 /**
  * Instance of this class is CEC model object.
  */

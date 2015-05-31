@@ -7,6 +7,17 @@
 #include <RcppArmadillo.h>
 #endif
 
+#ifdef SWIG
+%include <boost_shared_ptr.i>
+%{
+#define SWIG_FILE_WITH_INIT
+#include <boost/shared_ptr.hpp>
+#include "cluster_params.hpp"
+using namespace gmum;
+using namespace boost;
+%}
+#endif
+
 namespace gmum {
 
 enum ClusterType {
@@ -18,42 +29,32 @@ enum ClusterType {
  */
 struct ClusterParams {
 	ClusterType type;
-	ClusterParams(ClusterType _type) :
-			type(_type) {
-	}
-    virtual ~ClusterParams() { };
+	ClusterParams(ClusterType _type);
+    virtual ~ClusterParams();
 };
 
 struct ClusterFullParams: public ClusterParams {
 	bool cov_mat_set;
 	arma::mat cov_mat;
-	ClusterFullParams(arma::mat _cov_mat) :
-			ClusterParams(kfull), cov_mat_set(true), cov_mat(_cov_mat) {
-	}
-	ClusterFullParams() :
-			ClusterParams(kfull), cov_mat_set(false) {
-	}
-    virtual ~ClusterFullParams() { }
+	ClusterFullParams(arma::mat _cov_mat);
+	ClusterFullParams();
+    virtual ~ClusterFullParams();
 };
 
 struct ClusterFsphereParams: public ClusterParams {
 	bool radius_set;
 	double radius;
-	ClusterFsphereParams(double _radius) :
-			ClusterParams(kfsphere), radius_set(true), radius(_radius) {
-	}
-	ClusterFsphereParams() :
-			ClusterParams(kfsphere), radius_set(false) {
-	}
-    virtual ~ClusterFsphereParams() { }
+	ClusterFsphereParams(double _radius);
+	ClusterFsphereParams();
+    virtual ~ClusterFsphereParams();
 };
 
 #ifdef RCPP_INTERFACE
 struct ClusterCustomParams: public ClusterParams {
 	boost::shared_ptr<Rcpp::Function> function;
-	ClusterCustomParams(boost::shared_ptr<Rcpp::Function> _function) : ClusterParams(kcustom), function(_function) {}
-	ClusterCustomParams() : ClusterParams(kcustom) {}
-    virtual ~ClusterCustomParams() { }
+	ClusterCustomParams(boost::shared_ptr<Rcpp::Function> _function);
+	ClusterCustomParams();
+    virtual ~ClusterCustomParams();
 };
 #endif
 

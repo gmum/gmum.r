@@ -12,6 +12,14 @@
 #include <RcppArmadillo.h>
 #endif
 
+#ifdef SWIG
+%{
+#define SWIG_FILE_WITH_INIT
+#include "cluster_custom_function.hpp"
+using namespace gmum;
+%}
+#endif
+
 #ifdef RCPP_INTERFACE
 namespace gmum {
 	class ClusterCustomFunction: public ClusterUseCovMat {

@@ -53,6 +53,11 @@ void KmeansppAssignment::operator()(std::vector<unsigned int> &assignment) {
 	assign_points(assignment, centers, m_points);
 }
 
+void init_assign_kmeanspp(std::vector<unsigned int> &assignment,
+		const arma::mat &points, unsigned int nclusters) {
+    /* TODO */
+}
+
 void calculate_distance(const std::vector<unsigned int> &centers,
 		std::list<Point> &selected, const arma::mat &points) {
 

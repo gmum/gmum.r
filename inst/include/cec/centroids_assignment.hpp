@@ -5,6 +5,14 @@
 #include <stdlib.h>
 #include "assignment.hpp"
 
+#ifdef SWIG
+%{
+#define SWIG_FILE_WITH_INIT
+#include "centroids_assignment.hpp"
+using namespace gmum;
+%}
+#endif
+
 namespace gmum {
 
 /**

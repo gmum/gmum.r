@@ -3,7 +3,6 @@
 
 #include <armadillo>
 
-#include "hartigan.hpp"
 #include "params.hpp"
 
 #ifdef RCPP_INTERFACE
