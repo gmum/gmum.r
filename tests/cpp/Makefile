@@ -20,7 +20,7 @@ ROOT_SRC_PATH := ../../src
 ROOT_TEST_PATH := .
 
 # Branches that will be compiled
-GMUMR_BRANCHES := cec #svm gng utils
+GMUMR_BRANCHES := cec svm gng utils
 TEST_BRANCHES := cec gng svm
 
 # Additional cleaning paths
@@ -190,8 +190,9 @@ python: $(OBJECTS) $(COMPILED_LIBRARIES_OBJECTS)
 	mkdir -p $(SWIG_OUTPUT_PATH)/{,cec,gng,svm}
 	rm -f $(PYTHON_INTERFACE)
 	# Collect headers and create SWIG interface
-	$(foreach b, $(GMUMR_BRANCHES), \
-		cat $(ROOT_INCLUDE_PATH)/$b/*.hpp >> $(PYTHON_INTERFACE);)
+	cat $(ROOT_INCLUDE_PATH)/cec/*.hpp >> $(PYTHON_INTERFACE)
+	cat $(ROOT_INCLUDE_PATH)/svm/svm_basic.h >> $(PYTHON_INTERFACE)
+	cat $(ROOT_INCLUDE_PATH)/svm/svm_client.h >> $(PYTHON_INTERFACE)
 	# Collect our custom interfaces
 	cat $(SWIG_INTERFACES)/*.i >> $(PYTHON_INTERFACE)
 	# Generate SWIG C++ wrapping code...

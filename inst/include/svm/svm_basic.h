@@ -8,7 +8,7 @@
 #include <RcppArmadillo.h>
 #endif
 
-#include "log.h"
+#include "log.hpp"
 
 #ifdef SWIG
 %{
@@ -128,8 +128,10 @@ public:
 
     // methods
     arma::mat getData();
+    arma::vec getTarget();
     void setData(arma::mat);
     void setDefaultParams();
+    void setTarget(arma::vec);
 
     void setFilename(std::string);
     std::string getFilename();

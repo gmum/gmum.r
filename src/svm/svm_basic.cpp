@@ -112,8 +112,16 @@ void SVMConfiguration::setData(arma::mat data) {
     this->data = data;
 }
 
+void SVMConfiguration::setTarget(arma::vec target) {
+    this->target = target;
+}
+
 arma::mat SVMConfiguration::getData() {
     return this->data;
+}
+
+arma::vec SVMConfiguration::getTarget() {
+    return this->target;
 }
 
 void SVMConfiguration::setOutputFilename(std::string filename) {

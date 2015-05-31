@@ -5,6 +5,13 @@
 #include "svm_basic.h"
 #include <vector>
 
+#ifdef SWIG
+%{
+#define SWIG_FILE_WITH_INIT
+#include "svm_client.h"
+%}
+#endif
+
 class SVMClient {
 private:
     std::vector<SVMHandler*> SVMHandlers;

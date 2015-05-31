@@ -1,0 +1,7 @@
+# Compiled library
+_core.so
+core.py
+
+# Binaries
+*.pyc
+

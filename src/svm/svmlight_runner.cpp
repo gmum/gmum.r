@@ -14,7 +14,7 @@
 #include <cassert>
 
 #include "svmlight_runner.h"
-#include "svm/log.h"
+#include "log.hpp"
 #include "svm_basic.h"
 
 const std::string __file__ = "svmlight_runner.cpp";

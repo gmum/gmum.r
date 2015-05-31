@@ -3,7 +3,7 @@
 
 #define LIBSVM_VERSION 318
 
-#include "log.h"
+#include "log.hpp"
 
 #ifdef __cplusplus
 extern "C" {

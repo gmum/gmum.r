@@ -1,19 +1,12 @@
 #!/usr/bin/env python2
 
-from gmumpy import core
+import numpy as np
+from sklearn.datasets import load_svmlight_file
 
-print dir(core)
+from gmumpy.svm import SVMConfiguration
 
-print core.Algorithm
-print dir(core.CecModel)
+X, y = load_svmlight_file('../inst/data_sets/svm/breast_cancer.data')
 
-print ''
-cc = core.CecConfiguration()
-print cc
+sc = SVMConfiguration()
 
-# FIXME
-cec = core.CecModel(cc)
-print cec
-
-exit(0)
 
