@@ -15,11 +15,24 @@
 #include "params.hpp"
 
 #ifdef SWIG
+
 %{
 #define SWIG_FILE_WITH_INIT
 #include "cec.hpp"
 using namespace gmum;
 %}
+
+%include "std_string.i"
+%include "std_vector.i"
+%include "armanpy.i"
+%include <boost_shared_ptr.i>
+
+namespace std 
+{
+    %template(UnsignedIntVector) vector<unsigned int>;
+}
+
+
 #endif
 
 /**

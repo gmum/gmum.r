@@ -4,7 +4,8 @@ include ../../src/Makevars
 CXX := $(CXX)
 CXXFLAGS := $(PKG_CXXFLAGS) -fPIC
 CPPFLAGS := $(PKG_CPPFLAGS) -O2 -g -s
-LDLIBS := $(PKG_LIBS) -lpthread -lgtest -lgtest_main -lpython2.7
+LDLIBS := $(PKG_LIBS) -lpthread -lgtest -lgtest_main -lpython2.7 \
+	-llapack -lblas -larmadillo
 
 ###
 # Compilation parameters
@@ -101,8 +102,12 @@ INCLUDES := $(ROOT_INCLUDE) $(BRANCH_INCLUDES) $(LIBRARIES_INCLUDES)
 # SWIG parameters
 ###
 
-# Path to our python interface
+# Path to our python package
 GMUMPY_PATH := ../../python/gmumpy
+
+# Our custom interfaces
+SWIG_INTERFACES := ../../python/interface
+INCLUDES := $(INCLUDES) -I $(SWIG_INTERFACES)
 
 # GMUM.py shared object
 GMUMPY_SO := $(GMUMPY_PATH)/_core.so
@@ -187,8 +192,11 @@ python: $(OBJECTS) $(COMPILED_LIBRARIES_OBJECTS)
 	# Collect headers and create SWIG interface
 	$(foreach b, $(GMUMR_BRANCHES), \
 		cat $(ROOT_INCLUDE_PATH)/$b/*.hpp >> $(PYTHON_INTERFACE);)
+	# Collect our custom interfaces
+	cat $(SWIG_INTERFACES)/*.i >> $(PYTHON_INTERFACE)
 	# Generate SWIG C++ wrapping code...
 	swig -c++ -module core -outdir $(GMUMPY_PATH) -python \
+		-I$(SWIG_INTERFACES) \
 		-o $(ROOT_SRC_PATH)/python_interface.cxx $(PYTHON_INTERFACE)
 	# Compile SWIG C++ wrapping code...
 	g++ $(CPPFLAGS) $(CXXFLAGS) -O2 -fPIC \

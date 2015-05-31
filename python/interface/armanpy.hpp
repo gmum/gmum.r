@@ -1,3 +1,6 @@
+#ifndef ARMANPY_HPP
+#define ARMANPY_HPP
+
 // Copyright (C) 2012 thomas.natschlaeger@gmail.com
 // 
 // This file is part of the ArmaNpy library.
@@ -230,3 +233,5 @@ void armanpy_conversion( bool allowed =false, bool warnings = true ) {
 //
 
 //#include "armanpy_1d.hpp"
+
+#endif  // ARMANPY_HPP
