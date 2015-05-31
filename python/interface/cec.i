@@ -14,7 +14,7 @@ public:
     CecConfiguration();
     ~CecConfiguration();
 
-    void set_data_set(arma::mat dataset);
+    void set_dataset(arma::mat& dataset);
     void set_eps(double kill_threshold);
     void set_nclusters(unsigned int nclusters);
     void set_log_energy(bool log_energy);
@@ -30,6 +30,6 @@ public:
 class CecModel {
 public:
 	~CecModel();
-	CecModel(CecConfiguration* cfg);
+	CecModel(CecConfiguration& cfg);
 	double get_energy() const;
 };

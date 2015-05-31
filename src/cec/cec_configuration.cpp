@@ -16,7 +16,7 @@ CecConfiguration::~CecConfiguration()
 {
 }
 
-Params &CecConfiguration::get_params()
+const Params& CecConfiguration::get_params() const
 {
     return this->m_params;
 }
@@ -26,13 +26,13 @@ void CecConfiguration::set_params(Params params)
     this->m_params = params;
 }
 
-void CecConfiguration::set_data_set(arma::mat dataset)
+void CecConfiguration::set_dataset(arma::mat &dataset)
 {
     this->m_params.dataset = dataset;
 }
 
 #ifdef RCPP_INTERFACE
-void CecConfiguration::set_data_set(const Rcpp::NumericMatrix proxy_dataset)
+void CecConfiguration::set_dataset_rcpp(const Rcpp::NumericMatrix proxy_dataset)
 {
     m_params.dataset = arma::mat(proxy_dataset.begin(), proxy_dataset.nrow(), proxy_dataset.ncol());
 }
