@@ -1,7 +1,6 @@
 #ifndef SVM_BASIC_H
 #define SVM_BASIC_H
 
-#include <armadillo>
 #include <string>
 #include <cstdlib>
 
@@ -10,6 +9,13 @@
 #endif
 
 #include "log.h"
+
+#ifdef SWIG
+%{
+#define SWIG_FILE_WITH_INIT
+#include "svm_basic.h"
+%}
+#endif
 
 enum KernelType {
     _LINEAR, _POLY, _RBF, _SIGMOID // _PRECOMPUTED
@@ -173,4 +179,4 @@ public:
     size_t getSVCount();
 };
 
-#endif
+#endif  // SVM_BASIC_H

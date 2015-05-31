@@ -25,7 +25,7 @@ void CecModel::clear_clusters() {
 }
 
 Cluster* CecModel::create_cluster(ClusterParams* cluster_params, int i) {
-    Params& params = m_config->get_params();
+    const Params& params = m_config.get_params();
     Cluster * cluster = 0;
     switch (cluster_params->type) {
     case kno_type: // TODO: handle knoType parameter
@@ -65,12 +65,18 @@ CecModel::~CecModel() {
     clear_clusters();
 }
 
-CecModel::CecModel(CecConfiguration *cfg) :
-    m_config(cfg) {
+CecModel::CecModel(CecConfiguration& cfg)
+    :   m_config(cfg)
+{
     find_best_cec();
 }
-CecModel::CecModel(CecModel &other) :
-    m_config(0) {
+
+CecModel::CecModel(CecConfiguration *cfg)
+    :   CecModel(*cfg)
+{ }
+
+CecModel::CecModel(CecModel &other)
+{
     *this = other;
 }
 
@@ -91,14 +97,14 @@ CecModel& CecModel::operator=(CecModel& other) {
 }
 
 void CecModel::init_clusters(std::vector<unsigned int>& assignment) {
-    Params& params = m_config->get_params();
+    const Params& params = m_config.get_params();
     m_assignment = assignment;
     clear_clusters();
     m_clusters.reserve(params.nclusters);
 
     int i = 0;
     if (params.cluster_type == kmix) {
-        for(std::list<boost::shared_ptr<ClusterParams> >::iterator it = params.clusters.begin(); it != params.clusters.end(); ++it)
+        for(auto it = params.clusters.begin(); it != params.clusters.end(); ++it)
         {
             m_clusters.push_back(create_cluster(it->get(), i));
             ++i;
@@ -134,7 +140,7 @@ void CecModel::init_clusters(std::vector<unsigned int>& assignment) {
 
 void CecModel::find_best_cec() {
     std::vector<unsigned int> assignment;
-    Params& params = m_config->get_params();
+    const Params& params = m_config.get_params();
     boost::scoped_ptr<Assignment> assignment_type;
 
     switch (params.assignment_type) {
@@ -181,7 +187,7 @@ void CecModel::find_best_cec() {
 }
 
 void CecModel::loop() {
-    Params& params = m_config->get_params();
+    const Params& params = m_config.get_params();
     m_result = params.algorithm->loop(params.dataset, m_assignment, params.kill_threshold, m_clusters);
     int nclusters = m_clusters.size();
     m_inv_set.resize(nclusters, false);
@@ -189,7 +195,7 @@ void CecModel::loop() {
 }
 
 void CecModel::single_loop() {
-    Params& params = m_config->get_params();
+    const Params& params = m_config.get_params();
     SingleResult sr = params.algorithm->single_loop(params.dataset, m_assignment, params.kill_threshold, m_clusters);
     m_result.append(sr, params.log_nclusters, params.log_energy);
 }
@@ -214,7 +220,7 @@ void CecModel::set_assignment(std::vector<unsigned int>& assignment) {
 }
 
 arma::mat CecModel::get_points() {
-    return m_config->get_params().dataset;
+    return m_config.get_params().dataset;
 }
 
 std::vector<arma::rowvec> CecModel::centers() const {
@@ -227,7 +233,7 @@ std::vector<arma::rowvec> CecModel::centers() const {
 }
 
 std::vector<arma::mat> CecModel::cov() const {
-    Params& params = m_config->get_params();
+    const Params& params = m_config.get_params();
     std::vector < arma::mat > array;
     array.reserve(m_clusters.size());
 
@@ -243,7 +249,7 @@ unsigned int CecModel::iters() const {
 }
 
 std::list<unsigned int> CecModel::get_nclusters() const {
-    Params& params = m_config->get_params();
+    const Params& params = m_config.get_params();
     if(!params.log_nclusters)
     {
         GMUM_ERROR("log.nclusters is available only if you turn log.ncluster=TRUE");
@@ -252,7 +258,7 @@ std::list<unsigned int> CecModel::get_nclusters() const {
 }
 
 std::list<double> CecModel::get_energy_history() const {
-    Params& params = m_config->get_params();
+    const Params& params = m_config.get_params();
     if(!params.log_energy)
     {
         GMUM_ERROR("log.energy is available only if you turn log.energy=TRUE");
@@ -265,7 +271,7 @@ double CecModel::get_energy() const {
 }
 
 unsigned int CecModel::predict(std::vector<double> vec) {
-    Params& params = m_config->get_params();
+    const Params& params = m_config.get_params();
     arma::rowvec x = arma::conv_to < arma::rowvec > ::from(vec);
 
     unsigned int assign = 0;

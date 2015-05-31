@@ -10,6 +10,14 @@
 #include "boost/random/mersenne_twister.hpp"
 #include "boost/random/uniform_int_distribution.hpp"
 
+#ifdef SWIG
+%{
+#define SWIG_FILE_WITH_INIT
+#include "kmeanspp_assignment.hpp"
+using namespace gmum;
+%}
+#endif
+
 namespace gmum {
 
 struct Point {

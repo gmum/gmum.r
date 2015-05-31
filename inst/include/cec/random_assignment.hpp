@@ -9,6 +9,14 @@
 #include "boost/random/uniform_int_distribution.hpp"
 #include "cec_configuration.hpp"
 
+#ifdef SWIG
+%{
+#define SWIG_FILE_WITH_INIT
+#include "random_assignment.hpp"
+using namespace gmum;
+%}
+#endif
+
 namespace gmum {
 
 void init_assign_random(std::vector<unsigned int> &assignment,

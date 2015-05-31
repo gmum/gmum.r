@@ -14,28 +14,35 @@
 #include "exceptions.hpp"
 #include "params.hpp"
 
+#ifdef SWIG
+
+%{
+#define SWIG_FILE_WITH_INIT
+#include "cec.hpp"
+using namespace gmum;
+%}
+
+%include "std_string.i"
+%include "std_vector.i"
+%include "armanpy.i"
+%include <boost_shared_ptr.i>
+
+namespace std 
+{
+    %template(UnsignedIntVector) vector<unsigned int>;
+}
+
+
+#endif
+
 /**
  * Instance of this class is CEC model object.
  */
 class CecModel {
-private:
-	std::vector<gmum::Cluster*> m_clusters;
-	gmum::TotalResult m_result;
-	std::vector<unsigned int> m_assignment;
-	std::vector<bool> m_inv_set;
-	std::vector<arma::mat> m_inv;
-
-	// pointer to the object created by R, it shouldn't be freed by the user because R built in GC will do it.
-	CecConfiguration* m_config;
-
-    gmum::Cluster * create_cluster(gmum::ClusterParams* cluster_params, int i);
-	void find_best_cec();
-    void init_clusters(std::vector<unsigned int>& assignment);
-	void clear_clusters();
-
 public:
 	~CecModel();
-	CecModel(CecConfiguration* cfg);
+    CecModel(CecConfiguration& cfg);
+    CecModel(CecConfiguration* cfg);
 	CecModel(CecModel& other);
 	CecModel& operator=(CecModel& other);
 
@@ -53,6 +60,18 @@ public:
 	double get_energy() const;
 	unsigned int predict(std::vector<double> vec);
 	const gmum::TotalResult& get_result() const;
+private:
+    std::vector<gmum::Cluster*> m_clusters;
+    gmum::TotalResult m_result;
+    std::vector<unsigned int> m_assignment;
+    std::vector<bool> m_inv_set;
+    std::vector<arma::mat> m_inv;
+    CecConfiguration m_config;
+
+    gmum::Cluster * create_cluster(gmum::ClusterParams* cluster_params, int i);
+    void find_best_cec();
+    void init_clusters(std::vector<unsigned int>& assignment);
+    void clear_clusters();
 };
 
 #endif

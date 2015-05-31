@@ -1,20 +1,22 @@
 #include "cec_configuration.hpp"
 #include "const.hpp"
+#include "hartigan.hpp"
 #include <boost/foreach.hpp>
 #include <sstream>
 #include <string.h>
 #include <iostream>
-#include <hartigan.hpp>
 
 using namespace gmum;
-
-
 
 CecConfiguration::CecConfiguration()
 {
 }
 
-Params &CecConfiguration::get_params()
+CecConfiguration::~CecConfiguration()
+{
+}
+
+const Params& CecConfiguration::get_params() const
 {
     return this->m_params;
 }
@@ -24,8 +26,13 @@ void CecConfiguration::set_params(Params params)
     this->m_params = params;
 }
 
+void CecConfiguration::set_dataset(arma::mat &dataset)
+{
+    this->m_params.dataset = dataset;
+}
+
 #ifdef RCPP_INTERFACE
-void CecConfiguration::set_data_set(const Rcpp::NumericMatrix proxy_dataset)
+void CecConfiguration::set_dataset_rcpp(const Rcpp::NumericMatrix proxy_dataset)
 {
     m_params.dataset = arma::mat(proxy_dataset.begin(), proxy_dataset.nrow(), proxy_dataset.ncol());
 }
@@ -135,11 +142,11 @@ void CecConfiguration::set_centroids(const Rcpp::List centroids) {
 }
 #endif
 
-void CecConfiguration::set_eps(const double kill_threshold) {
+void CecConfiguration::set_eps(double kill_threshold) {
     m_params.kill_threshold = kill_threshold;
 }
 
-void CecConfiguration::set_nclusters(const unsigned int nclusters) {
+void CecConfiguration::set_nclusters(unsigned int nclusters) {
     if (nclusters != 0)
         m_params.nclusters = nclusters;
     else if (m_params.clusters.size() > 0)
@@ -159,11 +166,11 @@ void CecConfiguration::set_log_cluster(bool log_nclusters) {
     m_params.log_nclusters = log_nclusters;
 }
 
-void CecConfiguration::set_nstart(const unsigned int nstart) {
+void CecConfiguration::set_nstart(unsigned int nstart) {
     m_params.nstart = nstart;
 }
 
-void CecConfiguration::set_method_init(const std::string init) {
+void CecConfiguration::set_method_init(std::string init) {
     m_params.assignment_type = CONST::default_assignment;
     if (init.compare(CONST::CLUSTERS::random) == 0)
         m_params.assignment_type = krandom;
@@ -249,7 +256,7 @@ void CecConfiguration::set_method_init(const std::string init) {
     }
 }
 
-void CecConfiguration::set_method_type(const std::string type) {
+void CecConfiguration::set_method_type(std::string type) {
     if (m_params.clusters.size() > 0)
         m_params.cluster_type = kmix;
     else {
@@ -271,7 +278,7 @@ void CecConfiguration::set_method_type(const std::string type) {
     }
 }
 
-void CecConfiguration::set_r(const double radius) {
+void CecConfiguration::set_r(double radius) {
     if (radius != 0 && m_params.clusters.empty()) {
         m_params.radius_set = true;
         m_params.radius = radius;
@@ -291,7 +298,7 @@ void CecConfiguration::set_it_max(int it_max) {
     m_params.it_max = it_max;
 }
 
-void CecConfiguration::set_algorithm(const std::string algorithm)
+void CecConfiguration::set_algorithm(std::string algorithm)
 {
     m_params.algorithm.reset(new Hartigan(m_params.log_nclusters, m_params.log_energy, m_params.it_max));
 }

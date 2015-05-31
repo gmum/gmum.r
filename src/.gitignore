@@ -1,0 +1,4 @@
+# SWIG sources
+*.cxx
+# SWIG interfaces
+*.i

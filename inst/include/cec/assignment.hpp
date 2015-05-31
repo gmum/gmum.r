@@ -5,6 +5,14 @@
 #include <armadillo>
 #include <list>
 
+#ifdef SWIG
+%{
+#define SWIG_FILE_WITH_INIT
+#include "assignment.hpp"
+using namespace gmum;
+%}
+#endif
+
 namespace gmum {
 
 /**

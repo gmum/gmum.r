@@ -17,7 +17,7 @@ using namespace gmum;
 RCPP_MODULE(cec) {
 	class_<CecConfiguration>("CecConfiguration")
 	.constructor()
-	.method("setDataSet", &CecConfiguration::set_data_set)
+    .method("setDataSet", &CecConfiguration::set_dataset_rcpp)
 	.method("setEps", &CecConfiguration::set_eps)
 	.method("setMix", &CecConfiguration::set_mix)
 	.method("setNrOfClusters", &CecConfiguration::set_nclusters)

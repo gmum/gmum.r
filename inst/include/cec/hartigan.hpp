@@ -9,6 +9,14 @@
 #include "../utils/log.hpp"
 #include <sstream>
 
+#ifdef SWIG
+%{
+#define SWIG_FILE_WITH_INIT
+#include "hartigan.hpp"
+using namespace gmum;
+%}
+#endif
+
 namespace gmum {
 
 //TODO: clean 3 loggers (:P) and include utils/utils.h with this function
