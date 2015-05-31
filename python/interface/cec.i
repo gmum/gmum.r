@@ -6,8 +6,14 @@
 %}
 
 %include "std_string.i"
+%include "std_vector.i"
 %include "armanpy.i"
 %include <boost_shared_ptr.i>
+
+namespace std 
+{
+    %template(UnsignedIntVector) vector<unsigned int>;
+}
 
 class CecConfiguration {
 public:
@@ -32,4 +38,5 @@ public:
 	~CecModel();
 	CecModel(CecConfiguration& cfg);
 	double get_energy() const;
+    std::vector<unsigned int> get_assignment() const;
 };
