@@ -4,7 +4,7 @@ CPP_SOURCES := $(wildcard svm/*.cpp cec/*.cpp utils/*.cpp gng/*.cpp)
 SOURCES := $(CPP_SOURCES) $(wildcard svmlight/*.c)
 INCLUDES := -I ../inst/include/svmlight -I ../inst/include/utils -I ../inst/include  -I ../inst/include/cec -I ../inst/include/gng -I ../inst/include/svm
 
-SVMLIGHT_OBJECTS = svmlight/svm_common.o svmlight/svm_hideo.o svmlight/svm_learn.o
+SVMLIGHT_OBJECTS = ../inst/include/svmlight/svm_common.o ../inst/include/svmlight/svm_hideo.o ../inst/include/svmlight/svm_learn.o
 COMPILED_LIBRARIES_OBJECTS = $(SVMLIGHT_OBJECTS)
 OBJECTS = $(CPP_SOURCES:.cpp=.o) $(COMPILED_LIBRARIES_OBJECTS)
 

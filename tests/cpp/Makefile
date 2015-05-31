@@ -19,7 +19,7 @@ ROOT_SRC_PATH := ../../src
 ROOT_TEST_PATH := .
 
 # Branches that will be compiled
-GMUMR_BRANCHES := cec #gng svm utils
+GMUMR_BRANCHES := cec #svm gng utils
 TEST_BRANCHES := cec gng svm
 
 # Additional cleaning paths
@@ -70,7 +70,7 @@ OBJECTS := $(patsubst %.cpp, %.o, $(SOURCES))
 TEST_OBJECTS := $(patsubst %.cpp, %.o, $(TEST_SOURCES))
 
 # Externally compiled libraries objects
-SVMLIGHT_OBJECT_PATHS := $(patsubst %, $(SVMLIGHT_SRC_PATH)/%, $(SVMLIGHT_OBJECT_FILENAMES))
+SVMLIGHT_OBJECT_PATHS := $(patsubst %, $(SVMLIGHT_INCLUDE_PATH)/%, $(SVMLIGHT_OBJECT_FILENAMES))
 
 # Sum up compiled libraries objects
 COMPILED_LIBRARIES_OBJECTS := $(SVMLIGHT_OBJECT_PATHS)
@@ -171,16 +171,33 @@ helper_script:
 	$(shell chmod +x $(filename))
 
 ###
+# SVMLight
+###
+
+$(SVMLIGHT_INCLUDE_PATH)/%.o:
+	cd $(SVMLIGHT_INCLUDE_PATH) && make $*.o
+
+###
 # SWIG: Compilation rules
 ###
 
-python: $(OBJECTS)
+python: $(OBJECTS) $(COMPILED_LIBRARIES_OBJECTS)
 	mkdir -p $(SWIG_OUTPUT_PATH)/{,cec,gng,svm}
 	rm -f $(PYTHON_INTERFACE)
-	cat $(ROOT_INCLUDE_PATH)/cec/*.hpp >> $(PYTHON_INTERFACE)
-	swig -c++ -module core -outdir $(GMUMPY_PATH) -python -o $(ROOT_SRC_PATH)/python_interface.cxx $(PYTHON_INTERFACE)
-	g++ $(CPPFLAGS) $(CXXFLAGS) -O2 -fPIC -c $(ROOT_SRC_PATH)/python_interface.cxx -o $(ROOT_SRC_PATH)/python_interface.o $(GMUMPY_INCLUDES)
-	$(CXX) -fPIC -shared $(LDLIBS) $(ROOT_SRC_PATH)/python_interface.o $(OBJECTS) -o $(GMUMPY_SO)
+	# Collect headers and create SWIG interface
+	$(foreach b, $(GMUMR_BRANCHES), \
+		cat $(ROOT_INCLUDE_PATH)/$b/*.hpp >> $(PYTHON_INTERFACE);)
+	# Generate SWIG C++ wrapping code...
+	swig -c++ -module core -outdir $(GMUMPY_PATH) -python \
+		-o $(ROOT_SRC_PATH)/python_interface.cxx $(PYTHON_INTERFACE)
+	# Compile SWIG C++ wrapping code...
+	g++ $(CPPFLAGS) $(CXXFLAGS) -O2 -fPIC \
+		-c $(ROOT_SRC_PATH)/python_interface.cxx \
+		-o $(ROOT_SRC_PATH)/python_interface.o $(GMUMPY_INCLUDES)
+	# Link shared object
+	$(CXX) -fPIC -shared $(LDLIBS) \
+		$(ROOT_SRC_PATH)/python_interface.o $(OBJECTS) $(COMPILED_LIBRARIES_OBJECTS) \
+		-o $(GMUMPY_SO)
 
 
 clean-python:
