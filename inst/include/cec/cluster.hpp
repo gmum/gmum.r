@@ -123,39 +123,39 @@ public:
                                   const arma::mat &points);
 };
 
-class ClusterCovMat: public ClusterUseCovMat {
+class ClusterFixedCovariance : public ClusterUseCovMat {
 private:
 	arma::mat m_inv_sigma;
 	double m_sigma_det;
 
 	double calculate_entropy(int n, const arma::mat &cov_mat);
 public:
-	ClusterCovMat(const arma::mat& inv_sigma, double sigma_det, int count,
+	ClusterFixedCovariance(const arma::mat& inv_sigma, double sigma_det, int count,
 			const arma::rowvec & mean, const arma::mat & cov_mat);
-	ClusterCovMat(const arma::mat & sigma, unsigned int id,
+	ClusterFixedCovariance(const arma::mat & sigma, unsigned int id,
 			const std::vector<unsigned int> &assignment,
 			const arma::mat &points);
-	virtual ClusterCovMat* clone();
-    virtual ~ClusterCovMat() { }
+	virtual ClusterFixedCovariance * clone();
+    virtual ~ClusterFixedCovariance() { }
 
     virtual arma::mat get_cov_mat(unsigned int id,
                                   const std::vector<unsigned int> &assignment,
                                   const arma::mat &points);
 };
 
-class ClusterConstRadius: public ClusterOnlyTrace {
+class ClusterSphericalFixedR : public ClusterOnlyTrace {
 private:
 	double calculate_entropy(double, int);
 	double m_r;
 public:
-	ClusterConstRadius(double r, int count, const arma::rowvec & mean,
+	ClusterSphericalFixedR(double r, int count, const arma::rowvec & mean,
 			double cov_mat_trace);
-	ClusterConstRadius(double r, unsigned int id,
+	ClusterSphericalFixedR(double r, unsigned int id,
 			const std::vector<unsigned int> &assignment,
 			const arma::mat &points);
-	virtual ClusterConstRadius* clone();
+	virtual ClusterSphericalFixedR * clone();
 
-    virtual ~ClusterConstRadius() { }
+    virtual ~ClusterSphericalFixedR() { }
 
     virtual arma::mat get_cov_mat(unsigned int id,
                                   const std::vector<unsigned int> &assignment,

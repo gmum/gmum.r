@@ -4,8 +4,10 @@
 \name{log.iters.cec}
 \alias{log.iters.cec}
 \title{log.iters.cec}
+\format{\preformatted{ NULL
+}}
 \usage{
-\method{log}{iters.cec}(c)
+log.iters.cec
 }
 \arguments{
 \item{c}{CEC model object.}
@@ -13,4 +15,5 @@
 \description{
 Print how many iterations it took to learn CEC model
 }
+\keyword{datasets}
 

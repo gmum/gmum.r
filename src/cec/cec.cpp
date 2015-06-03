@@ -34,20 +34,20 @@ Cluster* CecModel::create_cluster(ClusterParams* cluster_params, int i) {
     case kstandard:
         cluster = new ClusterStandard(i, m_assignment, params.dataset);
         break;
-    case kfull: {
-        ClusterFullParams *ptr = dynamic_cast<ClusterFullParams*>(cluster_params);
-        cluster = new ClusterCovMat(ptr->cov_mat, i, m_assignment, params.dataset);
+    case kfixed_covariance: {
+        ClusterFixedCovarianceParams *ptr = dynamic_cast<ClusterFixedCovarianceParams *>(cluster_params);
+        cluster = new ClusterFixedCovariance(ptr->cov_mat, i, m_assignment, params.dataset);
         break;
     }
     case kdiagonal:
         cluster = new ClusterDiagonal(i, m_assignment, params.dataset);
         break;
-    case ksphere:
+    case kspherical:
         cluster = new ClusterSpherical(i, m_assignment, params.dataset);
         break;
-    case kfsphere: {
-        ClusterFsphereParams* ptr = dynamic_cast<ClusterFsphereParams*>(cluster_params);
-        cluster = new ClusterConstRadius(ptr->radius, i, m_assignment, params.dataset);
+    case kfixed_spherical: {
+        ClusterSphericalFixedRParams * ptr = dynamic_cast<ClusterSphericalFixedRParams *>(cluster_params);
+        cluster = new ClusterSphericalFixedR(ptr->radius, i, m_assignment, params.dataset);
         break;
     }
 #ifdef RCPP_INTERFACE
@@ -100,18 +100,18 @@ void CecModel::init_clusters(std::vector<unsigned int>& assignment) {
     if (params.cluster_type == kmix) {
         for(std::list<boost::shared_ptr<ClusterParams> >::iterator it = params.clusters.begin(); it != params.clusters.end(); ++it)
         {
-            m_clusters.push_back(create_cluster(it->get(), i));
-            ++i;
+                m_clusters.push_back(create_cluster(it->get(), i));
+                ++i;
         }
     } else {
         //TODO: why pointer?
         boost::scoped_ptr<ClusterParams> cluster;
         switch (params.cluster_type) {
-        case kfsphere:
-            cluster.reset(new ClusterFsphereParams(params.radius));
+        case kfixed_spherical:
+            cluster.reset(new ClusterSphericalFixedRParams(params.radius));
             break;
-        case kfull:
-            cluster.reset(new ClusterFullParams(params.cov_mat));
+        case kfixed_covariance:
+            cluster.reset(new ClusterFixedCovarianceParams(params.cov_mat));
             break;
 #ifdef RCPP_INTERFACE
         case kcustom:
@@ -121,7 +121,7 @@ void CecModel::init_clusters(std::vector<unsigned int>& assignment) {
         default:
             /*case standard:
              case diagonal:
-             case sphere:*/
+             case spherical:*/
             cluster.reset(new ClusterParams(params.cluster_type));
             break;
         }
@@ -164,11 +164,20 @@ void CecModel::find_best_cec() {
             init_clusters(assignment);
             loop();
 
+            if(!std::isnormal(m_result.energy))
+            {
+                continue;
+            }
+            
             if (m_result.energy < best_cec.get_result().energy) {
                 best_cec = *this;
             }
         }
         *this = best_cec;
+        if(!std::isnormal(m_result.energy))
+        {
+            GMUM_WARNING("There are degenerated clusters! You should try run CEC with other parameters")
+        }
     } catch (std::exception &e) {
 #ifdef RCPP_INTERFACE
         Rcpp::stop(std::string("exception ") + e.what() + " caught in CEC_new");

@@ -3,7 +3,7 @@ library('gmum.r')
 
 source("cec_function.R")
 
-data(cec_simple_1)
+data(cec.simple1)
 
 expected_energy <- cec.simple1.extra[["energy"]]
 dataset_points <- cec.simple1

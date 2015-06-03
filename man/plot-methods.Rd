@@ -4,10 +4,13 @@
 \name{plot.gng}
 \alias{plot.gng}
 \title{plot}
+\format{\preformatted{ NULL
+}}
 \usage{
 plot(gng)
 }
 \arguments{
+
 \item{vertex.color}{How to color vertexes. Possible values: \code{gng.plot.color.cluster} (vertex color is set to fastgreedy.community clustering),
 \code{gng.plot.color.label} (rounds to integer label if present), \code{gng.plot.color.none} (every node is white),}
 
@@ -18,6 +21,7 @@ plot(gng)
 \code{gng.plot.2d.errors} (igraph plot with mean error log plot)}
 
 \item{vertex.size}{Size of plotted vertices}
+
 }
 \description{
 Plot resulting graph using igraph plotting, or using rgl 3d engine.
@@ -38,4 +42,5 @@ plot(gng, mode=gng.plot.3d, layout=gng.plot.layout.v2d, vertex.color=gng.plot.co
 
 # For more possibilities see gng.plot.* constants
 }
+\keyword{datasets}
 

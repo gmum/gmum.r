@@ -43,7 +43,7 @@ plot(c)
 Better than before, however, we know that clusters are spherical; let's inform CEC about that.
 
 ```{r fig.width=7, fig.height=6}
-c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere')
+c <- CEC(k=3, x=dataset, control.nstart=10, method.type='spherical')
 plot(c)
 ```
 
@@ -69,7 +69,7 @@ plot(c, ellipses=TRUE)
 Try the same with random assignment.
 
 ```{r fig.width=7, fig.height=6}
-c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere', method.init='random')
+c <- CEC(k=3, x=dataset, control.nstart=10, method.type='spherical', method.init='random')
 plot(c)
 ```
 

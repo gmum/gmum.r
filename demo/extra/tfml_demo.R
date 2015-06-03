@@ -24,7 +24,7 @@ title(main="Best result from 10 CEC runs")
 
 # Better than before, however, we know that clusters 
 # are spherical; let's inform cec about that.
-c <- CEC(k=3, x=mouse, method.type='sphere')
+c <- CEC(k=3, x=mouse, method.type='spherical')
 plot(c)
 title(main="CEC with predestined cluster type")
 

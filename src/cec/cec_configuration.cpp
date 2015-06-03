@@ -42,25 +42,25 @@ void CecConfiguration::set_cov(const Rcpp::NumericMatrix cov_mat_proxy)
     }
 }
 
-void CecConfiguration::set_mix_handle_full_cluster(Rcpp::List &list)
+void CecConfiguration::set_mix_handle_fixed_covariance_cluster(Rcpp::List &list)
 {
     if (list.containsElementNamed(CONST::CLUSTERS::cov_mat))
     {
         Rcpp::NumericMatrix temp = Rcpp::as < Rcpp::NumericMatrix > (list[CONST::CLUSTERS::cov_mat]);
-        m_params.clusters.push_back(boost::make_shared<ClusterFullParams>(arma::mat(temp.begin(), temp.nrow(), temp.ncol())));
+        m_params.clusters.push_back(boost::make_shared<ClusterFixedCovarianceParams>(arma::mat(temp.begin(), temp.nrow(), temp.ncol())));
     } else {
         GMUM_ERROR(CONST::ERRORS::cov_mat_req);
     }
 }
 
-void CecConfiguration::set_mix_handle_fsphere_cluster(Rcpp::List &list)
+void CecConfiguration::set_mix_handle_fixed_spherical_cluster(Rcpp::List &list)
 {
     if (list.containsElementNamed(CONST::CLUSTERS::radius))
     {
         double radius = Rcpp::as<double>(list[CONST::CLUSTERS::radius]);
-        m_params.clusters.push_back(boost::make_shared<ClusterFsphereParams>(radius));
+        m_params.clusters.push_back(boost::make_shared<ClusterSphericalFixedRParams>(radius));
     } else {
-        m_params.clusters.push_back(boost::make_shared<ClusterFsphereParams>());
+        m_params.clusters.push_back(boost::make_shared<ClusterSphericalFixedRParams>());
     }
 }
 
@@ -80,9 +80,9 @@ void CecConfiguration::set_mix_handle_standard_cluster(Rcpp::List &list)
     m_params.clusters.push_back(boost::make_shared<ClusterParams>(kstandard));
 }
 
-void CecConfiguration::set_mix_handle_sphere_cluster(Rcpp::List &list)
+void CecConfiguration::set_mix_handle_spherical_cluster(Rcpp::List &list)
 {
-    m_params.clusters.push_back(boost::make_shared<ClusterParams>(ksphere));
+    m_params.clusters.push_back(boost::make_shared<ClusterParams>(kspherical));
 }
 
 void CecConfiguration::set_mix_handle_diagonal_cluster(Rcpp::List &list)
@@ -93,6 +93,7 @@ void CecConfiguration::set_mix_handle_diagonal_cluster(Rcpp::List &list)
 void CecConfiguration::set_mix(const Rcpp::List clusters)
 {
     if (Rf_isNull(clusters)) { return; }
+    m_params.nclusters = 0;
 
     Rcpp::List desc = Rcpp::as < Rcpp::List > (clusters);
     for (Rcpp::List::iterator it = desc.begin(); it != desc.end(); ++it)
@@ -104,23 +105,42 @@ void CecConfiguration::set_mix(const Rcpp::List clusters)
         }
 
         std::string typeStr = Rcpp::as < std::string > (list[CONST::CLUSTERS::type]);
-
-        if (typeStr.compare(CONST::CLUSTERS::standard) == 0)
+        
+        int count = 1;
+        if(list.containsElementNamed(CONST::nclusters))
         {
-            set_mix_handle_standard_cluster(list);
-        } else if (typeStr.compare(CONST::CLUSTERS::full) == 0) {
-            set_mix_handle_full_cluster(list);
-        } else if (typeStr.compare(CONST::CLUSTERS::fsphere) == 0) {
-            set_mix_handle_fsphere_cluster(list);
-        } else if (typeStr.compare(CONST::CLUSTERS::sphere) == 0) {
-            set_mix_handle_sphere_cluster(list);
-        } else if (typeStr.compare(CONST::CLUSTERS::diagonal) == 0) {
-            set_mix_handle_diagonal_cluster(list);
-        } else if (typeStr.compare(CONST::CLUSTERS::custom) == 0) {
-            set_mix_handle_custom_cluster(list);
-        } else {
-            GMUM_ERROR(typeStr + ": unknown method.type");
+            count = Rcpp::as<int>(list[CONST::nclusters]);
+            if(count <= 0)
+            {
+                GMUM_ERROR("k must be greater or equal 1");
+            }
         }
+        m_params.nclusters += count;
+        
+        for(int i = 0; i < count; ++i)
+        {
+            if (typeStr.compare(CONST::CLUSTERS::standard) == 0)
+            {
+                set_mix_handle_standard_cluster(list);
+            } else if (typeStr.compare(CONST::CLUSTERS::fixed_covariance) == 0) {
+                set_mix_handle_fixed_covariance_cluster(list);
+            } else if (typeStr.compare(CONST::CLUSTERS::fixed_spherical) == 0) {
+                set_mix_handle_fixed_spherical_cluster(list);
+            } else if (typeStr.compare(CONST::CLUSTERS::spherical) == 0) {
+                set_mix_handle_spherical_cluster(list);
+            } else if (typeStr.compare(CONST::CLUSTERS::diagonal) == 0) {
+                set_mix_handle_diagonal_cluster(list);
+            } else if (typeStr.compare(CONST::CLUSTERS::custom) == 0) {
+                set_mix_handle_custom_cluster(list);
+            } else {
+                GMUM_ERROR(typeStr + ": unknown method.type");
+            }
+        }
+    }
+    
+    if(m_params.nclusters <= 0)
+    {
+        GMUM_ERROR("method type mix require at least one cluster parameter (params.mix)");
     }
 }
 
@@ -179,12 +199,12 @@ void CecConfiguration::set_method_init(const std::string init) {
         GMUM_ERROR(CONST::ERRORS::centroids_error);
 
     switch (m_params.cluster_type) {
-        case kfull:
+        case kfixed_covariance:
         {
             if (!m_params.cov_mat_set) GMUM_ERROR(CONST::ERRORS::cov_mat_req);
             break;
         }
-        case kfsphere:
+        case kfixed_spherical:
         {
             if (!m_params.radius_set) GMUM_ERROR(CONST::ERRORS::radius_req);
             break;
@@ -207,18 +227,18 @@ void CecConfiguration::set_method_init(const std::string init) {
                           m_params.clusters)
             {
                 switch (cluster->type) {
-                case kfull:
+                case kfixed_covariance:
                 {
-                    ClusterFullParams &ptr =
-                            static_cast<ClusterFullParams&>(*cluster);
+                    ClusterFixedCovarianceParams &ptr =
+                            static_cast<ClusterFixedCovarianceParams &>(*cluster);
                     if (!ptr.cov_mat_set)
                         GMUM_ERROR(CONST::ERRORS::cov_mat_req);
                     break;
                 }
-                case kfsphere:
+                case kfixed_spherical:
                 {
-                    ClusterFsphereParams &ptr =
-                            static_cast<ClusterFsphereParams&>(*cluster);
+                    ClusterSphericalFixedRParams &ptr =
+                            static_cast<ClusterSphericalFixedRParams &>(*cluster);
                     if (!ptr.radius_set)
                         GMUM_ERROR(CONST::ERRORS::radius_req);
                     break;
@@ -255,14 +275,14 @@ void CecConfiguration::set_method_type(const std::string type) {
     else {
         if (type.compare(CONST::CLUSTERS::standard) == 0) {
             m_params.cluster_type = kstandard;
-        } else if (type.compare(CONST::CLUSTERS::full) == 0) {
-            m_params.cluster_type = kfull;
+        } else if (type.compare(CONST::CLUSTERS::fixed_covariance) == 0) {
+            m_params.cluster_type = kfixed_covariance;
         } else if (type.compare(CONST::CLUSTERS::diagonal) == 0) {
             m_params.cluster_type = kdiagonal;
-        } else if (type.compare(CONST::CLUSTERS::sphere) == 0) {
-            m_params.cluster_type = ksphere;
-        } else if (type.compare(CONST::CLUSTERS::fsphere) == 0) {
-            m_params.cluster_type = kfsphere;
+        } else if (type.compare(CONST::CLUSTERS::spherical) == 0) {
+            m_params.cluster_type = kspherical;
+        } else if (type.compare(CONST::CLUSTERS::fixed_spherical) == 0) {
+            m_params.cluster_type = kfixed_spherical;
         } else if (type.compare(CONST::CLUSTERS::custom) == 0) {
             m_params.cluster_type = kcustom;
         } else{

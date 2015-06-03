@@ -4,6 +4,8 @@
 \name{summary.cec}
 \alias{summary.cec}
 \title{summary}
+\format{\preformatted{ NULL
+}}
 \usage{
 summary(cec)
 }
@@ -16,4 +18,5 @@ Print detailed information about CEC model object
 \details{
 Summary CEC
 }
+\keyword{datasets}
 

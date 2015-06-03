@@ -1,7 +1,8 @@
 library(gmum.r)
 library(CEC)
-
-method_types = list(gmum=c('standard', 'sphere', 'diagonal'), cran=c('all', 'spherical', 'diagonal'))
+source('../../../../../R/R_scripts/energy.R')
+method_types = list(gmum=c('standard', 'spherical', 'diagonal'), cran=c('all', 'spherical', 'diagonal'))
+entropy_func_map = list(standard_entropy, sphere_entropy, diagonal_entropy)
 nmethod_types = length(method_types$gmum)
 
 load_dataset <- function(data_path) {
@@ -18,29 +19,13 @@ load_dataset <- function(data_path) {
     
     dataset <- as.matrix(read.table(file=points_file, colClasses='numeric'))
     clusters <- normalize_clustering(as.vector(as.matrix(read.table(file=clusters_file))))
-    k <- max(clusters)
+    k <- length(unique(clusters))
     name <- basename(data_path) 
     return(list(name=name, k=k, clustering=clusters, dataset=dataset))
 }
 
 normalize_clustering <- function(clustering) {
     return( (clustering - min(clustering)) + 1 )
-}
-
-cran_calculate_energy <- function(points, centers, method_type) {
-    if( is.list(centers) ) {
-        centers = do.call(rbind, centers)
-    }
-    c <- cec(x=points, centers=centers, type=method_type, iter.max=200, nstart=1)
-    return(c$final.cost)
-}
-
-gmum_calculate_energy <- function(points, centers, method_type) {
-    if( !is.list(centers) ) {
-        centers = as.list(data.frame(t(centers)))
-    }
-    c <- CEC(k=length(centers), x=points, method.init='centroids', params.centroids=centers, method.type=method_type, control.itmax=200, control.nstart=1)
-    return(c$energy())
 }
 
 gmum_cec <- function(nclusters, nstart, points, init_type, method_type, max_iterations, eps, output_plot_path = NULL) {        

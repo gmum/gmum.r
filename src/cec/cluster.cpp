@@ -225,7 +225,7 @@ ClusterStandard::ClusterStandard(unsigned int id,
         return m_cov_mat;
     }
 
-ClusterCovMat::ClusterCovMat(const arma::mat & sigma, unsigned int id,
+ClusterFixedCovariance::ClusterFixedCovariance(const arma::mat & sigma, unsigned int id,
 		const std::vector<unsigned int> &assignment, const arma::mat &points) :
 		ClusterUseCovMat(id, assignment, points) {
 	m_sigma_det = arma::det(sigma);
@@ -233,40 +233,40 @@ ClusterCovMat::ClusterCovMat(const arma::mat & sigma, unsigned int id,
 	m_entropy = calculate_entropy(m_n, m_cov_mat);
 }
 
-ClusterCovMat::ClusterCovMat(const arma::mat& inv_sigma, double sigma_det,
+ClusterFixedCovariance::ClusterFixedCovariance(const arma::mat& inv_sigma, double sigma_det,
 		int count, const arma::rowvec & mean, const arma::mat & cov_mat) :
 		ClusterUseCovMat(count, mean, cov_mat), m_inv_sigma(inv_sigma), m_sigma_det(
 				sigma_det) {
 	m_entropy = calculate_entropy(m_n, cov_mat);
 }
 
-double ClusterCovMat::calculate_entropy(int n, const arma::mat &cov_mat) {
+double ClusterFixedCovariance::calculate_entropy(int n, const arma::mat &cov_mat) {
 	return n * log(2 * M_PI) / 2 + arma::trace(m_inv_sigma * cov_mat) / 2
 			+ log(m_sigma_det) / 2;
 }
 
-    arma::mat ClusterCovMat::get_cov_mat(unsigned int id,
+    arma::mat ClusterFixedCovariance::get_cov_mat(unsigned int id,
                                            const std::vector<unsigned int> &assignment, const arma::mat &points) {
         return arma::inv(m_inv_sigma);
     }
 
-ClusterConstRadius::ClusterConstRadius(double r, unsigned int id,
+ClusterSphericalFixedR::ClusterSphericalFixedR(double r, unsigned int id,
 		const std::vector<unsigned int> &assignment, const arma::mat &points) :
 		ClusterOnlyTrace(id, assignment, points), m_r(r) {
 	m_entropy = calculate_entropy(m_cov_mat_trace, m_n);
 }
 
-ClusterConstRadius::ClusterConstRadius(double r, int count,
+ClusterSphericalFixedR::ClusterSphericalFixedR(double r, int count,
 		const arma::rowvec & mean, double cov_mat_trace) :
 		ClusterOnlyTrace(count, mean, cov_mat_trace), m_r(r) {
 	m_entropy = calculate_entropy(m_cov_mat_trace, m_n);
 }
 
-double ClusterConstRadius::calculate_entropy(double cov_mat_trace, int n) {
+double ClusterSphericalFixedR::calculate_entropy(double cov_mat_trace, int n) {
 	return n * log(2 * M_PI) / 2 + cov_mat_trace / (2 * m_r) + n * log(m_r) / 2;
 }
 
-    arma::mat ClusterConstRadius::get_cov_mat(unsigned int id,
+    arma::mat ClusterSphericalFixedR::get_cov_mat(unsigned int id,
                                   const std::vector<unsigned int> &assignment,
                                   const arma::mat &points){
 		arma::mat cov = ClusterOnlyTrace::get_cov_mat(id, assignment, points);
@@ -322,13 +322,13 @@ double ClusterDiagonal::calculate_entropy(int n, const arma::mat &cov_mat) {
 		return m_cov_mat;
 	}
 
-ClusterCovMat* ClusterCovMat::clone() {
-	return new ClusterCovMat(m_inv_sigma, m_sigma_det, m_count, m_mean,
+ClusterFixedCovariance *ClusterFixedCovariance::clone() {
+	return new ClusterFixedCovariance(m_inv_sigma, m_sigma_det, m_count, m_mean,
 			m_cov_mat);
 }
 
-ClusterConstRadius* ClusterConstRadius::clone() {
-	return new ClusterConstRadius(m_r, m_count, m_mean, m_cov_mat_trace);
+ClusterSphericalFixedR *ClusterSphericalFixedR::clone() {
+	return new ClusterSphericalFixedR(m_r, m_count, m_mean, m_cov_mat_trace);
 }
 
 ClusterSpherical* ClusterSpherical::clone() {

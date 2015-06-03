@@ -1,9 +1,6 @@
 #include <climits>
 #include <cmath>
 #include "hartigan.hpp"
-#include "cec_configuration.hpp" // for GMUM_WARNING, TODO: move GMUM_WARNING and GMUM_ERROR to other file.
-
-#define isnan(x) (x != x)
 
 namespace gmum {
 
@@ -153,10 +150,6 @@ SingleResult Hartigan::single_loop(const arma::mat &points,
     double energy = 0;
     for (unsigned int i = 0; i < clusters_raw.size(); ++i) {
         curr_cluster_energy = calc_energy(clusters_raw[i]->entropy(), clusters_raw[i]->size(), npoints);
-        if(!std::isnormal(curr_cluster_energy))
-        {
-            GMUM_WARNING("There are degenerated clusters! You should try run CEC with other parameters")
-        }
         energy += curr_cluster_energy;
     }
 
@@ -186,8 +179,8 @@ void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
             if(assignment[j] == source)
             {
                 clusters[0]->add_point(points.row(j));
-                assignment[j] = 0;
             }
+            assignment[j] = 0;
         }
         return;
     }

@@ -4,6 +4,8 @@
 \name{print.cec}
 \alias{print.cec}
 \title{print}
+\format{\preformatted{ NULL
+}}
 \usage{
 print(cec)
 }
@@ -17,4 +19,5 @@ Presents a structure of the cec results object (clusters found)
 \details{
 Print CEC
 }
+\keyword{datasets}
 

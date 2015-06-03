@@ -12,9 +12,9 @@ DefaultGmumParams::DefaultGmumParams(unsigned int nclusters, gmum::ClusterType c
 MixTypeParamsThreeSpheres::MixTypeParamsThreeSpheres(gmum::AssignmentType assignment_type, int it_max)
     :   DefaultGmumParams(3, gmum::kmix, assignment_type, it_max)
 {
-    gmum_params.clusters.push_back(boost::make_shared<gmum::ClusterParams>(gmum::ksphere));
-    gmum_params.clusters.push_back(boost::make_shared<gmum::ClusterParams>(gmum::ksphere));
-    gmum_params.clusters.push_back(boost::make_shared<gmum::ClusterParams>(gmum::ksphere));
+    gmum_params.clusters.push_back(boost::make_shared<gmum::ClusterParams>(gmum::kspherical));
+    gmum_params.clusters.push_back(boost::make_shared<gmum::ClusterParams>(gmum::kspherical));
+    gmum_params.clusters.push_back(boost::make_shared<gmum::ClusterParams>(gmum::kspherical));
 }
 
 TestsFixtureParam::TestsFixtureParam(ClusterReader _reader, boost::shared_ptr<DefaultGmumParams> _params, unsigned int _times)

@@ -4,8 +4,10 @@
 \name{covMatrix.cec}
 \alias{covMatrix.cec}
 \title{covMatrix}
+\format{\preformatted{ NULL
+}}
 \usage{
-covMatrix.cec(c)
+covMatrix.cec
 }
 \arguments{
 \item{c}{CEC model object.}
@@ -13,4 +15,5 @@ covMatrix.cec(c)
 \description{
 Print covariances of clusters
 }
+\keyword{datasets}
 

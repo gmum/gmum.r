@@ -4,8 +4,10 @@
 \name{runAll.cec}
 \alias{runAll.cec}
 \title{runAll}
+\format{\preformatted{ NULL
+}}
 \usage{
-runAll.cec(c)
+runAll.cec
 }
 \arguments{
 \item{c}{CEC model object.}
@@ -13,4 +15,5 @@ runAll.cec(c)
 \description{
 Starts whole algorithm again with same parameters
 }
+\keyword{datasets}
 

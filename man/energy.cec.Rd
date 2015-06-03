@@ -4,8 +4,10 @@
 \name{energy.cec}
 \alias{energy.cec}
 \title{energy}
+\format{\preformatted{ NULL
+}}
 \usage{
-energy.cec(c)
+energy.cec
 }
 \arguments{
 \item{c}{CEC model object.}
@@ -13,4 +15,5 @@ energy.cec(c)
 \description{
 Print result energy of clustering found
 }
+\keyword{datasets}
 

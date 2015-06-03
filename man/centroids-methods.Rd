@@ -5,6 +5,8 @@
 \alias{centroids}
 \alias{centroids.gng}
 \title{centroids}
+\format{\preformatted{ NULL
+}}
 \usage{
 centroids(gng)
 }
@@ -18,4 +20,5 @@ Get centroids
 # Print position of the first centroid
 print(node(gng, centroids(gng)[1])$pos)
 }
+\keyword{datasets}
 

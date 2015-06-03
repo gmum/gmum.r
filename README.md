@@ -59,7 +59,7 @@ Subpackage containing **efficient**, **online** GNG algorithm. It produces topol
 dump your model to optimized binary file and load it later on.
 
 <small>Clustering of the UCI wine dataset</small>
-<center><img src="./doc/img/gng_readme.png" width="100%"></img></center>
+<center><img src="./doc/gng/img/gng_readme.png" width="100%"></img></center>
 
 ### Example: cluster wine dataset
 
@@ -92,7 +92,7 @@ CEC aims to efficiently implement Cross Entropy Clustering Algorithm as R extens
 Cross-entropy clustering (shortly CEC) joins advantages of classical k-means with those of EM. Moreover, contrary to k-means and EM, CEC **finds the optimal number of clusters** by automatically removing redundant ones.
 
 <small>CEC clustering</small>
-<center><img src="./doc/img/cec_mouse.png" width="60%"></img></center>
+<center><img src="./doc/cec/img/cec_mouse.png" width="60%"></img></center>
 
 
 ### Example usage
@@ -115,7 +115,7 @@ c <- CEC(k=3, x=dataset, control.nstart=10)
 plot(c)
 
 # Better than before, however, we know that clusters are spherical; let's inform cec about that.
-c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere')
+c <- CEC(k=3, x=dataset, control.nstart=10, method.type='spherical')
 plot(c)
 
 # You can learn details of clustering like this
@@ -129,7 +129,7 @@ predict(c, c(1,1))
 plot(c, ellipses=TRUE)
 
 # Try the same with random assignment
-c <- CEC(k=3, x=dataset, control.nstart=10, method.type='sphere', method.init='random')
+c <- CEC(k=3, x=dataset, control.nstart=10, method.type='spherical', method.init='random')
 plot(c)
 ```
 

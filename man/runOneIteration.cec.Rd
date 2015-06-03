@@ -4,8 +4,10 @@
 \name{runOneIteration.cec}
 \alias{runOneIteration.cec}
 \title{runOneIteration}
+\format{\preformatted{ NULL
+}}
 \usage{
-runOneIteration.cec(c)
+runOneIteration.cec
 }
 \arguments{
 \item{c}{CEC model object.}
@@ -13,4 +15,5 @@ runOneIteration.cec(c)
 \description{
 runs one iteration of algorithm
 }
+\keyword{datasets}
 

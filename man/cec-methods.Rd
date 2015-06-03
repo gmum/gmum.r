@@ -4,8 +4,10 @@
 \name{CEC}
 \alias{CEC}
 \title{CEC}
+\format{\preformatted{ NULL
+}}
 \usage{
-CEC(k=3, x=dataset)
+CEC
 }
 \arguments{
 \item{x}{Numeric matrix of data.}
@@ -14,25 +16,26 @@ CEC(k=3, x=dataset)
 
 \item{method.type}{Type of clustering (Gauss family).
 \enumerate{
-\item diagonal Gaussians with diagonal covariance. The clustering will try to divide the data into ellipsoid with radiuses parallel to coordinate axes
-\item fsphere Spherical (radial) Gaussian densities (additional parameter - radius)
-\item full The clustering will have the tendency to divide the data into clusters resembling the unit circles in the Mahalanobis distance (additional parameter - covaraince matrix required)
-\item func Own function dependent on m and sigma (additional parameter)
-\item mix Mix of others Gaussian types.
-\item standard We divide dataset into ellipsoid-like clusters without any preferences (default)
-\item sphere The clustering will try to divide the data into circles of arbitrary sizes}}
+\item \code{"diagonal"} Gaussians with diagonal covariance. The clustering will try to divide the data into ellipsoid with radiuses parallel to coordinate axes
+\item \code{"fixed_spherical"} Spherical (radial) Gaussian densities (additional parameter - radius)
+\item \code{"fixed_covariance"} The clustering will have the tendency to divide the data into clusters resembling the unit circles in the Mahalanobis distance (additional parameter - covaraince matrix required)
+\item \code{"func"} Own function dependent on m and sigma (additional parameter)
+\item \code{"standard"} We divide dataset into ellipsoid-like clusters without any preferences (default)
+\item \code{"spherical"} The clustering will try to divide the data into circles of arbitrary sizes}}
 
 \item{method.init}{Method to initialize clusters.
 \enumerate{
-\item centroids
-\item kmeans++
-\item random}}
+\item \code{"centroids"}
+\item \code{"kmeans++"}
+\item \code{"random"}}}
 
 \item{params.r}{Radius for spherical family.}
 
 \item{params.cov}{Covariance matrix for covariance family.}
 
 \item{params.centroids}{List of centroids.}
+
+\item{params.mix}{List of cluster with mixed Gaussian types.}
 
 \item{control.nstart}{How many times to perform algorithm.}
 
@@ -52,4 +55,16 @@ Create CEC model object
 \details{
 CEC
 }
+\examples{
+CEC(k=3, x=dataset)
+CEC(k=3, x=dataset, control.nstart=10, method.type='spherical', control.eps=0.05)
+CEC(k=2, x=dataset, method.type='spherical', method.init='centroids', params.centroids=list(c(-0.5,0.5),c(0,0)))
+CEC(k=5, x=dataset, method.type='fixed_spherical', params.r=0.01, control.nstart=10, control.eps=0.07)
+CEC(k=5, x=dataset, method.type='fixed_covariance', params.cov=matrix(c(0.03,0,0,0.01),2), control.nstart=10, control.eps=0.06)
+CEC(k=1, x=dataset, method.type='func', params.function='name_of_my_own_function')
+fixed_spherical_cluster_param = list(method.type = 'fixed_spherical', params.r = 0.001)
+covariance_cluster_param = list(method.type = 'fixed_covariance', params.cov=matrix(c(0.05, 0, 0, 0.001), 2))
+CEC(x = dataset, params.mix = list(covariance_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param), control.nstart = 10)
+}
+\keyword{datasets}
 
