@@ -3,10 +3,34 @@ Support Vector Machines module
 """
 
 import numpy as np
-import scipy
-import sklearn.metrics
 
 import gmumpy.core
+
+from scipy.sparse.csr import csr_matrix
+
+from gmumpy.base import ClassifierMixin, BaseEstimator
+
+
+class SVC(ClassifierMixin, BaseEstimator):
+    """Support Vector Classifier
+
+    Parameters
+    ----------
+
+    TODO
+
+    Attributes
+    ----------
+
+    TODO
+    """
+
+    def __init__(self, C=1.0, cache_size=200, class_weight=None, coef0=0.0,
+                 degree=3, gamma=0.0, kernel='rbf', max_iter=-1,
+                 probability=False, random_state=None, shrinking=True,
+                 tol=1e-3, verbose=False):
+        # TODO
+        pass
 
 
 class SVMConfiguration(gmumpy.core.SVMConfiguration):
@@ -22,17 +46,17 @@ class SVMConfiguration(gmumpy.core.SVMConfiguration):
     >>> X, y = load_svmlight_file('../inst/data_sets/svm/breast_cancer.data')
     >>> sc.setData(X)
     >>> sc.setTarget(y)
-    
+
     Note that so created SVM configuration contains default params.
     """
 
     def setData(self, X):
-        if type(X) is scipy.sparse.csr.csr_matrix:
+        if isinstance(X, csr_matrix):
             X = X.toarray()
         super(SVMConfiguration, self).setData(np.asfortranarray(X))
 
     def setTarget(self, y):
-        if type(y) is scipy.sparse.csr.csr_matrix:
+        if isinstance(y, csr_matrix):
             y = y.toarray()
         super(SVMConfiguration, self).setTarget(np.asfortranarray(y))
 
@@ -49,7 +73,7 @@ class SVMClient(gmumpy.core.SVMClient):
     >>> sc.setData(X)
     >>> sc.setTarget(y)
     >>> sc.setKernel('rbf')
-    
+
     In order to train your SVM you must turn off the prediction flag:
 
     >>> sc.setPrediction(False)
@@ -64,12 +88,13 @@ class SVMClient(gmumpy.core.SVMClient):
     >>> sc.setPrediction(True)
     >>> svm = SVMClient(sc)
     >>> svm.predict(X)
+    >>> import sklearn.metrics
     >>> assert(sklearn.metrics.accuracy_score(sc.result, y) > 0.6)
 
     """
 
     def predict(self, X):
-        if type(X) is scipy.sparse.csr.csr_matrix:
+        if isinstance(X, csr_matrix):
             X = X.toarray()
         return super(SVMClient, self).predict(np.asfortranarray(X))
 

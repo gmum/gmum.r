@@ -4,8 +4,7 @@ gmumpy library index
 
 # TODO: Import high-level classes here like this:
 
-from cec import CecConfiguration
-from cec import CecModel
+from cec import CEC
+from svm import SVC
 
-from svm import SVMConfiguration
 

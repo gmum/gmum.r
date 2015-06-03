@@ -6,6 +6,28 @@ import numpy as np
 
 import gmumpy.core
 
+from gmumpy.base import BaseEstimator, ClusterMixin, TransformerMixin
+
+
+class CEC(BaseEstimator, ClusterMixin, TransformerMixin):
+    """Cross-Entropy Clustering
+
+    Parameters
+    ----------
+
+    TODO
+
+    Attributes
+    ----------
+
+    TODO
+    """
+
+    def __init__(self, algorithm='hartigan', init='random',
+                 method_type='standard', n_clusters=8):
+        # TODO
+        pass
+
 
 class CecConfiguration(gmumpy.core.CecConfiguration):
     """CEC configuration
