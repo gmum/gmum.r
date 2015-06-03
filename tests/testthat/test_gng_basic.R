@@ -62,7 +62,7 @@ test_that("predictCluster returns sensible results", {
   expect_that(all(sapply(table(target), function(x) x>40)), is_true())
   
   # At least catches most important clusters
-  expect_that(length(centroids(g)) > 3, is_true())
+  expect_that(length(predictCentroids(g)) > 3, is_true())
   
 })
 
@@ -130,7 +130,7 @@ test_that("GNG is working on mouse dataset", {
   expect_that(all(gng$clustering() == predict(gng,dataset)), is_true())
   gng.refit <- GNG(dataset, seed=778)
   # Seeding works => error statistics are the same
-  expect_that(all(abs(errorStatistics(gng.refit) - errorStatistics(gng)) < 1e-2) )
+  expect_that(all(abs(errorStatistics(gng.refit) - errorStatistics(gng)) < 1e-2), is_true() )
 })
 
 test_that("GNG clustering and predict are returning the same", {
