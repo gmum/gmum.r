@@ -10,12 +10,6 @@ using namespace std;
 
 void TwoeSVMPostprocessor::processRequest(SVMConfiguration &data) {
   if (!data.prediction) {
-		// int dim = data.data.n_cols;
-		// cout << "SVs: " << data.l << endl;
-		// cout << "dim: " << dim << endl;
-		// cout << "Classes: " << data.nr_class << endl;
-		// for(size_t i = 0; i < data.nr_class; i++) {
-		// 	cout << "Class: " << i << " SVs: " << data.nSV[i];
 
 		//TODO: Use copying memory for better memory optimalization
 		//DIM PROJECTION: examps x dim x dim x 1 = exams x 1

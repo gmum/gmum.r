@@ -1,5 +1,3 @@
 import(igraph)
 useDynLib(gmum.r)
 exportPattern("^[[:alpha:]]+")
-
-#S3method(print, Rcpp_GNGServer)

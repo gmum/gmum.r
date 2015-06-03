@@ -23,7 +23,6 @@
 
 /* interface to QP-solver */
 double *optimize_qp(QP *, double *, long, double *, LEARN_PARM *);
-
 /*---------------------------------------------------------------------------*/
 
 /* Learns an SVM classification model based on the training data in
@@ -252,6 +251,8 @@ void svm_learn_classification(DOC **docs, double *class, long int
 				     &maxdiff,(long)-1,
 				     (long)1);
   
+  learn_parm->iterations=iterations;
+
   if(verbosity>=1) {
     if(verbosity==1) printf("done. (%ld iterations)\n",iterations);
 
@@ -610,7 +611,8 @@ void svm_learn_regression(DOC **docs, double *value, long int totdoc,
 				     model,inconsistent,unlabeled,a,lin,c,
 				     &timing_profile,&maxdiff,(long)-1,
 				     (long)1);
-  
+  learn_parm->iterations=iterations;
+
   if(verbosity>=1) {
     if(verbosity==1) printf("done. (%ld iterations)\n",iterations);
 
@@ -1048,6 +1050,8 @@ void svm_learn_optimization(DOC **docs, double *rhs, long int
 				     a,lin,c,&timing_profile,
 				     &maxdiff,(long)-1,(long)1);
   
+  learn_parm->iterations=iterations;
+
   if(verbosity>=1) {
     if(verbosity==1) printf("done. (%ld iterations)\n",iterations);
 

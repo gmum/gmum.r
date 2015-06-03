@@ -2,7 +2,7 @@ include ../../src/Makevars
 
 # Explicit Makevars inheritances adn overrides
 CXX := $(CXX)
-CPPFLAGS := $(PKG_CPPFLAGS) -O2 -g -s
+CPPFLAGS := $(PKG_CPPFLAGS) -O2 -g -s --std=c++0x
 LDLIBS := $(PKG_LIBS) -lpthread -lgtest -lgtest_main
 
 ###
@@ -19,7 +19,7 @@ ROOT_TEST_PATH := .
 
 # Branches that will be compiled
 GMUMR_BRANCHES := cec gng svm utils
-TEST_BRANCHES := cec gng svm
+TEST_BRANCHES := cec gng svm utils
 
 # Additional cleaning paths
 ADDITIONAL_CLEANING := *.graphml *.bin

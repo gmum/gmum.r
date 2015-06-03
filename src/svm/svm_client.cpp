@@ -88,6 +88,7 @@ void  SVMClient::setAlpha(arma::vec new_alpha){
     }
 }
 
+
 // Getters
 arma::mat SVMClient::getX(){
     return config.data;
@@ -188,7 +189,7 @@ arma::vec SVMClient::getW() {
         return arma::vec(config.w);
     }
     else {
-    	LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundary is not available with non-linear kernel"));
+    	LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("w is not available with non-linear kernel"));
         return 0;
     }
 }
@@ -204,6 +205,10 @@ int SVMClient::getNumberClass() {
 arma::sp_mat SVMClient::getSV(){
     // FIXME: Workaround for R interface
     return config.support_vectors.t();
+}
+
+int SVMClient::getIterations(){
+    return config.iter;
 }
 
 SVMConfiguration &SVMClient::getConfiguration() {

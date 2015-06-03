@@ -70,7 +70,7 @@ library(ggplot2)
 #' data(svm_breast_cancer_dataset)
 #' ds <- svm.breastcancer.dataset
 #' svm.2e <- SVM(x=ds[,-1], y=ds[,1], core="libsvm", kernel="linear", prep = "2e", C=10);
-#' # more at <link to the 2e sample>
+#' # more at \url{http://r.gmum.net/samples/svm.2e.html}
 #' 
 #' # train SVM on a multiclass data set
 #' data(iris)
@@ -88,7 +88,7 @@ library(ggplot2)
 #' # suppose we have a labels y with missing labels marked as zeros
 #' svm.transduction <- SVM(x, y, transductive.learning=TRUE, core="svmlight")
 #' 
-#' # for more in-depth examples visit <link to samples on the website>                       
+#' # for more in-depth examples visit \url{http://r.gmum.net/getting_started.html}                     
 SVM <- NULL
 
 .createMultiClassSVM <- NULL
@@ -254,6 +254,7 @@ evalqOnLoad({
     }
     
     models <- list()
+    call[[1]] <- as.name("SVM")
     
     # Fit one model after another
     for (j in J){
@@ -272,23 +273,34 @@ evalqOnLoad({
       p <- as.list(match.call(expand.dots=TRUE))
       p$x <- x.model
       p$y <- as.factor(y.model)
+      # class weights
+      w <- p$class.weights
+      if (!is.null(w) && class.type == "one.versus.one") {
+        weight.pos <- w[lev[pick[1][j]]]
+        weight.neg <- w[lev[pick[2][j]]]
+        p$class.weights <- c("1"=weight.pos, "-1"=weight.neg)
+      }
       models[[j]] <- do.call(SVM, p[2:length(p)])
+      assign("call", call, models[[j]])
     }
-    call[[1]] <- as.name("SVM")
+    
     core <- as.list(call)$core
     kernel <- as.list(call)$kernel
+    prep <- as.list(call)$prep
     if (is.null(core)) core <- "libsvm"
     if (is.null(kernel)) kernel <- "linear"
+    if (is.null(prep)) prep <- "none"
 
     obj <- list(models=models, 
                 class.type=class.type, 
                 X=x,
                 Y=y,
-                pick=pick, 
+                .pick=pick, 
                 levels=lev, 
                 call=call, 
                 core=core, 
-                kernel=kernel)
+                kernel=kernel,
+                prep=prep)
 
     class(obj) <- "MultiClassSVM"
     obj
@@ -315,7 +327,8 @@ evalqOnLoad({
            max.iter    = -1,
            verbosity   = 4,
            class.type = 'one.versus.all',
-           seed = NULL) {
+           seed = NULL,
+           svm.options = '') {
     # First check if we have binary or multiclass case
     if (!is.vector(y) && !is.factor(y)) {
       stop("y is of a wrong class, please provide vector or factor")
@@ -335,23 +348,36 @@ evalqOnLoad({
     if((length(levels) > 2 && !transductive.learning)){
       params <- as.list(match.call(expand.dots=TRUE))
       #skipping first param which is function itself
+      params$class.weights <- class.weights
+      params$class.type <- class.type
       return(do.call(.createMultiClassSVM, as.list(params[2:length(params)])))
     }
+    else if(length(levels) > 3 && transductive.learning){ # 3 or more classes + TR class
+      stop("Multiclass transductive learning is not supported!")
+    }
     
+    if ( core != "svmlight" && transductive.learning) 
+      core <- "svmlight"
     
     call <- match.call(expand.dots = TRUE)
     call[[1]] <- as.name("SVM")
 
     # check for errors
-    if ( core != "libsvm" && core != "svmlight") 
-      stop(paste(GMUM_WRONG_LIBRARY, ": bad library, available are: libsvm, svmlight" ))  
-    if ( core != "svmlight" && transductive.learning) 
-      stop(paste(GMUM_WRONG_LIBRARY, ": bad library, transductive learning is supported only by svmlight" ))  
+    if (core != "libsvm" && core != "svmlight") 
+      stop(sprintf("bad core: %s, available are: libsvm, svmlight", core))   
     if (kernel != "linear" && kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") 
-      stop(paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
-    if (prep != "2e" && prep != "none") stop(paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
+      stop("bad kernel: %s" )
+    if (prep != "2e" && prep != "none") stop(sprintf("bad preprocess: %s", prep ))
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
-    if (C < 0 || gamma < 0 || degree < 1) stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
+    # if (C < 0 || gamma < 0 || degree < 1) stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
+    if (C == 0 && core == "libsvm"){ # libsvm does not handle C=0, svmlight does
+      warning("libsvm doesn't support C=0, switching to svmlight")
+      core <- "svmlight"
+    }
+    else if (C < 0) stop(sprintf("C parameter can't be negative: %f", C))
+    if (gamma <= 0) stop(sprintf("gamma parameter must be positive: %f", gamma))
+    if (degree < 1 || degree %% 1 != 0) stop(sprintf("degree parameter must be positive integer: %.2f", degree))
+    
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
     if ((transductive.posratio < 0 && transductive.posratio != -1) || transductive.posratio > 1)
       stop("Please pass transductive.posratio in range [0,1]")  
@@ -404,7 +430,6 @@ evalqOnLoad({
 
     # Decide what label is used for unlabeled examples
     unlabeled.level = "TR"
-    unlabeled.level = "TR"
     if(transductive.learning){
       if(! ("TR" %in% levels || "0" %in% levels ) ){
         stop("Please include TR or 0 factor in levels for transductive learning")
@@ -423,7 +448,7 @@ evalqOnLoad({
     # Contribution to simplifying this are welcome :)
     if(transductive.learning){
       # Erasing TR from levels. We will never return it
-      levels = levels[levels != unlabeled.level] 
+      levels <- levels[levels != unlabeled.level] 
       indexes.unlabeled <- y == unlabeled.level  
       z <- y[!indexes.unlabeled]
       z <- as.integer(factor(z, levels=levels))
@@ -435,15 +460,15 @@ evalqOnLoad({
       y[!indexes.unlabeled] <- z
     }else{
       y <- as.integer(y) # Standarization, omits 0!
-      y[y==1] = -1 # Standarize it further!
-      y[y==2] = 1
+      y[y==1] <- -1 # Standarize it further!
+      y[y==2] <- 1
     }
     
     config <- new(SVMConfiguration)
     config$y <- data.matrix(y)
     
-    config$use_transductive_learning = transductive.learning
-    config$transductive_posratio = transductive.posratio
+    config$use_transductive_learning <- transductive.learning
+    config$transductive_posratio <- transductive.posratio
     
     # sparse 
     if (sparse) {
@@ -459,9 +484,6 @@ evalqOnLoad({
       config$x <- x
     }
     
-    if(!is.null(seed)){
-      config$setSeed(seed)
-    }
     config$setLibrary(core)
     config$setKernel(kernel)
     config$setPreprocess(prep)
@@ -474,6 +496,7 @@ evalqOnLoad({
     config$eps <- tol
     config$cache_size <- cache_size
     config$max_iter <- max.iter
+    config$svm_options <- svm.options
     
     if (!is.null(class.weights) && !is.logical(class.weights)) {
       
@@ -532,12 +555,31 @@ evalqOnLoad({
   }
   
   summary.MultiClassSVM <<- function(object) {
-    print(sprintf("Support Vector Machine, multiclass.type: %s, core: %s, kernel: %s",
+    print(sprintf("Support Vector Machine, multiclass.type: %s, core: %s, preprocess: %s",
                   object$class.type, 
                   object$core, 
-                  object$kernel))
+                  object$kernel,
+                  object$prep))
     print(sprintf("%d classes", 
                   length(object$levels)))
+    object <- object$models[[1]]
+    print(sprintf("Parameters: kernel: %s, C: %f", object$kernel(), object$C()))
+    
+    if (object$kernel() == "rbf"){
+      print(sprintf("Kernel parameters: gamma: %f", 
+                    object$gamma()))
+    }
+    else if (object$kernel() == "poly"){
+      print(sprintf("Kernel parameters: gamma: %f, degree: %d, coef0: %f", 
+                    object$gamma(),
+                    object$degree(),
+                    object$coef0()))
+    }
+    else if (object$kernel() == "sigmoid"){
+      print(sprintf("Kernel parameters: gamma: %f, coef0: %f", 
+                    object$gamma(),
+                    object$coef0()))
+    }
   }
   
   print.MultiClassSVM <<- function(object) {
@@ -545,17 +587,34 @@ evalqOnLoad({
   }
   
   summary.svm <<- function(object) {
-    print(sprintf("Support Vector Machine, core: %s, kernel: %s, preprocess: %s",
-                  object$getLibrary(), 
-                  object$getKernel(), 
-                  object$getPreprocess()))
+    print(sprintf("Support Vector Machine, core: %s, preprocess: %s",
+                  object$core(), 
+                  object$kernel(), 
+                  object$prep()))
+    print(sprintf("Parameters: kernel: %s, C: %f", object$kernel(), object$C()))
+
+    if (object$kernel() == "rbf"){
+      print(sprintf("Kernel parameters: gamma: %f", 
+                    object$gamma()))
+    }
+    else if (object$kernel() == "poly"){
+      print(sprintf("Kernel parameters: gamma: %f, degree: %d, coef0: %f", 
+                    object$gamma(),
+                    object$degree(),
+                    object$coef0()))
+    }
+    else if (object$kernel() == "sigmoid"){
+      print(sprintf("Kernel parameters: gamma: %f, coef0: %f", 
+                    object$gamma(),
+                    object$coef0()))
+    }
     print(sprintf("%d classes with %d support vectors", 
                   object$getNumberClass(), 
                   object$getNumberSV()))
   }
   
-  plot.MultiClassSVM <<- function(x, X=NULL, cols=c(1,2), radius=3, radius.max=10) {
-    plot.svm(x, X=X, cols=cols, radius=radius, radius.max=radius.max)
+  plot.MultiClassSVM <<- function(x, X=NULL, mode="normal", cols=c(1,2), radius=3, radius.max=10) {
+    plot.svm(x, X=X, cols=cols, mode=mode, radius=radius, radius.max=radius.max)
   }
   
   plot.svm <<- function(x, X=NULL, mode="normal", cols=c(1,2), radius=3, radius.max=10) {
@@ -576,9 +635,10 @@ evalqOnLoad({
     
     #1. Get X and Y
     if(is.null(X)){
+      new_data <- FALSE
       if(class(x) == "MultiClassSVM"){
          X <- x$X
-         true_target <- x$Y
+         true_target <- as.factor(x$Y)
       }else{
         true_target <- as.factor(x$.getY())
         if(obj$isSparse()){
@@ -587,10 +647,10 @@ evalqOnLoad({
           X <- obj$.getX()
         }
       }
-      
       t <- predict(x, X)
       
     }else{
+      new_data <- TRUE
       t <- predict(x, X)
       true_target <- NULL
     }
@@ -617,8 +677,13 @@ evalqOnLoad({
     colnames(df) <- c("X1", "X2") # This is even worse
     df['prediction'] <- as.factor(t)
     
-    if(!is.null(true_target)){
-      levels(true_target) <- x$levels
+    if(!new_data){
+      if(length(levels(true_target)) > length(x$levels)){
+        levels(true_target) <- c(x$levels, "0") 
+      }
+      else {
+        levels(true_target) <- x$levels
+      }
       df['label'] <- true_target
     }
   
@@ -632,7 +697,7 @@ evalqOnLoad({
     }
     
     #5. Support parameters
-    kernel <- obj$getKernel()
+    kernel <- obj$kernel()
     
     
     if(mode == "pca"){
@@ -647,17 +712,18 @@ evalqOnLoad({
     if (kernel == "linear" && class(x) != "MultiClassSVM") {
       # W will be used only for binary model
       if (mode == "pca") {
-        w <- c(obj$getW())
+        w <- c(obj$w())
         w <- (w - mx) %*% pca_data$rotation
       }else if(ncol(X)==2){
-        w <- c(obj$getW())
+        w <- c(obj$w())
       }
     }
     
-    
+    points <- NULL
     
     #6. PLOT
     if(ncol(X) == 2 && mode == "contour"){
+
       x_col <- df$X1
       y_col <- df$X2
       
@@ -665,6 +731,14 @@ evalqOnLoad({
       x_min <- min(x_col) 
       y_max <- max(y_col)
       y_min <- min(y_col)
+      
+      x_margin <- (x_max - x_min) / 10
+      y_margin <- (y_max - y_min) / 10
+      
+      x_max <- x_max + x_margin
+      x_min <- x_min - x_margin
+      y_max <- y_max + y_margin
+      y_min <- y_min - y_margin
       
       x_axis <- seq(from=x_min, to=x_max, length.out=300)
       y_axis <- seq(from=y_min, to=y_max, length.out=300)
@@ -675,45 +749,38 @@ evalqOnLoad({
       grid['prediction'] <- prediction
       
       
-      if(!is.null(true_target)){
-        pl <- ggplot()+ 
-          geom_tile(data=grid, aes(x=x,y=y, fill=prediction, alpha=.5)) + 
-          theme(legend.position="none") + 
-          scale_fill_brewer(palette="Set1") + 
-          scale_alpha_identity() + 
-          geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label)) + 
-          scale_colour_brewer(palette="Set1") + 
-          scale_size
-      }
-      else{
-        pl <- ggplot()+ 
-          geom_tile(data=grid, aes(x=x,y=y, fill=prediction, alpha=.5)) + 
-          theme(legend.position="none") + 
-          scale_fill_brewer(palette="Set1") + 
-          scale_alpha_identity() + 
-          geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction)) + 
-          scale_colour_brewer(palette="Set1") + 
-          scale_size
-      }  
+      
+      if(new_data)
+        points <- geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction))
+      else
+        points <- geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label))
+      
+      pl <- ggplot()+ 
+        geom_tile(data=grid, aes(x=x,y=y, fill=prediction, alpha=.5)) + 
+        scale_fill_brewer(palette="Set1") + 
+        scale_alpha_identity() + 
+        points + 
+        scale_colour_brewer(palette="Set1") + 
+        scale_size
+      
     }else{
-      warning("Only limited plotting is currently supported for multidimensional data")
-      if(!is.null(true_target)){
-        pl <- ggplot()+ 
-          geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label)) + 
-          scale_colour_brewer(palette="Set1") + 
-          scale_size
-      }else{
-        pl <- ggplot()+ 
-          geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction)) + 
-          scale_colour_brewer(palette="Set1") + 
-          scale_size
-      }
+      if (ncol(X) > 2) warning("Only limited plotting is currently supported for multidimensional data")
+      
+      if(new_data)
+        points <- geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction))
+      else
+        points <- geom_point(data=df, aes(X1, X2, size=sizes, colour=prediction, shape=label))
+      
+      pl <- ggplot()+ 
+        points + 
+        scale_colour_brewer(palette="Set1") + 
+        scale_size
     }
     
     # Add line
-    if(!is.null(w) && ncol(X) && mode != "pca"){
+    if(!is.null(w) && ncol(X) && mode != "pca" && mode != "contour"){
       s <- -w[1]/w[2]
-      int <- -obj$getBias()/w[2]
+      int <- -obj$bias()/w[2]
       pl <- pl + geom_abline(slope=s, intercept=int)
     }
     
@@ -734,8 +801,8 @@ evalqOnLoad({
       model <- object$models[[i]]
 
       if(object$class.type == "one.versus.one"){
-        pick <- as.integer(object$pick[,i])
-        pick = pick[c(2,1)] # Reverse order
+        pick <- as.integer(object$.pick[,i])
+        pick <- pick[c(2,1)] # Reverse order
         # Predict
         prediction <- predict(model, x)
         
@@ -759,29 +826,39 @@ evalqOnLoad({
   }
   
   predict.svm.gmum <<- function(object, x, decision.function=FALSE) {
-    if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric") && !is(x,"matrix.csr") ) {
+    if ( !is(x, "data.frame") && 
+         !is(x, "matrix") && 
+         !is(x,"numeric") && 
+         !is(x,"matrix.csr")) {
       stop("Wrong target class, please provide data.frame, matrix or numeric vector")
     }
     if (!object$isSparse()) {
-      if (!is(x, "matrix") && !is(x, "data.frame")) {
+      if (!is(x, "matrix") && 
+          !is(x, "data.frame") &&
+          !is.vector(x)) {
         stop("Please provide matrix or data.frame")
       }
       if (!is(x, "matrix")) {
-        x <- data.matrix(x)
+        if (is.vector(x)){
+          x <- t(as.matrix(x))
+        } 
+        else {
+          x <- data.matrix(x)
+        }
       }
-      object$predict(x)
+      object$.predict(x)
     }
     else {
       if (!is(x, "matrix.csr")) {
         stop("Please provide sparse matrix")
       }
-      object$sparse_predict(x@ia, x@ja, x@ra, nrow(x), ncol(x))
+      object$.sparse_predict(x@ia, x@ja, x@ra, nrow(x), ncol(x))
     }
     
     if(decision.function){
-      return(object$getDecisionFunction())
+      return(object$.getDecisionFunction())
     }else{
-      prediction <- object$getPrediction()
+      prediction <- object$.getPrediction()
       
       if(any(prediction == 0) || length(unique(prediction)) > length(object$levels)){
         stop("Failed prediction, returned too many unique labels from library.")

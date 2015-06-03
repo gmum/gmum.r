@@ -10,12 +10,12 @@ test_that('SVM functions are fool proof', {
   ds[,'V3'] <- as.factor(ds[,'V3'])
   f <- V3 ~ .
 
-  expect_error( SVM(f, ds, core="xyz"), paste(GMUM_WRONG_LIBRARY, ": bad library" ))
-  expect_error( SVM(f, ds, kernel="xyz"), paste(GMUM_WRONG_KERNEL, ": bad kernel" ))
-  expect_error( SVM(f, ds, prep="xyz"), paste(GMUM_BAD_PREPROCESS, ": bad preprocess" ))
-  expect_error( SVM(f, ds, C = -1), paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
-  expect_error( SVM(f, ds, gamma = -1), paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
-  expect_error( SVM(f, ds, degree = 0), paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
+  expect_error( SVM(f, ds, core="xyz"))
+  expect_error( SVM(f, ds, kernel="xyz"))
+  expect_error( SVM(f, ds, prep="xyz"))
+  expect_error( SVM(f, ds, C = -1))
+  expect_error( SVM(f, ds, gamma = -1))
+  expect_error( SVM(f, ds, degree = 0))
     
 })
 print("test::SVM throws user errors")

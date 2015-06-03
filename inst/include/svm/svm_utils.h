@@ -20,7 +20,7 @@
 using namespace std;
 
 //TODO: clean after consolidating svm_utils.h
-//and log.h with utils/log.hpp and utils/utils.h
+//and log.h with utils/logger.h and utils/utils.h
 template<class T>
 std::string svm_to_str(const T& x) {
 	stringstream ss;
@@ -40,6 +40,8 @@ public:
 		arma::mat diagonalMat;
 		arma::mat inverse;
 		double mu = arma::trace(matrix) / matrix.n_rows;
+		//trying to inverse 0 matrix
+		mu = mu == 0 ? cov_eps_smoothing_start : mu;
 		double cov_eps_smoothing_end = cov_eps_smoothing_start;
 		bool not_singular = false;
 		while(!not_singular) {

@@ -4,10 +4,10 @@
 #include "gtest/gtest.h"
 
 #include "svm_helpers.h"
-#include "svm/log.h"
 #include "svmlight_runner.h"
 #include "svm_basic.h"
 #include "svm_client.h"
+#include "utils/logger.h"
 
 namespace {
 
@@ -272,3 +272,46 @@ TEST_F(SVMLightRunnerTest, integration_svmclient_sparse_predict) {
     }
 }
 
+TEST_F(SVMLightRunnerTest, svm_options_01) {
+    std::cout << "Learning..." << std::endl << std::flush;
+    svm_config.data = learning_data_01;
+    svm_config.target = learning_target_01;
+    svm_config.setPrediction(false);
+    svm_config.svm_options = "-c 0.25";
+    svmlr.processRequest(svm_config);
+
+    std::cout << "Testing SVMClient prediction..." << std::endl << std::flush;
+    svm_config.data = testing_data_01;
+    svm_config.setPrediction(true);
+    SVMClient *svm_client = new SVMClient(&svm_config);
+    svm_client->predict(testing_data_01);
+    SVMConfiguration client_config = svm_client->getConfiguration();
+
+    for (int i = 0; i < testing_target_01.n_rows; ++i) {
+        // NOTE: `svm_predict` after `svm_learn -c 0.25` predicts 1
+        // (incorrectly) for all of this data
+        ASSERT_DOUBLE_EQ(client_config.result[i], 1);
+    }
+}
+
+TEST_F(SVMLightRunnerTest, svm_options_02) {
+    std::cout << "Learning..." << std::endl << std::flush;
+    svm_config.data = learning_data_01;
+    svm_config.target = learning_target_01;
+    svm_config.setPrediction(false);
+    svm_config.svm_options = "-c 1";
+    svmlr.processRequest(svm_config);
+
+    std::cout << "Testing SVMClient prediction..." << std::endl << std::flush;
+    svm_config.data = testing_data_01;
+    svm_config.setPrediction(true);
+    SVMClient *svm_client = new SVMClient(&svm_config);
+    svm_client->predict(testing_data_01);
+    SVMConfiguration client_config = svm_client->getConfiguration();
+
+    for (int i = 0; i < testing_target_01.n_rows; ++i) {
+        // NOTE: `svm_predict` after `svm_learn -c 1` predicts with good
+        // accuracy for this data
+        ASSERT_DOUBLE_EQ(client_config.result[i], testing_target_01[i]);
+    }
+}

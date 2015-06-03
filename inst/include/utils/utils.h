@@ -35,10 +35,10 @@ typedef vector<int> VI;
 
 #include <utils/logger.h>
 
-#define LOG(logger, level, text) logger->log(level, text);
+#define LOG(logger, level, text) logger.log(level, text);
 
 #ifdef DEBUG
-	#define DBG(logger, level, text) logger->log(level, text);
+	#define DBG(logger, level, text) logger.log(level, text);
 	#define REPORT(x) cout<<#x<<"="<<(x)<<endl<<std::flush;
 #else
 	#define DBG(verbosity, level, text)
@@ -107,28 +107,26 @@ std::string to_string(const T& x) {
 #include <vector>
 using namespace std;
 
-static mt19937 mt_rand(time(0));
-
 const int __one__ = 1;
 const bool isCpuLittleEndian = 1 == *(char*) (&__one__); // CPU endianness
 const bool isFileLittleEndian = false;  // output endianness - you choose :)
 
 static int __seed(int seed){
-    mt_rand.seed(seed);
+    srand(seed);
 }
 
 #define RANDOM_INT(rng, min, max) (rng() % (max - min +1) + min)
 
 static int __rnd(int min, int max) {
-	return (mt_rand() % (max - min + 1) + min);
+	return (rand() % (max - min + 1) + min);
 }
 
 static int __int_rnd(int min, int max) {
-	return (mt_rand() % (max - min + 1) + min);
+	return (rand() % (max - min + 1) + min);
 }
 
 static double __double_rnd(double min, double max) {
-	return min + (max - min) * ((double) mt_rand()) / RAND_MAX;
+	return min + (max - min) * ((double) rand()) / RAND_MAX;
 }
 
 static void _write_bin(ostream & out, double v) {
@@ -177,5 +175,12 @@ static vector<double> _load_bin_vector(istream & in) {
 	}
 	return x;
 }
+
+int check_argc(const char*);
+int check_argc(const std::string);
+char** to_argv(const char*);
+char** to_argv(const std::string);
+/// Free `char**` allocated by `to_argv()` function
+char** free_argv(int argc, char** argv);
 
 #endif	/* UTILS_H */
