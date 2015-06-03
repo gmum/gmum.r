@@ -7,6 +7,7 @@ gng.plot.color.fast.cluster <- 'fast.cluster'
 gng.plot.color.cluster <- 'cluster'
 gng.plot.color.none <- 'none'
 
+
 gng.plot.layout.v2d <- function(g){
   cbind(V(g)$v0, V(g)$v1)
 }
@@ -64,7 +65,7 @@ gng.type.utility<- function(k=1.3){
 #' \code{gng.plot.layout.igraph.auto} (auto layout from igraph)  \code{gng.plot.layout.igraph.fruchterman.fast} (fast fruchterman reingold layout),or any function accepting igraph graph and returning layout
 #' 
 #' @param vertex.color How to color vertexes. Possible values: \code{gng.plot.color.cluster} (vertex color is set to fastgreedy.community clustering),
-#' \code{gng.plot.color.label} (rounds to integer label if present), \code{gng.plot.color.none} (every node is white),
+#' \code{gng.plot.color.label} (rounds to integer label if present), \code{list of integers} (colors vertices according to provided list), \code{gng.plot.color.none} (every node is white),
 #' 
 #' @param vertex.size Size of plotted vertices
 #' 
@@ -341,14 +342,14 @@ errorStatistics.gng <- NULL
 #' @param alpha Decrease the error variables of the nodes neighboring to 
 #' the newly inserted node by this fraction. Default 0.5
 #' 
-#' @param lambda Every lambda iteration is added new vertex. Default 200
+#' @param lambda New vertex is added every lambda iterations. Default 200
 #' 
 #' @param max.nodes Maximum number of nodes 
-#' (after reaching this size it will continue running, but won't add new nodes)
+#' (after reaching this size it will continue running, but new noes won't be added)
 #' 
-#' @param eps.n How strongly adapt neighbour node. Default \code{0.0006}
+#' @param eps.n Strength of adaptation of neighbour node. Default \code{0.0006}
 #' 
-#' @param eps.w How strongly adapt winning node. Default \code{0.05}
+#' @param eps.w Strength of adaptation of winning node. Default \code{0.05}
 #' 
 #' @param max.iter If training offline will stop if exceedes max.iter iterations. Default \code{200}
 #'
@@ -357,9 +358,9 @@ errorStatistics.gng <- NULL
 #' @param min.improvement Used for offline (default) training. 
 #' Controls stopping criterion, decrease if training stops too early. Default \code{1e-3}
 #'
-#' @param dim Used for training online, specifies training example size
+#' @param dim Used for training online, specifies dataset example dimensionality
 #'
-#' @param value.range All example features should be in this range, needed for optimized version of the algorithm. Default \code{(0,1)} 
+#' @param value.range All example features should be in this range, required for optimized version of the algorithm. Default \code{(0,1)} 
 #' 
 #' @examples
 #' 
@@ -523,7 +524,7 @@ insertExamples.Rcpp_GNGServer <- NULL
 
 
 
-.GNG <<- function(x=NULL, labels=c(),
+.GNG <- function(x=NULL, labels=c(),
                   beta=0.99, 
                   alpha=0.5, 
                   max.nodes=100, 
@@ -552,7 +553,11 @@ insertExamples.Rcpp_GNGServer <- NULL
   
   # Fill in configuration
   if(train.online){
-    config$dim = dim
+    if(is.null(x)){
+      config$dim = dim
+    }else{
+      config$dim = ncol(x)
+    }
     config$max_iter = -1
   }else{
     config$dim = ncol(x)
@@ -566,7 +571,7 @@ insertExamples.Rcpp_GNGServer <- NULL
     
     if(!train.online){
       if(!max(x) <= type[3] && !min(x) >= type[2]){
-        gmum.error(ERROR_BAD_PARAMS, "Passed incorrect parameters. The dataset is not in the defined range")
+        stop(gmum.error(GMUM_WRONG_PARAMS, "Passed incorrect parameters. The dataset is not in the defined range"))
       }
     }
     
@@ -596,18 +601,24 @@ insertExamples.Rcpp_GNGServer <- NULL
   config$verbosity = verbosity
   
   if(!config$.check_correctness()){
-    gmum.error(ERROR_BAD_PARAMS, "Passed incorrect parameters.")
+    stop(gmum.error(GMUM_WRONG_PARAMS, "Passed incorrect parameters."))
   }
   
   # Construct server
   server = new(GNGServer, config)
   
-  # Perform training on passed dataset
+ 
+  if(train.online){
+    if(!is.null(x)){
+      insertExamples(server, x, labels)
+      run(server)
+    }
+  }
   if(!train.online){
     
     print("Training offline")
     if(is.null(x)){
-      gmum.error(ERROR, "Passed null data and requested training offline")
+      stop(gmum.error(GMUM_ERROR, "Passed null data and requested training offline"))
     }else{
       insertExamples(server, x, labels)
       run(server)
@@ -693,7 +704,7 @@ insertExamples.Rcpp_GNGServer <- NULL
 }
 
 
-GNG <<- function(x=NULL, labels=c(),
+GNG <- function(x=NULL, labels=c(),
                  beta=0.99, 
                  alpha=0.5, 
                  max.nodes=1000, 
@@ -722,7 +733,7 @@ GNG <<- function(x=NULL, labels=c(),
   gng
 }
 
-OptimizedGNG <<- function(x=NULL, labels=c(),
+OptimizedGNG <- function(x=NULL, labels=c(),
                           beta=0.99, 
                           alpha=0.5, 
                           max.nodes=1000, 
@@ -739,7 +750,7 @@ OptimizedGNG <<- function(x=NULL, labels=c(),
                           value.range=c(0,1)
 ){
   if(value.range[1] >= value.range[2]){
-    gmum.error(ERROR, "Incorrect range")
+    stop(gmum.error(GMUM_ERROR, "Incorrect range"))
     return()
   }
   call <- match.call(expand.dots = TRUE)
@@ -749,7 +760,7 @@ OptimizedGNG <<- function(x=NULL, labels=c(),
   gng
 }    
 
-predictComponent <<- function(object, x){
+predictComponent <- function(object, x){
   tryCatch(if(is.null(object$components.membership)){
     assign("components.membership", clusters(convertToGraph(object))$membership, object)
   }, error=function(...) 
@@ -758,14 +769,14 @@ predictComponent <<- function(object, x){
   object$components.membership[predict(object, x)]
 }
 
-plot.gng <<- function(x, vertex.color=gng.plot.color.cluster, 
+plot.gng <- function(x, vertex.color=gng.plot.color.cluster, 
                       layout=gng.plot.layout.v2d, mode=gng.plot.2d, 
                       vertex.size=3){
   if(vertex.size <= 0){
     stop("Please pass positivie vertex.size")
   }
   
-  if(!(vertex.color %in% c(gng.plot.color.cluster, 
+  if(!(is.list(vertex.color) || is.vector(vertex.color) || vertex.color %in% c(gng.plot.color.cluster, 
                            gng.plot.color.fast.cluster, gng.plot.color.label, gng.plot.color.none))){
     stop("Please pass correct vertex.color")
   }
@@ -797,13 +808,13 @@ plot.gng <<- function(x, vertex.color=gng.plot.color.cluster,
   }
 }
 
-print.gng <<- function(x){
+print.gng <- function(x){
   print(sprintf("Growing Neural Gas, nodes %d with mean error %f", 
                 x$getNumberNodes(), x$getMeanError()))
 }
 
-summary.gng <<- function(object){
-  if(object$.getConfiguration$.uniformgrid_optimization){
+summary.gng <- function(object){
+  if(object$.getConfiguration()$.uniformgrid_optimization){
     print("(Optimized) Growing Neural Gas")
   }else{
     print("Growing Neural Gas")
@@ -827,17 +838,17 @@ summary.gng <<- function(object){
 }
 
 
-node.gng <<- function(x, gng_id){
+node.gng <- function(x, gng_id){
   x$getNode(gng_id)
 }
 
-run.gng <<- function(object){
+run.gng <- function(object){
   # Invalidate components
   assign("components.membership", NULL, object)
   object$run()
 }
 
-pause.gng <<- function(object){
+pause.gng <- function(object){
   object$pause()
   n = 0.0
   sleep = 0.1
@@ -851,35 +862,35 @@ pause.gng <<- function(object){
   }
 }
 
-terminate.gng <<- function(object){
+terminate.gng <- function(object){
   object$terminate()
 }
 
-meanError.gng <<- function(object){
+meanError.gng <- function(object){
   object$getMeanError()
 }  
 
-errorStatistics.gng <<- function(object){
+errorStatistics.gng <- function(object){
   object$getErrorStatistics()
 }  
 
-clustering.gng <<- function(object){
-  object$clustering()
+clustering.gng <- function(c){
+  c$clustering()
 }  
 
-gngSave <<- function(object, filename){
+gngSave <- function(object, filename){
   warning("Saving does not preserve training history")
-  object$save(filename)
+  object$.save(filename)
 }
 
-gngLoad <<- function(filename){
+gngLoad <- function(filename){
   warning("Saving does not preserve training history")
   fromFileGNG(filename)
 }
 
 
 
-predictCentroids  <<- function(object, community.detection.algorithm=spinglass.community){
+predictCentroids  <- function(object, community.detection.algorithm=spinglass.community){
   ig <- convertToGraph(object)
   
   cl = clusters(ig)
@@ -983,7 +994,7 @@ convertToGraph.gng <- function(object, calculate.dist=TRUE){
 }
 
 
-findClosests <<- function(object, node.ids, x){
+findClosests <- function(object, node.ids, x){
   .findClosests <- function(object, node.ids, x){
     # Returns all dists from given pos to given nodes
     get_all_dists <- function(pos, nodes, gng){
@@ -996,7 +1007,7 @@ findClosests <<- function(object, node.ids, x){
     .findClosests(object, node.ids, x)
   }else{
     if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
-      gmum.error(ERROR_BAD_PARAMS, "Wrong target class, please provide data.frame, matrix or numeric vector")
+      stop(gmum.error(GMUM_WRONG_PARAMS, "Wrong target class, please provide data.frame, matrix or numeric vector"))
     }
     
     if (!is(x, "matrix")) {
@@ -1014,7 +1025,7 @@ findClosests <<- function(object, node.ids, x){
 }
 
 
-insertExamples.Rcpp_GNGServer <<- function(object, examples, labels=c()){   
+insertExamples.Rcpp_GNGServer <- function(object, examples, labels=c()){   
   
   
   if(length(labels) == 0){
@@ -1022,14 +1033,14 @@ insertExamples.Rcpp_GNGServer <<- function(object, examples, labels=c()){
   }else if(typeof(labels) == "character"){
     if(typeof(labels) == "list"){
       if(is.null(examples$labels)){
-        gmum.error(ERROR_BAD_PARAMS, "Empty labels column")
+        stop(gmum.error(GMUM_WRONG_PARAMS, "Empty labels column"))
       }else{
         label.column <- examples$labels
         examples$labels <- NULL
         object$insertLabeledExamples(examples, label.column)
       }
     }else{
-      gmum.error(ERROR_BAD_PARAMS, "Please pass data frame")
+      stop(gmum.error(GMUM_WRONG_PARAMS, "Please pass data frame"))
     }
   }else{
     object$insertLabeledExamples(examples, labels)
@@ -1037,7 +1048,7 @@ insertExamples.Rcpp_GNGServer <<- function(object, examples, labels=c()){
 }
 
 
-generateExamples <<- function(preset, N, r=1.0, center=c(0.5,0.5,0.5)){
+generateExamples <- function(preset, N, r=1.0, center=c(0.5,0.5,0.5)){
   preset(N, center=center, r=r, prob=-1)
 }
 
@@ -1056,7 +1067,7 @@ setGeneric("node",
            function(x, gng_id, ...) standardGeneric("node"))
 
 setGeneric("clustering", 
-           function(object) standardGeneric("clustering"))
+           function(c) standardGeneric("clustering"))
 
 
 setGeneric("convertToGraph", 
@@ -1147,7 +1158,7 @@ evalqOnLoad( {
                     object$predict(x)
                 }else{
                   if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
-                    gmum.error(ERROR_BAD_PARAMS, "Wrong target class, please provide data.frame, matrix or numeric vector")
+                    stop(gmum.error(GMUM_WRONG_PARAMS, "Wrong target class, please provide data.frame, matrix or numeric vector"))
                   }
                   
                   if (!is(x, "matrix")) {

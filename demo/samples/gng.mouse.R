@@ -14,7 +14,7 @@ library(ggplot2)
 data(cec_mouse_1_spherical)
 
 # Train GNG model and find centroids of the resulting graph
-g <- GNG(cec.mouse1spherical, max.nodes=50)
+g <- GNG(cec.mouse1spherical, max.nodes=3)
 
 # GNG aims at making it easy to work with its graph.
 # Here we will predict closest centroid 

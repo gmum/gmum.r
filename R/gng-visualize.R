@@ -1,11 +1,11 @@
 library(igraph)
 
   .gng.plot3d<-function(g, radius=NULL){
-	if("rgl" %in% rownames(installed.packages()) == TRUE){
-	    .visualizeIGraphRGL(convertToGraph(g), radius=radius)
-	}else{
-	    warning("Please install rgl package to plot 3d graphs")
-	}
+  	if("rgl" %in% rownames(installed.packages()) == TRUE){
+  	    .visualizeIGraphRGL(convertToGraph(g), radius=radius)
+  	}else{
+  	    warning("Please install rgl package to plot 3d graphs")
+  	}
   }
   #' Draw igraph using rgl - assumes >=3 dimensions and draws 3 first
   .visualizeIGraphRGL<-function(g, radius=NULL){
@@ -89,6 +89,10 @@ library(igraph)
         max_col = max(max_col, round(label))
     cols = rainbow(max_col+1)
     vertex.color = cols[as.double(lapply(V(ig)$label, round))]
+  }
+  
+  if(vertex.color == 'component'){
+    vertex.color <- predictComponent(gngServer, )
   }
   
   .visualizeIGraph2dWithErrors(ig, vertex.color, layout, gngServer, vertex.size=3)

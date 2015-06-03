@@ -125,9 +125,12 @@ test_that("GNG converges on simple cases", {
 test_that("GNG is working on mouse dataset", {
     data(cec_mouse_1_spherical)
     dataset = cec.mouse1spherical
-    gng <- GNG(dataset)
+    gng <- GNG(dataset, seed=778)
   expect_that(gng$getMeanError() < 0.1, is_true())
   expect_that(all(gng$clustering() == predict(gng,dataset)), is_true())
+  gng.refit <- GNG(dataset, seed=778)
+  # Seeding works => error statistics are the same
+  expect_that(all(abs(errorStatistics(gng.refit) - errorStatistics(gng)) < 1e-2) )
 })
 
 test_that("GNG clustering and predict are returning the same", {

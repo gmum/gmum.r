@@ -2,10 +2,9 @@ library(igraph)
 library(testthat)
 
 test_that("GNG Utility works", {
-
     max_nodes <- 500
 
-# Construct gng object
+    # Construct gng object
     gng <- GNG(max.nodes=max_nodes, train.online=TRUE, dim=3, verbosity=3, k=1.3)
 
     # Construct examples, here we will use a sphere
