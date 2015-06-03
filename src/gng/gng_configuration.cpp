@@ -111,7 +111,7 @@ void GNGConfiguration::deserialize(std::istream & in)  {
 	/**Validate server configuration. *Not working now**/
 	bool GNGConfiguration::check_correctness() {
 		if(alpha <= 0 || alpha > 1){
-            cerr << "ERROR: alpha should be in range [0,1]\n";
+            cerr << "ERROR: alpha should be in range (0,1)\n";
             return false;        
         }
 
@@ -136,7 +136,7 @@ void GNGConfiguration::deserialize(std::istream & in)  {
         }
 
         if((max_iter <= 2 && max_iter != -1) || max_nodes <= 2){
-            cerr << "ERROR: max_iter and max_nodes  should be in range [2,+inf]\n";
+            cerr << "ERROR: max_iter and max_nodes  should be in range [3,+inf]\n";
             cerr<<max_iter<< " "<<max_nodes<<endl;
             return false;        
 

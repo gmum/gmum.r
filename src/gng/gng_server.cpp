@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <string>
-
+#include <utils.h>
 #include <gng_node.h>
 #include <gng_server.h>
 #include <logger.h>
@@ -31,16 +31,17 @@ GNGServer::GNGServer(GNGConfiguration configuration,
 void GNGServer::init(GNGConfiguration configuration,
 		std::istream * input_graph) {
 
-    if(configuration.seed != -1){
-        srand(configuration.seed);
-    }
-
 	m_index = gng_server_count++;
 
 	algorithm_thread = 0;
 	m_running_thread_created = false;
 
 	m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity));
+
+    if(configuration.seed != -1){
+        LOG(m_logger, 5, "GNGServer()::seeding to "+to_str(configuration.seed));
+        __seed(configuration.seed);
+    }
 
 	LOG(m_logger,5, "GNGServer()::constructing GNGServer");
 
@@ -63,7 +64,7 @@ void GNGServer::init(GNGConfiguration configuration,
 		this->gngDataset = std::auto_ptr<GNGDataset>(
 				new GNGDatasetSimple<double>(&database_mutex,
 						current_configuration.dim, true /* store_extra */,
-						GNGDatasetSimple<double>::Sampling, m_logger));
+						GNGDatasetSimple<double>::Sampling, current_configuration.seed,  m_logger));
 	} else if (current_configuration.datasetType
 			== GNGConfiguration::DatasetSamplingProb) {
 		//Add probability to layout
@@ -71,15 +72,15 @@ void GNGServer::init(GNGConfiguration configuration,
 		this->gngDataset = std::auto_ptr<GNGDataset>(
 				new GNGDatasetSimple<double>(&database_mutex,
 						current_configuration.dim, true /* store_extra */,
-						GNGDatasetSimple<double>::SamplingProbability,
+						GNGDatasetSimple<double>::SamplingProbability, current_configuration.seed, 
 						m_logger));
 	} else if (current_configuration.datasetType
 			== GNGConfiguration::DatasetSeq) {
 		DBG(m_logger,11, "GNGServer::Constructing Normal Seq Dataset");
 		this->gngDataset = std::auto_ptr<GNGDataset>(
 				new GNGDatasetSimple<double>(&database_mutex,
-						current_configuration.dim, true /* store_extra */,
-						GNGDatasetSimple<double>::Sequential, m_logger));
+						current_configuration.dim, true /* store_extra */, 
+						GNGDatasetSimple<double>::Sequential, current_configuration.seed, m_logger));
 	} else {
 		cerr << "Passed dataset type " << current_configuration.datasetType
 				<< endl;
@@ -107,6 +108,7 @@ void GNGServer::init(GNGConfiguration configuration,
 								current_configuration.starting_nodes,
 								(gmum::GNGGraph::GNGDistanceFunction) current_configuration.distance_function,
 								m_logger));
+
 	} else {
 		throw BasicException("Not supported GNGConfiguration type");
 	}
@@ -134,6 +136,7 @@ void GNGServer::init(GNGConfiguration configuration,
 					current_configuration.experimental_utility_option,
 					current_configuration.experimental_utility_k, 
                     current_configuration.max_iter,
+                    current_configuration.seed, 
                     m_logger));
 
 	DBG(m_logger,10, "GNGServer()::constructed algorithm object");
@@ -328,7 +331,12 @@ Rcpp::List GNGServer::getNode(int index) {
 }
 
 int GNGServer::Rpredict(Rcpp::NumericVector & r_ex) {
-	return 1+gngAlgorithm->predict(std::vector<double>(r_ex.begin(), r_ex.end()) );
+  if(r_ex.size() > current_configuration.dim){
+     cerr<<"Wrong example dimensionality. Note that C++ method accepts only vectors, not matrix, please use S4 predict method instead\n";
+     return -1;
+  }else{
+	  return 1+gngAlgorithm->predict(std::vector<double>(r_ex.begin(), r_ex.end()) );
+  }
 }
 
 Rcpp::NumericVector GNGServer::RgetClustering() {

@@ -107,21 +107,28 @@ std::string to_string(const T& x) {
 #include <vector>
 using namespace std;
 
+static mt19937 mt_rand(time(0));
+
 const int __one__ = 1;
 const bool isCpuLittleEndian = 1 == *(char*) (&__one__); // CPU endianness
 const bool isFileLittleEndian = false;  // output endianness - you choose :)
 
+static int __seed(int seed){
+    mt_rand.seed(seed);
+}
+
+#define RANDOM_INT(rng, min, max) (rng() % (max - min +1) + min)
 
 static int __rnd(int min, int max) {
-	return (rand() % (max - min + 1) + min);
+	return (mt_rand() % (max - min + 1) + min);
 }
 
 static int __int_rnd(int min, int max) {
-	return (rand() % (max - min + 1) + min);
+	return (mt_rand() % (max - min + 1) + min);
 }
 
 static double __double_rnd(double min, double max) {
-	return min + (max - min) * ((double) rand()) / RAND_MAX;
+	return min + (max - min) * ((double) mt_rand()) / RAND_MAX;
 }
 
 static void _write_bin(ostream & out, double v) {

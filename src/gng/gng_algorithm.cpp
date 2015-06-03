@@ -81,7 +81,7 @@ GNGAlgorithm::GNGAlgorithm(GNGGraph * g, GNGDataset* db,
 		int max_nodes, int max_age, double alpha, double betha, double lambda,
 		double eps_w, double eps_n, int dim, bool uniformgrid_optimization,
 		bool lazyheap_optimization, unsigned int utility_option,
-		double utility_k, int max_iter, boost::shared_ptr<Logger> logger) :
+		double utility_k, int max_iter, int seed, boost::shared_ptr<Logger> logger) :
 		m_g(*g), g_db(db), c(0), s(0), m_max_nodes(max_nodes), m_max_age(
 				max_age), m_alpha(alpha), m_betha(betha), m_lambda(lambda), m_eps_w(
 				eps_w), m_eps_n(eps_n), m_density_threshold(0.1), m_grow_rate(
@@ -92,7 +92,7 @@ GNGAlgorithm::GNGAlgorithm(GNGGraph * g, GNGDataset* db,
                 max_iter(max_iter), m_logger(
 				logger), m_iteration(0),
 				m_gng_status(GNG_TERMINATED),
-				m_gng_status_request(GNG_TERMINATED) {
+				m_gng_status_request(GNG_TERMINATED), mt_rand(seed) {
 
 	DBG(m_logger, 1, "GNGAlgorithm:: Constructing object");
 	DBG(m_logger, 10,
@@ -567,7 +567,7 @@ void GNGAlgorithm::updateClustering() {
 	}
 }
 
-void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that computes)
+void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that computes)    
     m_gng_status = m_gng_status_request = GNG_RUNNING;
 	//Initialize global counters
 	s = 0;
@@ -606,6 +606,8 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 	LOG(m_logger, 3, "GNGAlgorithm::init successful, starting the loop"); 
     LOG(m_logger, 10, "GNGAlgorithm::gng_status="+to_string(this->m_gng_status));
     LOG(m_logger, 10, "GNGAlgorithm::gng_status_request="+to_string(this->m_gng_status_request));
+    
+    
 	for(int iteration=0; iteration<max_iter || max_iter==-1; ++iteration){
         this->status_change_mutex.lock();
 		while (this->m_gng_status_request == GNG_PAUSED) {
@@ -632,6 +634,7 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 				gmum::scoped_lock<GNGDataset> db_lock(*g_db);
 				ex = g_db->drawExample();
 
+                LOG(m_logger, 8, to_str(ex));
 
 				position = g_db->getPosition(ex);
 				vertex_data = g_db->getExtraData(ex);

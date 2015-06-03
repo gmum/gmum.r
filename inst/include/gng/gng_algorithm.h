@@ -58,7 +58,7 @@ public:
 			int dim = 3, bool uniformgrid_optimization = true,
 			bool lazyheap_optimization = true, unsigned int utility_option =
 					GNGConfiguration::UtilityOff, double utility_k = -1,
-            int max_iter = -1,
+            int max_iter = -1, int seed=777,
 			boost::shared_ptr<Logger> logger = boost::shared_ptr<Logger>());
 
 	/** Run main loop of the algorithm*/
@@ -143,6 +143,8 @@ public:
 	vector<int> clustering_result;
 private:
 	//Main algorithm methods
+
+    mt19937 mt_rand;
 
 	//@return error and closest node index
 	std::pair<double, int> adapt(const double * ex, const double * extra);
