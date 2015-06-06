@@ -15,6 +15,9 @@ LIB_OUTPUT_PATH := lib
 SRC_PATH := src
 INCLUDE_PATH := include
 
+#GMUM submodules
+SUBMODULES := cec gng svm
+
 GMUM_INCLUDES := -I include -I include/svm -I include/cec 
 PYTHON_INCLUDES := -I /usr/include/python2.7
 
@@ -57,8 +60,10 @@ init:
 	@echo Variables: $(GMUMPY_PATH)
 	mkdir -p $(GMUMPY_CORE_PATH)
 	touch $(GMUMPY_CORE_PATH)/__init__.py
-	mkdir -p $(LIB_OUTPUT_PATH)/{,cec,gng,svm}
-	mkdir -p $(SWIG_OUTPUT_PATH)/{,cec,gng,svm}
+	for s in $(SUBMODULES); do \
+		mkdir -p $(LIB_OUTPUT_PATH)/$$s; \
+		mkdir -p $(SWIG_OUTPUT_PATH)/$$s; \
+	done
 
 clean:
 	rm -rf $(GMUMPY_CORE_PATH)/* $(LIB_OUTPUT_PATH)/* $(SWIG_OUTPUT_PATH)/*
