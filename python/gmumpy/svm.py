@@ -207,7 +207,9 @@ class SVMConfiguration(gmumpy.core.SVMConfiguration):
     def setTarget(self, y):
         if isinstance(y, csr_matrix):
             y = y.toarray()
-        super(SVMConfiguration, self).setTarget(np.asfortranarray(y))
+        super(SVMConfiguration, self).setTarget(
+            np.asfortranarray(y).astype(float)
+        )
 
 
 class SVMClient(gmumpy.core.SVMClient):
