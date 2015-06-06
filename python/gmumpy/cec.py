@@ -27,7 +27,7 @@ class CEC(BaseEstimator, ClusterMixin, TransformerMixin):
     ----------
     k : int, optional (default=1)
         Number of clusters / features
-       
+
     method_type : CEC_METHOD_TYPE, optional (default=STANDARD)
                   Type of clustering (Gauss family).
                   DIAGONAL - Gaussians with diagonal covariance. The clustering will try to divide the data into ellipsoid with radiuses parallel to coordinate axes
@@ -37,13 +37,13 @@ class CEC(BaseEstimator, ClusterMixin, TransformerMixin):
     method_init : CEC_METHOD_INIT, optional (default=RANDOM)
                   Initial clustering
                   RANDOM - Starts with random clustering
-                  KMEANS - Uses kmeans++ algorithm to initialize clustering 
+                  KMEANS - Uses kmeans++ algorithm to initialize clustering
 
     control_nstart : int, optional (default=10)
                      Number of times CEC algorithm is to be performed. The best outcome is chosen as result.
 
     control_eps : float, optional (default=0.05)
-                  Percentage size threshold from range (0, 1) for killing cluster.  
+                  Percentage size threshold from range (0, 1) for killing cluster
 
     control_itmax : int, optional (default=25)
                     Maximum number of iterations.
@@ -64,8 +64,8 @@ class CEC(BaseEstimator, ClusterMixin, TransformerMixin):
     TODO
     """
 
-    def __init__(self, x, k=1, method_type=CEC_METHOD_TYPE.STANDARD, 
-            method_init=CEC_METHOD_INIT.RANDOM, control_nstart=10, control_eps=0.05, 
+    def __init__(self, x, k=1, method_type=CEC_METHOD_TYPE.STANDARD,
+            method_init=CEC_METHOD_INIT.RANDOM, control_nstart=10, control_eps=0.05,
             control_itmax=25, log_energy=True, log_ncluster=True, algorithm=CEC_ALGORITHM.HARTIGAN):
         self.cfg = CecConfiguration()
         self.cfg.set_dataset(x)
@@ -91,16 +91,16 @@ class CecConfiguration(gmumpy.core.CecConfiguration):
 
     Create your CecConfiguration object like this:
 
-        >>> conf = CecConfiguration()
+    >>> conf = CecConfiguration()
 
     Set dataset with any numpy array compatible object:
 
-        >>> data = np.loadtxt('../inst/data_sets/cec/mouse_1/input.txt')
+    >>> data = np.loadtxt('../inst/data_sets/cec/mouse_1/input.txt')
     >>> conf.set_dataset(data)
 
     Fill remaining parameters with appropriate setters:
 
-        >>> conf.set_nclusters(3)
+    >>> conf.set_nclusters(3)
     >>> conf.set_nstart(5)
     >>> conf.set_method_type('standard')
     >>> conf.set_method_init('random')
@@ -119,7 +119,7 @@ class CecModel(gmumpy.core.CecModel):
 
     In order to create a model you must setup your configuration:
 
-        >>> conf = CecConfiguration()
+    >>> conf = CecConfiguration()
     >>> data = np.loadtxt('../inst/data_sets/cec/mouse_1/input.txt')
     >>> conf.set_dataset(data)
     >>> conf.set_nclusters(3)
@@ -130,7 +130,7 @@ class CecModel(gmumpy.core.CecModel):
 
     Use your configuration object to create a model:
 
-        >>> model = CecModel(conf)
+    >>> model = CecModel(conf)
 
     print model.get_energy()
     print model.get_assignment()
