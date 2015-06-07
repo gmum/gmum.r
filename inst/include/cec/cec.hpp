@@ -30,6 +30,7 @@ using namespace gmum;
 namespace std 
 {
     %template(UnsignedIntVector) vector<unsigned int>;
+    %template(DoubleVector) vector<double>;
 }
 
 

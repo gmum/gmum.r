@@ -11,5 +11,6 @@ X, y = load_svmlight_file('../inst/data_sets/svm/breast_cancer.data')
 sc = SVMConfiguration()
 
 mouse1 = load_mouse1()
-cec = CEC(x=mouse1.data, k=mouse1.k)
-print cec.energy()
+cec = CEC(n_clusters=mouse1.n_clusters)
+clustering = cec.fit_predict(mouse1.data)
+print cec.predict([[1.0, 2.0]])

@@ -5,11 +5,10 @@ import numpy as np
 import os
 import sklearn.datasets.base
 
-DATA_HOME = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../inst/data_sets'))
-
+DATA_HOME = os.path.abspath(os.path.realpath(os.path.join(os.path.dirname(__file__), '../../inst/data_sets')))
 
 # TODO: Consider creating `datasets` package TODO that in gmumpy.datasets.base
-class Bunch(sklearn.datasets.bunch):
+class Bunch(sklearn.datasets.base.Bunch):
 
     pass
 
@@ -24,7 +23,7 @@ def load_simple1():
     bunch = Bunch(name='simple1')
     bunch['data'] = np.loadtxt(os.path.join(simple1_path, 'input.txt'))
     bunch['target'] = np.loadtxt(os.path.join(simple1_path, 'cluster.txt'))
-    bunch['k'] = np.unique(bunch.target).size
+    bunch['n_clusters'] = np.unique(bunch.target).size
     return bunch
 
 
@@ -33,7 +32,7 @@ def load_mouse1():
     bunch = Bunch(name='mouse1')
     bunch['data'] = np.loadtxt(os.path.join(mouse1_path, 'input.txt'))
     bunch['target'] = np.loadtxt(os.path.join(mouse1_path, 'cluster.txt'))
-    bunch['k'] = np.unique(bunch.target).size
+    bunch['n_clusters'] = np.unique(bunch.target).size
     return bunch
 
 
@@ -42,6 +41,6 @@ def load_ellipse_gauss():
     bunch = Bunch(name='ellipse_gauss')
     bunch['data'] = np.loadtxt(os.path.join(ellipse_gauss_path, 'input.txt'))
     bunch['target'] = np.loadtxt(os.path.join(ellipse_gauss_path, 'cluster.txt'))
-    bunch['k'] = np.unique(bunch.target).size
+    bunch['n_clusters'] = np.unique(bunch.target).size
     return bunch
 
