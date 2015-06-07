@@ -10,6 +10,8 @@ Support Vector Machines module
 # pylint: disable=invalid-name
 # We are using sklearn-like argument number
 # pylint: disable=too-many-arguments
+# We are using sklearn get_params() and set_params()
+# pylint: disable=too-many-instance-attributes
 
 import gmumpy.core
 
@@ -129,6 +131,10 @@ class SVC(ClassifierMixin, BaseEstimator):
         else:
             self.verbosity = 0
 
+        # Flags
+
+        self.fitted = False
+
         # Attributes
 
         self.configuration_ = SVMConfiguration()
@@ -179,6 +185,7 @@ class SVC(ClassifierMixin, BaseEstimator):
         self.configuration_.setTarget(y)
         self.client_.setConfiguration(self.configuration_)
         self.client_.train()
+        self.fitted = True
 
         return self
 
@@ -195,10 +202,37 @@ class SVC(ClassifierMixin, BaseEstimator):
         -------
         y_pred : array, shape (n_samples,)
         """
+        X = self._validate_for_predict(X)
+
         self.configuration_.setPrediction(True)
         self.client_.setConfiguration(self.configuration_)
         self.client_.predict(X)
         return self.client_.getConfiguration().result
+
+    def decision_function(self, X):
+        """Distance of the samples X to the separating hyperplane.
+
+        Parameters
+        ----------
+        X : array-like, shape = [n_samples, n_features]
+
+        Returns
+        -------
+        X : array-like, shape = [n_samples, n_class * (n_class-1) / 2]
+            Returns the decision function of the sample for each class
+            in the model.
+        """
+        X = self._validate_for_predict(X)
+
+        # TODO: Implement in C++
+        raise NotImplementedError(
+            "decision_function is currently not implemented in core")
+
+    def _validate_for_predict(self, X):
+        """Validate data and SVC if they are good to perform a predict()"""
+        if not self.fitted:
+            raise ValueError("You must use fit() before trying to predict()")
+        return X
 
 
 class SVMConfiguration(gmumpy.core.SVMConfiguration):
