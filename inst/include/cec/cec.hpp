@@ -53,7 +53,7 @@ public:
 	std::vector<unsigned int> get_assignment() const;
 	void set_assignment(std::vector<unsigned int>& assignment);
 	arma::mat get_points();
-	std::vector<arma::rowvec> centers() const;
+    arma::mat centers() const;
 	std::vector<arma::mat> cov() const;
 	unsigned int iters() const;
 	std::list<unsigned int> get_nclusters() const;

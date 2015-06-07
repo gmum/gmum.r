@@ -223,13 +223,12 @@ arma::mat CecModel::get_points() {
     return m_config.get_params().dataset;
 }
 
-std::vector<arma::rowvec> CecModel::centers() const {
-    std::vector < arma::rowvec > array;
-    array.reserve(m_clusters.size());
+arma::mat CecModel::centers() const {
+    arma::mat result(m_clusters.size(), m_config.get_params().dataset.n_cols); 
     for (unsigned int i = 0; i < m_clusters.size(); ++i) {
-        array.push_back(m_clusters[i]->get_mean());
+        result.row(i) = m_clusters[i]->get_mean();
     }
-    return array;
+    return result;
 }
 
 std::vector<arma::mat> CecModel::cov() const {
