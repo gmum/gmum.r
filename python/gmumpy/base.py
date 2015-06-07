@@ -2,11 +2,11 @@
 Base classes for all estimators
 """
 
-import sklearn.base
-
 # We are wrapping below classes and might want to expand / reimplement them in
 # the future.
 # pylint: disable=too-few-public-methods
+
+import sklearn.base
 
 
 class BaseEstimator(sklearn.base.BaseEstimator):

@@ -2,10 +2,18 @@
 Support Vector Machines module
 """
 
-import numpy as np
+# Arguments number may differ since we are extending SWIG-generated code
+# which implements method params as *args, **kwargs for their own reasons
+# pylint: disable=arguments-differ
+# pylint: disable=fixme
+# We are using sklearn-like argument names: X, y, C etc.
+# pylint: disable=invalid-name
+# We are using sklearn-like argument number
+# pylint: disable=too-many-arguments
 
 import gmumpy.core
 
+from numpy.core.numeric import asfortranarray
 from scipy.sparse.csr import csr_matrix
 
 from gmumpy.base import ClassifierMixin, BaseEstimator
@@ -52,14 +60,12 @@ class SVC(ClassifierMixin, BaseEstimator):
 
     tol : float, optional (default=1e-3)
         Tolerance for stopping criterion.
+        Currently, supported only with 'libsvm' core.
 
-    verbose : bool, default: False
+    verbose : bool, optional (default: False)
         Enable verbose output.
         If True, sets verbosity to 6. False sets verbosity to 0 unless other
         given as a verbosity parameter.
-
-    verbosity : int, optional (default=0)
-        Set verbosity level (from 0 to 6).
 
     Attributes
     ----------
@@ -80,7 +86,7 @@ class SVC(ClassifierMixin, BaseEstimator):
     >>> clf.fit(X, y) #doctest: +NORMALIZE_WHITESPACE
     SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0, core='libsvm',
         degree=3, gamma=0.0, kernel='rbf', max_iter=-1, random_state=None,
-        tol=0.001, verbose=False, verbosity=0)
+        tol=0.001, verbose=False)
     >>> print(clf.predict([[-1, -1, -1, -1, -1, -1, -0.5, -1, -1, -1]]))
     [ 2.]
 
@@ -88,13 +94,21 @@ class SVC(ClassifierMixin, BaseEstimator):
 
     # TODO: class_weight = 'auto'
     # TODO: kernel: 'precomputed' and callable
-    # TODO: probability
-    # TODO: random_state
-    # TODO: shrinking
+    # TODO: Add probability (?)
+    # TODO: Implement random_state
+    # TODO: Add shrinking (?)
 
     def __init__(self, C=1.0, cache_size=200, class_weight=None, coef0=0.0,
                  core='libsvm', degree=3, gamma=0.0, kernel='rbf', max_iter=-1,
-                 random_state=None, tol=1e-3, verbose=False, verbosity=0):
+                 random_state=None, tol=1e-3, verbose=False):
+
+        # Parameter exceptions
+
+        if random_state:
+            print 'WARINIG: random_state parameter currently not implemented.'
+
+        # Parameter collection
+
         self.C = C
         self.cache_size = cache_size
         self.class_weight = class_weight
@@ -107,13 +121,19 @@ class SVC(ClassifierMixin, BaseEstimator):
         self.random_state = random_state
         self.tol = tol
         self.verbose = verbose
+
+        # Additional parameters
+
         if verbose:
             self.verbosity = 6
         else:
-            self.verbosity = min(0, max(6, verbosity))
+            self.verbosity = 0
+
+        # Attributes
 
         self.configuration_ = SVMConfiguration()
         self.client_ = SVMClient(self.configuration_)
+
 
         self.client_.setC(C)
         self.client_.setCacheSize(cache_size)
@@ -125,10 +145,10 @@ class SVC(ClassifierMixin, BaseEstimator):
         self.client_.setDegree(degree)
         self.client_.setGamma(gamma)
         self.client_.setKernel(kernel)
-        # TODO: setter and wrap in SVMClient
+        # TODO: wrap in SVMClient
         self.client_.getConfiguration().max_iter = max_iter
         # TODO: random_state
-        # TODO: tol
+        self.client_.setEps(tol)
         self.client_.getConfiguration().set_verbosity(self.verbosity)
 
     def fit(self, X, y, sample_weight=None):
@@ -153,7 +173,7 @@ class SVC(ClassifierMixin, BaseEstimator):
         """
         # TODO: sample_weight
         if sample_weight:
-            raise NotImplementedError
+            print 'WARINIG: sample_weight parameter currently not implemented.'
 
         self.configuration_.setData(X)
         self.configuration_.setTarget(y)
@@ -174,7 +194,6 @@ class SVC(ClassifierMixin, BaseEstimator):
         Returns
         -------
         y_pred : array, shape (n_samples,)
-
         """
         self.configuration_.setPrediction(True)
         self.client_.setConfiguration(self.configuration_)
@@ -202,13 +221,13 @@ class SVMConfiguration(gmumpy.core.SVMConfiguration):
     def setData(self, X):
         if isinstance(X, csr_matrix):
             X = X.toarray()
-        super(SVMConfiguration, self).setData(np.asfortranarray(X))
+        super(SVMConfiguration, self).setData(asfortranarray(X))
 
     def setTarget(self, y):
         if isinstance(y, csr_matrix):
             y = y.toarray()
         super(SVMConfiguration, self).setTarget(
-            np.asfortranarray(y).astype(float)
+            asfortranarray(y).astype(float)
         )
 
 
@@ -247,5 +266,5 @@ class SVMClient(gmumpy.core.SVMClient):
     def predict(self, X):
         if isinstance(X, csr_matrix):
             X = X.toarray()
-        return super(SVMClient, self).predict(np.asfortranarray(X))
+        return super(SVMClient, self).predict(asfortranarray(X))
 
