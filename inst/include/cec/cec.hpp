@@ -24,6 +24,7 @@ using namespace gmum;
 
 %include "std_string.i"
 %include "std_vector.i"
+%include "std_list.i"
 %include "armanpy.i"
 %include <boost_shared_ptr.i>
 
@@ -31,6 +32,8 @@ namespace std
 {
     %template(UnsignedIntVector) vector<unsigned int>;
     %template(DoubleVector) vector<double>;
+    %template(DoubleList) list<double>;
+    %template(UnsignedIntList) list<unsigned int>;
 }
 
 

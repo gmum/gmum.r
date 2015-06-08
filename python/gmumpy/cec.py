@@ -219,6 +219,44 @@ class CEC(BaseEstimator, ClusterMixin, TransformerMixin):
         else:
             return None
 
+    def energy_history(self):
+        """Returns energy history from all iterations
+
+        Returns
+        -------
+        energy_history : array
+
+        Examples
+        --------
+        >>> from gmumpy.datasets import load_mouse1
+        >>> mouse = load_mouse1()
+        >>> c = CEC(n_clusters=mouse.n_clusters)
+        >>> c.fit(mouse.data) #doctest: +NORMALIZE_WHITESPACE
+        CEC(algorithm='hartigan', init='kmeans++', log_energy=True, log_ncluster=True,
+                max_iter=25, method_type='standard', n_clusters=3, n_init=10, tol=0.05)
+        >>> energy_history = c.energy_history()
+        """
+        return self.model.get_energy_history()
+
+    def n_clusters_history(self):
+        """Returns n_clusters history from all iterations
+
+        Returns
+        -------
+        n_clusters_history : array
+
+        Examples
+        --------
+        >>> from gmumpy.datasets import load_mouse1
+        >>> mouse = load_mouse1()
+        >>> c = CEC(n_clusters=mouse.n_clusters)
+        >>> c.fit(mouse.data) #doctest: +NORMALIZE_WHITESPACE
+        CEC(algorithm='hartigan', init='kmeans++', log_energy=True, log_ncluster=True,
+                max_iter=25, method_type='standard', n_clusters=3, n_init=10, tol=0.05)
+        >>> n_clusters_history = c.n_clusters_history()
+        """
+        return self.model.get_nclusters()
+
     def centers(self):
         """Returns centroids of clusters computed by fit method
 
