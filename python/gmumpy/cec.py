@@ -236,7 +236,10 @@ class CEC(BaseEstimator, ClusterMixin, TransformerMixin):
                 max_iter=25, method_type='standard', n_clusters=3, n_init=10, tol=0.05)
         >>> energy_history = c.energy_history()
         """
-        return self.model.get_energy_history()
+        if self.model is not None:
+            return self.model.get_energy_history()
+        else:
+            return None
 
     def n_clusters_history(self):
         """Returns n_clusters history from all iterations
@@ -255,7 +258,10 @@ class CEC(BaseEstimator, ClusterMixin, TransformerMixin):
                 max_iter=25, method_type='standard', n_clusters=3, n_init=10, tol=0.05)
         >>> n_clusters_history = c.n_clusters_history()
         """
-        return self.model.get_nclusters()
+        if self.model is not None:
+            return self.model.get_nclusters()
+        else:
+            return None
 
     def centers(self):
         """Returns centroids of clusters computed by fit method
