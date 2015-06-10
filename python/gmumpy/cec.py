@@ -187,7 +187,7 @@ class CEC(BaseEstimator, ClusterMixin, TransformerMixin):
         cfg.set_it_max(self.max_iter)
         cfg.set_algorithm(self.algorithm)
         self._model = CecModel(cfg)
-        self.cluster_centers_ = self._model.centers()
+        self.cluster_centers_ = np.array(self._model.centers())
         self.n_iter_ = self._model.iters()
         self.labels_ = self._model.get_assignment()
         self.energy_ = self._model.get_energy()

@@ -24,9 +24,9 @@ struct SingleResult {
 
 struct TotalResult {
 	int iterations;
-	std::list<unsigned int> nclusters;
+    std::vector<unsigned int> nclusters;
 	// energy from all iterations of algorithm
-	std::list<double> energy_history;
+    std::vector<double> energy_history;
 	double energy;
 
 	TotalResult();

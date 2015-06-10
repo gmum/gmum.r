@@ -32,8 +32,7 @@ namespace std
 {
     %template(UnsignedIntVector) vector<unsigned int>;
     %template(DoubleVector) vector<double>;
-    %template(DoubleList) list<double>;
-    %template(UnsignedIntList) list<unsigned int>;
+    %template(DoubleVVector) vector< vector<double> >;
 }
 
 
@@ -56,11 +55,11 @@ public:
 	std::vector<unsigned int> get_assignment() const;
 	void set_assignment(std::vector<unsigned int>& assignment);
 	arma::mat get_points();
-    arma::mat centers() const;
+    std::vector< std::vector<double> > centers() const;
 	std::vector<arma::mat> cov() const;
 	unsigned int iters() const;
-	std::list<unsigned int> get_nclusters() const;
-	std::list<double> get_energy_history() const;
+    std::vector<unsigned int> get_nclusters() const;
+    std::vector<double> get_energy_history() const;
 	double get_energy() const;
 	unsigned int predict(std::vector<double> vec);
 	const gmum::TotalResult& get_result() const;

@@ -223,10 +223,11 @@ arma::mat CecModel::get_points() {
     return m_config.get_params().dataset;
 }
 
-arma::mat CecModel::centers() const {
-    arma::mat result(m_clusters.size(), m_config.get_params().dataset.n_cols); 
+std::vector< std::vector<double> > CecModel::centers() const {
+    std::vector< std::vector<double> > result;
     for (unsigned int i = 0; i < m_clusters.size(); ++i) {
-        result.row(i) = m_clusters[i]->get_mean();
+        arma::rowvec row = m_clusters[i]->get_mean();
+        result.push_back(std::vector<double>(row.begin(), row.end()));
     }
     return result;
 }
@@ -247,7 +248,7 @@ unsigned int CecModel::iters() const {
     return m_result.iterations;
 }
 
-std::list<unsigned int> CecModel::get_nclusters() const {
+std::vector<unsigned int> CecModel::get_nclusters() const {
     const Params& params = m_config.get_params();
     if(!params.log_nclusters)
     {
@@ -256,7 +257,7 @@ std::list<unsigned int> CecModel::get_nclusters() const {
     return m_result.nclusters;
 }
 
-std::list<double> CecModel::get_energy_history() const {
+std::vector<double> CecModel::get_energy_history() const {
     const Params& params = m_config.get_params();
     if(!params.log_energy)
     {
