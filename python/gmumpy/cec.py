@@ -1,7 +1,8 @@
 """
 Cross Entropy Clustering module
 """
-
+# Pylint shows messages like: Module 'numpy' has no 'array' member, which is not true
+# pylint: disable=no-member
 # Arguments number may differ since we are extending SWIG-generated code
 # which implements method params as *args, **kwargs for their own reasons
 # pylint: disable=arguments-differ
@@ -12,12 +13,19 @@ Cross Entropy Clustering module
 # pylint: disable=too-many-arguments
 # We are using sklearn get_params() and set_params()
 # pylint: disable=too-many-instance-attributes
+# I've done it like sklearn KMeans
+# pylint: disable=unused-argument
+# pylint: disable=protected-access
 
-from numpy.core.numeric import asfortranarray
+import warnings
+import numpy as np
 
 import gmumpy.core
-
 from gmumpy.base import BaseEstimator, ClusterMixin, TransformerMixin
+
+from sklearn.metrics.pairwise import euclidean_distances
+from sklearn.utils import check_array
+from sklearn.utils.validation import check_is_fitted
 
 class CEC(BaseEstimator, ClusterMixin, TransformerMixin):
     """Cross-Entropy Clustering
@@ -65,8 +73,23 @@ class CEC(BaseEstimator, ClusterMixin, TransformerMixin):
 
     Attributes
     ----------
+    cluster_centers_ : array, [n_clusters, n_features]
+        Coordinates of cluster centers
 
-    TODO
+    labels_ :
+        Labels of each point
+
+    energy_ :
+        Cost of the best assignment
+
+    energy_history_ :
+        List of costs from each iteration
+
+    ncluster_history_ :
+        List of number or clusters from each iteration
+
+    n_iter_ :
+        Total number of iterations
 
     Examples
     --------
@@ -100,9 +123,40 @@ class CEC(BaseEstimator, ClusterMixin, TransformerMixin):
         self.log_energy = log_energy
         self.log_ncluster = log_ncluster
         self.algorithm = algorithm
-        self.model = None
+        self._model = None
+        self.cluster_centers_ = None
+        self.n_iter_ = None
+        self.labels_ = None
+        self.energy_ = None
+        self.energy_history_ = None
+        self.ncluster_history_ = None
 
-    def fit(self, X):
+    def _check_fit_data(self, X):
+        """Verify that the number of samples given is larger than k"""
+        X = check_array(X, accept_sparse='csr', dtype=np.float64)
+        if X.shape[0] < self.n_clusters:
+            raise ValueError("n_samples=%d should be >= n_clusters=%d" % (
+                X.shape[0], self.n_clusters))
+        return X
+
+    def _check_test_data(self, X):
+        """Verify test data"""
+        X = check_array(X, accept_sparse='csr')
+        _, n_features = X.shape
+        expected_n_features = self.cluster_centers_.shape[1]
+        if not n_features == expected_n_features:
+            raise ValueError("Incorrect number of features. "
+                             "Got %d features, expected %d" % (
+                                 n_features, expected_n_features))
+        if X.dtype.kind != 'f':
+            warnings.warn("Got data type %s, converted to float "
+                          "to avoid overflows" % X.dtype,
+                          RuntimeWarning, stacklevel=2)
+            X = X.astype(np.float)
+
+        return X
+
+    def fit(self, X, y=None):
         """Compute CEC clustering.
 
         Parameters
@@ -120,6 +174,7 @@ class CEC(BaseEstimator, ClusterMixin, TransformerMixin):
         CEC(algorithm='hartigan', init='kmeans++', log_energy=True, log_ncluster=True,
               max_iter=25, method_type='standard', n_clusters=3, n_init=10, tol=0.05)
         """
+        X = self._check_fit_data(X)
         cfg = CecConfiguration()
         cfg.set_dataset(X)
         cfg.set_eps(self.tol)
@@ -131,7 +186,15 @@ class CEC(BaseEstimator, ClusterMixin, TransformerMixin):
         cfg.set_method_init(self.init)
         cfg.set_it_max(self.max_iter)
         cfg.set_algorithm(self.algorithm)
-        self.model = CecModel(cfg)
+        self._model = CecModel(cfg)
+        self.cluster_centers_ = self._model.centers()
+        self.n_iter_ = self._model.iters()
+        self.labels_ = self._model.get_assignment()
+        self.energy_ = self._model.get_energy()
+        if self.log_energy:
+            self.energy_history_ = self._model.get_energy_history()
+        if self.log_ncluster:
+            self.ncluster_history_ = self._model.get_nclusters()
         return self
 
     def fit_predict(self, X, y=None):
@@ -145,8 +208,41 @@ class CEC(BaseEstimator, ClusterMixin, TransformerMixin):
         >>> c = CEC(n_clusters=mouse.n_clusters)
         >>> clustering = c.fit_predict(mouse.data)
         """
-        self.fit(X)
-        return self.model.get_assignment()
+        return self.fit(X).labels_
+
+    def fit_transform(self, X, y=None):
+        """Compute clustering and transform X to cluster-distance space.
+        Equivalent to fit(X).transform(X), but more efficiently implemented.
+        """
+        # Currently, this just skips a copy of the data if it is not in
+        # np.array or CSR format already.
+        # XXX This skips _check_test_data, which may change the dtype;
+        # we should refactor the input validation.
+        X = self._check_fit_data(X)
+        return self.fit(X)._transform(X)
+
+    def transform(self, X, y=None):
+        """Transform X to a cluster-distance space.
+        In the new space, each dimension is the distance to the cluster
+        centers.  Note that even if X is sparse, the array returned by
+        `transform` will typically be dense.
+        Parameters
+        ----------
+        X : {array-like, sparse matrix}, shape = [n_samples, n_features]
+            New data to transform.
+        Returns
+        -------
+        X_new : array, shape [n_samples, k]
+            X transformed in the new space.
+        """
+        check_is_fitted(self, 'cluster_centers_')
+
+        X = self._check_test_data(X)
+        return self._transform(X)
+
+    def _transform(self, X):
+        """guts of transform method; no input validation"""
+        return euclidean_distances(X, self.cluster_centers_)
 
     def predict(self, X):
         """Predict the closest cluster each sample in X belongs to.
@@ -169,122 +265,12 @@ class CEC(BaseEstimator, ClusterMixin, TransformerMixin):
         >>> c.fit(mouse.data) #doctest: +NORMALIZE_WHITESPACE
         CEC(algorithm='hartigan', init='kmeans++', log_energy=True, log_ncluster=True,
                 max_iter=25, method_type='standard', n_clusters=3, n_init=10, tol=0.05)
-        >>> cluster_id = c.predict([[1, 2]])
+        >>> cluster_id = c.predict([[1.0, 2.0], [3.0, 4.0]])
         """
-        if self.model is None:
-            return None
-        return [self.model.predict(x) for x in X]
+        check_is_fitted(self, 'cluster_centers_')
 
-    def clustering(self):
-        """Returns clustering computed by fit method
-
-        Returns
-        -------
-        y : array, shape (n_samples,)
-
-        Examples
-        --------
-        >>> from gmumpy.datasets import load_mouse1
-        >>> mouse = load_mouse1()
-        >>> c = CEC(n_clusters=mouse.n_clusters)
-        >>> c.fit(mouse.data) #doctest: +NORMALIZE_WHITESPACE
-        CEC(algorithm='hartigan', init='kmeans++', log_energy=True, log_ncluster=True,
-                max_iter=25, method_type='standard', n_clusters=3, n_init=10, tol=0.05)
-        >>> clustering = c.clustering()
-        """
-        if self.model is not None:
-            return self.model.get_assignment()
-        else:
-            return None
-
-    def energy(self):
-        """Returns energy computed by fit method
-
-        Returns
-        -------
-        energy : float
-
-        Examples
-        --------
-        >>> from gmumpy.datasets import load_mouse1
-        >>> mouse = load_mouse1()
-        >>> c = CEC(n_clusters=mouse.n_clusters)
-        >>> c.fit(mouse.data) #doctest: +NORMALIZE_WHITESPACE
-        CEC(algorithm='hartigan', init='kmeans++', log_energy=True, log_ncluster=True,
-                max_iter=25, method_type='standard', n_clusters=3, n_init=10, tol=0.05)
-        >>> energy = c.energy()
-        """
-        if self.model is not None:
-            return self.model.get_energy()
-        else:
-            return None
-
-    def energy_history(self):
-        """Returns energy history from all iterations
-
-        Returns
-        -------
-        energy_history : array
-
-        Examples
-        --------
-        >>> from gmumpy.datasets import load_mouse1
-        >>> mouse = load_mouse1()
-        >>> c = CEC(n_clusters=mouse.n_clusters)
-        >>> c.fit(mouse.data) #doctest: +NORMALIZE_WHITESPACE
-        CEC(algorithm='hartigan', init='kmeans++', log_energy=True, log_ncluster=True,
-                max_iter=25, method_type='standard', n_clusters=3, n_init=10, tol=0.05)
-        >>> energy_history = c.energy_history()
-        """
-        if self.model is not None:
-            return self.model.get_energy_history()
-        else:
-            return None
-
-    def n_clusters_history(self):
-        """Returns n_clusters history from all iterations
-
-        Returns
-        -------
-        n_clusters_history : array
-
-        Examples
-        --------
-        >>> from gmumpy.datasets import load_mouse1
-        >>> mouse = load_mouse1()
-        >>> c = CEC(n_clusters=mouse.n_clusters)
-        >>> c.fit(mouse.data) #doctest: +NORMALIZE_WHITESPACE
-        CEC(algorithm='hartigan', init='kmeans++', log_energy=True, log_ncluster=True,
-                max_iter=25, method_type='standard', n_clusters=3, n_init=10, tol=0.05)
-        >>> n_clusters_history = c.n_clusters_history()
-        """
-        if self.model is not None:
-            return self.model.get_nclusters()
-        else:
-            return None
-
-    def centers(self):
-        """Returns centroids of clusters computed by fit method
-
-        Returns
-        -------
-        centers : array, shape (n_clusters, n_features)
-
-        Examples
-        --------
-        >>> from gmumpy.datasets import load_mouse1
-        >>> mouse = load_mouse1()
-        >>> c = CEC(n_clusters=mouse.n_clusters)
-        >>> c.fit(mouse.data) #doctest: +NORMALIZE_WHITESPACE
-        CEC(algorithm='hartigan', init='kmeans++', log_energy=True, log_ncluster=True,
-                max_iter=25, method_type='standard', n_clusters=3, n_init=10, tol=0.05)
-        >>> centers = c.centers()
-        """
-        if self.model is not None:
-            return self.model.centers()
-        else:
-            return None
-
+        X = self._check_test_data(X)
+        return np.array([self._model.predict(x) for x in X])
 
 class CecConfiguration(gmumpy.core.CecConfiguration):
     """CEC configuration
@@ -312,7 +298,7 @@ class CecConfiguration(gmumpy.core.CecConfiguration):
         super(CecConfiguration, self).__init__()
 
     def set_dataset(self, X):
-        super(CecConfiguration, self).set_dataset(asfortranarray(X))
+        super(CecConfiguration, self).set_dataset(np.asfortranarray(X))
 
 
 class CecModel(gmumpy.core.CecModel):
