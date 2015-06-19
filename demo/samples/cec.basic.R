@@ -7,14 +7,21 @@
 #'    self_contained: false
 #' ---
 
+# Load our library
 library(gmum.r)
 
-# Fitting to mouse like dataset
+# Fitting to mouse like data set
 data(cec_mouse_1_spherical)
-plot(cec.mouse1spherical, main="Mouse-like dataset")
 
-# Fit spherical gaussians to the dataset
-cec <- CEC(k=3, x=cec.mouse1spherical, control.nstart=10, method.type="sphere")
+# Look at Mouse-like data set
+plot(cec.mouse1spherical, main="Mouse-like data set")
+
+# Fit spherical gaussians to the data set
+cec <- CEC(k=3, x=cec.mouse1spherical, control.nstart=10, method.type="spherical")
 
 # Plot results
 plot(cec, centers=TRUE, ellipses=TRUE)
+
+# Predict cluster which given points (1,1) and (2,2) would belong to:
+predict(cec, c(1,1))
+predict(cec, c(2,2))

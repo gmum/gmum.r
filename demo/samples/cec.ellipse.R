@@ -7,14 +7,17 @@
 #'    self_contained: false
 #' ---
 
-
+# Load our library
 library(gmum.r)
+
+# Load ellipse_gauss data set
 data(cec_ellipse_gauss)
 
-# Try to fit 5 gaussians to the dataset
+# Try to fit 5 gaussians to the data set
 cec <- CEC(k=5, x=cec.ellipsegauss, method.init="random")
 
 # Note that we set 5 cluster. Only 4 was needed.
 plot(cec, centers=TRUE, ellipses=TRUE)
-summary(cec)
 
+# Show information about clustering
+summary(cec)
