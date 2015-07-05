@@ -1,5 +1,9 @@
 library(gmum.r)
 library(e1071)
+library(testthat)
+
+
+
 
 if(!file.exists(svm.colon_cancer.path)) {
 	print(svm.colon_cancer.path)
@@ -7,8 +11,8 @@ if(!file.exists(svm.colon_cancer.path)) {
 } else {
 	 test_that("2e works with really big dataset", {
 
-	  ds <- svm.dataset.colon_cancer()
-	  formula <- X1 ~ .
+	  ds <- as.data.frame(svm.dataset.colon_cancer())
+	  formula <- V1 ~ .
 	  
 	  svm <- SVM(formula, ds, core="libsvm", kernel="linear", prep = "none", C=10);
 	  twoe_svm <- SVM(formula, ds, core="libsvm", kernel="linear", prep = "2e", C=10);
