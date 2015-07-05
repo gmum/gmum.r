@@ -90,7 +90,7 @@ test_that("Transduction improves score", {
   
   i <- createDataPartition(Y, times=1, p=0.8, list=FALSE)
   #A lot of transductive labels to make sure the effect is visible
-  K=as.integer(0.8*length(i)) 
+  K=as.integer(0.9*length(i)) 
   
   X.test <- X[-i,]
   Y.test <- Y[-i]
