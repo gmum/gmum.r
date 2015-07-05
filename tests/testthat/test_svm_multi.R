@@ -29,6 +29,8 @@ test_that("ovo and ova multiclass schemes work for SVM on simple datasets", {
   
   df[,3] <- as.factor(df[,3])
   
+  print(df[,1:2])
+  print(df[,3])
   sv <- SVM(x=df[,1:2], y=df[,3], class.type="one.versus.all")
   preds <- predict(sv, df[,1:2])
   acc <- sum(diag(table(preds, df[,3])))/sum(table(preds, df[,3]))
