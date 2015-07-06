@@ -19,8 +19,8 @@ for (c in seq(-6,5,1) ){
     train = ds[-folds[[i]],]
     test = ds[folds[[i]],]
     
-    svm <- SVM(formula, train, lib="libsvm", kernel="linear", prep = "none", C=10^c);
-    twoe_svm <- SVM(formula, train, lib="libsvm", kernel="linear", prep = "2e", C=10^c);
+    svm <- SVM(formula, train, core="libsvm", kernel="linear", prep = "none", C=10^c);
+    twoe_svm <- SVM(formula, train, core="libsvm", kernel="linear", prep = "2e", C=10^c);
     
     print("----------")
     

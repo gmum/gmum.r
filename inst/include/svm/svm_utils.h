@@ -1,8 +1,8 @@
 #ifndef SVC_UTILS_H_
 #define SVC_UTILS_H_
 #include <svm.h>
-//#include <RcppArmadillo.h>
 #include <armadillo>
+#include <sstream>
 
 #ifndef DEBUG
 #define ASSERT(x)
@@ -19,26 +19,46 @@
 
 using namespace std;
 
+//TODO: clean after consolidating svm_utils.h
+//and log.h with utils/logger.h and utils/utils.h
+template<class T>
+std::string svm_to_str(const T& x) {
+	stringstream ss;
+	ss << x;
+	return ss.str();
+}
+
 class SvmUtils {
 private:
   SvmUtils();
 	virtual ~SvmUtils();
 public:
 
-	static void sqrtInvMat(const arma::mat &matrix, arma::mat &finalMat) {
+	static double sqrtInvMat(arma::mat &matrix, arma::mat &finalMat, double cov_eps_smoothing_start = 0) {
 		arma::vec eigenValue;
 		arma::mat eigenVector;
 		arma::mat diagonalMat;
-		// Throws runtime decomposition error
-		arma::mat inverse = arma::inv(matrix);
+		arma::mat inverse;
+		double mu = arma::trace(matrix) / matrix.n_rows;
+		//trying to inverse 0 matrix
+		mu = mu == 0 ? cov_eps_smoothing_start : mu;
+		double cov_eps_smoothing_end = cov_eps_smoothing_start;
+		bool not_singular = false;
+		while(!not_singular) {
+			not_singular = inv_sympd(inverse,matrix);
+			matrix = (1-cov_eps_smoothing_end) * matrix +
+			mu * cov_eps_smoothing_end * arma::eye(matrix.n_cols, matrix.n_cols);
+			cov_eps_smoothing_end *= 2;
+		}
 		arma::eig_sym(eigenValue, eigenVector,inverse);
 		finalMat = eigenVector * arma::sqrt(arma::diagmat(eigenValue))	* eigenVector.t();
+		return cov_eps_smoothing_end;
 	}
 
 	//convert sparse matrix to armadillo matrix
 	static arma::mat libtoarma(svm_node** svm_nodes, int nr_sv, int dim) {
-		arma::mat ret(nr_sv, dim);
-		
+		arma::mat ret(nr_sv, dim, arma::fill::zeros);
+
 		for (int row = 0; row < nr_sv; row++) {
 			svm_node* tmp_row = svm_nodes[row];
 			for (int j = 0; tmp_row[j].index != -1; j++) {
@@ -51,12 +71,13 @@ public:
 	}
 
 	//TODO: resize ret matrix
-	static void libToArma(svm_node** svm_nodes, int nr_sv, int dim, arma::mat ret) {
+    // FIXME: Deprecated?
+	static void libToArma(svm_node** svm_nodes, int nr_sv, int dim, arma::mat& ret) {
 		//TODO: resize ret matrix
 		// arma::mat ret(nr_sv, dim);
 
 		for (int row = 0; row < nr_sv; row++) {
-			
+
 			svm_node* tmp_row = svm_nodes[row];
 			for (int j = 0; tmp_row[j].index != -1; j++) {
 				// cout << "Row, j, index, value" << row << " " << j << " " <<
@@ -65,6 +86,11 @@ public:
 			}
 		}
 	}
+
+    //Constructs effciently CSR matrix containing SVs
+	static arma::sp_mat SvmNodeToArmaSpMat(
+        svm_node** svm_nodes, int nr_sv, int dim
+    ); 
 
 	static arma::vec arrtoarmavec(double* arr, int size) {
 		arma::vec ret(size);

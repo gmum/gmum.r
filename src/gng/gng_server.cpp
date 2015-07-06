@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <string>
-
+#include <utils.h>
 #include <gng_node.h>
 #include <gng_server.h>
 #include <logger.h>
@@ -31,10 +31,6 @@ GNGServer::GNGServer(GNGConfiguration configuration,
 void GNGServer::init(GNGConfiguration configuration,
 		std::istream * input_graph) {
 
-    if(configuration.seed != -1){
-        srand(configuration.seed);
-    }
-
 	m_index = gng_server_count++;
 
 	algorithm_thread = 0;
@@ -42,7 +38,12 @@ void GNGServer::init(GNGConfiguration configuration,
 
 	m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity));
 
-	LOG(m_logger,5, "GNGServer()::constructing GNGServer");
+    if(configuration.seed != -1){
+        LOG_PTR(m_logger, 5, "GNGServer()::seeding to "+to_str(configuration.seed));
+        __seed(configuration.seed);
+    }
+
+	LOG_PTR(m_logger,5, "GNGServer()::constructing GNGServer");
 
 	if (!configuration.check_correctness()){
 		throw invalid_argument("Invalid configuration passed to GNGServer");
@@ -59,39 +60,39 @@ void GNGServer::init(GNGConfiguration configuration,
 	/** Construct database **/
 	if (current_configuration.datasetType
 			== GNGConfiguration::DatasetSampling) {
-		DBG(m_logger,11, "GNGServer::Constructing Normal Sampling Prob Dataset");
+		DBG_PTR(m_logger,11, "GNGServer::Constructing Normal Sampling Prob Dataset");
 		this->gngDataset = std::auto_ptr<GNGDataset>(
 				new GNGDatasetSimple<double>(&database_mutex,
 						current_configuration.dim, true /* store_extra */,
-						GNGDatasetSimple<double>::Sampling, m_logger));
+						GNGDatasetSimple<double>::Sampling, current_configuration.seed,  m_logger));
 	} else if (current_configuration.datasetType
 			== GNGConfiguration::DatasetSamplingProb) {
 		//Add probability to layout
-		DBG(m_logger,11, "GNGServer::Constructing Sampling Prob Dataset");
+		DBG_PTR(m_logger,11, "GNGServer::Constructing Sampling Prob Dataset");
 		this->gngDataset = std::auto_ptr<GNGDataset>(
 				new GNGDatasetSimple<double>(&database_mutex,
 						current_configuration.dim, true /* store_extra */,
-						GNGDatasetSimple<double>::SamplingProbability,
+						GNGDatasetSimple<double>::SamplingProbability, current_configuration.seed, 
 						m_logger));
 	} else if (current_configuration.datasetType
 			== GNGConfiguration::DatasetSeq) {
-		DBG(m_logger,11, "GNGServer::Constructing Normal Seq Dataset");
+		DBG_PTR(m_logger,11, "GNGServer::Constructing Normal Seq Dataset");
 		this->gngDataset = std::auto_ptr<GNGDataset>(
 				new GNGDatasetSimple<double>(&database_mutex,
-						current_configuration.dim, true /* store_extra */,
-						GNGDatasetSimple<double>::Sequential, m_logger));
+						current_configuration.dim, true /* store_extra */, 
+						GNGDatasetSimple<double>::Sequential, current_configuration.seed, m_logger));
 	} else {
 		cerr << "Passed dataset type " << current_configuration.datasetType
 				<< endl;
 		cerr << GNGConfiguration::DatasetSampling << endl;
 		cerr << GNGConfiguration::DatasetSamplingProb << endl;
-		DBG(m_logger,11, "GNGServer::Not recognized dataset");
+		DBG_PTR(m_logger,11, "GNGServer::Not recognized dataset");
 		throw BasicException(
 				"Database type not supported "
 						+ to_string(current_configuration.datasetType));
 	}
 
-	DBG(m_logger,10, "GNGServer()::gngDatabase constructed");
+	DBG_PTR(m_logger,10, "GNGServer()::gngDatabase constructed");
 
 	/** Construct graph **/
 	if (current_configuration.graph_storage == GNGConfiguration::SharedMemory) {
@@ -107,6 +108,7 @@ void GNGServer::init(GNGConfiguration configuration,
 								current_configuration.starting_nodes,
 								(gmum::GNGGraph::GNGDistanceFunction) current_configuration.distance_function,
 								m_logger));
+
 	} else {
 		throw BasicException("Not supported GNGConfiguration type");
 	}
@@ -115,7 +117,7 @@ void GNGServer::init(GNGConfiguration configuration,
 		this->gngGraph->load(*input_graph);
 	}
 
-	DBG(m_logger,10, "GNGServer()::constructing algorithm object");
+	DBG_PTR(m_logger,10, "GNGServer()::constructing algorithm object");
 
 	/** Initiliaze main computing object **/
 	this->gngAlgorithm = std::auto_ptr<GNGAlgorithm>(
@@ -134,17 +136,18 @@ void GNGServer::init(GNGConfiguration configuration,
 					current_configuration.experimental_utility_option,
 					current_configuration.experimental_utility_k, 
                     current_configuration.max_iter,
+                    current_configuration.seed, 
                     m_logger));
 
-	DBG(m_logger,10, "GNGServer()::constructed algorithm object");
+	DBG_PTR(m_logger,10, "GNGServer()::constructed algorithm object");
 
 }
 
 void GNGServer::run() {
 	if(!algorithm_thread){
-		DBG(m_logger,10, "GNGServer::runing algorithm thread");
+		DBG_PTR(m_logger,10, "GNGServer::runing algorithm thread");
 		algorithm_thread = new gmum::gmum_thread(&GNGServer::_run, (void*) this);
-		DBG(m_logger,10, "GNGServer::runing collect_statistics thread");
+		DBG_PTR(m_logger,10, "GNGServer::runing collect_statistics thread");
 		m_running_thread_created = true;
 	}else{
 		gngAlgorithm->run(/*synchronized*/ true);
@@ -223,14 +226,14 @@ void GNGServer::insertExamples(double * positions, double * extra,
 	gmum::scoped_lock<GNGDataset> lock(gngDataset.get());
 
 	if (dim != current_configuration.dim) {
-		DBG(m_logger,10, "Wrong dimensionality is "+gmum::to_string(count*dim)+" expected "+
+		DBG_PTR(m_logger,10, "Wrong dimensionality is "+gmum::to_string(count*dim)+" expected "+
 				gmum::to_string(count*gngDataset->getDataDim()) +
 				" data dim " + gmum::to_string(gngDataset->size()));
 		throw invalid_argument("Wrong dimensionality");
 	}
 
 	gngDataset->insertExamples(positions, extra, probability, count);
-	DBG(m_logger,7, "GNGServer::Database size "+gmum::to_string(gngDataset->size()));
+	DBG_PTR(m_logger,7, "GNGServer::Database size "+gmum::to_string(gngDataset->size()));
 
 }
 
@@ -328,7 +331,12 @@ Rcpp::List GNGServer::getNode(int index) {
 }
 
 int GNGServer::Rpredict(Rcpp::NumericVector & r_ex) {
-	return 1+gngAlgorithm->predict(std::vector<double>(r_ex.begin(), r_ex.end()) );
+  if(r_ex.size() > current_configuration.dim){
+     cerr<<"Wrong example dimensionality. Note that C++ method accepts only vectors, not matrix, please use S4 predict method instead\n";
+     return -1;
+  }else{
+	  return 1+gngAlgorithm->predict(std::vector<double>(r_ex.begin(), r_ex.end()) );
+  }
 }
 
 Rcpp::NumericVector GNGServer::RgetClustering() {
@@ -415,10 +423,10 @@ void GNGServer::pause() {
 ///Terminate algorithm
 void GNGServer::terminate() {
 	if(gngAlgorithm.get()){
-		LOG(m_logger,5, "GNGServer::getAlgorithm terminating");
-		LOG(m_logger,10, "GNGServer::isRunning ="+ to_str(gngAlgorithm->isRunning()));
+		LOG_PTR(m_logger,5, "GNGServer::getAlgorithm terminating");
+		LOG_PTR(m_logger,10, "GNGServer::isRunning ="+ to_str(gngAlgorithm->isRunning()));
 		gngAlgorithm->terminate(/*synchronized*/true);
-		LOG(m_logger,10, "GNGServer::isRunning ="+ to_str(gngAlgorithm->isRunning()));
+		LOG_PTR(m_logger,10, "GNGServer::isRunning ="+ to_str(gngAlgorithm->isRunning()));
 	}
 }
 
@@ -433,19 +441,19 @@ GNGDataset & GNGServer::getDatabase() {
 }
 
 GNGServer::~GNGServer() {
-	LOG(m_logger, 5, "GNGServer::destructor for "+to_str(m_index)+" called");
+	LOG_PTR(m_logger, 5, "GNGServer::destructor for "+to_str(m_index)+" called");
 
 	if(gngAlgorithm.get()){
 	    terminate();
 	}
 
-	LOG(m_logger, 5, "GNGServer::joining to algorithm_thread");
+	LOG_PTR(m_logger, 5, "GNGServer::joining to algorithm_thread");
 
 	if(algorithm_thread){
 		algorithm_thread->join();
 	}
 
-	LOG(m_logger, 5, "GNGServer::destructor for "+to_str(m_index)+" finished");
+	LOG_PTR(m_logger, 5, "GNGServer::destructor for "+to_str(m_index)+" finished");
 
 }
 

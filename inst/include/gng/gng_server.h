@@ -133,6 +133,7 @@ private:
 	 * @note Runs one extra threads for communication.
 	 */
 	static void _run(void * server) {
+        // This shouldn't be necessary but R behaves strangely in this matter.
 		GNGServer * gng_server = (GNGServer*) server;
 		try {
 			DBG(gng_server->m_logger,10, "GNGServer::run::proceeding to algorithm");

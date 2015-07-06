@@ -5,20 +5,52 @@
  * @copyright   GPLv3
  */
 
+
 #include <string.h>
 #include <iostream>
 #include <iomanip>
 #include <string>
 #include <vector>
+#include <cassert>
 
 #include "svmlight_runner.h"
-#include "svm/log.h"
+#include "utils/logger.h"
 #include "svm_basic.h"
+#include "utils/utils.h"
 
 const std::string __file__ = "svmlight_runner.cpp";
 const std::string __runner_class__ = "SVMLightRunner";
 const std::string __debug_prefix__ = __file__ + "." + __runner_class__;
 
+
+extern long smallroundcount;
+extern long roundnumber;
+extern long precision_violations;
+extern double *primal;
+extern double *dual;
+extern long precision_violations;
+extern double opt_precision;
+extern long maxiter;
+extern double lindep_sensitivity;
+extern double* buffer;
+extern long* nonoptimal;
+
+# define DEF_PRECISION          1E-5
+# define DEF_MAX_ITERATIONS     200
+# define DEF_LINDEP_SENSITIVITY 1E-8
+
+void init_global_params_QP() {
+    primal=0;
+    dual=0;
+    lindep_sensitivity=DEF_LINDEP_SENSITIVITY;
+    maxiter=DEF_MAX_ITERATIONS;
+    opt_precision=DEF_PRECISION;
+    buffer = 0;
+    nonoptimal = 0;
+    smallroundcount = 0;
+    roundnumber = 0;
+    precision_violations = 0;
+}
 
 SVMLightRunner::SVMLightRunner() {
 }
@@ -35,20 +67,52 @@ bool SVMLightRunner::canHandle(SVMConfiguration &config) {
 }
 
 
-void SVMLightRunner::processRequest(SVMConfiguration &config) {
-    char **argv;
+void SVMLightRunner::processRequest(
+    SVMConfiguration &config
+) {
+    int argc = 0;
+    char** argv = 0;
 
     arma::mat unique_labels = arma::unique(config.target);
-    config.neg_target = unique_labels[0];
-    config.pos_target = unique_labels[1];
+
+    if(unique_labels.size() !=2 && !config.use_transductive_learning){
+    	printf("Passed 3 labels to svmlight without use_transductive_learning\n");
+    	exit(1);
+    }
+    if((unique_labels.size() <2 || unique_labels.size() > 3)  && config.use_transductive_learning){
+    	printf("Passed incorred # of labels to svmlight (<2 || >3) for transductive learning\n");
+    	exit(1);
+    }
+    if(unique_labels.size() == 2){
+    	if(unique_labels[0] != -1 && unique_labels[1] != 1){
+    		printf("Please pass negative class as -1 and positive as 1");
+    		exit(1);
+    	}
+    }
+    if(unique_labels.size() == 3){
+    	if(unique_labels[0] != 0 && unique_labels[1] != -1
+    			&& unique_labels[2] != 1
+    	){
+    		printf("Please pass negative class as -1 and positive as 1");
+    		exit(1);
+    	}
+    }
+
+    config.neg_target = -1;
+    config.pos_target = 1;
+
+    if (!config.svm_options.empty()) {
+        argc = check_argc(std::string("gmum ") + config.svm_options);
+        argv = to_argv(std::string("gmum ") + config.svm_options);
+    }
 
     if (!config.isPrediction()) {
         // Learning
-        librarySVMLearnMain(0, argv, true, config);
+        librarySVMLearnMain(argc, argv, true, config);
 
     } else {
         // Predict
-        librarySVMClassifyMain(0, argv, true, config);
+        librarySVMClassifyMain(argc, argv, true, config);
         // Convert sign to label
         resultsToLabels(config);
     }
@@ -67,7 +131,6 @@ void SVMLightRunner::resultsToLabels(SVMConfiguration &config) {
     for (int i=0; i < n_docs; ++i) {
         doc_result = config.result[i];
 
-        // Store only a class label
         //arma::vec doc_result_vec;
         //doc_result_vec << doc_result << arma::endr;
         //arma::vec result_sign_vec = arma::sign(doc_result_vec);
@@ -154,6 +217,9 @@ int SVMLightRunner::librarySVMLearnMain(
       kernel_cache=kernel_cache_init(totdoc,learn_parm.kernel_cache_size);
     }
 
+    //gmum.r
+    init_global_params_QP();
+
     if(learn_parm.type == CLASSIFICATION) {
       svm_learn_classification(docs,target,totdoc,totwords,&learn_parm,
 			     &kernel_parm,kernel_cache,model,alpha_in);
@@ -170,6 +236,8 @@ int SVMLightRunner::librarySVMLearnMain(
       svm_learn_optimization(docs,target,totdoc,totwords,&learn_parm,
 			   &kernel_parm,kernel_cache,model,alpha_in);
     }
+    //gmum.r
+    config.iter = learn_parm.iterations;
 
     if(kernel_cache) {
       /* Free the memory used for the cache. */
@@ -234,12 +302,15 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     learn_parm->svm_maxqpsize=10;
     learn_parm->svm_newvarsinqp=0;
     learn_parm->svm_iter_to_shrink=-9999;
-    learn_parm->maxiter=100000;
     learn_parm->kernel_cache_size=40;
-    learn_parm->svm_c=0.0;
+    /* upper bound C on alphas */
+    learn_parm->svm_c=config.C;
     learn_parm->eps=0.1;
     learn_parm->transduction_posratio=-1.0;
+    /* factor to multiply C for positive examples */
     learn_parm->svm_costratio=1.0;
+
+    /* FIXME: Find what this one does */
     learn_parm->svm_costratio_unlab=1.0;
     learn_parm->svm_unlabbound=1E-5;
     learn_parm->epsilon_crit=0.001;
@@ -255,29 +326,41 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     strcpy(kernel_parm->custom,"empty");
     strcpy(type,"c");
 
-    // GMUM.R changes {
+    if (config.max_iter == -1)
+        learn_parm->maxiter = 100000;
+    else
+        learn_parm->maxiter = config.max_iter;
+
     if (static_cast<long int>(config.kernel_type) == 3) {
         // sigmoid tanh(s a*b + c)
         // s = 1.0/highest_feature_index
-        kernel_parm->coef_lin = 1.0/config.data.n_cols;
+        kernel_parm->coef_lin = 1.0/config.getDataDim();
         // c
         kernel_parm->coef_const = -1.0;
     }
 
     /* set userdefined */
-    if (config.degree)
+    if (config.degree){
         kernel_parm->poly_degree = config.degree;
-    if (config.gamma)
+    }
+    if (config.gamma){
         kernel_parm->rbf_gamma = config.gamma;
-    if (config.gamma)
+    }
+    if (config.gamma){
         kernel_parm->coef_lin = config.gamma;
-    if (config.coef0)
+    }
+    if (config.coef0){
         kernel_parm->coef_const = config.coef0;
-    // GMUM.R changes }
+    }
+
+    learn_parm->transduction_posratio = config.transductive_posratio;
+    //This is tricky - both LIBSVM and SVMLIGHT have same default eps.
+    //However in general we should do things like that
+    learn_parm->epsilon_crit=config.eps;
 
     for(i=1;(i<argc) && ((argv[i])[0] == '-');i++) {
-      switch ((argv[i])[1]) 
-        { 
+      switch ((argv[i])[1])
+        {
         case '?': libraryPrintHelp(); exit(0);
         case 'z': i++; strcpy(type,argv[i]); break;
         case 'v': i++; (*verbosity)=atol(argv[i]); break;
@@ -306,12 +389,13 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
         case 'l': i++; strcpy(learn_parm->predfile,argv[i]); break;
         case 'a': i++; strcpy(learn_parm->alphafile,argv[i]); break;
         case 'y': i++; strcpy(restartfile,argv[i]); break;
-        default: printf("\nUnrecognized option %s!\n\n",argv[i]);
+        default: printf("\n[SVMLight] Unrecognized option %s!\n\n",argv[i]);
 	         libraryPrintHelp();
 	         exit(0);
         }
     }
 
+    // GMUM.R changes }
     if(!use_gmumr) {
         if(i>=argc) {
             printf("\nNot enough input parameters!\n\n");
@@ -463,8 +547,8 @@ int SVMLightRunner::librarySVMClassifyMain(
         line = (char *)my_malloc(sizeof(char)*lld);
     } else {
         max_docs = config.target.n_rows;
-        max_words_doc = config.data.n_cols;
-        config.result = arma::randu<arma::vec>(max_docs);
+        max_words_doc = config.getDataDim();
+        config.result = arma::zeros<arma::vec>(max_docs);
         // Prevent writing to the file
         pred_format = -1;
         // lld used only for file reading
@@ -496,7 +580,7 @@ int SVMLightRunner::librarySVMClassifyMain(
         newline = (!feof(docfl)) && fgets(line,(int)lld,docfl);
     } else {
         newline = false;
-        if (totdoc < config.data.n_rows) {
+        if (totdoc < config.getDataExamplesNumber()) {
             newline = true;
             std::string str = SVMConfigurationToSVMLightLearnInputLine(config, totdoc);
             line = new char[str.size() + 1];
@@ -563,7 +647,7 @@ int SVMLightRunner::librarySVMClassifyMain(
           // Store prediction result in config
           config.result[totdoc-1] = dist;
           // Read next line
-          if (totdoc < config.data.n_rows) {
+          if (totdoc < config.getDataExamplesNumber()) {
               newline = true;
               std::string str = SVMConfigurationToSVMLightLearnInputLine(config, totdoc);
               line = new char[str.size() + 1];
@@ -710,7 +794,7 @@ MODEL * SVMLightRunner::libraryReadModel(
         fscanf(modelfl,"%ld%*[^\n]\n", &model->sv_num);
         fscanf(modelfl,"%lf%*[^\n]\n", &model->b);
     } else { // use_gmumr
-        max_words = config.data.n_cols;
+        max_words = config.getDataDim();
         words = (WORD *)my_malloc(sizeof(WORD)*(max_words+10));
 
         LOG(
@@ -734,7 +818,7 @@ MODEL * SVMLightRunner::libraryReadModel(
         char * model_kernel_parm_custom = model->kernel_parm.custom;
         model_kernel_parm_custom = kernel_parm_custom;
         // highest feature index
-        model->totwords = config.data.n_cols;
+        model->totwords = config.getDataDim();
         // number of training documents
         model->totdoc = config.target.n_rows;
         // number of support vectors plus 1 (!)
@@ -743,7 +827,7 @@ MODEL * SVMLightRunner::libraryReadModel(
          * In svm_common.c:57 in double classify_example_linear():
          *     return(sum-model->b);
          */
-        model->b = - config.threshold_b;
+        model->b = - config.b;
 
         LOG(
             config.log,
@@ -788,6 +872,7 @@ MODEL * SVMLightRunner::libraryReadModel(
                               0,0,
                               0.0,
                               create_svector(words,comment,1.0));
+            free(line);
         }
     }
     // GMUM.R changes }
@@ -830,7 +915,7 @@ void SVMLightRunner::libraryReadDocuments (
         nol_ll(docfile,&max_docs,&max_words_doc,&ll); /* scan size of input file */
     } else {
         max_docs = config.target.n_rows;
-        max_words_doc = config.data.n_cols;
+        max_words_doc = config.getDataDim();
         // ll used only for file reading
     }
     // GMUM.R changes }
@@ -887,12 +972,18 @@ void SVMLightRunner::libraryReadDocuments (
       /* printf("docnum=%ld: Class=%f ",dnum,doc_label); */
       if(doc_label > 0) dpos++;
       if (doc_label < 0) dneg++;
-      if (doc_label == 0) dunlab++;
+      if (doc_label == 0) {
+    	  if(config.use_transductive_learning){
+    		  dunlab++;
+    	  }else{
+    		  printf("Please for transductive learning pass use_transductive_learning\n");
+    		  exit(1);
+    	  }
+      }
       if((wpos>1) && ((words[wpos-2]).wnum>(*totwords))) 
         (*totwords)=(words[wpos-2]).wnum;
       if((*totwords) > MAXFEATNUM) {
         printf("\nMaximum feature number exceeds limit defined in MAXFEATNUM!\n");
-        printf("LINE: %s\n",line);
         exit(1);
       }
       (*docs)[dnum] = create_example(dnum,queryid,slackid,costfactor,
@@ -901,7 +992,7 @@ void SVMLightRunner::libraryReadDocuments (
       dnum++;  
       if(verbosity>=1) {
         if((dnum % 100) == 0) {
-      printf("%ld..",dnum); fflush(stdout);
+        	printf("%ld..",dnum); fflush(stdout);
         }
       }
       // GMUM.R changes {
@@ -947,6 +1038,7 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     double target_value = config.target[line_num];
 
 
+
     // Handle user-defined labels
     if (target_value == config.neg_target) {
         ss << -1;
@@ -954,16 +1046,49 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
         ss << 1;
     } else if (!target_value) {
         ss << 0;
+    }else{
+    	printf("Unrecognized class label %d\n", target_value);
+    	exit(1);
     }
 
     // Optional feature: cost :)
-    if (config.use_cost) {
-        ss << " cost:" << std::setprecision(8) << config.data_cost[line_num];
+
+    if (config.use_example_weights || (config.use_class_weights && target_value)) {
+    	double weight = 1.0;
+    	if(config.use_example_weights){
+    		weight *= config.example_weights[line_num];
+    	}
+    	if(config.use_class_weights){
+    		weight *= (target_value == config.pos_target? config.class_weights[1] : config.class_weights[0]);
+    	}
+
+        ss << " cost:" << std::setprecision(8) << weight;
+
     }
 
-    for (long int j = 1; j <= config.data.n_cols; ++j) {
-        ss << ' ' << j << ':' << std::setprecision(8) << config.data(line_num, j-1);
+    // Matrix type handling
+    if (config.isSparse()) {
+    	int current_row = 0;
+        arma::sp_mat::iterator begin = config.getSparseData().begin_col(line_num);
+        arma::sp_mat::iterator end = config.getSparseData().end_col(line_num);
+        for (arma::sp_mat::iterator it = begin; it != end; ++it) {
+            ss << ' ' << it.row() + 1 << ':' << std::setprecision(8);
+            current_row = it.row();
+            ss << *it;
+        }
+        //Always output last row
+        if(current_row != config.getSparseData().n_rows-1){
+        	ss << ' ' << config.getSparseData().n_rows << ':' << std::setprecision(8);
+        	ss << config.getSparseData()(config.getSparseData().n_rows-1, line_num);
+        }
+
+    } else {
+        for (long int i = 1; i <= config.data.n_cols; ++i) {
+            ss << ' ' << i << ':' << std::setprecision(8);
+            ss << config.data(line_num, i-1);
+        }
     }
+
     ss << std::endl;
     line_string = ss.str();
 
@@ -980,15 +1105,13 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
         __debug_prefix__ + ".SVMConfigurationToSVMLightModelSVLine() Started."
     );
 
-    std::string line_string = "";
 
     std::ostringstream ss;
     ss << std::setprecision(32) << config.alpha_y[line_num];
-    for (long int i = 1; i <= config.support_vectors.n_cols; ++i) {
-        ss << ' ' << i << ':' << std::setprecision(8) << config.support_vectors(line_num, i-1);
+    for (long int i = 1; i <= config.support_vectors.n_rows; ++i) {
+        ss << ' ' << i << ':' << std::setprecision(8) << config.support_vectors(i-1, line_num);
     }
     ss << " #" << std::endl;
-    line_string = ss.str();
 
     LOG(
         config.log,
@@ -996,7 +1119,12 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
         __debug_prefix__ + ".SVMConfigurationToSVMLightModelSVLine() Done."
     );
 
-    return (char*)line_string.c_str();
+    std::string line = ss.str();
+    char * c_line = new char[line.length() + 1];
+    strcpy(c_line, line.c_str());
+
+    //FIXME: well.. this hopefully will be fixed once we change way we interact with SVMLight
+    return(c_line);
 }
 
 
@@ -1019,7 +1147,7 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
         __debug_prefix__ + ".SVMLightModelToSVMConfiguration() Started."
     );
 
-    long i, j;
+    long i, j, k;
     SVECTOR *v;
 
     /* 0=linear, 1=poly, 2=rbf, 3=sigmoid, 4=custom -- same as GMUM.R! */
@@ -1042,25 +1170,51 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
     config.l = model->sv_num - 1;
     // Threshold b (has opposite sign than SVMClient::predict()
     // NOTE: see libraryReadModel()
-    config.threshold_b = - model->b;
+    config.b = - model->b;
+    config.nr_class = 2; // svmlight works only with 2 classes
 
-    config.alpha_y = arma::randu<arma::vec>(config.l);
-    config.support_vectors = arma::randu<arma::mat>(config.l, model->totwords);
-    for(i=1;i<model->sv_num;i++) {
-      for(v=model->supvec[i]->fvec;v;v=v->next) {
-        config.alpha_y(i-1) = model->alpha[i]*v->factor;
-        for (j=0; (v->words[j]).wnum; j++) {
-            config.support_vectors(i-1,j) = v->words[j].weight;
+    config.alpha_y = arma::zeros<arma::vec>(config.l);
+    int dim = model->totwords;
+
+    // Constructing alphas and SV:
+    arma::uvec colptr(config.l+1); //this always has this dim
+    colptr(0) = 0; //always
+
+    int non_zero = 0;
+    //get necessary statistics 
+    for (i = 1; i < model->sv_num; i++) {
+      for (v = model->supvec[i]->fvec; v; v=v->next) {
+        for (j = 0; (v->words[j]).wnum; j++) {
+            non_zero += 1;
         }
-        //printf("#%s\n",v->userdefined);
       }
     }
-    config.w = (config.alpha_y.t() * config.support_vectors).t();
+    arma::uvec rowind(non_zero);
+    arma::vec values(non_zero);
+
+    int current = 0;
+    for (i = 1; i < model->sv_num; i++) {
+      for (v = model->supvec[i]->fvec; v; v=v->next) {
+        config.alpha_y(i - 1) = model->alpha[i]*v->factor;
+        for (j = 0; (v->words[j]).wnum; j++) {
+            k = (v->words[j]).wnum - 1;
+            rowind[current] = k;
+            values[current] = v->words[j].weight;
+            current++;
+        }
+        colptr(i) = current;
+      }
+    }
+
+    config.support_vectors = arma::sp_mat(rowind, colptr, values, dim, config.l); 
+	config.w = (config.support_vectors * config.alpha_y);
+
     LOG(
         config.log,
         LogLevel::DEBUG,
         __debug_prefix__ + ".SVMLightModelToSVMConfiguration() Done."
     );
+
 }
 
 void SVMLightRunner::libraryWaitAnyKey()

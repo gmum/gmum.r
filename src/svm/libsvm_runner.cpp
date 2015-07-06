@@ -14,6 +14,7 @@
 #include "libsvm_runner.h"
 #include "svm_basic.h"
 #include "svm_utils.h"
+#include "utils/utils.h"
 
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 svm_parameter get_default_params();
@@ -31,24 +32,27 @@ void LibSVMRunner::processRequest(SVMConfiguration& config) {
 
 //	Training
 	if (!config.isPrediction()) {
+		svm_node** node = 0;
+		if(config.isSparse()) {
+            node = ArmaSpMatToSvmNode(config.sparse_data);
+		} else {
+			node = armatlib(config.data);
+		}
 		svm_parameter* param = configuration_to_problem(config);
+        parseCommandLine(config, *param);
 		prob.l = config.target.n_rows;
-		svm_node** node = armatlib(config.data);
 		prob.y = vectlib(config.target);
 		prob.x = node;
 		save_model_to_config(config, param, prob);
-		//Xk is already transposed
-		//examples x dim
-		//config.alpha_y = SvmUtils::arrtoarmavec(config.sv_coef, config.l);
-		//DIM W: (nsv x 1)^T x nsv x dim = 1 x dim
-		config.w = (config.alpha_y.t() * config.support_vectors).t();
+		config.w = (config.support_vectors * config.alpha_y);
+
 	} else {
 		arma_prediction(config);
 	}
 }
 
 bool LibSVMRunner::canHandle(SVMConfiguration& config) {
-    if (config.use_cost) {
+    if (config.use_example_weights) {
         return false;
     }
 	return config.library == LIBSVM;
@@ -72,40 +76,39 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 	//*nr = config.support_vectors.n_rows; //support vectors
 	*nclasses = model->nr_class;
 	config.nr_class = model->nr_class;
+	LOG(config.log, LogLevel::TRACE, "save_model_to_config writing down alphas, nclasses= " + svm_to_str(config.nr_class));
 
 	int nr_support_vectors = model->l;
-	//config.sv_coef = (double **) malloc(model->nr_class * sizeof(double*));
-	for (int i = 0; i < config.nr_class - 1; i++) {
-		//config.sv_coef[i] = (double *) malloc(nr_support_vectors * sizeof(double));
-		//memcpy(config.sv_coef[i * nr_support_vectors], model->sv_coef[i],
-				//nr_support_vectors * sizeof(double*));
-		
-		arma::vec alpha_y_copy(model->sv_coef[i], nr_support_vectors);
-		config.alpha_y = alpha_y_copy;
-		// std::vector<double> alpha_y(config.alpha_y.begin(), config.alpha_y.end());
-		// memcpy(model->sv_coef[i * config.l], &alpha_y[0] ,config.l * sizeof(double*));
-	}
+    //conversion vec->SpCol
+    arma::vec alpha_y_tmp = arma::vec(model->sv_coef[0], nr_support_vectors);
+    //not my fault. Arma fault :)
+	config.alpha_y = arma::zeros(nr_support_vectors);
+    for(int i=0;i<nr_support_vectors;++i){
+        if(alpha_y_tmp(i) != 0){
+            config.alpha_y(i) = alpha_y_tmp(i);
+        }
+    }
 
 	if(config.nr_class != 2) {
 		throw std::invalid_argument( "Code is not implemented for more than 2 classes right now");
 	}
 
-	config.threshold_b = -model->rho[0];
+	config.b = -model->rho[0];
+	config.iter = model->iter;
 	// memcpy(config.rho, ,
 	// 		config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
 
 	//config.sv_indices = (int*) malloc(config.l * sizeof(int));
 	//svm_get_sv_indices(model, config.sv_indices, config.log);
 
-	int dim = config.data.n_cols;
+	int dim = config.getDataDim();
 	ASSERT(dim > 0);
-	config.support_vectors = SvmUtils::libtoarma(model->SV, nr_support_vectors, dim);
-
-	// config.SV = (svm_node **) malloc(config.l * sizeof(svm_node*));
-	// for (int i = 0; i < config.l; i++) {
-	// 	config.SV[i] = (svm_node*) malloc(sizeof(svm_node));
-	// 	memcpy(config.SV, model->SV, sizeof(svm_node));
-	// }
+	//config.support_vectors = SvmUtils::libtoarma(model->SV, nr_support_vectors, dim);
+    //
+	LOG(config.log, LogLevel::TRACE, "save_model_to_config writing down SV, n_SV = " + svm_to_str(nr_support_vectors));
+	config.support_vectors = SvmUtils::SvmNodeToArmaSpMat(model->SV, nr_support_vectors, dim);
+	LOG(config.log, LogLevel::TRACE, "save_model_to_config wrote down SV, n_SV = " + svm_to_str(config.support_vectors.n_cols));
+	LOG(config.log, LogLevel::TRACE, "save_model_to_config wrote down SV, dim = " + svm_to_str(config.support_vectors.n_rows));
 
 	//	TODO: WTF!!!!!???
 	if (config.svm_type < 2) {
@@ -114,6 +117,7 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 		memcpy(config.label, model->label, *nclasses * sizeof(int));
 		memcpy(config.nSV, model->nSV, *nclasses * sizeof(int));
 	}
+
     config.neg_target = model->label[1];
     config.pos_target = model->label[0];
 
@@ -136,23 +140,25 @@ svm_model* LibSVMRunner::load_model_from_config(SVMConfiguration& config,
 
 	model = Malloc(svm_model, 1);
 
-	model->l =  config.support_vectors.n_rows; //support vectors number
+	model->l =  config.getSVCount(); //support vectors number
 	model->nr_class = config.nr_class;
 	model->param = *param;
 
 	model->sv_coef = (double **) malloc(model->nr_class * sizeof(double*));
 	for (int i = 0; i < config.nr_class - 1; i++) {
-		model->sv_coef[i] = (double *) malloc(config.support_vectors.n_rows * sizeof(double));
-		std::copy(config.alpha_y.begin(), config.alpha_y.end(), model->sv_coef[i *  config.support_vectors.n_rows]);
+		model->sv_coef[i] = (double *) malloc(config.getSVCount() * sizeof(double));
+		std::copy(config.alpha_y.begin(), config.alpha_y.end(), model->sv_coef[i *  config.getSVCount()]);
 	}
 
-	model->SV = armatlib(config.support_vectors);
+    model->SV = armatlib(arma::mat(config.support_vectors.t()));
+	// FIXME: Why below is not working?
+    //model->SV = ArmaSpMatToSvmNode(config.support_vectors);
 
 	model->rho = (double *) malloc(
 			config.nr_class * (config.nr_class - 1) / 2 * sizeof(double));
 
 	//i need change sign in b
-	double local_rho = -config.threshold_b;
+	double local_rho = -config.b;
 	
 	if(config.nr_class != 2) {
 		throw std::invalid_argument( "Code is not implemented for more than 2 classes right now");
@@ -190,9 +196,10 @@ svm_parameter* LibSVMRunner::configuration_to_problem(
 	param->p = config.p;
 	param->shrinking = config.shrinking;
 	param->probability = config.probability;
-	param->nr_weight = config.nr_weight;
-	param->weight_label = config.weight_label;
-	param->weight = config.weight;
+	param->nr_weight = config.class_weight_length;
+	param->weight_label = config.libsvm_class_weights_labels;
+	param->weight = config.libsvm_class_weights;
+	param->max_iter = config.max_iter;
 
 	if ( config.kernel_type == _LINEAR ) {
 			param->kernel_type = LINEAR;
@@ -273,22 +280,46 @@ double * LibSVMRunner::vectlib(arma::vec target) {
 	return return_target;
 }
 
+svm_node** LibSVMRunner::SparseToSVMNode(arma::vec& x, int r, arma::Col<int>& rowindex, arma::Col<int>& colindex) { 
+    struct svm_node** sparse;
+    int i, ii, count = 0, nnz = 0;
 
+    sparse = (struct svm_node **) malloc (r * sizeof(struct svm_node*));
+    for (i = 0; i < r; i++) {
+	/* allocate memory for column elements */
+	nnz = rowindex[i+1] - rowindex[i];
+	sparse[i] = (struct svm_node *) malloc ((nnz + 1) * sizeof(struct svm_node));
+
+	/* set column elements */
+	for (ii = 0; ii < nnz; ii++) {
+	    sparse[i][ii].index = colindex[count];
+	    sparse[i][ii].value = x[count];
+	    count++;
+	}
+
+	/* set termination element */
+	sparse[i][ii].index = -1;
+    }    
+
+    return sparse;
+}
 
 
 void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 	struct svm_model* m;
 	struct svm_node ** train;
 	svm_parameter *params;
-	arma::mat training_mat = config.data;
-	int training_examples = training_mat.n_rows;
+	int training_examples = config.getDataExamplesNumber();
 
 	params = configuration_to_problem(config);
 	m = load_model_from_config(config, params);
 
 //	TODO: READ MODEL FROM PARAMETERS
-
-	train = armatlib(config.data);
+	if(config.isSparse()) {
+        train = ArmaSpMatToSvmNode(config.sparse_data);
+	} else {
+		train = armatlib(config.data);
+	}
 	double* ret = Malloc(double, training_examples);
 
 	for (int i = 0; i < training_examples; i++)
@@ -310,3 +341,183 @@ void LibSVMRunner::arma_prediction(SVMConfiguration& config) {
 	free(ret);
 }
 
+svm_node** LibSVMRunner::ArmaSpMatToSvmNode(arma::sp_mat & sparse_data) {
+    int max_rows = sparse_data.n_rows + 1;
+    svm_node **sn = new svm_node*[sparse_data.n_cols + 1];
+    svm_node * tmp_col = new svm_node[max_rows];
+    long int current_col_counter;
+    long int row;
+    for (unsigned int col = 0; col < sparse_data.n_cols; ++col) {
+        current_col_counter = 0;
+        row = -1;
+
+        for (
+            arma::sp_mat::iterator it = sparse_data.begin_col(col);
+            it != sparse_data.end_col(col); ++it
+        ) {
+            tmp_col[current_col_counter].value = *it;
+            tmp_col[current_col_counter++].index = it.row() + 1;
+        }
+        
+        sn[col] = new svm_node[current_col_counter + 1];
+        memcpy(sn[col], tmp_col, current_col_counter * sizeof(svm_node));
+        sn[col][current_col_counter].index = -1.0;
+    }
+    delete [] tmp_col;
+    return sn;
+}
+
+void LibSVMRunner::parseCommandLine(
+    SVMConfiguration& config, svm_parameter& param
+) {
+    int argc = 0;
+    char** argv = 0;
+
+    if (!config.svm_options.empty()) {
+        argc = check_argc(std::string("gmum ") + config.svm_options);
+        argv = to_argv(std::string("gmum ") + config.svm_options);
+        char input_file_name[1024];
+        char model_file_name[1024];
+
+        LibSVMRunner::libraryParseCommandLine(
+            config, param, argc, argv, input_file_name, model_file_name);
+    }
+}
+
+void LibSVMRunner::libraryParseCommandLine(
+    SVMConfiguration& config,
+    svm_parameter& param,
+    int argc,
+    char** argv,
+    char* input_file_name,
+    char* model_file_name
+) {
+	int i;
+	void (*print_func)(const char*) = NULL;	// default printing to stdout
+
+	// default values
+    /* These are being handled in SVMClient
+	param.svm_type = C_SVC;
+	param.kernel_type = RBF;
+	param.degree = 3;
+	param.gamma = 0;	// 1/num_features
+	param.coef0 = 0;
+	param.nu = 0.5;
+	param.cache_size = 100;
+	param.C = 1;
+	param.eps = 1e-3;
+	param.p = 0.1;
+	param.shrinking = 1;
+	param.probability = 0;
+	param.nr_weight = 0;
+	param.weight_label = NULL;
+	param.weight = NULL;
+	cross_validation = 0;
+    */
+
+	// parse options
+	for(i=1;i<argc;i++)
+	{
+		if(argv[i][0] != '-') break;
+		if(++i>=argc)
+            break;
+			//exit_with_help();
+		switch(argv[i-1][1])
+		{
+			case 's':
+				param.svm_type = atoi(argv[i]);
+				break;
+			case 't':
+				param.kernel_type = atoi(argv[i]);
+				break;
+			case 'd':
+				param.degree = atoi(argv[i]);
+				break;
+			case 'g':
+				param.gamma = atof(argv[i]);
+				break;
+			case 'r':
+				param.coef0 = atof(argv[i]);
+				break;
+			case 'n':
+				param.nu = atof(argv[i]);
+				break;
+			case 'm':
+				param.cache_size = atof(argv[i]);
+				break;
+			case 'c':
+				param.C = atof(argv[i]);
+				break;
+			case 'e':
+				param.eps = atof(argv[i]);
+				break;
+			case 'p':
+				param.p = atof(argv[i]);
+				break;
+			case 'h':
+				param.shrinking = atoi(argv[i]);
+				break;
+			case 'b':
+				param.probability = atoi(argv[i]);
+				break;
+			case 'q':
+				//print_func = &print_null;
+				i--;
+				break;
+			case 'v':
+                // TODO: We need to wrap more functions from svm-train.c
+                LOG(
+                    config.log,
+                    LogLevel::ERR,
+                    "-v n: n-fold cross validation mode: not implemented."
+                );
+                break;
+                /*
+				cross_validation = 1;
+				nr_fold = atoi(argv[i]);
+				if(nr_fold < 2)
+				{
+					fprintf(stderr,"n-fold cross validation: n must >= 2\n");
+					//exit_with_help();
+				}
+				break;
+                */
+			case 'w':
+				++param.nr_weight;
+				param.weight_label = (int *)realloc(
+                    param.weight_label,sizeof(int)*param.nr_weight);
+				param.weight = (double *)realloc(
+                    param.weight,sizeof(double)*param.nr_weight);
+				param.weight_label[param.nr_weight-1] = atoi(&argv[i-1][2]);
+				param.weight[param.nr_weight-1] = atof(argv[i]);
+				break;
+			default:
+				fprintf(stderr,"Unknown option: -%c\n", argv[i-1][1]);
+				//exit_with_help();
+		}
+	}
+
+	//svm_set_print_string_function(print_func);
+
+	// determine filenames
+    // FIXME: Decide what TODO with this code
+
+    /*
+	if(i>=argc)
+		exit_with_help();
+
+	strcpy(input_file_name, argv[i]);
+
+	if(i<argc-1)
+		strcpy(model_file_name,argv[i+1]);
+	else
+	{
+		char *p = strrchr(argv[i],'/');
+		if(p==NULL)
+			p = argv[i];
+		else
+			++p;
+		sprintf(model_file_name,"%s.model",p);
+	}
+    */
+}

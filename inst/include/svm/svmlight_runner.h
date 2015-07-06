@@ -33,7 +33,9 @@ public:
     bool canHandle(SVMConfiguration &);
 
     // Documented in the parent class
-    void processRequest(SVMConfiguration &);
+    void processRequest(
+        SVMConfiguration &
+    );
 
 protected:
     
@@ -138,7 +140,7 @@ protected:
      * Convert SVMConfiguration to one line of SVMLight's `svm_classify` input
      * of every Support Vector in one line (starting with alpha*y)
      */
-    char * SVMConfigurationToSVMLightModelSVLine(
+     char * SVMConfigurationToSVMLightModelSVLine(
         SVMConfiguration &config, long int line_num
     );
 

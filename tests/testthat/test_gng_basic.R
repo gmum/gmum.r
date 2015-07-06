@@ -25,15 +25,15 @@ test_that("Basic saving/loading works", {
 })
 
 test_that("predictCluster returns sensible results", {
-  data(cec_mouse_1_spherical)
-  g <- GNG(input, max.nodes=50)
-  mouse_centr <- centroids(g)
+  data(cec.mouse1.spherical)
+  g <- GNG(cec.mouse1.spherical, max.nodes=50)
+  mouse_centr <- predictCentroids(g)
   
-  m = as.data.frame(input)
+  m = as.data.frame(cec.mouse1.spherical)
   colnames(m) = c("x", "y")
   
-  x_col <- input[,1]
-  y_col <- input[,2]
+  x_col <- cec.mouse1.spherical[,1]
+  y_col <- cec.mouse1.spherical[,2]
   
   x_max <- max(x_col)
   x_min <- min(x_col) 
@@ -44,8 +44,8 @@ test_that("predictCluster returns sensible results", {
   y_axis <- seq(from=y_min, to=y_max, length.out=30)
   grid <- data.frame(x_axis,y_axis)
   grid <- expand.grid(x=x_axis,y=y_axis)
-  target <- predictCentroid(g, centroids=mouse_centr, x=grid)
-  target_loopy <- apply(grid, 1, function(x) predictCentroid(g, centroids=mouse_centr, x=x))
+  target <- findClosests(g, node.ids=mouse_centr, x=grid)
+  target_loopy <- apply(grid, 1, function(x) findClosests(g, node.ids=mouse_centr, x=x))
   
   grid["target"] <- target
   library(ggplot2)
@@ -62,7 +62,7 @@ test_that("predictCluster returns sensible results", {
   expect_that(all(sapply(table(target), function(x) x>40)), is_true())
   
   # At least catches most important clusters
-  expect_that(length(centroids(g)) > 3, is_true())
+  expect_that(length(predictCentroids(g)) > 3, is_true())
   
 })
 
@@ -123,11 +123,14 @@ test_that("GNG converges on simple cases", {
 })
 
 test_that("GNG is working on mouse dataset", {
-    data(cec_mouse_1_spherical)
-    dataset = input
-    gng <- GNG(dataset)
+    data(cec.mouse1.spherical)
+    dataset = cec.mouse1.spherical
+    gng <- GNG(dataset, seed=778)
   expect_that(gng$getMeanError() < 0.1, is_true())
   expect_that(all(gng$clustering() == predict(gng,dataset)), is_true())
+  gng.refit <- GNG(dataset, seed=778)
+  # Seeding works => error statistics are the same
+  expect_that(all(abs(errorStatistics(gng.refit) - errorStatistics(gng)) < 1e-2), is_true() )
 })
 
 test_that("GNG clustering and predict are returning the same", {
@@ -139,8 +142,8 @@ test_that("GNG clustering and predict are returning the same", {
 test_that("GNG synchronization looks ok", {
     synchronization_test <- function(){
 
-        data(cec_mouse_1_spherical)
-        dataset = input
+        data(cec.mouse1.spherical)
+        dataset = cec.mouse1.spherical
         gng <- GNG(dataset, verbosity=3, max.nodes=20)
         gng$.updateClustering()
         sum_1 = (sum( gng$clustering() != predict(gng, dataset)))

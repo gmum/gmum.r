@@ -3,7 +3,7 @@
 
 #define LIBSVM_VERSION 318
 
-#include "log.h"
+#include "utils/logger.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,6 +46,8 @@ struct svm_parameter
 	double p;	/* for EPSILON_SVR */
 	int shrinking;	/* use the shrinking heuristics */
 	int probability; /* do probability estimates */
+	int max_iter; // gmum.r modification
+
 };
 
 //
@@ -71,6 +73,7 @@ struct svm_model
 	/* XXX */
 	int free_sv;		/* 1 if svm_model is created by svm_load_model*/
 				/* 0 if svm_model is created by svm_train */
+	int iter; // gmum.r modification -> sacherus
 };
 
 struct svm_model *svm_train(const struct svm_problem *prob, const struct svm_parameter *param, Logger &log);

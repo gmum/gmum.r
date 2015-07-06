@@ -202,7 +202,6 @@ TEST(LibSVMRunnerTest, integration_svmclient_predict) {
 	svm_config.target = b;
 	LibSVMRunner lib_svm_runner;
 	lib_svm_runner.processRequest(svm_config);
-    
 
     std::cout << "Testing SVMClient prediction..." << std::endl << std::flush;
 	svm_config.data = helper_testing_data_01();
@@ -217,3 +216,28 @@ TEST(LibSVMRunnerTest, integration_svmclient_predict) {
     }
 }
 
+TEST(LibSVMRunnerTest, svm_options_01) {
+    std::cout << "Learning..." << std::endl << std::flush;
+	SVMConfiguration svm_config;
+    arma::mat A = helper_learning_data_01();
+    arma::mat b = helper_learning_target_01();
+	svm_config.setPrediction(false); // training model
+    svm_config.svm_options = "-c 0.24";
+	svm_config.data = A;
+	svm_config.target = b;
+	LibSVMRunner lib_svm_runner;
+	lib_svm_runner.processRequest(svm_config);
+
+    std::cout << "Testing SVMClient prediction..." << std::endl << std::flush;
+	svm_config.data = helper_testing_data_01();
+    svm_config.setPrediction(true);
+    SVMClient *svm_client = new SVMClient(&svm_config);
+    svm_client->predict(svm_config.data);
+    SVMConfiguration client_config = svm_client->getConfiguration();
+
+    for (int i = 0; i < 4; ++i) {
+        // NOTE: `svm-predict` after `svm-train -c 0.24` predicts 1
+        // (incorrectly) for all of this data
+        ASSERT_DOUBLE_EQ(client_config.result[i], 1);
+    }
+}

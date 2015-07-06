@@ -2,11 +2,11 @@ library(gmum.r)
 library(testthat)
 library(ggplot2)
 
-lib <- "svmlight"
+core <- "svmlight"
 verbose <- FALSE # use TRUE only for local testing
 
 if (verbose) {
-  print(sprintf("Library used for non-weights svm: %s", lib))
+  print(sprintf("Library used for non-weights svm: %s", core))
 }
 
 x <- cbind(c(2.76405235,  1.97873798,  2.86755799,  1.95008842,  0.89678115,  1.14404357,
@@ -53,8 +53,8 @@ df <- data.frame(x, y)
 
 # -------------------------------------------------------
 
-no_weights_svm_rbf <- SVM(formula=y~., data=df, lib=lib, kernel="rbf", C=1.0, gamma=0.5)
-SV_rbf <- no_weights_svm_rbf$get_SV()
+no_weights_svm_rbf <- SVM(formula=y~., data=df, core=core, kernel="rbf", C=1.0, gamma=0.5)
+SV_rbf <- no_weights_svm_rbf$getSV()
 
 if (verbose) {
 
@@ -77,8 +77,8 @@ if (verbose) {
 }
 # -------------------------------------------------------
 
-no_weights_svm_linear <- SVM(formula=y~., data=df, lib=lib, kernel="linear", C=1.0)
-SV_linear <- no_weights_svm_linear$get_SV()
+no_weights_svm_linear <- SVM(formula=y~., data=df, core=core, kernel="linear", C=1.0)
+SV_linear <- no_weights_svm_linear$getSV()
 
 if (verbose) {
 
@@ -104,8 +104,8 @@ if (verbose) {
   print("For weighted examples only svmlight is available")
 }
 
-weights_svm_rbf <- SVM(formula=y~., data=df, lib="svmlight", kernel="rbf", C=1.0, gamma=0.5, example_weights=weights)
-weights_SV_rbf <- weights_svm_rbf$get_SV()
+weights_svm_rbf <- SVM(formula=y~., data=df, core="svmlight", kernel="rbf", C=1.0, gamma=0.5, example.weights=weights)
+weights_SV_rbf <- weights_svm_rbf$getSV()
 
 if (verbose) {
 
@@ -128,8 +128,8 @@ if (verbose) {
 }
 # -------------------------------------------------------
 
-weights_svm_linear <- SVM(formula=y~., data=df, lib="svmlight", kernel="linear", C=1.0, example_weights=weights)
-weights_SV_linear <- weights_svm_linear$get_SV()
+weights_svm_linear <- SVM(formula=y~., data=df, core="svmlight", kernel="linear", C=1.0, example.weights=weights)
+weights_SV_linear <- weights_svm_linear$getSV()
 
 if (verbose) {
     
@@ -157,5 +157,6 @@ if (verbose) {
 }
 
 test_that("weighted exaples in svmlight work like in sklearn SVC", {
-  expect_that(diff, is_less_than(1e-2))
+  expect_that(diff < 1e-2, is_true())
 })
+print("test::SVM weighted exaples in svmlight work like in sklearn SVC")

@@ -169,7 +169,7 @@ TEST(DatabaseTests, BasicDatasetTest) {
 	unsigned int num_examples = 100, meta_data_dim = 1;
 	GNGDatasetSimple<double> dataset2(&phase_2_lock, dim,
 			true /* store_extra */,
-			GNGDatasetSimple<double>::SamplingProbability, logger);
+			GNGDatasetSimple<double>::SamplingProbability, 777, logger);
 
 	double * x = new double[num_examples * (dim)];
 	double * labels = new double[num_examples];

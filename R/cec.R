@@ -14,21 +14,21 @@
 #' @param k Initial number of clusters.
 #' @param method.type Type of clustering (Gauss family).
 #' \enumerate{
-#' \item diagonal Gaussians with diagonal covariance. The clustering will try to divide the data into ellipsoid with radiuses parallel to coordinate axes
-#' \item fsphere Spherical (radial) Gaussian densities (additional parameter - radius)
-#' \item full The clustering will have the tendency to divide the data into clusters resembling the unit circles in the Mahalanobis distance (additional parameter - covaraince matrix required)
-#' \item func Own function dependent on m and sigma (additional parameter)
-#' \item mix Mix of others Gaussian types.
-#' \item standard We divide dataset into ellipsoid-like clusters without any preferences (default)
-#' \item sphere The clustering will try to divide the data into circles of arbitrary sizes}
+#' \item \code{"diagonal"} Gaussians with diagonal covariance. The clustering will try to divide the data into ellipsoid with radiuses parallel to coordinate axes
+#' \item \code{"fixed_spherical"} Spherical (radial) Gaussian densities (additional parameter - radius)
+#' \item \code{"fixed_covariance"} The clustering will have the tendency to divide the data into clusters resembling the unit circles in the Mahalanobis distance (additional parameter - covaraince matrix required)
+#' \item \code{"func"} Own function dependent on m and sigma (additional parameter)
+#' \item \code{"standard"} We divide dataset into ellipsoid-like clusters without any preferences (default)
+#' \item \code{"spherical"} The clustering will try to divide the data into circles of arbitrary sizes}
 #' @param method.init Method to initialize clusters.
 #' \enumerate{
-#' \item centroids
-#' \item kmeans++
-#' \item random}
+#' \item \code{"centroids"}
+#' \item \code{"kmeans++"}
+#' \item \code{"random"}}
 #' @param params.r Radius for spherical family.
 #' @param params.cov Covariance matrix for covariance family.
 #' @param params.centroids List of centroids.
+#' @param params.mix List of cluster with mixed Gaussian types.
 #' @param control.nstart How many times to perform algorithm.
 #' @param control.eps What change of value should terminate algorithm.
 #' @param control.itmax Maximum number of iterations at each start.
@@ -36,13 +36,22 @@
 #' @param log.ncluster Records number of clusters in each iteration.
 #' @param log.iters Records number of iterations.
 #' 
-#' @usage CEC(k=3, x=dataset)
-#' @usage CEC(k=3, x=dataset, control.nstart=10, method.type='sphere', control.eps=0.05)
-#' @usage CEC(k=2, x=dataset, method.type='sphere', method.init='centroids', params.centroids=list(c(-0.5,0.5),c(0,0)))
-#' @usage CEC(k=5, x=dataset, method.type='fsphere', params.r=0.01, control.nstart=10, control.eps=0.07)
-#' @usage CEC(k=5, x=dataset, method.type='full', params.cov=matrix(c(0.03,0,0,0.01),2), control.nstart=10, control.eps=0.06)
-#' @usage CEC(k=1, x=dataset_points, method.type='func', params.function='name_of_my_own_function')
+#' @usage
+#' CEC
 #' 
+#' @examples
+#' CEC(k=3, x=dataset)
+#' CEC(k=3, x=dataset, control.nstart=10, method.type='spherical', control.eps=0.05)
+#' CEC(k=2, x=dataset, method.type='spherical', method.init='centroids', params.centroids=list(c(-0.5,0.5),c(0,0)))
+#' CEC(k=5, x=dataset, method.type='fixed_spherical', params.r=0.01, control.nstart=10, control.eps=0.07)
+#' CEC(k=5, x=dataset, method.type='fixed_covariance', params.cov=matrix(c(0.03,0,0,0.01),2), control.nstart=10, control.eps=0.06)
+#' CEC(k=1, x=dataset, method.type='func', params.function='name_of_my_own_function')
+#' fixed_spherical_cluster_param = list(method.type = 'fixed_spherical', params.r = 0.001)
+#' covariance_cluster_param = list(method.type = 'fixed_covariance', params.cov=matrix(c(0.05, 0, 0, 0.001), 2))
+#' CEC(x = dataset, params.mix = list(covariance_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param), control.nstart = 10)
+#' p1 = list(method.type='spherical', k=3)
+#' p2 = list(method.type='diagonal', k=2)
+#' CEC(x=dataset, params.mix=list(p1, p2))
 CEC <- NULL
 
 #' @title runAll
@@ -75,7 +84,7 @@ runOneIteration.cec <- NULL
 #' 
 energy.cec <- NULL
 
-#' @title y
+#' @title clustering
 #' 
 #' @description Print labels assigned
 #' 
@@ -83,7 +92,7 @@ energy.cec <- NULL
 #'
 #' @param c CEC model object.
 #' 
-y.cec <- NULL
+clustering.cec <- NULL
 
 #' @title x
 #' 
@@ -175,7 +184,7 @@ nstart.cec <- NULL
 
 loadModule('cec', TRUE)
 
-evalqOnLoad({
+evalqOnLoad( with(asNamespace("gmum.r"), {
   CEC <<- function(x = NULL,
                    k = 0,
                    method.type = "standard",
@@ -185,11 +194,11 @@ evalqOnLoad({
                    params.centroids = NULL,
                    params.mix = NULL,
                    params.function = NULL,
-                   control.nstart = 1,
-                   control.eps = 1e-4,
+                   control.nstart = 10,
+                   control.eps = 0.05,
                    control.itmax = 25,
-                   log.energy = FALSE,
-                   log.ncluster= FALSE){
+                   log.energy = TRUE,
+                   log.ncluster= TRUE){
     
     # check for errors
     call <- match.call(expand.dots = TRUE)
@@ -201,17 +210,18 @@ evalqOnLoad({
       x = data.matrix(x);
     }
     
-    if (k <= 0)
+    if (is.null(params.mix) && k <= 0)
       stop("Number of clusters should be a positive integer!");
     
     if (control.nstart <= 0)
       stop("Number of starts should be a positive integer!");
     
-    if (control.eps > 1.0 / k)
-      stop("killThreshold " + contorl.eps + " is too high!");  
+    npoints <- dim(x)[1]
+    if ( (control.eps < 0) || (control.eps > ((npoints - 1) / npoints)) )
+      stop("control.eps = ", control.eps, " should be in range [0, (N-1)/N]!");  
     
-    if (control.itmax <= 0)
-      stop("Maximum number of iterations should be a positive integer!");
+    if (control.itmax < 0)
+      stop("Maximum number of iterations should be a natural number!");
     
     if(is(params.cov, "data.frame")){
      params.cov = data.matrix(params.cov);
@@ -220,23 +230,28 @@ evalqOnLoad({
     config <- new(CecConfiguration)
     config$setDataSet(x)
     config$setEps(control.eps)      
-    config$setMix(params.mix) 
+    config$setNrOfClusters(k)
+
+    if(is.null(params.mix) == FALSE) {
+        config$setMix(params.mix) 
+    }
     
     if(is.null(params.function) == FALSE) {
         config$setFunction(params.function)
     }
     
-    config$setNrOfClusters(k)
     config$setLogEnergy(log.energy)
     config$setLogCluster(log.ncluster)      
     config$setNstart(control.nstart)
     config$setCentroids(params.centroids)
-    config$setMethodType(method.type)
-    config$setMethodInit(method.init)              
+    config$setMethodType(method.type)             
     config$setCov(params.cov)
     config$setR(params.r)
+    config$setMethodInit(method.init) 
     config$setItmax(control.itmax)
-     model <- new(CecModel, config)
+    config$setAlgorithm('hartigan')
+    
+    model <- new(CecModel, config)
 
     assign("call", call, model)
     model
@@ -254,8 +269,8 @@ evalqOnLoad({
     c$energy()
   }
   
-  y.cec <<- function(c) {
-    c$y()
+  clustering.cec <<- function(c) {
+    c$clustering()
   }
   
   x.cec <<- function(c) {
@@ -270,7 +285,7 @@ evalqOnLoad({
     c$covMatrix()
   }
 
-  log.ncluster <<- function(c) {
+  log.ncluster.cec <<- function(c) {
     c$log.ncluster()
   }
 
@@ -285,7 +300,7 @@ evalqOnLoad({
     setGeneric("runAll", function(c) standardGeneric("runAll"))
     setGeneric("runOneIteration", function(c) standardGeneric("runOneIteration"))
     setGeneric("energy", function(c) standardGeneric("energy"))
-    setGeneric("y", function(c) standardGeneric("y"))
+    setGeneric("clustering", function(c) standardGeneric("clustering"))
     setGeneric("x", function(c) standardGeneric("x"))
     setGeneric("centers", function(c) standardGeneric("centers"))
     setGeneric("covMatrix", function(c) standardGeneric("covMatrix"))
@@ -296,7 +311,7 @@ evalqOnLoad({
     setMethod("runAll", "Rcpp_CecModel", runAll.cec)
     setMethod("runOneIteration", "Rcpp_CecModel", runOneIteration.cec)
     setMethod("energy", "Rcpp_CecModel", energy.cec)
-    setMethod("y", "Rcpp_CecModel", y.cec)
+    setMethod("clustering", "Rcpp_CecModel", clustering.cec)
     setMethod("x", "Rcpp_CecModel", x.cec)
     setMethod("centers", "Rcpp_CecModel", centers.cec)
     setMethod("covMatrix", "Rcpp_CecModel", covMatrix.cec)
@@ -316,9 +331,13 @@ evalqOnLoad({
         x = data.matrix(x)
       }
       
+      if(dim(object$x())[2] != dim(x)[2]){
+        stop("Incompatible dimension!")
+      }
+      
       apply(x, 1, function(row) {
         object$predict(row)
       })
       
     })
-})
+}), where=asNamespace("gmum.r"))

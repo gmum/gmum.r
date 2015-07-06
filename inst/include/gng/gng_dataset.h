@@ -75,6 +75,8 @@ protected:
 	unsigned int current_example_;
 
 	boost::shared_ptr<Logger> logger_;
+
+    mt19937 mt_rand;
 public:
 
 	enum AccessMethod {
@@ -87,9 +89,11 @@ public:
 	 */
 	GNGDatasetSimple(gmum::recursive_mutex *mutex, unsigned int dim,
 			bool store_extra = false, AccessMethod access_method = Sequential,
+            int seed = 777,
 			boost::shared_ptr<Logger> logger = boost::shared_ptr<Logger>()) :
 			mutex_(mutex), store_extra_(store_extra), dim_(dim), access_method_(
-					access_method), current_example_(0), logger_(logger) {
+					access_method), current_example_(0), logger_(logger), mt_rand(seed) {
+
 	}
 
 	void lock() {
@@ -120,13 +124,14 @@ public:
 
 		if (access_method_ != Sequential) {
 			if (access_method_ == Sampling) {
-				return __int_rnd(0, size() - 1);
+				return RANDOM_INT(mt_rand, 0, size() - 1);
 			} else {
-				const double * ex;
+				exit(0);
+                const double * ex;
 				unsigned int index;
 
 				do {
-					index = __int_rnd(0, size() - 1);
+				    index = RANDOM_INT(mt_rand, 0, size() - 1);
 					ex = getPosition(index);
 				} while (storage_probability_[index] < __double_rnd(0, 1.0));
 
