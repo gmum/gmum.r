@@ -4,7 +4,7 @@ library(testthat)
 library(gmum.r)
 library(caret)
 
-{
+test_that("ovo and ova multiclass schemes work for SVM on simple datasets", {
   set.seed(777)
   
   centers <- list(c(0,0),  
@@ -71,4 +71,5 @@ library(caret)
   
   
   expect_that(acc.ova < acc.ovo && abs(acc.e1 - acc.ovo) < 1e-1, is_true())
-}
+})
+
