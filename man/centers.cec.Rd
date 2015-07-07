@@ -4,10 +4,8 @@
 \name{centers.cec}
 \alias{centers.cec}
 \title{centers}
-\format{\preformatted{ NULL
-}}
 \usage{
-centers.cec
+centers.cec(c)
 }
 \arguments{
 \item{c}{CEC model object.}
@@ -15,5 +13,4 @@ centers.cec
 \description{
 Print centers of clusters
 }
-\keyword{datasets}
 

@@ -4,10 +4,8 @@
 \name{log.energy.cec}
 \alias{log.energy.cec}
 \title{log.energy.cec}
-\format{\preformatted{ NULL
-}}
 \usage{
-log.energy.cec
+\method{log}{energy.cec}(c)
 }
 \arguments{
 \item{c}{CEC model object.}
@@ -16,5 +14,4 @@ log.energy.cec
 Print energy that has been recorded at each stage of learning.
 Data is recorded only if you have chosen to when you created CEC model object.
 }
-\keyword{datasets}
 

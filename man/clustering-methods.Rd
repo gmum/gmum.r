@@ -5,13 +5,10 @@
 \alias{clustering}
 \alias{clustering.gng}
 \title{clustering}
-\format{\preformatted{ NULL
-}}
 \usage{
 clustering(gng)
 }
 \description{
 Gets vector with node indexes assigned to examples in the dataset
 }
-\keyword{datasets}
 

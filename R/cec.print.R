@@ -11,19 +11,21 @@
 #' 
 #' @export
 #' 
-#' @usage print(cec)
+#' @usage print.cec(cec)
+#' 
 print.cec <- NULL
 
-evalqOnLoad({
-  
-    print.cec <<- function(x) {
-        print(sprintf("CEC clustering; %d clusters with energy = %f",
-                      length(x$centers()), x$energy()))
-        print("Centers: ")
-        print(x$centers())
-        print("Covariances: ")
-        print(x$covMatrix())
-    }
 
+  
+print.cec <- function(x) {
+    print(sprintf("CEC clustering; %d clusters with energy = %f",
+                  length(x$centers()), x$energy()))
+    print("Centers: ")
+    print(x$centers())
+    print("Covariances: ")
+    print(x$covMatrix())
+}
+
+evalqOnLoad({
     setMethod("print","Rcpp_CecModel", print.cec)    
 })

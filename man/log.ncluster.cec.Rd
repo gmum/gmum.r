@@ -4,10 +4,8 @@
 \name{log.ncluster.cec}
 \alias{log.ncluster.cec}
 \title{log.ncluster.cec}
-\format{\preformatted{ NULL
-}}
 \usage{
-log.ncluster.cec
+\method{log}{ncluster.cec}(c)
 }
 \arguments{
 \item{c}{CEC model object.}
@@ -16,5 +14,4 @@ log.ncluster.cec
 Print number of clusters that has been recorded at each stage of learning.
 Data is recorded only if you have chosen to when you created CEC model object.
 }
-\keyword{datasets}
 

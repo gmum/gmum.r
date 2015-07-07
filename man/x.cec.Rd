@@ -4,10 +4,8 @@
 \name{x.cec}
 \alias{x.cec}
 \title{x}
-\format{\preformatted{ NULL
-}}
 \usage{
-x.cec
+x.cec(c)
 }
 \arguments{
 \item{c}{CEC model object.}
@@ -15,5 +13,4 @@ x.cec
 \description{
 Print input dataset
 }
-\keyword{datasets}
 

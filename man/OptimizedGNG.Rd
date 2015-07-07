@@ -18,24 +18,24 @@ nodes by this fraction (forgetting rate). Default 0.99}
 the newly inserted node by this fraction. Default 0.5}
 
 \item{max.nodes}{Maximum number of nodes
-(after reaching this size it will continue running, but won't add new nodes)}
+(after reaching this size it will continue running, but new noes won't be added)}
 
-\item{eps.n}{How strongly adapt neighbour node. Default \code{0.0006}}
+\item{eps.n}{Strength of adaptation of neighbour node. Default \code{0.0006}}
 
-\item{eps.w}{How strongly adapt winning node. Default \code{0.05}}
+\item{eps.w}{Strength of adaptation of winning node. Default \code{0.05}}
 
 \item{train.online}{If used will run in online fashion. Default \code{FALSE}}
 
 \item{max.iter}{If training offline will stop if exceedes max.iter iterations. Default \code{200}}
 
-\item{dim}{Used for training online, specifies training example size}
+\item{dim}{Used for training online, specifies dataset example dimensionality}
 
 \item{min.improvement}{Used for offline (default) training.
 Controls stopping criterion, decrease if training stops too early. Default \code{1e-3}}
 
-\item{lambda}{Every lambda iteration is added new vertex. Default 200}
+\item{lambda}{New vertex is added every lambda iterations. Default 200}
 
-\item{value.range}{All example features should be in this range, needed for optimized version of the algorithm. Default \code{(0,1)}}
+\item{value.range}{All example features should be in this range, required for optimized version of the algorithm. Default \code{(0,1)}}
 }
 \description{
 Construct simplified and optimized GNG object. Can be used to train offline, or online. Data dimensionality shouldn't be too big, if

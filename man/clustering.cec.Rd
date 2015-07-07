@@ -4,10 +4,8 @@
 \name{clustering.cec}
 \alias{clustering.cec}
 \title{clustering}
-\format{\preformatted{ NULL
-}}
 \usage{
-clustering.cec
+clustering.cec(c)
 }
 \arguments{
 \item{c}{CEC model object.}
@@ -15,5 +13,4 @@ clustering.cec
 \description{
 Print labels assigned
 }
-\keyword{datasets}
 

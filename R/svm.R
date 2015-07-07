@@ -118,6 +118,8 @@ predict.svm.gmum <- NULL
 
 #' @title print
 #' 
+#' @method print svm
+#' 
 #' @description Prints short summary of the SVM object and its parameters.
 #' 
 #' @export
@@ -127,6 +129,7 @@ predict.svm.gmum <- NULL
 #' @param object SVM object
 #' 
 #' @docType methods
+#' 
 print.svm <- NULL
 
 #' @title plot

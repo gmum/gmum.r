@@ -5,8 +5,6 @@
 \alias{convertToGraph}
 \alias{convertToGraph.gng}
 \title{convertToGraph}
-\format{\preformatted{ NULL
-}}
 \usage{
 convertToGraph(gng)
 }
@@ -16,5 +14,4 @@ convertToGraph(gng)
 \description{
 Converts GNG to igraph object.
 }
-\keyword{datasets}
 
