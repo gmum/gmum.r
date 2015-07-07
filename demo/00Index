@@ -1,1 +1,3 @@
-gng_sphere.R Simple sphere demo
+gng_sphere.R Simple GNG sphere demo
+cec.R Simple CEC demo
+svm_demo.R Simple SVM demo
