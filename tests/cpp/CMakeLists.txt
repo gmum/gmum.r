@@ -6,15 +6,13 @@ file (GLOB TEST_SOURCES
     "${TESTS_DIR}/gng/*.cpp"
     "${TESTS_DIR}/svm/*.cpp")
 
-file (GLOB GMUM_SOURCES 
-    "${CEC_SRC_DIR}/*.cpp" "${CEC_SRC_DIR}/*.c"
-    "${SVM_SRC_DIR}/*.cpp" "${SVM_SRC_DIR}/*.c"
-    "${GNG_SRC_DIR}/*.cpp" "${GNG_SRC_DIR}/*.c"
-    "${SVM_LIGHT_SRC_DIR}/*.cpp" "${SVM_LIGHT_SRC_DIR}/*.c"
-    "${UTILS_SRC_DIR}/*.cpp" "${UTILS_SRC_DIR}/*.c")
+include_directories(${GMUM_INCLUDE})
+include_directories(${R_INCLUDE_DIR} ${RCPP_INCLUDE_PATHS})
+add_definitions(-DRCPP_INTERFACE -DTEST_DATA_PATH="${TEST_DATA_PATH}")
 
 link_directories(${R_LIBRARY_PATH})
+add_executable(gmum_tests ${TEST_SOURCES} ${GMUM_SOURCES})
 
-add_executable(${PROJECT_NAME} ${GMUM_SOURCES} ${TEST_SOURCES})
-target_link_libraries(${PROJECT_NAME} gtest gtest_main pthread ${R_LIBRARY_DEPS})
+target_link_libraries(gmum_tests gtest gtest_main pthread ${R_LIBRARY_DEPS})
+set_target_properties(gmum_tests PROPERTIES OUTPUT_NAME "run_tests")
 INSTALL(TARGETS gmum_tests DESTINATION ${TESTS_DIR})
