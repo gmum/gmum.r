@@ -7,7 +7,7 @@ test_that("svmlight is faster than e1071 on big sparse data", {
 data_file <- system.file("data_sets", "svm", "large", "news20_part.RData", mustWork=TRUE, package="gmum.r")
 
 if (!file.exists(data_file)) {
-  stop("Missing dataset file, get it here http://gmum.net/files/gmum.r/data/news20_part.RData")
+  stop("Missing dataset file. Run `download_large.sh` from `inst/data_sets/svm`.")
 }
 
 load(data_file)
