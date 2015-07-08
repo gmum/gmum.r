@@ -17,6 +17,27 @@ Then load package for use:
 library(gmum.r)
 ```
 
+## Compile with CMake
+
+Go to project root directory and run following commands 
+
+```{shell}
+mkdir build
+cd build
+cmake ..
+make
+make install
+cd ..
+```
+
+Now u can use library from R
+
+```{R}
+library(devtools)
+devtools::load_all()
+...
+```
+
 ## Windows
 
 Please download appropriate version of [Rtools](http://cran.r-project.org/bin/windows/Rtools/).
@@ -49,3 +70,4 @@ R CMD INSTALL . --no-lock --no-multiarch --preclean --library=<path_to_your_R_li
 ```
 
 , where path might be `C:\Program Files\R\R-3.1.2\library"`. 
+
