@@ -219,6 +219,8 @@ evalqOnLoad({
   }
   
   .createMultiClassSVM <<- function(x, y, class.type, ...){
+    force(x) # Force non-lazy evaluation of arguments. This is just for devtools testthat to work, it has some strange issues. 
+    force(y)
     call <- match.call(expand.dots=TRUE)
     ys <- as.factor(y)
     tys <- table(ys)
@@ -332,6 +334,9 @@ evalqOnLoad({
            class.type = 'one.versus.all',
            seed = NULL,
            svm.options = '') {
+    force(x)
+    force(y)
+    
     # First check if we have binary or multiclass case
     if (!is.vector(y) && !is.factor(y)) {
       stop("y is of a wrong class, please provide vector or factor")

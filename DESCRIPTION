@@ -15,6 +15,8 @@ Depends:
     ggplot2(>= 1.0.0),
     BH,
     igraph
+Imports:
+    Rcpp
 LinkingTo: Rcpp, RcppArmadillo, BH
 NeedsCompilation: yes
 LazyData: yes

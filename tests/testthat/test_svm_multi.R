@@ -4,6 +4,7 @@ library(testthat)
 library(gmum.r)
 library(caret)
 
+test_that("Test basic svm multi", {
   set.seed(777)
   
   centers <- list(c(0,0),  
@@ -19,11 +20,11 @@ library(caret)
   sizes <- list(100, 100, 100, 101)
   
   n <- length(centers)  
-  my_df <- c()
+  my_df <<- c()
   for(i in 1:n){
-    my_df <- rbind(my_df, cbind(mvrnorm(n=sizes[[i]], mu=centers[[i]], Sigma=sigmas[[i]]), rep(i,sizes[[i]])))
+    my_df <<- rbind(my_df, cbind(mvrnorm(n=sizes[[i]], mu=centers[[i]], Sigma=sigmas[[i]]), rep(i,sizes[[i]])))
   }
-  my_df <- data.frame(my_df)
+  my_df <<- data.frame(my_df)
   colnames(my_df) <- c("x1","x2", "y")
   my_df[,3] <- as.factor(my_df[,3])
   
@@ -69,3 +70,4 @@ library(caret)
   
   
   expect_that(acc.ova < acc.ovo && abs(acc.e1 - acc.ovo) < 1e-1, is_true())
+})
