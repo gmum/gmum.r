@@ -4,20 +4,20 @@
 #  R_INCLUDE_DIR       - Path to R include directories
 #  R_CXX_FLAGS         - Rcpp and RcppArmadillo CXX flags (include directories)
 #  R_LD_FLAGS          - -llib1 -llib2 -llib3 flags for linker used by R
-#  R_LIBRARY_DEPS      - list of libraries required by R
-#  R_LD_LIBRARY_PATH   - -L/r-library-path flag
-#  R_LIBRARY_PATH      - r-library-path, just path without flag prefix
 #  RCPPARMADILLO_CXX_FLAGS - CXX flags required by RcppArmadillo
-#  RCPP_INCLUDE_PATHS  - Rcpp and RcppArmadillo include paths
 
+set(TEMP_CMAKE_FIND_APPBUNDLE ${CMAKE_FIND_APPBUNDLE})
+set(CMAKE_FIND_APPBUNDLE "NEVER")
 find_program(R_COMMAND R DOC "R executable.")
+set(CMAKE_FIND_APPBUNDLE ${TEMP_CMAKE_FIND_APPBUNDLE})
 
 if(R_COMMAND)
     execute_process(WORKING_DIRECTORY .
-        COMMAND ${R_COMMAND} RHOME
+        COMMAND ${R_COMMAND} RHOME 
         OUTPUT_VARIABLE R_ROOT_DIR
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     set(R_HOME ${R_ROOT_DIR} CACHE PATH "R home directory obtained from R RHOME")
+
     if(R_HOME)
         message("-- R_HOME found: ${R_HOME}")
     else(R_HOME)
@@ -46,13 +46,6 @@ if(R_COMMAND)
         message(FATAL_ERROR "R_LD_FLAGS not found" )
     endif(R_LD_FLAGS)
  
-    STRING(REGEX MATCHALL "-l.*" R_LIBRARY_DEPS "${R_LD_FLAGS}")
-    STRING(REPLACE "-l" "" R_LIBRARY_DEPS ${R_LIBRARY_DEPS})
-    SEPARATE_ARGUMENTS(R_LIBRARY_DEPS)
-
-    STRING(REGEX MATCHALL "-L.*" R_LD_LIBRARY_PATH "${R_LD_FLAGS}")
-    STRING(REPLACE "-L" "" R_LIBRARY_PATH ${R_LD_LIBRARY_PATH})
-
     EXECUTE_PROCESS(
         COMMAND ${R_COMMAND} --vanilla --slave -e "RcppArmadillo:::CxxFlags()"
         OUTPUT_VARIABLE RCPPARMADILLO_CXX_FLAGS
@@ -98,17 +91,7 @@ if(R_COMMAND)
     endif(R_LIBRARY_BLAS)
 
     set(R_LD_FLAGS "${R_LD_FLAGS} ${R_LIBRARY_LAPACK} ${R_LIBRARY_BLAS}" CACHE TYPE STRING)
-    STRING(REPLACE "-l" "" R_LIBRARY_LAPACK_NAME ${R_LIBRARY_LAPACK})
-    STRING(REPLACE "-l" "" R_LIBRARY_BLAS_NAME ${R_LIBRARY_BLAS})
-    set(R_LIBRARY_DEPS ${R_LIBRARY_DEPS} ${R_LIBRARY_BLAS_NAME} ${R_LIBRARY_LAPACK_NAME} CACHE TYPE LIST)
     set(R_CXX_FLAGS "${RCPP_CXX_FLAGS} ${RCPPARMADILLO_CXX_FLAGS}" CACHE TYPE STRING)
-
-    STRING(REGEX MATCHALL "-I.*" RCPP_INCLUDE_PATHS "${R_CXX_FLAGS}")
-    STRING(REPLACE "-I" "" RCPP_INCLUDE_PATHS "${RCPP_INCLUDE_PATHS}")
-    STRING(REPLACE "\"" "" RCPP_INCLUDE_PATHS "${RCPP_INCLUDE_PATHS}")
-    SEPARATE_ARGUMENTS(RCPP_INCLUDE_PATHS)
-    MESSAGE("-- RCPP_INCLUDE_PATHS: ${RCPP_INCLUDE_PATHS}")
-    MESSAGE("-- R_LIBRARY_DEPS: ${R_LIBRARY_DEPS}")
 else()
     message(SEND_ERROR "FindR.cmake requires the following variables to be set: R_COMMAND")
 endif()
