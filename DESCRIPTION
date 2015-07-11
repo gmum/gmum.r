@@ -23,13 +23,10 @@ LazyData: yes
 Suggests:
     car,
     caret,
-    doMC,
     e1071,
-    knitr,
     methods,
     mlbench,
     rattle,
-    rgl,
     SparseM,
     stats,
     testthat
