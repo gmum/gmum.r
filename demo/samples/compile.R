@@ -21,6 +21,7 @@ render("gng.mouse.R", output_options=c(highlight=highlighting))
 
 render("cec.basic.R", output_options=c(highlight=highlighting))
 render("cec.ellipse.R", output_options=c(highlight=highlighting))
+render("cec.iris.R", output_options=c(highlight=highlighting))
 render("cec.T.dataset.R", output_options=c(highlight=highlighting))
 
 # THIS IS REALLY TRICKY - we generate not self contained files
