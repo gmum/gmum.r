@@ -35,6 +35,10 @@ typedef vector<int> VI;
 
 #include <utils/logger.h>
 
+#ifdef RCPP_INTERFACE
+#include <RcppArmadillo.h>
+#endif
+
 #define LOG(logger, level, text) logger.log(level, text);
 
 #ifdef DEBUG
@@ -111,9 +115,7 @@ const int __one__ = 1;
 const bool isCpuLittleEndian = 1 == *(char*) (&__one__); // CPU endianness
 const bool isFileLittleEndian = false;  // output endianness - you choose :)
 
-static int __seed(int seed){
-    srand(seed);
-}
+static int __seed(int seed);
 
 #define RANDOM_INT(rng, min, max) (rng() % (max - min +1) + min)
 
@@ -182,5 +184,8 @@ char** to_argv(const char*);
 char** to_argv(const std::string);
 /// Free `char**` allocated by `to_argv()` function
 char** free_argv(int argc, char** argv);
+
+/// C rand() implemented in RCpp
+int rcpp_c_rand();
 
 #endif	/* UTILS_H */

@@ -3,6 +3,14 @@
 
 #include "utils/utils.h"
 
+static int __seed(int seed){
+    #ifdef RCPP_INTERFACE
+    // TODO
+    #else
+    srand(seed);
+    #endif
+}
+
 int check_argc(const char* input) {
     int argc = 0;
     int len = strlen(input);
@@ -33,7 +41,7 @@ int check_argc(const std::string input) {
 
 char** to_argv(const char* input) {
     int argc = check_argc(input);
-    
+
     char** argv;
     char* arg;
     char* in_copy;
@@ -76,4 +84,8 @@ char** free_argv(int argc, char** argv) {
     }
     free(argv);
     return NULL;
+}
+
+int rcpp_c_rand() {
+    return int(Rcpp::runif(1)[0] * INT_MAX);
 }
