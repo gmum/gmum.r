@@ -45,14 +45,14 @@ test_that("fixed_covariance works", {
   print("test_t_set: fixed_covariance works")
 })
 
+
 test_that("mix works", {
   data(cec.tset)
-  fixed_spherical_cluster_param = list(method.type = 'fixed_spherical', params.r = 0.001)
-  fixed_covariance_cluster_param = list(method.type = 'fixed_covariance', params.cov=matrix(c(0.05, 0, 0, 0.001), 2))
-  c <- CEC(x = Tset, params.mix = list(fixed_covariance_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param,
-   fixed_spherical_cluster_param), control.nstart = 100, control.eps=0.09)
+  fixed_spherical_cluster = list(k = 3, method.type = 'fixed_spherical', params.r = 0.001)
+  fixed_covariance_cluster = list(k = 1, method.type = 'fixed_covariance', params.cov=matrix(c(0.05, 0, 0, 0.001), 2))
+  c <- CEC(x = Tset, params.mix = list(fixed_covariance_cluster, fixed_spherical_cluster), control.nstart = 100, control.eps=0.09)
   plot(c, ellipses = TRUE, centers = TRUE)
-  
+
   expected_energy = 2.459158
   
   expect_that(all.equal(current = c$energy(), target = expected_energy, tolerance = 0.2), is_true())

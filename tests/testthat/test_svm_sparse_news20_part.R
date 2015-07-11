@@ -3,7 +3,6 @@ library(caret)
 library(testthat)
 
 test_that("svmlight is faster than e1071 on big sparse data", {
-  
   data_file <- system.file("data_sets", "svm", "large", "news20_part.RData", mustWork=TRUE, package="gmum.r")
   if (!file.exists(data_file)) {
     warning("Missing dataset file, get it here http://gmum.net/files/gmum.r/data/news20_part.RData")
@@ -63,3 +62,4 @@ test_that("svmlight is faster than e1071 on big sparse data", {
     expect_true(gmum_test < e_test)
   }
 })
+

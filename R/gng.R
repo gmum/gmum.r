@@ -1024,7 +1024,11 @@ findClosests <- function(object, node.ids, x){
   }
 }
 
-
+#' Insert examples
+#' 
+#' @note It copies your examples twice in RAM. You might want to use object$insertExamples, or
+#' not to copy at all set_memory_move_examples (when using this function, remember not to modify the matrix
+#' and after removing the object delete it aswell)
 insertExamples.Rcpp_GNGServer <- function(object, examples, labels=c()){   
   
   
