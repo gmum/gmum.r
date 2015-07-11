@@ -1,6 +1,7 @@
 library(ggplot2)
 
-#' @title SVM
+#' @title create SVM object
+#' @rdname svm
 #' @export
 #' 
 #' @description Create and train SVM model object. 
@@ -56,9 +57,15 @@ library(ggplot2)
 #' @param class.type Multiclass algorithm type as string, 
 #' available are: \code{'one.versus.all', 'one.versus.one'}; default: \code{'one.versus.one'}
 #' @param verbosity How verbose should the process be, as integer from \eqn{[1,6]}, default: \code{4}
+#' @param svm.options enables to pass all svmlight command lines arguments for more advanced options, 
+#' for details see \url{http://svmlight.joachims.org/}
+#' @param probability ignore
+#' @param shrinking ignore
+#' @param ... ignore
 #'  
 #' @return SVM model object
 #' @examples 
+#' \dontrun{
 #' # train SVM from data in x and labels in y 
 #' svm <- SVM(x, y, core="libsvm", kernel="linear", C=1)
 #' 
@@ -88,7 +95,8 @@ library(ggplot2)
 #' # suppose we have a labels y with missing labels marked as zeros
 #' svm.transduction <- SVM(x, y, transductive.learning=TRUE, core="svmlight")
 #' 
-#' # for more in-depth examples visit \url{http://r.gmum.net/getting_started.html}                     
+#' # for more in-depth examples visit \url{http://r.gmum.net/getting_started.html}
+#' }                     
 SVM <- NULL
 
 .createMultiClassSVM <- NULL
@@ -97,26 +105,31 @@ show.MultiClassSVM <- NULL
 plot.MulticlassSVM <- NULL
 predict.MultiClassSVM <- NULL
 
-#' @title Predict
+#' @title Predict using SVM object
+#' @rdname svm-predict
 #' 
 #' @description Returns predicted classes or distance to discriminative for provided test examples.
 #' 
 #' @export
 #' 
-#' @usage predict(svm, x)
-#' 
-#' @param object Trained SVM object.
-#' @param x Unlabeled data, in one of the following formats:
+#' @param object Trained SVM object
+#' @param x_test Unlabeled data, in one of the following formats:
 #'  \code{data.frame}, \code{data.matrix}, \code{SparseM::matrix.csr}, \code{Matrix::Matrix},
 #'  \code{slam::simple_triplet_matrix}
 #' @param decision.function Uf \code{TRUE} returns SVMs decision function 
 #' (distance of a point from discriminant) instead of predicted labels, default: \code{FALSE}
 #' 
-#' @docType methods
+#' @method predict svm.gmum
 #' 
+#' @examples
+#' \dontrun{
+#' svm <- SVM(x, y, core="libsvm", kernel="linear", C=1)
+#' predcit(svm, x_test)
+#' }
 predict.svm.gmum <- NULL
 
-#' @title print
+#' @title print SVM object
+#' @rdname svm-print
 #' 
 #' @method print svm
 #' 
@@ -124,21 +137,16 @@ predict.svm.gmum <- NULL
 #' 
 #' @export
 #' 
-#' @usage print(svm)
-#' 
-#' @param object SVM object
-#' 
-#' @docType methods
-#' 
 print.svm <- NULL
 
-#' @title plot
+#' @title plot SVM object
+#' @rdname svm-plot
 #' 
 #' @description Plots trained svm data and models disciriminative
 #' 
 #' @export
 #' 
-#' @param x Trained svm object
+#' @param x Trained SVM object
 #' @param X Optional new data points to be predicted and plotted in one of the following formats:
 #'  \code{data.frame}, \code{data.matrix}; default: \code{NULL}
 #' @param mode Which plotting mode to use as string, available are: 
@@ -154,21 +162,23 @@ print.svm <- NULL
 #' @param radius.max Maximum radius of data points can be plotted, when model is trained 
 #'  with example weights as float, default: \code{10}
 #' 
-#' @usage plot(svm)
-#' @usage plot(svm, X=x, cols=c(1,3))
-#' @usage plot(svm, mode="pca", radius=5)
+#' @examples
+#' plot(svm)
+#' plot(svm, X=x, cols=c(1,3))
+#' plot(svm, mode="pca", radius=5)
 #' 
+#' @method plot svm
 plot.svm <- NULL
 
-#' @title summary
+#' @title summary of SVM object
+#' @rdname svm-summary
 #' 
 #' @description Prints short summary of a trained model.
 #' 
 #' @export
+#' @param object Trained SVM object
 #' 
-#' @usage summary(svm)
-#' 
-#' @param svm SVM object 
+#' @method summary svm
 #' 
 summary.svm <- NULL
 
@@ -177,8 +187,12 @@ caret.gmumSvmRadial <- NULL
 caret.gmumSvmLinear <- NULL
 caret.gmumSvmPoly <- NULL
 
-
+#' @export
+#' @rdname svm
 SVM.formula <- NULL
+
+#' @export
+#' @rdname svm
 SVM.default <- NULL
 
 loadModule('svm_wrapper', TRUE)
@@ -332,7 +346,6 @@ evalqOnLoad({
            max.iter    = -1,
            verbosity   = 4,
            class.type = 'one.versus.all',
-           seed = NULL,
            svm.options = '') {
     force(x)
     force(y)
@@ -833,34 +846,34 @@ evalqOnLoad({
     return(factor(ymat.preds, levels=object$levels))
   }
   
-  predict.svm.gmum <<- function(object, x, decision.function=FALSE) {
-    if ( !is(x, "data.frame") && 
-         !is(x, "matrix") && 
-         !is(x,"numeric") && 
-         !is(x,"matrix.csr")) {
+  predict.svm.gmum <<- function(object, x_test, decision.function=FALSE) {
+    if ( !is(x_test, "data.frame") && 
+         !is(x_test, "matrix") && 
+         !is(x_test,"numeric") && 
+         !is(x_test,"matrix.csr")) {
       stop("Wrong target class, please provide data.frame, matrix or numeric vector")
     }
     if (!object$isSparse()) {
-      if (!is(x, "matrix") && 
-          !is(x, "data.frame") &&
-          !is.vector(x)) {
+      if (!is(x_test, "matrix") && 
+          !is(x_test, "data.frame") &&
+          !is.vector(x_test)) {
         stop("Please provide matrix or data.frame")
       }
-      if (!is(x, "matrix")) {
-        if (is.vector(x)){
-          x <- t(as.matrix(x))
+      if (!is(x_test, "matrix")) {
+        if (is.vector(x_test)){
+          x_test <- t(as.matrix(x_test))
         } 
         else {
-          x <- data.matrix(x)
+          x_test <- data.matrix(x_test)
         }
       }
-      object$.predict(x)
+      object$.predict(x_test)
     }
     else {
-      if (!is(x, "matrix.csr")) {
+      if (!is(x_test, "matrix.csr")) {
         stop("Please provide sparse matrix")
       }
-      object$.sparse_predict(x@ia, x@ja, x@ra, nrow(x), ncol(x))
+      object$.sparse_predict(x_test@ia, x_test@ja, x_test@ra, nrow(x_test), ncol(x_test))
     }
     
     if(decision.function){
