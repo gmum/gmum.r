@@ -9,7 +9,7 @@
 
 #ifdef RCPP_INTERFACE
 #define GMUM_ERROR(x) Rcpp::stop(x);
-#define GMUM_WARNING(x) std::cout << x;
+#define GMUM_WARNING(x) Rcpp::Rcerr << (x);
 #else
 #define GMUM_ERROR(x) throw x;
 #define GMUM_WARNING(x) std::cerr << x;
@@ -18,7 +18,7 @@
 class CecConfiguration {
 private:
 	gmum::Params m_params;
-	// Rcpp::Function func;
+	// Rcpp::Function func; 
 #ifdef RCPP_INTERFACE
 	void set_mix_handle_standard_cluster(Rcpp::List& list);
 	void set_mix_handle_fixed_covariance_cluster(Rcpp::List &list);
