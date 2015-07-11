@@ -71,3 +71,4 @@ test_that("Test basic svm multi", {
   
   expect_that(acc.ova < acc.ovo && abs(acc.e1 - acc.ovo) < 1e-1, is_true())
 })
+
