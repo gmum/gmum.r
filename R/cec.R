@@ -40,6 +40,7 @@
 #' CEC
 #' 
 #' @examples
+#' \dontrun{
 #' CEC(k=3, x=dataset)
 #' CEC(k=3, x=dataset, control.nstart=10, method.type='spherical', control.eps=0.05)
 #' CEC(k=2, x=dataset, method.type='spherical', method.init='centroids', params.centroids=list(c(-0.5,0.5),c(0,0)))
@@ -52,6 +53,7 @@
 #' p1 = list(method.type='spherical', k=3)
 #' p2 = list(method.type='diagonal', k=2)
 #' CEC(x=dataset, params.mix=list(p1, p2))
+#' }
 CEC <- NULL
 
 #' @title runAll

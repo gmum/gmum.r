@@ -163,9 +163,11 @@ print.svm <- NULL
 #'  with example weights as float, default: \code{10}
 #' 
 #' @examples
+#' \dontrun{
 #' plot(svm)
 #' plot(svm, X=x, cols=c(1,3))
 #' plot(svm, mode="pca", radius=5)
+#' }
 #' 
 #' @method plot svm
 plot.svm <- NULL
