@@ -87,7 +87,14 @@ const int __one__ = 1;
 const bool isCpuLittleEndian = 1 == *(char*) (&__one__); // CPU endianness
 const bool isFileLittleEndian = false;  // output endianness - you choose :)
 
-static int __seed(int seed);
+static int __seed(int seed){
+    #ifdef RCPP_INTERFACE
+    // TODO
+    #else
+    srand(seed);
+    #endif
+}
+
 
 #define RANDOM_INT(rng, min, max) (rng() % (max - min +1) + min)
 

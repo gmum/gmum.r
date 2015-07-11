@@ -3,14 +3,6 @@
 
 #include "utils/utils.h"
 
-static int __seed(int seed){
-    #ifdef RCPP_INTERFACE
-    // TODO
-    #else
-    srand(seed);
-    #endif
-}
-
 int check_argc(const char* input) {
     int argc = 0;
     int len = strlen(input);
