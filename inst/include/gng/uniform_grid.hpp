@@ -4,41 +4,8 @@
  *
  * Created on September 3, 2012, 9:03 AM
  */
-using namespace gmum;
+using namespace gmum; 
 
-template<class VectorContainer, class ListContainer, class T>
-void UniformGrid<VectorContainer, ListContainer, T>::print3d() {
-	using namespace std;
-	int index[3];
-
-	REP(k, m_dim[2])
-	{
-
-		REP(j, m_dim[1])
-		{
-
-			REP(i, m_dim[0])
-			{
-				index[0] = i;
-				index[1] = j;
-				index[2] = k;
-
-				int inner_index = getIndex(index);
-
-				cout << inner_index;
-				//if(TMP[inner_index]) cout<<"::";
-				cout << ":";
-				BOOST_FOREACH(int x, m_grid[inner_index])
-					cout << x << ",";
-				cout << "\t";
-
-			}
-			cout << endl;
-		}
-		cout << "\n\n\n";
-	}
-
-}
 
 template<class VectorContainer, class ListContainer, class T>
 void UniformGrid<VectorContainer, ListContainer, T>::new_l(double l) {
@@ -291,7 +258,6 @@ std::vector<T> UniformGrid<VectorContainer, ListContainer, T>::findNearest(
 				< abs((p[i] - m_origin[i] - (center[i] + 1) * m_l)) ?
 				abs((p[i] - m_origin[i] - center[i] * m_l)) :
 				abs((p[i] - m_origin[i] - (center[i] + 1) * m_l));
-		// cout << tmp << endl;
 		if (border > tmp || i == 0)
 			border = tmp;
 	}

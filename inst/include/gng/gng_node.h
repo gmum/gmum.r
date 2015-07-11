@@ -67,7 +67,6 @@ public:
 
 	~GNGNode() {
 		if (_position_owner) {
-			std::cerr << "Position owner, dim = " << dim << std::endl;
 			delete[] position;
 
 		}

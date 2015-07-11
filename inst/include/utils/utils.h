@@ -10,21 +10,6 @@
 
 #include <exception>
 #include <vector>
-#include "boost/foreach.hpp"
-using namespace std;
-typedef vector<int> VI;
-#define FOR(x, b, e) for(size_t x=b; x<=(e); ++x)
-#define FORD(x, b, e) for(size_t x=b; x>=(e); ––x)
-#define REP(x, n) for(size_t x=0; x<(n); ++x)
-#define VAR(v,n) typeof(n) v=(n)
-#define ALL(c) c.begin(),c.end()
-#define SIZE(x) (int)(x).size()
-#define FOREACH(i,c) BOOST_FOREACH(i, c) //for(VAR(i,(c).begin());i!=(c).end();++i)
-#define IWAS(x) cout<<x<<endl<<flush;
-#define PB push_back
-#define ST first
-#define ND second
-
 #include <sstream>
 #include <string>
 #include <map>
@@ -32,45 +17,39 @@ typedef vector<int> VI;
 #include <assert.h>
 #include <stdlib.h>
 #include <time.h>
-
 #include <utils/logger.h>
+#include "boost/foreach.hpp"
+#include <iostream>
+#include <fstream>
+#include <vector>
+using namespace std;
+typedef vector<int> VI;
+#define FOR(x, b, e) for(size_t x=b; x<=(e); ++x)
+#define FORD(x, b, e) for(size_t x=b; x>=(e); ––x)
+#define REP(x, n) for(size_t x=0; x<(n); ++x)
+#define VAR(v,n) typeof(n) v=(n)
+#define SIZE(x) (int)(x).size()
+#define FOREACH(i,c) BOOST_FOREACH(i, c) //for(VAR(i,(c).begin());i!=(c).end();++i)
 
-#define LOG(logger, level, text) logger.log(level, text);
 
 #ifdef DEBUG
+
+#ifdef RCPP_INTERFACE
+  #include <RcppArmadillo.h>
+  using namespace Rcpp;
+  #define EXIT Rcpp::stop();
+  #define DBG(logger, level, text) logger.log(level, text);
+  #define REPORT(x) Rcpp::Rcout<<#x<<"="<<(x)<<endl<<std::flush;
+#else
+  #define EXIT exit(1)
 	#define DBG(logger, level, text) logger.log(level, text);
 	#define REPORT(x) cout<<#x<<"="<<(x)<<endl<<std::flush;
+#endif
+
 #else
 	#define DBG(verbosity, level, text)
 	#define REPORT(x)
 #endif
-
-
-template<class T>
-void write_array(T* begin, T*end) {
-	for (; begin != end; ++begin) {
-		std::cerr << *begin << ",";
-	}
-	std::cerr << endl;
-}
-
-template<class T>
-void write_cnt(T begin, T end) {
-	for (; begin != end; ++begin) {
-		std::cerr << *begin << ",";
-	}
-	std::cerr << endl;
-}
-
-template<class T>
-std::string write_cnt_str(T begin, T end) {
-	std::stringstream ss;
-
-	for (; begin != end; ++begin) {
-		ss << *begin << ",";
-	}
-	return ss.str();
-}
 
 template<class T>
 std::string to_str(const T& x) {
@@ -93,19 +72,13 @@ struct BasicException: public std::exception {
 
 //conflicting with boost namespace
 namespace gmum {
-template<class T>
-std::string to_string(const T& x) {
-	stringstream ss;
-	ss << x;
-	return ss.str();
+  template<class T>
+  std::string to_string(const T& x) {
+  	stringstream ss;
+  	ss << x;
+  	return ss.str();
+  }
 }
-}
-
-#include <string.h>
-#include <iostream>
-#include <fstream>
-#include <vector>
-using namespace std;
 
 const int __one__ = 1;
 const bool isCpuLittleEndian = 1 == *(char*) (&__one__); // CPU endianness
@@ -180,7 +153,6 @@ int check_argc(const char*);
 int check_argc(const std::string);
 char** to_argv(const char*);
 char** to_argv(const std::string);
-/// Free `char**` allocated by `to_argv()` function
 char** free_argv(int argc, char** argv);
 
 #endif	/* UTILS_H */
