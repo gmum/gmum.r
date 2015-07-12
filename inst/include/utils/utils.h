@@ -87,10 +87,10 @@ const int __one__ = 1;
 const bool isCpuLittleEndian = 1 == *(char*) (&__one__); // CPU endianness
 const bool isFileLittleEndian = false;  // output endianness - you choose :)
 
-/// ED - environment dependent utils
+// ED - environment dependent utils
+
 int ed_c_rand();
 void ed_c_srand(unsigned int);
-
 
 static int __seed(int seed) {
     ed_c_srand(seed);

@@ -1,5 +1,6 @@
 #include "svm_basic.h"
 #include "svm.h"
+#include "utils/utils.h"
 
 // SVM Configuration 
 // Constructors  
@@ -175,7 +176,7 @@ double SVMConfiguration::getB() {
 }
 
 void SVMConfiguration::setSeed(int seed){
-	srand(seed);
+	ed_c_srand(seed);
 	this->seed = seed;
 }
 
