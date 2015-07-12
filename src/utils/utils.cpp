@@ -92,7 +92,7 @@ int ed_c_rand() {
 
 void ed_c_srand(unsigned int seed) {
 #ifdef RCPP_INTERFACE
-    // TODO
+    Rcpp::Environment::global_env()[".Random.seed"] = seed;
 #else
     srand(seed);
 #endif
