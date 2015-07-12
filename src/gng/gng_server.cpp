@@ -178,7 +178,7 @@ void GNGServer::save(std::string filename) {
 
 	try {
 		gngGraph->lock();
-		assert(filename != "");
+		ASSERT(filename != "");
 		gngGraph->serialize(output);
 	} catch (...) {
 #ifdef DEBUG_GMUM
@@ -198,7 +198,7 @@ unsigned int GNGServer::getCurrentIteration() const {
 void GNGServer::exportToGraphML(std::string filename) {
 	try {
 		gngGraph->lock();
-		assert(filename != "");
+		ASSERT(filename != "");
 		writeToGraphML(getGraph(), filename);
 	} catch (...) {
 #ifdef DEBUG_GMUM

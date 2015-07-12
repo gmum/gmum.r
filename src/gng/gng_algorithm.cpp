@@ -172,7 +172,7 @@ void GNGAlgorithm::randomInit() {
 					+ to_string(m_g.get_number_nodes()));
 
 #ifdef GMUM_DEBUG_2
-	assert(m_g.get_number_nodes()==2);
+	ASSERT(m_g.get_number_nodes()==2);
 #endif
 
 	if (m_toggle_uniformgrid) {
@@ -631,7 +631,7 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 			std::pair<double, int> adapt_result = adapt(position, vertex_data);
 
 #ifdef GMUM_DEBUG
-			assert(adapt_result.second >= 0);
+			ASSERT(adapt_result.second >= 0);
 #endif
 
 			set_clustering(ex, adapt_result.second);
@@ -818,7 +818,7 @@ std::pair<int, int> GNGAlgorithm::_getNearestNeurons(const double *ex){
 
 
 			#ifdef GMUM_DEBUG_2
-					assert(m_g[nearest_index[1]].position > m_g.get_dist(m_g[nearest_index[0]].position, ex));
+					ASSERT(m_g[nearest_index[1]].position > m_g.get_dist(m_g[nearest_index[0]].position, ex));
 			#endif
 
 			return std::pair<int, int>(nearest_index[0], nearest_index[1]);
@@ -860,7 +860,7 @@ std::pair<int, int> GNGAlgorithm::_getNearestNeurons(const double *ex){
 
 
 			#ifdef GMUM_DEBUG_2
-				assert(dist1 > dist0);
+				ASSERT(dist1 > dist0);
 			#endif
 
 			return std::pair<int, int>(best_0, best_1);
@@ -885,7 +885,7 @@ bool GNGAlgorithm::stoppingCriterion() {
 
 void GNGAlgorithm::increaseErrorNew(GNGNode * node, double error) {
 	fixErrorNew(node);
-	assert(m_lambda - s <= m_betha_powers_size -1);
+	ASSERT(m_lambda - s <= m_betha_powers_size -1);
 	node->error += m_betha_powers[m_lambda - s] * error;
 	errorHeap.updateLazy(node->nr);
 }
@@ -904,7 +904,7 @@ void GNGAlgorithm::fixErrorNew(GNGNode * node) {
 		m_betha_powers_to_n[i] = std::pow(m_betha, m_lambda * (double) (i));
 	}
 
-	assert(c - node->error_cycle  <= m_betha_powers_to_n_length -1);
+	ASSERT(c - node->error_cycle  <= m_betha_powers_to_n_length -1);
 
 	node->error = m_betha_powers_to_n[c - node->error_cycle] * node->error;
 	node->error_cycle = c;
