@@ -9,9 +9,6 @@
 #include <logger.h>
 
 GNGServer::GNGServer(std::string filename) {
-
-	cerr << filename << endl;
-
 	std::ifstream input;
 	input.open(filename.c_str(), ios::in | ios::binary);
 
@@ -82,10 +79,6 @@ void GNGServer::init(GNGConfiguration configuration,
 						current_configuration.dim, true /* store_extra */, 
 						GNGDatasetSimple<double>::Sequential, current_configuration.seed, m_logger));
 	} else {
-		cerr << "Passed dataset type " << current_configuration.datasetType
-				<< endl;
-		cerr << GNGConfiguration::DatasetSampling << endl;
-		cerr << GNGConfiguration::DatasetSamplingProb << endl;
 		DBG_PTR(m_logger,11, "GNGServer::Not recognized dataset");
 		throw BasicException(
 				"Database type not supported "
@@ -167,12 +160,11 @@ bool GNGServer::isRunning() const {
 
 double GNGServer::nodeDistance(int id1, int id2) const {
 	if (gngAlgorithm->isRunning()) {
-		cerr
-				<< "nodeDistance: Please pause algorithm before calling nodeDistance function\n";
+		CERR("nodeDistance: Please pause algorithm before calling nodeDistance function\n");
 		return -1.0;
 	}
 	if (id1 <= 0 || id2 <= 0) {
-		cerr << "nodeDistance: Indexing starts from 1\n";
+		CERR("nodeDistance: Indexing starts from 1\n");
 		return -1.0;
 	}
 	return gngGraph->get_dist(id1 - 1, id2 - 1);
@@ -189,7 +181,6 @@ void GNGServer::save(std::string filename) {
 		assert(filename != "");
 		gngGraph->serialize(output);
 	} catch (...) {
-		cerr << "Failed exporting to GraphML\n";
 #ifdef DEBUG_GMUM
 		throw BasicException("Failed exporting to GraphML\n");
 #endif
@@ -210,7 +201,6 @@ void GNGServer::exportToGraphML(std::string filename) {
 		assert(filename != "");
 		writeToGraphML(getGraph(), filename);
 	} catch (...) {
-		cerr << "Failed exporting to GraphML\n";
 #ifdef DEBUG_GMUM
 		throw BasicException("Failed exporting to GraphML\n");
 #endif
@@ -290,7 +280,7 @@ Rcpp::List GNGServer::getNode(int index) {
 	int gng_index = index - 1; //1 based
 
 	if(index <= 0) {
-		cerr<<"Indexing of nodes starts from 1 (R convention)\n";
+		CERR("Indexing of nodes starts from 1 (R convention)\n");
 		List ret;
 		return ret;
 	}
@@ -332,7 +322,7 @@ Rcpp::List GNGServer::getNode(int index) {
 
 int GNGServer::Rpredict(Rcpp::NumericVector & r_ex) {
   if(r_ex.size() > current_configuration.dim){
-     cerr<<"Wrong example dimensionality. Note that C++ method accepts only vectors, not matrix, please use S4 predict method instead\n";
+     CERR("Wrong example dimensionality. Note that C++ method accepts only vectors, not matrix, please use S4 predict method instead\n");
      return -1;
   }else{
 	  return 1+gngAlgorithm->predict(std::vector<double>(r_ex.begin(), r_ex.end()) );
@@ -366,8 +356,7 @@ void GNGServer::RinsertLabeledExamples(Rcpp::NumericMatrix & r_points,
 	arma::Row<double> diff_std = arma::abs(std_colwise - 1.0);
 	float max_diff_std = arma::max(diff_std), max_mean = arma::max(mean_colwise);
 	if(max_diff_std > 0.1 || max_mean > 0.1) {
-		cerr<<max_diff_std<<" "<<max_mean<<endl;
-		cerr<<"Warning: it is advised to scale data for optimal algorithm behavior to mean=1 std=0 \n";
+		CERR("Warning: it is advised to scale data for optimal algorithm behavior to mean=1 std=0 \n");
 	}
 
 	//Check if data fits in bounding box
@@ -379,8 +368,8 @@ void GNGServer::RinsertLabeledExamples(Rcpp::NumericMatrix & r_points,
 
 		for(size_t i=0;i<current_configuration.dim; ++i) {
 			if(current_configuration.orig[i] > min_colwise[i] || current_configuration.orig[i]+current_configuration.axis[i] < max_colwise[i]) {
-				cerr<<"Error: each feature has to be in range <min, max> passed to gng.type.optimized \n";
-				cerr<<"Error: returning, did not insert examples\n";
+				CERR("Error: each feature has to be in range <min, max> passed to gng.type.optimized \n");
+				CERR("Error: returning, did not insert examples\n");
 				return;
 			}
 		}
@@ -393,9 +382,7 @@ void GNGServer::RinsertLabeledExamples(Rcpp::NumericMatrix & r_points,
 
 	if(extra.size()) {
 		if(!(points->n_cols== extra.size())){
-
-			cerr<<"Error: please pass same number of labels as examples\n";
-			cerr<<"Error: passed "<<points->n_cols<<" "<<extra.size()<<"\n";
+			CERR("Error: please pass same number of labels as examples\n");
 			return;
 		}
 		insertExamples(points->memptr(), &extra[0], 0 /*probabilty vector*/,

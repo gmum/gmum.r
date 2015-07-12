@@ -161,7 +161,6 @@ private:
 	//Utility functions
 
 	double calculateAccumulatedError();
-	void testAgeCorrectness();
 	void resetUniformGrid(double * orig, double *axis, double l);
 	void resizeUniformGrid();
 
