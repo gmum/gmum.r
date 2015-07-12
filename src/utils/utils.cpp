@@ -81,3 +81,19 @@ char** free_argv(int argc, char** argv) {
 int rcpp_c_rand() {
     return int(Rcpp::runif(1)[0] * INT_MAX);
 }
+
+int ed_c_rand() {
+#ifdef RCPP_INTERFACE
+    return rcpp_c_rand();
+#else
+    return rand();
+#endif
+}
+
+void ed_c_srand(unsigned int seed) {
+#ifdef RCPP_INTERFACE
+    // TODO
+#else
+    srand(seed);
+#endif
+}

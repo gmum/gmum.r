@@ -2366,11 +2366,7 @@ void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, i
 			for(i=0;i<count[c];i++)
 			{
 				int j = 0;
-                #ifdef RCPP_INTERFACE
-                j = i + rcpp_c_rand() % (count[c] - i);
-                #else
-                j = i+rand()%(count[c]-i);
-                #endif
+                j = i+ed_c_rand()%(count[c]-i);
 				swap(index[start[c]+j],index[start[c]+i]);
 			}
 		for(i=0;i<nr_fold;i++)
