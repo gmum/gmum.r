@@ -15,6 +15,7 @@ TEST_P(EnergyTests, IsEnergyCorrect)
         CecConfiguration conf;
         conf.set_params(params);
         conf.set_algorithm("hartigan");
+        conf.set_seed(seed);
         CecModel cec(&conf);
         double diff = std::fabs(cec.get_energy() - expected_energy);
 
@@ -36,6 +37,7 @@ TEST_P(CoverageTests, IsCoverageCorrect)
         CecConfiguration conf;
         conf.set_params(params);
         conf.set_algorithm("hartigan");
+        conf.set_seed(seed);
         CecModel cec(&conf);
         std::vector<unsigned int> clustering = cec.get_assignment();
         double percentage = comparator.evaluate_clustering(params.nclusters, expected_clustering, clustering);
@@ -55,6 +57,7 @@ TEST_P(BigDataTests, BigDataTest)
             CecConfiguration conf;
             conf.set_params(params);
             conf.set_algorithm("hartigan");
+            conf.set_seed(seed);
             CecModel cec(&conf);
             ASSERT_LE(cec.iters(), iterations_limit);
     }
@@ -65,6 +68,7 @@ TEST_P(ControlEpsTests, IsControlEpsBoundaryCaseCorrect)
     CecConfiguration conf;
     conf.set_params(params);
     conf.set_algorithm("hartigan");
+    conf.set_seed(seed);
     CecModel cec(&conf);
     int final_nclusters = cec.get_nclusters().back();
     EXPECT_EQ(final_nclusters, 1);

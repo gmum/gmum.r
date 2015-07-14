@@ -4,7 +4,7 @@ library(testthat)
 library(gmum.r)
 library(caret)
 
-{
+test_that("Test basic svm multi", {
   set.seed(777)
   
   centers <- list(c(0,0),  
@@ -20,20 +20,19 @@ library(caret)
   sizes <- list(100, 100, 100, 101)
   
   n <- length(centers)  
-  df <- c()
+  my_df <<- c()
   for(i in 1:n){
-    df <- rbind(df, cbind(mvrnorm(n=sizes[[i]], mu=centers[[i]], Sigma=sigmas[[i]]), rep(i,sizes[[i]])))
+    my_df <<- rbind(my_df, cbind(mvrnorm(n=sizes[[i]], mu=centers[[i]], Sigma=sigmas[[i]]), rep(i,sizes[[i]])))
   }
-  df <- data.frame(df)
-  colnames(df) <- c("x1","x2", "y")
+  my_df <<- data.frame(my_df)
+  colnames(my_df) <- c("x1","x2", "y")
+  my_df[,3] <- as.factor(my_df[,3])
   
-  df[,3] <- as.factor(df[,3])
-  
-  sv <- SVM(x=df[,1:2], y=df[,3], class.type="one.versus.all")
-  preds <- predict(sv, df[,1:2])
-  acc <- sum(diag(table(preds, df[,3])))/sum(table(preds, df[,3]))
+  sv <- SVM(x=my_df[,1:2], y=my_df[,3], class.type="one.versus.all")
+  preds <- predict(sv, my_df[,1:2])
+  acc <- sum(diag(table(preds, my_df[,3])))/sum(table(preds, my_df[,3]))
   #expect_that(acc > 0.96, is_true())
-  plot(sv, X=df[,1:2])
+  plot(sv, X=my_df[,1:2])
   data(iris)
   
   sv.ova <- SVM(Species ~ ., data=iris, class.type="one.versus.all")
@@ -71,4 +70,5 @@ library(caret)
   
   
   expect_that(acc.ova < acc.ovo && abs(acc.e1 - acc.ovo) < 1e-1, is_true())
-}
+})
+

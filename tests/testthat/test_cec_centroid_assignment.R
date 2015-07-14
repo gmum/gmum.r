@@ -19,7 +19,7 @@ test_that("EllipseGauss centroid assignment is correct", {
   npoints = dim(dataset_points)[1]
   for(i in 1:t)
   {
-    c1 <- CEC(k=nclusters, x=dataset_points, method.init='random', control.itmax=0, control.nstart=1)
+    c1 <- CEC(k=nclusters, x=dataset_points, method.init='random', control.itmax=0, control.nstart=1, seed=13371337)
     centers <- c1$centers()
     centers_len = length(centers)
     c2 <- CEC(k=centers_len, x=dataset_points, method.init='centroids', params.centroids=centers)

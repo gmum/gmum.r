@@ -10,21 +10,6 @@
 
 #include <exception>
 #include <vector>
-#include "boost/foreach.hpp"
-using namespace std;
-typedef vector<int> VI;
-#define FOR(x, b, e) for(size_t x=b; x<=(e); ++x)
-#define FORD(x, b, e) for(size_t x=b; x>=(e); ––x)
-#define REP(x, n) for(size_t x=0; x<(n); ++x)
-#define VAR(v,n) typeof(n) v=(n)
-#define ALL(c) c.begin(),c.end()
-#define SIZE(x) (int)(x).size()
-#define FOREACH(i,c) BOOST_FOREACH(i, c) //for(VAR(i,(c).begin());i!=(c).end();++i)
-#define IWAS(x) cout<<x<<endl<<flush;
-#define PB push_back
-#define ST first
-#define ND second
-
 #include <sstream>
 #include <string>
 #include <map>
@@ -32,45 +17,46 @@ typedef vector<int> VI;
 #include <assert.h>
 #include <stdlib.h>
 #include <time.h>
-
 #include <utils/logger.h>
+#include "boost/foreach.hpp"
+#include <iostream>
+#include <fstream>
+#include <vector>
+using namespace std;
+typedef vector<int> VI;
+#define FOR(x, b, e) for(size_t x=b; x<=(e); ++x)
+#define FORD(x, b, e) for(size_t x=b; x>=(e); ––x)
+#define REP(x, n) for(size_t x=0; x<(n); ++x)
+#define VAR(v,n) typeof(n) v=(n)
+#define SIZE(x) (int)(x).size()
+#define FOREACH(i,c) BOOST_FOREACH(i, c) //for(VAR(i,(c).begin());i!=(c).end();++i)
 
-#define LOG(logger, level, text) logger.log(level, text);
+#ifdef RCPP_INTERFACE
+#include <RcppArmadillo.h>
+#endif
 
 #ifdef DEBUG
+
+#ifdef RCPP_INTERFACE
+  #include <RcppArmadillo.h>
+  using namespace Rcpp;
+  #define EXIT(x) Rcpp::stop("");
+  #define DBG(logger, level, text) logger.log(level, text);
+  #define REPORT(x) Rcpp::Rcout<<#x<<"="<<(x)<<endl<<std::flush;
+  #define ASSERT(x)  
+#else
+  #define EXIT(x) exit(x);
 	#define DBG(logger, level, text) logger.log(level, text);
 	#define REPORT(x) cout<<#x<<"="<<(x)<<endl<<std::flush;
+  #define ASSERT(x) assert(x);
+#endif
+
 #else
 	#define DBG(verbosity, level, text)
 	#define REPORT(x)
+#define ASSERT(x)
+#define EXIT(x)
 #endif
-
-
-template<class T>
-void write_array(T* begin, T*end) {
-	for (; begin != end; ++begin) {
-		std::cerr << *begin << ",";
-	}
-	std::cerr << endl;
-}
-
-template<class T>
-void write_cnt(T begin, T end) {
-	for (; begin != end; ++begin) {
-		std::cerr << *begin << ",";
-	}
-	std::cerr << endl;
-}
-
-template<class T>
-std::string write_cnt_str(T begin, T end) {
-	std::stringstream ss;
-
-	for (; begin != end; ++begin) {
-		ss << *begin << ",";
-	}
-	return ss.str();
-}
 
 template<class T>
 std::string to_str(const T& x) {
@@ -93,40 +79,42 @@ struct BasicException: public std::exception {
 
 //conflicting with boost namespace
 namespace gmum {
-template<class T>
-std::string to_string(const T& x) {
-	stringstream ss;
-	ss << x;
-	return ss.str();
+  template<class T>
+  std::string to_string(const T& x) {
+  	stringstream ss;
+  	ss << x;
+  	return ss.str();
+  }
 }
-}
-
-#include <string.h>
-#include <iostream>
-#include <fstream>
-#include <vector>
-using namespace std;
 
 const int __one__ = 1;
 const bool isCpuLittleEndian = 1 == *(char*) (&__one__); // CPU endianness
 const bool isFileLittleEndian = false;  // output endianness - you choose :)
 
-static int __seed(int seed){
-    srand(seed);
+// ED - environment dependent utils
+
+int ed_c_rand();
+void ed_c_srand(unsigned int);
+
+static int __seed(int seed) {
+    ed_c_srand(seed);
+    return 0;
 }
+
+
 
 #define RANDOM_INT(rng, min, max) (rng() % (max - min +1) + min)
 
 static int __rnd(int min, int max) {
-	return (rand() % (max - min + 1) + min);
+	return (ed_c_rand() % (max - min + 1) + min);
 }
 
 static int __int_rnd(int min, int max) {
-	return (rand() % (max - min + 1) + min);
+	return (ed_c_rand() % (max - min + 1) + min);
 }
 
 static double __double_rnd(double min, double max) {
-	return min + (max - min) * ((double) rand()) / RAND_MAX;
+	return min + (max - min) * ((double) ed_c_rand()) / RAND_MAX;
 }
 
 static void _write_bin(ostream & out, double v) {
@@ -180,7 +168,9 @@ int check_argc(const char*);
 int check_argc(const std::string);
 char** to_argv(const char*);
 char** to_argv(const std::string);
-/// Free `char**` allocated by `to_argv()` function
 char** free_argv(int argc, char** argv);
+
+/// C rand() implemented in RCpp
+int rcpp_c_rand();
 
 #endif	/* UTILS_H */

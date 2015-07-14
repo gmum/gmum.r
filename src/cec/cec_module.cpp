@@ -31,7 +31,8 @@ RCPP_MODULE(cec) {
 	.method("setR", &CecConfiguration::set_r)
 	.method("setFunction", &CecConfiguration::set_function)
     .method("setItmax", &CecConfiguration::set_it_max)
-    .method("setAlgorithm", &CecConfiguration::set_algorithm);
+    .method("setAlgorithm", &CecConfiguration::set_algorithm)
+    .method("setSeed", &CecConfiguration::set_seed);
 
 	class_<CecModel>("CecModel")
 	.constructor<CecConfiguration*>()

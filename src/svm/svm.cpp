@@ -7,9 +7,15 @@
 #include <stdarg.h>
 #include <limits.h>
 #include <locale.h>
+#include <limits.h>
 #include "svm.h"
 #include "svm_utils.h"
 #include "svm_basic.h"
+#include "utils/utils.h"
+
+#ifdef RCPP_INTERFACE
+#include <RcppArmadillo.h>
+#endif
 
 int libsvm_version = LIBSVM_VERSION;
 typedef float Qfloat;
@@ -1886,7 +1892,7 @@ static void svm_binary_svc_probability(
 	for(i=0;i<prob->l;i++) perm[i]=i;
 	for(i=0;i<prob->l;i++)
 	{
-		int j = i+rand()%(prob->l-i);
+		int j = i+ed_c_rand()%(prob->l-i);
 		swap(perm[i],perm[j]);
 	}
 	for(i=0;i<nr_fold;i++)
@@ -2359,7 +2365,8 @@ void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, i
 		for (c=0; c<nr_class; c++) 
 			for(i=0;i<count[c];i++)
 			{
-				int j = i+rand()%(count[c]-i);
+				int j = 0;
+                j = i+ed_c_rand()%(count[c]-i);
 				swap(index[start[c]+j],index[start[c]+i]);
 			}
 		for(i=0;i<nr_fold;i++)
@@ -2396,7 +2403,7 @@ void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, i
 		for(i=0;i<l;i++) perm[i]=i;
 		for(i=0;i<l;i++)
 		{
-			int j = i+rand()%(l-i);
+			int j = i+ed_c_rand()%(l-i);
 			swap(perm[i],perm[j]);
 		}
 		for(i=0;i<=nr_fold;i++)
