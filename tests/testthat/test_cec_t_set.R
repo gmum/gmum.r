@@ -36,11 +36,9 @@ test_that("diagonal works", {
 
 test_that("fixed_covariance works", {
   data(cec.tset)
-  c <- CEC(x = Tset, k = 10, method.type = 'fixed_covariance', params.cov=matrix(c(0.04, 0, 0, 0.01), 2), control.nstart = 100, control.eps = 0.07, seed=13371337)
-  plot(c, ellipses = TRUE, centers = TRUE)
-  
   expected_energy = -0.2362521
-  
+  c <- CEC(x = Tset, k = 10, method.type = 'fixed_covariance', params.cov=matrix(c(0.04, 0, 0, 0.01), 2), control.nstart = 100, control.eps = 0.07, seed=2)
+  plot(c, ellipses = TRUE, centers = TRUE)
   expect_that(all.equal(current = c$energy(), target = expected_energy, tolerance = 0.2), is_true())
   print("test_t_set: fixed_covariance works")
 })
