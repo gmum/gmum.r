@@ -199,7 +199,8 @@ CEC <- function(x = NULL,
                  control.eps = 0.05,
                  control.itmax = 25,
                  log.energy = TRUE,
-                 log.ncluster= TRUE){
+                   log.ncluster= TRUE,
+                   seed = NULL){
   
   # check for errors
   call <- match.call(expand.dots = TRUE)
@@ -229,6 +230,10 @@ CEC <- function(x = NULL,
   }
   
   config <- new(CecConfiguration)
+
+    if(is.null(seed) == FALSE) {
+        config$setSeed(seed)
+    }
   config$setDataSet(x)
   config$setEps(control.eps)      
   config$setNrOfClusters(k)
@@ -240,7 +245,7 @@ CEC <- function(x = NULL,
   if(is.null(params.function) == FALSE) {
     config$setFunction(params.function)
   }
-  
+
   config$setLogEnergy(log.energy)
   config$setLogCluster(log.ncluster)      
   config$setNstart(control.nstart)

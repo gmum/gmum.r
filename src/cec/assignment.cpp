@@ -2,6 +2,14 @@
 
 namespace gmum {
 
+int Assignment::seed = time(0);
+
+Assignment::Assignment(const arma::mat &points, const unsigned int nclusters)
+    :   m_points(points), m_nclusters(nclusters)
+{ }
+
+Assignment::~Assignment() { }
+
 unsigned int find_nearest(unsigned int i,
 		const std::vector<unsigned int> &centers, const arma::mat &points) {
 

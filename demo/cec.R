@@ -20,8 +20,8 @@ plot(c)
 # Ain't that great? :D
 
 # You can learn details of clustering like this:
-centers(c)
-covMatrix(c)
+c$centers()
+c$covMatrix()
 
 # You can predict cluster which a point would belong to:
 predict(c, c(1,1))
