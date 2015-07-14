@@ -117,10 +117,9 @@ public:
 		ErrorNode max = super::extractMax();
 
 		m_buffer[max.i] = 0; //mark that it is removed from the heap
-		return max;
+		return max; 
 	}
 
-	using super::print;
 	using super::getSize;
 
 };

@@ -1,0 +1,31 @@
+# Sample .travis.yml for R projects.
+#
+# see the wiki:
+#   https://github.com/craigcitro/r-travis/wiki
+
+language: c
+
+sudo: required
+
+before_install:
+  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
+  - chmod 755 ./travis-tool.sh
+  - ./travis-tool.sh bootstrap
+  # Test datasets
+  - cd inst/data_sets/svm/ && ./download_large.sh && cd ../../..
+  - cd inst/data_sets/svm/ && ./download_transduction.sh && cd ../../..
+
+install:
+  - ./travis-tool.sh install_deps
+  # Install dependencies of R tests
+  - Rscript -e 'library("devtools"); library("methods"); options(repos=c(CRAN="http://cran.rstudio.com")); install_deps(dependencies = "Suggests")'
+
+script: ./travis-tool.sh run_tests
+
+after_failure:
+  - ./travis-tool.sh dump_logs
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change

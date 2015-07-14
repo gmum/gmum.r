@@ -40,6 +40,7 @@
 #' CEC
 #' 
 #' @examples
+#' \dontrun{
 #' CEC(k=3, x=dataset)
 #' CEC(k=3, x=dataset, control.nstart=10, method.type='spherical', control.eps=0.05)
 #' CEC(k=2, x=dataset, method.type='spherical', method.init='centroids', params.centroids=list(c(-0.5,0.5),c(0,0)))
@@ -52,6 +53,7 @@
 #' p1 = list(method.type='spherical', k=3)
 #' p2 = list(method.type='diagonal', k=2)
 #' CEC(x=dataset, params.mix=list(p1, p2))
+#' }
 CEC <- NULL
 
 #' @title runAll
@@ -184,135 +186,137 @@ nstart.cec <- NULL
 
 loadModule('cec', TRUE)
 
-evalqOnLoad( with(asNamespace("gmum.r"), {
-  CEC <<- function(x = NULL,
-                   k = 0,
-                   method.type = "standard",
-                   method.init = "kmeans++",
-                   params.r = 0,
-                   params.cov = matrix(0),
-                   params.centroids = NULL,
-                   params.mix = NULL,
-                   params.function = NULL,
-                   control.nstart = 10,
-                   control.eps = 0.05,
-                   control.itmax = 25,
-                   log.energy = TRUE,
+CEC <- function(x = NULL,
+                 k = 0,
+                 method.type = "standard",
+                 method.init = "kmeans++",
+                 params.r = 0,
+                 params.cov = matrix(0),
+                 params.centroids = NULL,
+                 params.mix = NULL,
+                 params.function = NULL,
+                 control.nstart = 10,
+                 control.eps = 0.05,
+                 control.itmax = 25,
+                 log.energy = TRUE,
                    log.ncluster= TRUE,
                    seed = NULL){
-    
-    # check for errors
-    call <- match.call(expand.dots = TRUE)
-    
-    if (is.null(x))
-      stop("Dataset is required!");
-    
-    if(is(x, "data.frame")){
-      x = data.matrix(x);
-    }
-    
-    if (is.null(params.mix) && k <= 0)
-      stop("Number of clusters should be a positive integer!");
-    
-    if (control.nstart <= 0)
-      stop("Number of starts should be a positive integer!");
-    
-    npoints <- dim(x)[1]
-    if ( (control.eps < 0) || (control.eps > ((npoints - 1) / npoints)) )
-      stop("control.eps = ", control.eps, " should be in range [0, (N-1)/N]!");  
-    
-    if (control.itmax < 0)
-      stop("Maximum number of iterations should be a natural number!");
-    
-    if(is(params.cov, "data.frame")){
-     params.cov = data.matrix(params.cov);
-    }
-    
-    config <- new(CecConfiguration)
+  
+  # check for errors
+  call <- match.call(expand.dots = TRUE)
+  
+  if (is.null(x))
+    stop("Dataset is required!");
+  
+  if(is(x, "data.frame")){
+    x = data.matrix(x);
+  }
+  
+  if (is.null(params.mix) && k <= 0)
+    stop("Number of clusters should be a positive integer!");
+  
+  if (control.nstart <= 0)
+    stop("Number of starts should be a positive integer!");
+  
+  npoints <- dim(x)[1]
+  if ( (control.eps < 0) || (control.eps > ((npoints - 1) / npoints)) )
+    stop("control.eps = ", control.eps, " should be in range [0, (N-1)/N]!");  
+  
+  if (control.itmax < 0)
+    stop("Maximum number of iterations should be a natural number!");
+  
+  if(is(params.cov, "data.frame")){
+    params.cov = data.matrix(params.cov);
+  }
+  
+  config <- new(CecConfiguration)
 
     if(is.null(seed) == FALSE) {
         config$setSeed(seed)
     }
-    config$setDataSet(x)
-    config$setEps(control.eps)      
-    config$setNrOfClusters(k)
-
-    if(is.null(params.mix) == FALSE) {
-        config$setMix(params.mix) 
-    }
-    
-    if(is.null(params.function) == FALSE) {
-        config$setFunction(params.function)
-    }
-
-    config$setLogEnergy(log.energy)
-    config$setLogCluster(log.ncluster)      
-    config$setNstart(control.nstart)
-    config$setCentroids(params.centroids)
-    config$setMethodType(method.type)             
-    config$setCov(params.cov)
-    config$setR(params.r)
-    config$setMethodInit(method.init) 
-    config$setItmax(control.itmax)
-    config$setAlgorithm('hartigan')
-    
-    model <- new(CecModel, config)
-
-    assign("call", call, model)
-    model
+  config$setDataSet(x)
+  config$setEps(control.eps)      
+  config$setNrOfClusters(k)
+  
+  if(is.null(params.mix) == FALSE) {
+    config$setMix(params.mix) 
   }
   
-  runAll.cec <<- function(c) {
-    c$runAll()
+  if(is.null(params.function) == FALSE) {
+    config$setFunction(params.function)
   }
+
+  config$setLogEnergy(log.energy)
+  config$setLogCluster(log.ncluster)      
+  config$setNstart(control.nstart)
+  config$setCentroids(params.centroids)
+  config$setMethodType(method.type)             
+  config$setCov(params.cov)
+  config$setR(params.r)
+  config$setMethodInit(method.init) 
+  config$setItmax(control.itmax)
+  config$setAlgorithm('hartigan')
   
-  runOneIteration.cec <<- function(c) {
-    c$runOneIteration()
-  }
-
-  energy.cec <<- function(c) {
-    c$energy()
-  }
+  model <- new(CecModel, config)
   
-  clustering.cec <<- function(c) {
-    c$clustering()
-  }
+  assign("call", call, model)
+  model
+}
+
+runAll.cec <- function(c) {
+  c$runAll()
+}
+
+runOneIteration.cec <- function(c) {
+  c$runOneIteration()
+}
+
+energy.cec <- function(c) {
+  c$energy()
+}
+
+clustering.cec <- function(c) {
+  c$clustering()
+}
+
+x.cec <- function(c) {
+  c$x()
+}
+
+centers.cec <- function(c) {
+  c$centers()
+}
+
+covMatrix.cec <- function(c) {
+  c$covMatrix()
+}
+
+log.ncluster.cec <- function(c) {
+  c$log.ncluster()
+}
+
+log.energy.cec <- function(c) {
+  c$log.energy()
+}
+
+log.iters.cec <- function(c) {
+  c$log.iters()
+}
+
+setGeneric("runAll", function(c) standardGeneric("runAll"))
+setGeneric("runOneIteration", function(c) standardGeneric("runOneIteration"))
+setGeneric("energy", function(c) standardGeneric("energy"))
+setGeneric("clustering", function(c) standardGeneric("clustering"))
+setGeneric("x", function(c) standardGeneric("x"))
+setGeneric("centers", function(c) standardGeneric("centers"))
+setGeneric("covMatrix", function(c) standardGeneric("covMatrix"))
+setGeneric("log.ncluster", function(c) standardGeneric("log.ncluster"))
+setGeneric("log.energy", function(c) standardGeneric("log.energy"))
+setGeneric("log.iters", function(c) standardGeneric("log.iters"))
+
+
+evalqOnLoad({
   
-  x.cec <<- function(c) {
-    c$x()
-  }
-
-  centers.cec <<- function(c) {
-    c$centers()
-  }
-  
-  covMatrix.cec <<- function(c) {
-    c$covMatrix()
-  }
-
-  log.ncluster.cec <<- function(c) {
-    c$log.ncluster()
-  }
-
-  log.energy.cec <<- function(c) {
-    c$log.energy()
-  }
-
-  log.iters.cec <<- function(c) {
-    c$log.iters()
-  }
-    
-    setGeneric("runAll", function(c) standardGeneric("runAll"))
-    setGeneric("runOneIteration", function(c) standardGeneric("runOneIteration"))
-    setGeneric("energy", function(c) standardGeneric("energy"))
-    setGeneric("clustering", function(c) standardGeneric("clustering"))
-    setGeneric("x", function(c) standardGeneric("x"))
-    setGeneric("centers", function(c) standardGeneric("centers"))
-    setGeneric("covMatrix", function(c) standardGeneric("covMatrix"))
-    setGeneric("log.ncluster", function(c) standardGeneric("log.ncluster"))
-    setGeneric("log.energy", function(c) standardGeneric("log.energy"))
-    setGeneric("log.iters", function(c) standardGeneric("log.iters"))
-    
     setMethod("runAll", "Rcpp_CecModel", runAll.cec)
     setMethod("runOneIteration", "Rcpp_CecModel", runOneIteration.cec)
     setMethod("energy", "Rcpp_CecModel", energy.cec)
@@ -345,4 +349,4 @@ evalqOnLoad( with(asNamespace("gmum.r"), {
       })
       
     })
-}), where=asNamespace("gmum.r"))
+})

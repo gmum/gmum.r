@@ -1,4 +1,4 @@
-﻿/*
+/*
  * File: GNGAlgorithm.cpp
  * Author: staszek "kudkudak" jastrzebski <grimghil<at>gmail.com>
  *
@@ -172,7 +172,7 @@ void GNGAlgorithm::randomInit() {
 					+ to_string(m_g.get_number_nodes()));
 
 #ifdef GMUM_DEBUG_2
-	assert(m_g.get_number_nodes()==2);
+	ASSERT(m_g.get_number_nodes()==2);
 #endif
 
 	if (m_toggle_uniformgrid) {
@@ -407,7 +407,7 @@ std::pair<double, int> GNGAlgorithm::adapt(const double * ex,
 #ifdef DEBUG_GMUM_2
 				FOREACH(GNGEdge* edg2, m_g[nr])
 				{
-					cerr<<"WARNING: GNGAlgorithm:: edges count of neighbours of erased node, shouldn't happen! " + to_string(m_g[(edg2)->nr].edgesCount)<<endl;
+				 CERR("WARNING: GNGAlgorithm:: edges count of neighbours of erased node, shouldn't happen! ");
 				}
 #endif
 
@@ -479,16 +479,7 @@ double GNGAlgorithm::calculateAccumulatedError() {
 	}
 }
 
-void GNGAlgorithm::testAgeCorrectness() {
-	int maximum_index = m_g.get_maximum_index();
-	REP(i, maximum_index + 1)
-		if (m_g.existsNode(i) && m_g[i].edgesCount)
-			BOOST_FOREACH(GNGEdge* edg, m_g[i])
-				if ((edg)->age > m_max_age) {
-					//cout << "XXXXXXXXXXXXXXXXX\n";
-					//cout << (m_g[i]) << endl;
-				}
-}
+
 
 void GNGAlgorithm::resizeUniformGrid() {
 
@@ -593,7 +584,6 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 		gmum::scoped_lock<GNGGraph> graph_lock(m_g);
 		randomInit();
 	} else if (m_g.get_number_nodes() == 1) {
-		cerr << "Incorrect passed graph to GNGAlgorithm. Aborting\n";
 		throw BasicException("Incorrect passed graph to GNGAlgorithm");
 	}
 
@@ -641,7 +631,7 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 			std::pair<double, int> adapt_result = adapt(position, vertex_data);
 
 #ifdef GMUM_DEBUG
-			assert(adapt_result.second >= 0);
+			ASSERT(adapt_result.second >= 0);
 #endif
 
 			set_clustering(ex, adapt_result.second);
@@ -652,7 +642,7 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 #ifdef GMUM_DEBUG_2
 		for (int i = 0; i <= m_g.get_maximum_index(); ++i) { //another idea for storing list of actual nodes?
 			if (m_g.existsNode(i) && m_g[i].edgesCount == 0 && m_utility_option == None) {
-				cerr<<"Error at " + to_string<int>(i))<<endl;
+				CERR("Error at " + to_string<int>(i)));
 			}
 		}
 #endif
@@ -822,14 +812,13 @@ std::pair<int, int> GNGAlgorithm::_getNearestNeurons(const double *ex){
 
 			#ifdef GMUM_DEBUG_2
 					if (nearest_index[0] == nearest_index[1]) {
-						cerr<<"Adapt::Found same nearest_indexes!~! "+to_string(nearest_index[0])<<endl;
 						throw BasicException("Found same nearest_indexes");  //something went wrong (-1==-1 też)
 					}
 			#endif
 
 
 			#ifdef GMUM_DEBUG_2
-					assert(m_g[nearest_index[1]].position > m_g.get_dist(m_g[nearest_index[0]].position, ex));
+					ASSERT(m_g[nearest_index[1]].position > m_g.get_dist(m_g[nearest_index[0]].position, ex));
 			#endif
 
 			return std::pair<int, int>(nearest_index[0], nearest_index[1]);
@@ -871,7 +860,7 @@ std::pair<int, int> GNGAlgorithm::_getNearestNeurons(const double *ex){
 
 
 			#ifdef GMUM_DEBUG_2
-				assert(dist1 > dist0);
+				ASSERT(dist1 > dist0);
 			#endif
 
 			return std::pair<int, int>(best_0, best_1);
@@ -896,7 +885,7 @@ bool GNGAlgorithm::stoppingCriterion() {
 
 void GNGAlgorithm::increaseErrorNew(GNGNode * node, double error) {
 	fixErrorNew(node);
-	assert(m_lambda - s <= m_betha_powers_size -1);
+	ASSERT(m_lambda - s <= m_betha_powers_size -1);
 	node->error += m_betha_powers[m_lambda - s] * error;
 	errorHeap.updateLazy(node->nr);
 }
@@ -915,7 +904,7 @@ void GNGAlgorithm::fixErrorNew(GNGNode * node) {
 		m_betha_powers_to_n[i] = std::pow(m_betha, m_lambda * (double) (i));
 	}
 
-	assert(c - node->error_cycle  <= m_betha_powers_to_n_length -1);
+	ASSERT(c - node->error_cycle  <= m_betha_powers_to_n_length -1);
 
 	node->error = m_betha_powers_to_n[c - node->error_cycle] * node->error;
 	node->error_cycle = c;
@@ -932,7 +921,7 @@ void GNGAlgorithm::set_clustering(unsigned int ex, unsigned int node_idx){
 
 	//Can potentially happen in case of shrinkage of dataset size
 	if(ex + 1 > clustering_result.size()){
-		cerr<<"g_db->size mismatch with ex index?\n";
+		CERR("g_db->size mismatch with ex index?\n");
 		return;
 	}
 
