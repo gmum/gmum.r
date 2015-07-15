@@ -19,6 +19,8 @@
 # include <math.h>
 # include "svm_common.h"
 
+#include "utils/cutils.h"
+
 /* 
   solve the quadratic programming problem
  
