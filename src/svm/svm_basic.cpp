@@ -32,8 +32,8 @@ void SVMConfiguration::setClassWeights(arma::vec class_weights){
     libsvm_class_weights_labels = new int[class_weight_length];
 
     if(this->class_weight_length != 2){
-        printf("SVMLight doesn't support multiclass classification. Please pass two class weights. \n");
-        exit(1);
+        COUT("SVMLight doesn't support multiclass classification. Please pass two class weights. \n");
+        EXIT(1);
     }
 
     libsvm_class_weights[0] = class_weights(0);

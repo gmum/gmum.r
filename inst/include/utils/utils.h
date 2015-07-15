@@ -40,12 +40,10 @@ typedef vector<int> VI;
 #ifdef RCPP_INTERFACE
   #include <RcppArmadillo.h>
   using namespace Rcpp;
-  #define EXIT(x) Rcpp::stop("");
   #define DBG(logger, level, text) logger.log(level, text);
   #define REPORT(x) Rcpp::Rcout<<#x<<"="<<(x)<<endl<<std::flush;
   #define ASSERT(x)  
 #else
-  #define EXIT(x) exit(x);
 	#define DBG(logger, level, text) logger.log(level, text);
 	#define REPORT(x) cout<<#x<<"="<<(x)<<endl<<std::flush;
   #define ASSERT(x) assert(x);
@@ -55,8 +53,14 @@ typedef vector<int> VI;
 	#define DBG(verbosity, level, text)
 	#define REPORT(x)
 #define ASSERT(x)
-#define EXIT(x)
 #endif
+
+#ifdef RCPP_INTERFACE
+  #define EXIT(x) Rcpp::stop("");
+#else
+    #define EXIT(x) exit(x);
+#endif
+
 
 template<class T>
 std::string to_str(const T& x) {

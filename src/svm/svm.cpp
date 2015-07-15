@@ -11,6 +11,7 @@
 #include "svm.h"
 #include "svm_utils.h"
 #include "svm_basic.h"
+#include "utils/cutils.h"
 #include "utils/utils.h"
 
 #ifdef RCPP_INTERFACE
@@ -2343,7 +2344,7 @@ void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, i
 	if (nr_fold > l)
 	{
 		nr_fold = l;
-		fprintf(stderr,"WARNING: # folds > # data. Will use # folds = # data instead (i.e., leave-one-out cross validation)\n");
+		C_FPRINTF(stderr,"WARNING: # folds > # data. Will use # folds = # data instead (i.e., leave-one-out cross validation)\n");
 	}
 	fold_start = Malloc(int,nr_fold+1);
 	// stratified cv may not give leave-one-out rate
@@ -2491,7 +2492,7 @@ double svm_get_svr_probability(const svm_model *model, Logger &log)
 		return model->probA[0];
 	else
 	{
-		fprintf(stderr,"Model doesn't contain information for SVR probability inference\n");
+		C_FPRINTF(stderr,"Model doesn't contain information for SVR probability inference\n");
 		return 0;
 	}
 }
@@ -2646,81 +2647,81 @@ int svm_save_model(const char *model_file_name, const svm_model *model, Logger &
 
 	const svm_parameter& param = model->param;
 
-	fprintf(fp,"svm_type %s\n", svm_type_table[param.svm_type]);
-	fprintf(fp,"kernel_type %s\n", kernel_type_table[param.kernel_type]);
+	C_FPRINTF(fp,"svm_type %s\n", svm_type_table[param.svm_type]);
+	C_FPRINTF(fp,"kernel_type %s\n", kernel_type_table[param.kernel_type]);
 
 	if(param.kernel_type == POLY)
-		fprintf(fp,"degree %d\n", param.degree);
+		C_FPRINTF(fp,"degree %d\n", param.degree);
 
 	if(param.kernel_type == POLY || param.kernel_type == RBF || param.kernel_type == SIGMOID)
-		fprintf(fp,"gamma %g\n", param.gamma);
+		C_FPRINTF(fp,"gamma %g\n", param.gamma);
 
 	if(param.kernel_type == POLY || param.kernel_type == SIGMOID)
-		fprintf(fp,"coef0 %g\n", param.coef0);
+		C_FPRINTF(fp,"coef0 %g\n", param.coef0);
 
 	int nr_class = model->nr_class;
 	int l = model->l;
-	fprintf(fp, "nr_class %d\n", nr_class);
-	fprintf(fp, "total_sv %d\n",l);
+	C_FPRINTF(fp, "nr_class %d\n", nr_class);
+	C_FPRINTF(fp, "total_sv %d\n",l);
 	
 	{
-		fprintf(fp, "rho");
+		C_FPRINTF(fp, "rho");
 		for(int i=0;i<nr_class*(nr_class-1)/2;i++)
-			fprintf(fp," %g",model->rho[i]);
-		fprintf(fp, "\n");
+			C_FPRINTF(fp," %g",model->rho[i]);
+		C_FPRINTF(fp, "\n");
 	}
 	
 	if(model->label)
 	{
-		fprintf(fp, "label");
+		C_FPRINTF(fp, "label");
 		for(int i=0;i<nr_class;i++)
-			fprintf(fp," %d",model->label[i]);
-		fprintf(fp, "\n");
+			C_FPRINTF(fp," %d",model->label[i]);
+		C_FPRINTF(fp, "\n");
 	}
 
 	if(model->probA) // regression has probA only
 	{
-		fprintf(fp, "probA");
+		C_FPRINTF(fp, "probA");
 		for(int i=0;i<nr_class*(nr_class-1)/2;i++)
-			fprintf(fp," %g",model->probA[i]);
-		fprintf(fp, "\n");
+			C_FPRINTF(fp," %g",model->probA[i]);
+		C_FPRINTF(fp, "\n");
 	}
 	if(model->probB)
 	{
-		fprintf(fp, "probB");
+		C_FPRINTF(fp, "probB");
 		for(int i=0;i<nr_class*(nr_class-1)/2;i++)
-			fprintf(fp," %g",model->probB[i]);
-		fprintf(fp, "\n");
+			C_FPRINTF(fp," %g",model->probB[i]);
+		C_FPRINTF(fp, "\n");
 	}
 
 	if(model->nSV)
 	{
-		fprintf(fp, "nr_sv");
+		C_FPRINTF(fp, "nr_sv");
 		for(int i=0;i<nr_class;i++)
-			fprintf(fp," %d",model->nSV[i]);
-		fprintf(fp, "\n");
+			C_FPRINTF(fp," %d",model->nSV[i]);
+		C_FPRINTF(fp, "\n");
 	}
 
-	fprintf(fp, "SV\n");
+	C_FPRINTF(fp, "SV\n");
 	const double * const *sv_coef = model->sv_coef;
 	const svm_node * const *SV = model->SV;
 
 	for(int i=0;i<l;i++)
 	{
 		for(int j=0;j<nr_class-1;j++)
-			fprintf(fp, "%.16g ",sv_coef[j][i]);
+			C_FPRINTF(fp, "%.16g ",sv_coef[j][i]);
 
 		const svm_node *p = SV[i];
 
 		if(param.kernel_type == PRECOMPUTED)
-			fprintf(fp,"0:%d ",(int)(p->value));
+			C_FPRINTF(fp,"0:%d ",(int)(p->value));
 		else
 			while(p->index != -1)
 			{
-				fprintf(fp,"%d:%.8g ",p->index,p->value);
+				C_FPRINTF(fp,"%d:%.8g ",p->index,p->value);
 				p++;
 			}
-		fprintf(fp, "\n");
+		C_FPRINTF(fp, "\n");
 	}
 
 	setlocale(LC_ALL, old_locale);
@@ -2781,7 +2782,7 @@ bool read_model_header(FILE *fp, svm_model* model, Logger &log)
 			}
 			if(svm_type_table[i] == NULL)
 			{
-				fprintf(stderr,"unknown svm type.\n");
+				C_FPRINTF(stderr,"unknown svm type.\n");
 				return false;
 			}
 		}
@@ -2799,7 +2800,7 @@ bool read_model_header(FILE *fp, svm_model* model, Logger &log)
 			}
 			if(kernel_type_table[i] == NULL)
 			{
-				fprintf(stderr,"unknown kernel function.\n");	
+				C_FPRINTF(stderr,"unknown kernel function.\n");	
 				return false;
 			}
 		}
@@ -2859,7 +2860,7 @@ bool read_model_header(FILE *fp, svm_model* model, Logger &log)
 		}
 		else
 		{
-			fprintf(stderr,"unknown text in model file: [%s]\n",cmd);
+			C_FPRINTF(stderr,"unknown text in model file: [%s]\n",cmd);
 			return false;
 		}
 	}
@@ -2889,7 +2890,7 @@ svm_model *svm_load_model(const char *model_file_name, Logger &log)
 	// read header
 	if (!read_model_header(fp, model, log))
 	{
-		fprintf(stderr, "ERROR: fscanf failed to read model\n");
+		C_FPRINTF(stderr, "ERROR: fscanf failed to read model\n");
 		setlocale(LC_ALL, old_locale);
 		free(old_locale);
 		free(model->rho);

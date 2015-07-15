@@ -20,6 +20,7 @@
 # include "svm_common.h"
 # include "svm_learn.h"
 
+#include "utils/cutils.h"
 
 /* interface to QP-solver */
 double *optimize_qp(QP *, double *, long, double *, LEARN_PARM *);
@@ -129,7 +130,7 @@ void svm_learn_classification(DOC **docs, double *class, long int
   if(learn_parm->svm_c == 0.0) {  /* default value for C */
     learn_parm->svm_c=1.0/(r_delta_avg*r_delta_avg);
     if(verbosity>=1) 
-      printf("Setting default regularization parameter C=%.4f\n",
+      C_PRINTF("Setting default regularization parameter C=%.4f\n",
 	     learn_parm->svm_c);
   }
 
@@ -164,8 +165,8 @@ void svm_learn_classification(DOC **docs, double *class, long int
     }
   }
   if(verbosity>=2) {
-    printf("%ld positive, %ld negative, and %ld unlabeled examples.\n",trainpos,trainneg,totdoc-trainpos-trainneg); fflush(stdout);
-    printf("transductive=%ld, ", transduction);
+    C_PRINTF("%ld positive, %ld negative, and %ld unlabeled examples.\n",trainpos,trainneg,totdoc-trainpos-trainneg); C_FFLUSH(stdout);
+    C_PRINTF("transductive=%ld, ", transduction);
   }
 
   /* caching makes no sense for linear kernel */
@@ -176,7 +177,7 @@ void svm_learn_classification(DOC **docs, double *class, long int
   /* compute starting state for initial alpha values */
   if(alpha) {
     if(verbosity>=1) {
-      printf("Computing starting state..."); fflush(stdout);
+      C_PRINTF("Computing starting state..."); C_FFLUSH(stdout);
     }
     index = (long *)my_malloc(sizeof(long)*totdoc);
     index2dnum = (long *)my_malloc(sizeof(long)*(totdoc+11));
@@ -212,35 +213,35 @@ void svm_learn_classification(DOC **docs, double *class, long int
     free(weights);
     free(aicache);
     if(verbosity>=1) {
-      printf("done.\n");  fflush(stdout);
+      C_PRINTF("done.\n");  C_FFLUSH(stdout);
     }   
   } 
 
   if(transduction) {
     learn_parm->svm_iter_to_shrink=99999999;
     if(verbosity >= 1)
-      printf("\nDeactivating Shrinking due to an incompatibility with the transductive \nlearner in the current version.\n\n");
+      C_PRINTF("\nDeactivating Shrinking due to an incompatibility with the transductive \nlearner in the current version.\n\n");
   }
 
   if(transduction && learn_parm->compute_loo) {
     learn_parm->compute_loo=0;
     if(verbosity >= 1)
-      printf("\nCannot compute leave-one-out estimates for transductive learner.\n\n");
+      C_PRINTF("\nCannot compute leave-one-out estimates for transductive learner.\n\n");
   }    
 
   if(learn_parm->remove_inconsistent && learn_parm->compute_loo) {
     learn_parm->compute_loo=0;
-    printf("\nCannot compute leave-one-out estimates when removing inconsistent examples.\n\n");
+    C_PRINTF("\nCannot compute leave-one-out estimates when removing inconsistent examples.\n\n");
   }    
 
   if(learn_parm->compute_loo && ((trainpos == 1) || (trainneg == 1))) {
     learn_parm->compute_loo=0;
-    printf("\nCannot compute leave-one-out with only one example in one class.\n\n");
+    C_PRINTF("\nCannot compute leave-one-out with only one example in one class.\n\n");
   }    
 
 
   if(verbosity==1) {
-    printf("Optimizing"); fflush(stdout);
+    C_PRINTF("Optimizing"); C_FFLUSH(stdout);
   }
 
   /* train the svm */
@@ -254,7 +255,7 @@ void svm_learn_classification(DOC **docs, double *class, long int
   learn_parm->iterations=iterations;
 
   if(verbosity>=1) {
-    if(verbosity==1) printf("done. (%ld iterations)\n",iterations);
+    if(verbosity==1) C_PRINTF("done. (%ld iterations)\n",iterations);
 
     misclassified=0;
     for(i=0;(i<totdoc);i++) { /* get final statistic */
@@ -262,12 +263,12 @@ void svm_learn_classification(DOC **docs, double *class, long int
 	misclassified++;
     }
 
-    printf("Optimization finished (%ld misclassified, maxdiff=%.5f).\n",
+    C_PRINTF("Optimization finished (%ld misclassified, maxdiff=%.5f).\n",
 	   misclassified,maxdiff); 
 
     runtime_end=get_runtime();
     if(verbosity>=2) {
-      printf("Runtime in cpu-seconds: %.2f (%.2f%% for kernel/%.2f%% for optimizer/%.2f%% for final/%.2f%% for update/%.2f%% for model/%.2f%% for check/%.2f%% for select)\n",
+      C_PRINTF("Runtime in cpu-seconds: %.2f (%.2f%% for kernel/%.2f%% for optimizer/%.2f%% for final/%.2f%% for update/%.2f%% for model/%.2f%% for check/%.2f%% for select)\n",
         ((float)runtime_end-(float)runtime_start)/100.0,
         (100.0*timing_profile.time_kernel)/(float)(runtime_end-runtime_start),
 	(100.0*timing_profile.time_opti)/(float)(runtime_end-runtime_start),
@@ -278,7 +279,7 @@ void svm_learn_classification(DOC **docs, double *class, long int
         (100.0*timing_profile.time_select)/(float)(runtime_end-runtime_start));
     }
     else {
-      printf("Runtime in cpu-seconds: %.2f\n",
+      C_PRINTF("Runtime in cpu-seconds: %.2f\n",
 	     (runtime_end-runtime_start)/100.0);
     }
 
@@ -287,7 +288,7 @@ void svm_learn_classification(DOC **docs, double *class, long int
       for(i=0;i<totdoc;i++) 
 	if(inconsistent[i]) 
 	  inconsistentnum++;
-      printf("Number of SV: %ld (plus %ld inconsistent examples)\n",
+      C_PRINTF("Number of SV: %ld (plus %ld inconsistent examples)\n",
 	     model->sv_num-1,inconsistentnum);
     }
     else {
@@ -298,7 +299,7 @@ void svm_learn_classification(DOC **docs, double *class, long int
 	    learn_parm->epsilon_a)) 
 	  upsupvecnum++;
       }
-      printf("Number of SV: %ld (including %ld at upper bound)\n",
+      C_PRINTF("Number of SV: %ld (including %ld at upper bound)\n",
 	     model->sv_num-1,upsupvecnum);
     }
     
@@ -311,33 +312,33 @@ void svm_learn_classification(DOC **docs, double *class, long int
 	model_length+=a[i]*label[i]*lin[i];
       }
       model_length=sqrt(model_length);
-      fprintf(stdout,"L1 loss: loss=%.5f\n",loss);
-      fprintf(stdout,"Norm of weight vector: |w|=%.5f\n",model_length);
+      C_FPRINTF(stdout,"L1 loss: loss=%.5f\n",loss);
+      C_FPRINTF(stdout,"Norm of weight vector: |w|=%.5f\n",model_length);
       example_length=estimate_sphere(model,kernel_parm); 
-      fprintf(stdout,"Norm of longest example vector: |x|=%.5f\n",
+      C_FPRINTF(stdout,"Norm of longest example vector: |x|=%.5f\n",
 	      length_of_longest_document_vector(docs,totdoc,kernel_parm));
-      fprintf(stdout,"Estimated VCdim of classifier: VCdim<=%.5f\n",
+      C_FPRINTF(stdout,"Estimated VCdim of classifier: VCdim<=%.5f\n",
 	      estimate_margin_vcdim(model,model_length,example_length,
 				    kernel_parm));
       if((!learn_parm->remove_inconsistent) && (!transduction)) {
 	runtime_start_xa=get_runtime();
 	if(verbosity>=1) {
-	  printf("Computing XiAlpha-estimates..."); fflush(stdout);
+	  C_PRINTF("Computing XiAlpha-estimates..."); C_FFLUSH(stdout);
 	}
 	compute_xa_estimates(model,label,unlabeled,totdoc,docs,lin,a,
 			     kernel_parm,learn_parm,&(model->xa_error),
 			     &(model->xa_recall),&(model->xa_precision));
 	if(verbosity>=1) {
-	  printf("done\n");
+	  C_PRINTF("done\n");
 	}
-	printf("Runtime for XiAlpha-estimates in cpu-seconds: %.2f\n",
+	C_PRINTF("Runtime for XiAlpha-estimates in cpu-seconds: %.2f\n",
 	       (get_runtime()-runtime_start_xa)/100.0);
 	
-	fprintf(stdout,"XiAlpha-estimate of the error: error<=%.2f%% (rho=%.2f,depth=%ld)\n",
+	C_FPRINTF(stdout,"XiAlpha-estimate of the error: error<=%.2f%% (rho=%.2f,depth=%ld)\n",
 		model->xa_error,learn_parm->rho,learn_parm->xa_depth);
-	fprintf(stdout,"XiAlpha-estimate of the recall: recall=>%.2f%% (rho=%.2f,depth=%ld)\n",
+	C_FPRINTF(stdout,"XiAlpha-estimate of the recall: recall=>%.2f%% (rho=%.2f,depth=%ld)\n",
 		model->xa_recall,learn_parm->rho,learn_parm->xa_depth);
-	fprintf(stdout,"XiAlpha-estimate of the precision: precision=>%.2f%% (rho=%.2f,depth=%ld)\n",
+	C_FPRINTF(stdout,"XiAlpha-estimate of the precision: precision=>%.2f%% (rho=%.2f,depth=%ld)\n",
 		model->xa_precision,learn_parm->rho,learn_parm->xa_depth);
       }
       else if(!learn_parm->remove_inconsistent) {
@@ -345,7 +346,7 @@ void svm_learn_classification(DOC **docs, double *class, long int
       }
     }
     if(verbosity>=1) {
-      printf("Number of kernel evaluations: %ld\n",kernel_cache_statistic);
+      C_PRINTF("Number of kernel evaluations: %ld\n",kernel_cache_statistic);
     }
   }
 
@@ -360,7 +361,7 @@ void svm_learn_classification(DOC **docs, double *class, long int
       a_fullset[i]=a[i];
     }
     if(verbosity>=1) {
-      printf("Computing leave-one-out");
+      C_PRINTF("Computing leave-one-out");
     }
     
     /* repeat this loop for every held-out example */
@@ -369,7 +370,7 @@ void svm_learn_classification(DOC **docs, double *class, long int
 	 < 1.0) { 
 	/* guaranteed to not produce a leave-one-out error */
 	if(verbosity==1) {
-	  printf("+"); fflush(stdout); 
+	  C_PRINTF("+"); C_FFLUSH(stdout); 
 	}
       }
       else if(xi_fullset[heldout] > 1.0) {
@@ -377,7 +378,7 @@ void svm_learn_classification(DOC **docs, double *class, long int
 	loo_count++;
 	if(label[heldout] > 0)  loo_count_pos++; else loo_count_neg++;
 	if(verbosity==1) {
-	  printf("-"); fflush(stdout); 
+	  C_PRINTF("-"); C_FFLUSH(stdout); 
 	}
       }
       else {
@@ -388,9 +389,9 @@ void svm_learn_classification(DOC **docs, double *class, long int
 	/* shrunk away. Assumes that lin is up to date! */
 	shrink_state.active[heldout]=1;  
 	if(verbosity>=2) 
-	  printf("\nLeave-One-Out test on example %ld\n",heldout);
+	  C_PRINTF("\nLeave-One-Out test on example %ld\n",heldout);
 	if(verbosity>=1) {
-	  printf("(?[%ld]",heldout); fflush(stdout); 
+	  C_PRINTF("(?[%ld]",heldout); C_FFLUSH(stdout); 
 	}
 	
 	optimize_to_convergence(docs,label,totdoc,totwords,learn_parm,
@@ -399,18 +400,18 @@ void svm_learn_classification(DOC **docs, double *class, long int
 				a,lin,c,&timing_profile,
 				&maxdiff,heldout,(long)2);
 
-	/* printf("%.20f\n",(lin[heldout]-model->b)*(double)label[heldout]); */
+	/* C_PRINTF("%.20f\n",(lin[heldout]-model->b)*(double)label[heldout]); */
 
 	if(((lin[heldout]-model->b)*(double)label[heldout]) <= 0.0) { 
 	  loo_count++;                            /* there was a loo-error */
 	  if(label[heldout] > 0)  loo_count_pos++; else loo_count_neg++;
 	  if(verbosity>=1) {
-	    printf("-)"); fflush(stdout); 
+	    C_PRINTF("-)"); C_FFLUSH(stdout); 
 	  }
 	}
 	else {
 	  if(verbosity>=1) {
-	    printf("+)"); fflush(stdout); 
+	    C_PRINTF("+)"); C_FFLUSH(stdout); 
 	  }
 	}
 	/* now we need to restore the original data set*/
@@ -420,7 +421,7 @@ void svm_learn_classification(DOC **docs, double *class, long int
 
 
     if(verbosity>=1) {
-      printf("\nRetrain on full problem"); fflush(stdout); 
+      C_PRINTF("\nRetrain on full problem"); C_FFLUSH(stdout); 
     }
     optimize_to_convergence(docs,label,totdoc,totwords,learn_parm,
 			    kernel_parm,
@@ -428,7 +429,7 @@ void svm_learn_classification(DOC **docs, double *class, long int
 			    a,lin,c,&timing_profile,
 			    &maxdiff,(long)-1,(long)1);
     if(verbosity >= 1) 
-      printf("done.\n");
+      C_PRINTF("done.\n");
     
     
     /* after all leave-one-out computed */
@@ -437,15 +438,15 @@ void svm_learn_classification(DOC **docs, double *class, long int
     model->loo_precision=(trainpos-loo_count_pos)/
       (double)(trainpos-loo_count_pos+loo_count_neg)*100.0;
     if(verbosity >= 1) {
-      fprintf(stdout,"Leave-one-out estimate of the error: error=%.2f%%\n",
+      C_FPRINTF(stdout,"Leave-one-out estimate of the error: error=%.2f%%\n",
 	      model->loo_error);
-      fprintf(stdout,"Leave-one-out estimate of the recall: recall=%.2f%%\n",
+      C_FPRINTF(stdout,"Leave-one-out estimate of the recall: recall=%.2f%%\n",
 	      model->loo_recall);
-      fprintf(stdout,"Leave-one-out estimate of the precision: precision=%.2f%%\n",
+      C_FPRINTF(stdout,"Leave-one-out estimate of the precision: precision=%.2f%%\n",
 	      model->loo_precision);
-      fprintf(stdout,"Actual leave-one-outs computed:  %ld (rho=%.2f)\n",
+      C_FPRINTF(stdout,"Actual leave-one-outs computed:  %ld (rho=%.2f)\n",
 	      loocomputed,learn_parm->rho);
-      printf("Runtime for leave-one-out in cpu-seconds: %.2f\n",
+      C_PRINTF("Runtime for leave-one-out in cpu-seconds: %.2f\n",
 	     (double)(get_runtime()-runtime_start_loo)/100.0);
     }
   }
@@ -578,7 +579,7 @@ void svm_learn_regression(DOC **docs, double *value, long int totdoc,
   if(learn_parm->svm_c == 0.0) {  /* default value for C */
     learn_parm->svm_c=1.0/(r_delta_avg*r_delta_avg);
     if(verbosity>=1) 
-      printf("Setting default regularization parameter C=%.4f\n",
+      C_PRINTF("Setting default regularization parameter C=%.4f\n",
 	     learn_parm->svm_c);
   }
 
@@ -598,11 +599,11 @@ void svm_learn_regression(DOC **docs, double *value, long int totdoc,
 
   /* caching makes no sense for linear kernel */
   if((kernel_parm->kernel_type == LINEAR) && (*kernel_cache)) {
-    printf("WARNING: Using a kernel cache for linear case will slow optimization down!\n");
+    C_PRINTF("WARNING: Using a kernel cache for linear case will slow optimization down!\n");
   } 
 
   if(verbosity==1) {
-    printf("Optimizing"); fflush(stdout);
+    C_PRINTF("Optimizing"); C_FFLUSH(stdout);
   }
 
   /* train the svm */
@@ -614,13 +615,13 @@ void svm_learn_regression(DOC **docs, double *value, long int totdoc,
   learn_parm->iterations=iterations;
 
   if(verbosity>=1) {
-    if(verbosity==1) printf("done. (%ld iterations)\n",iterations);
+    if(verbosity==1) C_PRINTF("done. (%ld iterations)\n",iterations);
 
-    printf("Optimization finished (maxdiff=%.5f).\n",maxdiff); 
+    C_PRINTF("Optimization finished (maxdiff=%.5f).\n",maxdiff); 
 
     runtime_end=get_runtime();
     if(verbosity>=2) {
-      printf("Runtime in cpu-seconds: %.2f (%.2f%% for kernel/%.2f%% for optimizer/%.2f%% for final/%.2f%% for update/%.2f%% for model/%.2f%% for check/%.2f%% for select)\n",
+      C_PRINTF("Runtime in cpu-seconds: %.2f (%.2f%% for kernel/%.2f%% for optimizer/%.2f%% for final/%.2f%% for update/%.2f%% for model/%.2f%% for check/%.2f%% for select)\n",
         ((float)runtime_end-(float)runtime_start)/100.0,
         (100.0*timing_profile.time_kernel)/(float)(runtime_end-runtime_start),
 	(100.0*timing_profile.time_opti)/(float)(runtime_end-runtime_start),
@@ -631,7 +632,7 @@ void svm_learn_regression(DOC **docs, double *value, long int totdoc,
         (100.0*timing_profile.time_select)/(float)(runtime_end-runtime_start));
     }
     else {
-      printf("Runtime in cpu-seconds: %.2f\n",
+      C_PRINTF("Runtime in cpu-seconds: %.2f\n",
 	     (runtime_end-runtime_start)/100.0);
     }
 
@@ -640,7 +641,7 @@ void svm_learn_regression(DOC **docs, double *value, long int totdoc,
       for(i=0;i<totdoc;i++) 
 	if(inconsistent[i]) 
 	  inconsistentnum++;
-      printf("Number of SV: %ld (plus %ld inconsistent examples)\n",
+      C_PRINTF("Number of SV: %ld (plus %ld inconsistent examples)\n",
 	     model->sv_num-1,inconsistentnum);
     }
     else {
@@ -651,7 +652,7 @@ void svm_learn_regression(DOC **docs, double *value, long int totdoc,
 	    learn_parm->epsilon_a)) 
 	  upsupvecnum++;
       }
-      printf("Number of SV: %ld (including %ld at upper bound)\n",
+      C_PRINTF("Number of SV: %ld (including %ld at upper bound)\n",
 	     model->sv_num-1,upsupvecnum);
     }
     
@@ -664,14 +665,14 @@ void svm_learn_regression(DOC **docs, double *value, long int totdoc,
 	model_length+=a[i]*label[i]*lin[i];
       }
       model_length=sqrt(model_length);
-      fprintf(stdout,"L1 loss: loss=%.5f\n",loss);
-      fprintf(stdout,"Norm of weight vector: |w|=%.5f\n",model_length);
+      C_FPRINTF(stdout,"L1 loss: loss=%.5f\n",loss);
+      C_FPRINTF(stdout,"Norm of weight vector: |w|=%.5f\n",model_length);
       example_length=estimate_sphere(model,kernel_parm); 
-      fprintf(stdout,"Norm of longest example vector: |x|=%.5f\n",
+      C_FPRINTF(stdout,"Norm of longest example vector: |x|=%.5f\n",
 	      length_of_longest_document_vector(docs,totdoc,kernel_parm));
     }
     if(verbosity>=1) {
-      printf("Number of kernel evaluations: %ld\n",kernel_cache_statistic);
+      C_PRINTF("Number of kernel evaluations: %ld\n",kernel_cache_statistic);
     }
   }
     
@@ -734,7 +735,7 @@ void svm_learn_ranking(DOC **docs, double *rankvalue, long int totdoc,
     }
   }
 
-  printf("Constructing %ld rank constraints...",totpair); fflush(stdout);
+  C_PRINTF("Constructing %ld rank constraints...",totpair); C_FFLUSH(stdout);
   docdiff=(DOC **)my_malloc(sizeof(DOC)*totpair);
   target=(double *)my_malloc(sizeof(double)*totpair); 
   greater=(long *)my_malloc(sizeof(long)*totpair); 
@@ -784,7 +785,7 @@ void svm_learn_ranking(DOC **docs, double *rankvalue, long int totdoc,
       }
     }
   }
-  printf("done.\n"); fflush(stdout);
+  C_PRINTF("done.\n"); C_FFLUSH(stdout);
 
   /* need to get a bigger kernel cache */
   if(*kernel_cache) {
@@ -949,7 +950,7 @@ void svm_learn_optimization(DOC **docs, double *rhs, long int
   if(learn_parm->svm_c == 0.0) {  /* default value for C */
     learn_parm->svm_c=1.0/(r_delta_avg*r_delta_avg);
     if(verbosity>=1) 
-      printf("Setting default regularization parameter C=%.4f\n",
+      C_PRINTF("Setting default regularization parameter C=%.4f\n",
 	     learn_parm->svm_c);
   }
 
@@ -974,13 +975,13 @@ void svm_learn_optimization(DOC **docs, double *rhs, long int
     for(i=0;i<totdoc;i++)     /*  be used on every constraint */
       if(!docs[i]->slackid) {
 	perror("Error: Missing shared slacks definitions in some of the examples.");
-	exit(0);
+	C_EXIT(0);
       }
       
   /* compute starting state for initial alpha values */
   if(alpha) {
     if(verbosity>=1) {
-      printf("Computing starting state..."); fflush(stdout);
+      C_PRINTF("Computing starting state..."); C_FFLUSH(stdout);
     }
     index = (long *)my_malloc(sizeof(long)*totdoc);
     index2dnum = (long *)my_malloc(sizeof(long)*(totdoc+11));
@@ -1016,14 +1017,14 @@ void svm_learn_optimization(DOC **docs, double *rhs, long int
     free(weights);
     free(aicache);
     if(verbosity>=1) {
-      printf("done.\n");  fflush(stdout);
+      C_PRINTF("done.\n");  C_FFLUSH(stdout);
     }   
   } 
 
   /* removing inconsistent does not work for general optimization problem */
   if(learn_parm->remove_inconsistent) {	  
     learn_parm->remove_inconsistent = 0;
-    printf("'remove inconsistent' not available in this mode. Switching option off!"); fflush(stdout);
+    C_PRINTF("'remove inconsistent' not available in this mode. Switching option off!"); C_FFLUSH(stdout);
   }
 
   /* caching makes no sense for linear kernel */
@@ -1032,7 +1033,7 @@ void svm_learn_optimization(DOC **docs, double *rhs, long int
   } 
 
   if(verbosity==1) {
-    printf("Optimizing"); fflush(stdout);
+    C_PRINTF("Optimizing"); C_FFLUSH(stdout);
   }
 
   /* train the svm */
@@ -1053,7 +1054,7 @@ void svm_learn_optimization(DOC **docs, double *rhs, long int
   learn_parm->iterations=iterations;
 
   if(verbosity>=1) {
-    if(verbosity==1) printf("done. (%ld iterations)\n",iterations);
+    if(verbosity==1) C_PRINTF("done. (%ld iterations)\n",iterations);
 
     misclassified=0;
     for(i=0;(i<totdoc);i++) { /* get final statistic */
@@ -1061,11 +1062,11 @@ void svm_learn_optimization(DOC **docs, double *rhs, long int
 	misclassified++;
     }
 
-    printf("Optimization finished (maxdiff=%.5f).\n",maxdiff); 
+    C_PRINTF("Optimization finished (maxdiff=%.5f).\n",maxdiff); 
 
     runtime_end=get_runtime();
     if(verbosity>=2) {
-      printf("Runtime in cpu-seconds: %.2f (%.2f%% for kernel/%.2f%% for optimizer/%.2f%% for final/%.2f%% for update/%.2f%% for model/%.2f%% for check/%.2f%% for select)\n",
+      C_PRINTF("Runtime in cpu-seconds: %.2f (%.2f%% for kernel/%.2f%% for optimizer/%.2f%% for final/%.2f%% for update/%.2f%% for model/%.2f%% for check/%.2f%% for select)\n",
         ((float)runtime_end-(float)runtime_start)/100.0,
         (100.0*timing_profile.time_kernel)/(float)(runtime_end-runtime_start),
 	(100.0*timing_profile.time_opti)/(float)(runtime_end-runtime_start),
@@ -1076,7 +1077,7 @@ void svm_learn_optimization(DOC **docs, double *rhs, long int
         (100.0*timing_profile.time_select)/(float)(runtime_end-runtime_start));
     }
     else {
-      printf("Runtime in cpu-seconds: %.2f\n",
+      C_PRINTF("Runtime in cpu-seconds: %.2f\n",
 	     (runtime_end-runtime_start)/100.0);
     }
   }
@@ -1089,7 +1090,7 @@ void svm_learn_optimization(DOC **docs, double *rhs, long int
       model_length+=a[i]*label[i]*lin[i];
     }
     model_length=sqrt(model_length);
-    fprintf(stdout,"Norm of weight vector: |w|=%.5f\n",model_length);
+    C_FPRINTF(stdout,"Norm of weight vector: |w|=%.5f\n",model_length);
   }
   
   if(learn_parm->sharedslack) {
@@ -1128,11 +1129,11 @@ void svm_learn_optimization(DOC **docs, double *rhs, long int
   
   if((verbosity>=1) && (!learn_parm->skip_final_opt_check)) {
     if(learn_parm->sharedslack) {
-      printf("Number of SV: %ld\n",
+      C_PRINTF("Number of SV: %ld\n",
 	     model->sv_num-1);
-      printf("Number of non-zero slack variables: %ld (out of %ld)\n",
+      C_PRINTF("Number of non-zero slack variables: %ld (out of %ld)\n",
 	     model->at_upper_bound,svsetnum);
-      fprintf(stdout,"L1 loss: loss=%.5f\n",loss);
+      C_FPRINTF(stdout,"L1 loss: loss=%.5f\n",loss);
     }
     else {
       upsupvecnum=0;
@@ -1142,16 +1143,16 @@ void svm_learn_optimization(DOC **docs, double *rhs, long int
 	    learn_parm->epsilon_a)) 
 	  upsupvecnum++;
       }
-      printf("Number of SV: %ld (including %ld at upper bound)\n",
+      C_PRINTF("Number of SV: %ld (including %ld at upper bound)\n",
 	     model->sv_num-1,upsupvecnum);
-      fprintf(stdout,"L1 loss: loss=%.5f\n",loss);
+      C_FPRINTF(stdout,"L1 loss: loss=%.5f\n",loss);
     }
     example_length=estimate_sphere(model,kernel_parm); 
-    fprintf(stdout,"Norm of longest example vector: |x|=%.5f\n",
+    C_FPRINTF(stdout,"Norm of longest example vector: |x|=%.5f\n",
 	    length_of_longest_document_vector(docs,totdoc,kernel_parm));
   }
   if(verbosity>=1) {
-    printf("Number of kernel evaluations: %ld\n",kernel_cache_statistic);
+    C_PRINTF("Number of kernel evaluations: %ld\n",kernel_cache_statistic);
   }
     
   if(alpha) {
@@ -1286,16 +1287,16 @@ long optimize_to_convergence(DOC **docs, long int *label, long int totdoc,
     if(kernel_cache)
       kernel_cache->time=iteration;  /* for lru cache */
     if(verbosity>=2) {
-      printf(
-	"Iteration %ld: ",iteration); fflush(stdout);
+      C_PRINTF(
+	"Iteration %ld: ",iteration); C_FFLUSH(stdout);
     }
     else if(verbosity==1) {
-      printf("."); fflush(stdout);
+      C_PRINTF("."); C_FFLUSH(stdout);
     }
 
     if(verbosity>=2) t0=get_runtime();
     if(verbosity>=3) {
-      printf("\nSelecting working set... "); fflush(stdout); 
+      C_PRINTF("\nSelecting working set... "); C_FFLUSH(stdout); 
     }
 
     if(learn_parm->svm_newvarsinqp>learn_parm->svm_maxqpsize) 
@@ -1392,7 +1393,7 @@ long optimize_to_convergence(DOC **docs, long int *label, long int totdoc,
     }
 
     if(verbosity>=2) {
-      printf(" %ld vectors chosen\n",choosenum); fflush(stdout); 
+      C_PRINTF(" %ld vectors chosen\n",choosenum); C_FFLUSH(stdout); 
     }
 
     if(verbosity>=2) t1=get_runtime();
@@ -1424,8 +1425,8 @@ long optimize_to_convergence(DOC **docs, long int *label, long int totdoc,
     if(verbosity>=3) {
       criterion=compute_objective_function(a,lin,c,learn_parm->eps,label,
 		                           active2dnum);
-      printf("Objective function (over active variables): %.16f\n",criterion);
-      fflush(stdout); 
+      C_PRINTF("Objective function (over active variables): %.16f\n",criterion);
+      C_FFLUSH(stdout); 
     }
 
     for(jj=0;(i=working2dnum[jj])>=0;jj++) {
@@ -1466,7 +1467,7 @@ long optimize_to_convergence(DOC **docs, long int *label, long int totdoc,
       terminate=1;
       retrain=0;
       if(verbosity>=1) 
-	printf("\nWARNING: Relaxing KT-Conditions due to slow progress! Terminating!\n");
+	C_PRINTF("\nWARNING: Relaxing KT-Conditions due to slow progress! Terminating!\n");
     }
 
     noshrink=0;
@@ -1476,10 +1477,10 @@ long optimize_to_convergence(DOC **docs, long int *label, long int totdoc,
       if(((verbosity>=1) && (kernel_parm->kernel_type != LINEAR)) 
 	 || (verbosity>=2)) {
 	if(verbosity==1) {
-	  printf("\n");
+	  C_PRINTF("\n");
 	}
-	printf(" Checking optimality of inactive variables..."); 
-	fflush(stdout);
+	C_PRINTF(" Checking optimality of inactive variables..."); 
+	C_FFLUSH(stdout);
       }
       t1=get_runtime();
       reactivate_inactive_examples(label,unlabeled,a,shrink_state,lin,c,totdoc,
@@ -1500,8 +1501,8 @@ long optimize_to_convergence(DOC **docs, long int *label, long int totdoc,
       timing_profile->time_shrink+=get_runtime()-t1;
       if(((verbosity>=1) && (kernel_parm->kernel_type != LINEAR)) 
 	 || (verbosity>=2)) {
-	printf("done.\n");  fflush(stdout);
-        printf(" Number of inactive variables = %ld\n",inactivenum);
+	C_PRINTF("done.\n");  C_FFLUSH(stdout);
+        C_PRINTF(" Number of inactive variables = %ld\n",inactivenum);
       }		  
     }
 
@@ -1516,12 +1517,12 @@ long optimize_to_convergence(DOC **docs, long int *label, long int totdoc,
       learn_parm->epsilon_crit=epsilon_crit_org;
     
     if(verbosity>=2) {
-      printf(" => (%ld SV (incl. %ld SV at u-bound), max violation=%.5f)\n",
+      C_PRINTF(" => (%ld SV (incl. %ld SV at u-bound), max violation=%.5f)\n",
 	     supvecnum,model->at_upper_bound,(*maxdiff)); 
-      fflush(stdout);
+      C_FFLUSH(stdout);
     }
     if(verbosity>=3) {
-      printf("\n");
+      C_PRINTF("\n");
     }
 
     if((!retrain) && (transduction)) {
@@ -1530,7 +1531,7 @@ long optimize_to_convergence(DOC **docs, long int *label, long int totdoc,
       }
       activenum=compute_index(shrink_state->active,totdoc,active2dnum);
       inactivenum=0;
-      if(verbosity==1) printf("done\n");
+      if(verbosity==1) C_PRINTF("done\n");
       retrain=incorporate_unlabeled_examples(model,label,inconsistent,
 					     unlabeled,a,lin,totdoc,
 					     selcrit,selexam,key,
@@ -1563,8 +1564,8 @@ long optimize_to_convergence(DOC **docs, long int *label, long int totdoc,
 
     if((!retrain) && learn_parm->remove_inconsistent) {
       if(verbosity>=1) {
-	printf(" Moving training errors to inconsistent examples...");
-	fflush(stdout);
+	C_PRINTF(" Moving training errors to inconsistent examples...");
+	C_FFLUSH(stdout);
       }
       if(learn_parm->remove_inconsistent == 1) {
 	retrain=identify_inconsistent(a,label,unlabeled,totdoc,learn_parm,
@@ -1584,9 +1585,9 @@ long optimize_to_convergence(DOC **docs, long int *label, long int totdoc,
 	} 
       }
       if(verbosity>=1) {
-	printf("done.\n");
+	C_PRINTF("done.\n");
 	if(retrain) {
-	  printf(" Now %ld inconsistent examples.\n",inconsistentnum);
+	  C_PRINTF(" Now %ld inconsistent examples.\n",inconsistentnum);
 	}
       }
     }
@@ -1736,16 +1737,16 @@ long optimize_to_convergence_sharedslack(DOC **docs, long int *label,
     if(kernel_cache)
       kernel_cache->time=iteration;  /* for lru cache */
     if(verbosity>=2) {
-      printf(
-	"Iteration %ld: ",iteration); fflush(stdout);
+      C_PRINTF(
+	"Iteration %ld: ",iteration); C_FFLUSH(stdout);
     }
     else if(verbosity==1) {
-      printf("."); fflush(stdout);
+      C_PRINTF("."); C_FFLUSH(stdout);
     }
 
     if(verbosity>=2) t0=get_runtime();
     if(verbosity>=3) {
-      printf("\nSelecting working set... "); fflush(stdout); 
+      C_PRINTF("\nSelecting working set... "); C_FFLUSH(stdout); 
     }
 
     if(learn_parm->svm_newvarsinqp>learn_parm->svm_maxqpsize) 
@@ -1761,7 +1762,7 @@ long optimize_to_convergence_sharedslack(DOC **docs, long int *label,
 	 || (!slackset) || (maxsharedviol<learn_parm->epsilon_crit)){
 	/* do a step with examples from different slack sets */
 	if(verbosity >= 2) {
-	  printf("(i-step)"); fflush(stdout);
+	  C_PRINTF("(i-step)"); C_FFLUSH(stdout);
 	}
 	i=0;
 	for(jj=0;(j=working2dnum[jj])>=0;jj++) { /* clear old part of working set */
@@ -1803,7 +1804,7 @@ long optimize_to_convergence_sharedslack(DOC **docs, long int *label,
       }
       else { /* do a step with all examples from same slack set */
 	if(verbosity >= 2) {
-	  printf("(j-step on %ld)",slackset); fflush(stdout);
+	  C_PRINTF("(j-step on %ld)",slackset); C_FFLUSH(stdout);
 	}
 	jointstep=1;
 	for(jj=0;(j=working2dnum[jj])>=0;jj++) { /* clear working set */
@@ -1818,7 +1819,7 @@ long optimize_to_convergence_sharedslack(DOC **docs, long int *label,
 	  else {
 	    ignore[j]=0; 
 	    learn_parm->svm_cost[j]=learn_parm->svm_c;
-	    /* printf("Inslackset(%ld,%ld)",j,shrink_state->active[j]); */
+	    /* C_PRINTF("Inslackset(%ld,%ld)",j,shrink_state->active[j]); */
 	  }
 	}
 	learn_parm->biased_hyperplane=1;
@@ -1844,7 +1845,7 @@ long optimize_to_convergence_sharedslack(DOC **docs, long int *label,
     }
 
     if(verbosity>=2) {
-      printf(" %ld vectors chosen\n",choosenum); fflush(stdout); 
+      C_PRINTF(" %ld vectors chosen\n",choosenum); C_FFLUSH(stdout); 
     }
 
     if(verbosity>=2) t1=get_runtime();
@@ -1897,8 +1898,8 @@ long optimize_to_convergence_sharedslack(DOC **docs, long int *label,
     if(verbosity>=3) {
       criterion=compute_objective_function(a,lin,c,learn_parm->eps,label,
 		                           active2dnum);
-      printf("Objective function (over active variables): %.16f\n",criterion);
-      fflush(stdout); 
+      C_PRINTF("Objective function (over active variables): %.16f\n",criterion);
+      C_FFLUSH(stdout); 
     }
 
     for(jj=0;(i=working2dnum[jj])>=0;jj++) {
@@ -1931,7 +1932,7 @@ long optimize_to_convergence_sharedslack(DOC **docs, long int *label,
       terminate=1;
       retrain=0;
       if(verbosity>=1) 
-	printf("\nWARNING: Relaxing KT-Conditions due to slow progress! Terminating!\n");
+	C_PRINTF("\nWARNING: Relaxing KT-Conditions due to slow progress! Terminating!\n");
     }
 
     noshrink=0; 
@@ -1942,10 +1943,10 @@ long optimize_to_convergence_sharedslack(DOC **docs, long int *label,
       if(((verbosity>=1) && (kernel_parm->kernel_type != LINEAR)) 
 	 || (verbosity>=2)) {
 	if(verbosity==1) {
-	  printf("\n");
+	  C_PRINTF("\n");
 	}
-	printf(" Checking optimality of inactive variables..."); 
-	fflush(stdout);
+	C_PRINTF(" Checking optimality of inactive variables..."); 
+	C_FFLUSH(stdout);
       }
       t1=get_runtime();
       reactivate_inactive_examples(label,unlabeled,a,shrink_state,lin,c,totdoc,
@@ -1974,8 +1975,8 @@ long optimize_to_convergence_sharedslack(DOC **docs, long int *label,
       timing_profile->time_shrink+=get_runtime()-t1;
       if(((verbosity>=1) && (kernel_parm->kernel_type != LINEAR)) 
 	 || (verbosity>=2)) {
-	printf("done.\n");  fflush(stdout);
-        printf(" Number of inactive variables = %ld\n",inactivenum);
+	C_PRINTF("done.\n");  C_FFLUSH(stdout);
+        C_PRINTF(" Number of inactive variables = %ld\n",inactivenum);
       }		  
     }
 
@@ -1990,12 +1991,12 @@ long optimize_to_convergence_sharedslack(DOC **docs, long int *label,
       learn_parm->epsilon_crit=epsilon_crit_org;
     
     if(verbosity>=2) {
-      printf(" => (%ld SV (incl. %ld SV at u-bound), max violation=%.5f)\n",
+      C_PRINTF(" => (%ld SV (incl. %ld SV at u-bound), max violation=%.5f)\n",
 	     supvecnum,model->at_upper_bound,(*maxdiff)); 
-      fflush(stdout);
+      C_FFLUSH(stdout);
     }
     if(verbosity>=3) {
-      printf("\n");
+      C_PRINTF("\n");
     }
 
     if(((iteration % 10) == 0) && (!noshrink)) {
@@ -2119,7 +2120,7 @@ void optimize_svm(DOC **docs, long int *label, long int *unlabeled,
 				      kernel_parm,qp);
 
     if(verbosity>=3) {
-      printf("Running optimizer..."); fflush(stdout);
+      C_PRINTF("Running optimizer..."); C_FFLUSH(stdout);
     }
     /* call the qp-subsolver */
     a_v=optimize_qp(qp,epsilon_crit_target,
@@ -2129,7 +2130,7 @@ void optimize_svm(DOC **docs, long int *label, long int *unlabeled,
                                    /* b is calculated in calculate_model. */
 		    learn_parm);
     if(verbosity>=3) {         
-      printf("done\n");
+      C_PRINTF("done\n");
     }
 
     for(i=0;i<varnum;i++) {
@@ -2156,8 +2157,8 @@ void compute_matrices_for_optimization(DOC **docs, long int *label,
   register double kernel_temp;
 
   if(verbosity>=3) {
-    fprintf(stdout,"Computing qp-matrices (type %ld kernel [degree %ld, rbf_gamma %f, coef_lin %f, coef_const %f])...",kernel_parm->kernel_type,kernel_parm->poly_degree,kernel_parm->rbf_gamma,kernel_parm->coef_lin,kernel_parm->coef_const); 
-    fflush(stdout);
+    C_FPRINTF(stdout,"Computing qp-matrices (type %ld kernel [degree %ld, rbf_gamma %f, coef_lin %f, coef_const %f])...",kernel_parm->kernel_type,kernel_parm->poly_degree,kernel_parm->rbf_gamma,kernel_parm->coef_lin,kernel_parm->coef_const); 
+    C_FFLUSH(stdout);
   }
 
   qp->opt_n=varnum;
@@ -2204,7 +2205,7 @@ void compute_matrices_for_optimization(DOC **docs, long int *label,
 
     if(verbosity>=3) {
       if(i % 20 == 0) {
-	fprintf(stdout,"%ld..",i); fflush(stdout);
+	C_FPRINTF(stdout,"%ld..",i); C_FFLUSH(stdout);
       }
     }
   }
@@ -2217,7 +2218,7 @@ void compute_matrices_for_optimization(DOC **docs, long int *label,
   }
 
   if(verbosity>=3) {
-    fprintf(stdout,"done\n");
+    C_FPRINTF(stdout,"done\n");
   }
 }
 
@@ -2232,7 +2233,7 @@ long calculate_svm_model(DOC **docs, long int *label, long int *unlabeled,
   double ex_c,b_temp,b_low,b_high;
 
   if(verbosity>=3) {
-    printf("Calculating model..."); fflush(stdout);
+    C_PRINTF("Calculating model..."); C_FFLUSH(stdout);
   }
 
   if(!learn_parm->biased_hyperplane) {
@@ -2330,12 +2331,12 @@ long calculate_svm_model(DOC **docs, long int *label, long int *unlabeled,
     }
     else {
       model->b=-(b_high+b_low)/2.0;  /* select b as the middle of range */
-      /* printf("\nb_low=%f, b_high=%f,b=%f\n",b_low,b_high,model->b); */
+      /* C_PRINTF("\nb_low=%f, b_high=%f,b=%f\n",b_low,b_high,model->b); */
     }
   }
 
   if(verbosity>=3) {
-    printf("done\n"); fflush(stdout);
+    C_PRINTF("done\n"); C_FFLUSH(stdout);
   }
 
   return(model->sv_num-1); /* have to substract one, since element 0 is empty*/
@@ -2437,15 +2438,15 @@ long check_optimality_sharedslack(DOC **docs, MODEL *model, long int *label,
     if((a[i]>learn_parm->epsilon_a) && (dist > target)) {
       if((dist-target)>(*maxdiff)) {  /* largest violation */
 	(*maxdiff)=dist-target;
-	if(verbosity>=5) printf("sid %ld: dist=%.2f, target=%.2f, slack=%.2f, a=%f, alphaslack=%f\n",docs[i]->slackid,dist,target,slack[docs[i]->slackid],a[i],alphaslack[docs[i]->slackid]);
-	if(verbosity>=5) printf(" (single %f)\n",(*maxdiff));
+	if(verbosity>=5) C_PRINTF("sid %ld: dist=%.2f, target=%.2f, slack=%.2f, a=%f, alphaslack=%f\n",docs[i]->slackid,dist,target,slack[docs[i]->slackid],a[i],alphaslack[docs[i]->slackid]);
+	if(verbosity>=5) C_PRINTF(" (single %f)\n",(*maxdiff));
       }
     }
     if((alphaslack[docs[i]->slackid]<ex_c) && (slack[docs[i]->slackid]>0)) {
       if((slack[docs[i]->slackid])>(*maxdiff)) { /* largest violation */
 	(*maxdiff)=slack[docs[i]->slackid];
-	if(verbosity>=5) printf("sid %ld: dist=%.2f, target=%.2f, slack=%.2f, a=%f, alphaslack=%f\n",docs[i]->slackid,dist,target,slack[docs[i]->slackid],a[i],alphaslack[docs[i]->slackid]);
-	if(verbosity>=5) printf(" (joint %f)\n",(*maxdiff));
+	if(verbosity>=5) C_PRINTF("sid %ld: dist=%.2f, target=%.2f, slack=%.2f, a=%f, alphaslack=%f\n",docs[i]->slackid,dist,target,slack[docs[i]->slackid],a[i],alphaslack[docs[i]->slackid]);
+	if(verbosity>=5) C_PRINTF(" (joint %f)\n",(*maxdiff));
       }
     }
     /* Count how long a variable was at lower/upper bound (and optimal).*/
@@ -2517,7 +2518,7 @@ long identify_inconsistent(double *a, long int *label,
 	inconsistent[i]=1;  /* never choose again */
 	retrain=2;          /* start over */
 	if(verbosity>=3) {
-	  printf("inconsistent(%ld)..",i); fflush(stdout);
+	  C_PRINTF("inconsistent(%ld)..",i); C_FFLUSH(stdout);
 	}
     }
   }
@@ -2545,7 +2546,7 @@ long identify_misclassified(double *lin, long int *label,
 	inconsistent[i]=1;  /* never choose again */
 	retrain=2;          /* start over */
 	if(verbosity>=3) {
-	  printf("inconsistent(%ld)..",i); fflush(stdout);
+	  C_PRINTF("inconsistent(%ld)..",i); C_FFLUSH(stdout);
 	}
     }
   }
@@ -2581,7 +2582,7 @@ long identify_one_misclassified(double *lin, long int *label,
     inconsistent[maxex]=1;  /* never choose again */
     retrain=2;          /* start over */
     if(verbosity>=3) {
-      printf("inconsistent(%ld)..",i); fflush(stdout);
+      C_PRINTF("inconsistent(%ld)..",i); C_FFLUSH(stdout);
     }
   }
   return(retrain);
@@ -2724,14 +2725,14 @@ long incorporate_unlabeled_examples(MODEL *model, long int *label,
       }
     }
     if((!unlabeled[i]) && (a[i]>(learn_parm->svm_cost[i]-learn_parm->epsilon_a))) {
-      /*      printf("Ubounded %ld (class %ld, unlabeled %ld)\n",i,label[i],unlabeled[i]); */
+      /*      C_PRINTF("Ubounded %ld (class %ld, unlabeled %ld)\n",i,label[i],unlabeled[i]); */
     }
   }
   if(verbosity>=2) {
-    printf("POS=%ld, ORGPOS=%ld, ORGNEG=%ld\n",pos,orgpos,orgneg);
-    printf("POS=%ld, NEWPOS=%ld, NEWNEG=%ld\n",pos,newpos,newneg);
-    printf("pos ratio = %f (%f).\n",(double)(upos)/(double)(allunlab),posratio);
-    fflush(stdout);
+    C_PRINTF("POS=%ld, ORGPOS=%ld, ORGNEG=%ld\n",pos,orgpos,orgneg);
+    C_PRINTF("POS=%ld, NEWPOS=%ld, NEWNEG=%ld\n",pos,newpos,newneg);
+    C_PRINTF("pos ratio = %f (%f).\n",(double)(upos)/(double)(allunlab),posratio);
+    C_FFLUSH(stdout);
   }
 
   if(transductcycle == 0) {
@@ -2775,22 +2776,22 @@ long incorporate_unlabeled_examples(MODEL *model, long int *label,
       }
     }
     if(verbosity>=1) {
-      /* printf("costratio %f, costratio_unlab %f, unlabbound %f\n",
+      /* C_PRINTF("costratio %f, costratio_unlab %f, unlabbound %f\n",
 	 learn_parm->svm_costratio,learn_parm->svm_costratio_unlab,
 	 learn_parm->svm_unlabbound); */
-      printf("Classifying unlabeled data as %ld POS / %ld NEG.\n",
+      C_PRINTF("Classifying unlabeled data as %ld POS / %ld NEG.\n",
 	     unsupaddnum1,unsupaddnum2); 
-      fflush(stdout);
+      C_FFLUSH(stdout);
     }
     if(verbosity >= 1) 
-      printf("Retraining.");
-    if(verbosity >= 2) printf("\n");
+      C_PRINTF("Retraining.");
+    if(verbosity >= 2) C_PRINTF("\n");
     return((long)3);
   }
   if((transductcycle % check_every) == 0) {
     if(verbosity >= 1) 
-      printf("Retraining.");
-    if(verbosity >= 2) printf("\n");
+      C_PRINTF("Retraining.");
+    if(verbosity >= 2) C_PRINTF("\n");
     j1=0;
     j2=0;
     unsupaddnum1=0;
@@ -2823,12 +2824,12 @@ long incorporate_unlabeled_examples(MODEL *model, long int *label,
     }
 
     if(verbosity>=2) {
-      /* printf("costratio %f, costratio_unlab %f, unlabbound %f\n",
+      /* C_PRINTF("costratio %f, costratio_unlab %f, unlabbound %f\n",
 	     learn_parm->svm_costratio,learn_parm->svm_costratio_unlab,
 	     learn_parm->svm_unlabbound); */
-      printf("%ld positive -> Added %ld POS / %ld NEG unlabeled examples.\n",
+      C_PRINTF("%ld positive -> Added %ld POS / %ld NEG unlabeled examples.\n",
 	     upos,unsupaddnum1,unsupaddnum2); 
-      fflush(stdout);
+      C_FFLUSH(stdout);
     }
 
     if(learn_parm->svm_unlabbound == 1) {
@@ -2854,9 +2855,9 @@ long incorporate_unlabeled_examples(MODEL *model, long int *label,
     }
     model_length=sqrt(model_length); 
     if(verbosity>=2) {
-      printf("Model-length = %f (%f), loss = %f, objective = %f\n",
+      C_PRINTF("Model-length = %f (%f), loss = %f, objective = %f\n",
 	     model_length,sumalpha,loss,loss+0.5*model_length*model_length);
-      fflush(stdout);
+      C_FFLUSH(stdout);
     }
     j1=0;
     j2=0;
@@ -2912,7 +2913,7 @@ long incorporate_unlabeled_examples(MODEL *model, long int *label,
     switchnum+=unsupaddnum1+unsupaddnum2;
 
     /* stop and print out current margin
-       printf("switchnum %ld %ld\n",switchnum,kernel_parm->poly_degree);
+       C_PRINTF("switchnum %ld %ld\n",switchnum,kernel_parm->poly_degree);
        if(switchnum == 2*kernel_parm->poly_degree) {
        learn_parm->svm_unlabbound=1;
        }
@@ -2927,7 +2928,7 @@ long incorporate_unlabeled_examples(MODEL *model, long int *label,
 	write_prediction(learn_parm->predfile,model,lin,a,unlabeled,label,
 			 totdoc,learn_parm);  
 	if(verbosity>=1)
-	  printf("Number of switches: %ld\n",switchnum);
+	  C_PRINTF("Number of switches: %ld\n",switchnum);
 	return((long)0);
       }
       switchsens=switchsensorg;
@@ -2937,16 +2938,16 @@ long incorporate_unlabeled_examples(MODEL *model, long int *label,
       }
       model->at_upper_bound=0; /* since upper bound increased */
       if(verbosity>=1) 
-	printf("Increasing influence of unlabeled examples to %f%% .",
+	C_PRINTF("Increasing influence of unlabeled examples to %f%% .",
 	       learn_parm->svm_unlabbound*100.0);
     }
     else if(verbosity>=1) {
-      printf("%ld positive -> Switching labels of %ld POS / %ld NEG unlabeled examples.",
+      C_PRINTF("%ld positive -> Switching labels of %ld POS / %ld NEG unlabeled examples.",
 	     upos,unsupaddnum1,unsupaddnum2); 
-      fflush(stdout);
+      C_FFLUSH(stdout);
     }
 
-    if(verbosity >= 2) printf("\n");
+    if(verbosity >= 2) C_PRINTF("\n");
     
     learn_parm->epsilon_crit=0.5; /* don't need to be so picky */
 
@@ -3277,7 +3278,7 @@ long shrink_problem(DOC **docs,
     /* Shrink problem by removing those variables which are */
     /* optimal at a bound for a minimum number of iterations */
     if(verbosity>=2) {
-      printf(" Shrinking..."); fflush(stdout);
+      C_PRINTF(" Shrinking..."); C_FFLUSH(stdout);
     }
     if(kernel_parm->kernel_type != LINEAR) { /*  non-linear case save alphas */
       a_old=(double *)my_malloc(sizeof(double)*totdoc);
@@ -3304,8 +3305,8 @@ long shrink_problem(DOC **docs,
       shrink_state->deactnum=0;
     }
     if(verbosity>=2) {
-      printf("done.\n"); fflush(stdout);
-      printf(" Number of inactive variables = %ld\n",totdoc-activenum);
+      C_PRINTF("done.\n"); C_FFLUSH(stdout);
+      C_PRINTF(" Number of inactive variables = %ld\n",totdoc-activenum);
     }
   }
   return(activenum);
@@ -3366,7 +3367,7 @@ void reactivate_inactive_examples(long int *label,
     inactive2dnum=(long *)my_malloc(sizeof(long)*(totdoc+11));
     for(t=shrink_state->deactnum-1;(t>=0) && shrink_state->a_history[t];t--) {
       if(verbosity>=2) {
-	printf("%ld..",t); fflush(stdout);
+	C_PRINTF("%ld..",t); C_FFLUSH(stdout);
       }
       a_old=shrink_state->a_history[t];    
       for(i=0;i<totdoc;i++) {
@@ -3523,7 +3524,7 @@ void kernel_cache_shrink(KERNEL_CACHE *kernel_cache, long int totdoc,
   long *keep;
 
   if(verbosity>=2) {
-    printf(" Reorganizing cache..."); fflush(stdout);
+    C_PRINTF(" Reorganizing cache..."); C_FFLUSH(stdout);
   }
 
   keep=(long *)my_malloc(sizeof(long)*totdoc);
@@ -3573,8 +3574,8 @@ void kernel_cache_shrink(KERNEL_CACHE *kernel_cache, long int totdoc,
   free(keep);
 
   if(verbosity>=2) {
-    printf("done.\n"); fflush(stdout);
-    printf(" Cache-size in rows = %ld\n",kernel_cache->max_elems);
+    C_PRINTF("done.\n"); C_FFLUSH(stdout);
+    C_PRINTF(" Cache-size in rows = %ld\n",kernel_cache->max_elems);
   }
 }
 
@@ -3600,8 +3601,8 @@ KERNEL_CACHE *kernel_cache_init(long int totdoc, long int buffsize)
   }
 
   if(verbosity>=2) {
-    printf(" Cache-size in rows = %ld\n",kernel_cache->max_elems);
-    printf(" Kernel evals so far: %ld\n",kernel_cache_statistic);    
+    C_PRINTF(" Cache-size in rows = %ld\n",kernel_cache->max_elems);
+    C_PRINTF(" Kernel evals so far: %ld\n",kernel_cache_statistic);    
   }
 
   kernel_cache->elems=0;   /* initialize cache */
@@ -3885,7 +3886,7 @@ double distribute_alpha_t_greedily(long int *sv2dnum, long int svnum,
 	allskip=0;
 	if(val < thresh) {
 	  i=svnum;
-	  /*	  printf("EARLY"); */
+	  /*	  C_PRINTF("EARLY"); */
 	}
       }
     }
@@ -3908,7 +3909,7 @@ double distribute_alpha_t_greedily(long int *sv2dnum, long int svnum,
   free(cache);
   free(trow);
 
-  /*  printf("Distribute[%ld](%ld)=%f, ",docnum,best_depth,best); */
+  /*  C_PRINTF("Distribute[%ld](%ld)=%f, ",docnum,best_depth,best); */
   return(best);
 }
 
@@ -3972,11 +3973,11 @@ void estimate_transduction_quality(MODEL *model, long int *label,
       }
     }
   }
-  printf("xacrit>=1: labeledpos=%.5f labeledneg=%.5f default=%.5f\n",(double)labpos/(double)totlab*100.0,(double)labneg/(double)totlab*100.0,(double)totlabpos/(double)(totlab)*100.0);
-  printf("xacrit>=1: unlabelpos=%.5f unlabelneg=%.5f\n",(double)ulabpos/(double)totulab*100.0,(double)ulabneg/(double)totulab*100.0);
-  printf("xacrit>=1: labeled=%.5f unlabled=%.5f all=%.5f\n",(double)lab/(double)totlab*100.0,(double)ulab/(double)totulab*100.0,(double)l/(double)(totdoc)*100.0);
-  printf("xacritsum: labeled=%.5f unlabled=%.5f all=%.5f\n",(double)labsum/(double)totlab*100.0,(double)ulabsum/(double)totulab*100.0,(double)(labsum+ulabsum)/(double)(totdoc)*100.0);
-  printf("r_delta_sq=%.5f xisum=%.5f asum=%.5f\n",r_delta_sq,xisum,asum);
+  C_PRINTF("xacrit>=1: labeledpos=%.5f labeledneg=%.5f default=%.5f\n",(double)labpos/(double)totlab*100.0,(double)labneg/(double)totlab*100.0,(double)totlabpos/(double)(totlab)*100.0);
+  C_PRINTF("xacrit>=1: unlabelpos=%.5f unlabelneg=%.5f\n",(double)ulabpos/(double)totulab*100.0,(double)ulabneg/(double)totulab*100.0);
+  C_PRINTF("xacrit>=1: labeled=%.5f unlabled=%.5f all=%.5f\n",(double)lab/(double)totlab*100.0,(double)ulab/(double)totulab*100.0,(double)l/(double)(totdoc)*100.0);
+  C_PRINTF("xacritsum: labeled=%.5f unlabled=%.5f all=%.5f\n",(double)labsum/(double)totlab*100.0,(double)ulabsum/(double)totulab*100.0,(double)(labsum+ulabsum)/(double)(totdoc)*100.0);
+  C_PRINTF("r_delta_sq=%.5f xisum=%.5f asum=%.5f\n",r_delta_sq,xisum,asum);
 }
 
 double estimate_margin_vcdim(MODEL *model, double w, double R, 
@@ -4098,10 +4099,10 @@ void write_prediction(char *predfile, MODEL *model, double *lin,
   double dist,a_max;
 
   if(verbosity>=1) {
-    printf("Writing prediction file..."); fflush(stdout);
+    C_PRINTF("Writing prediction file..."); C_FFLUSH(stdout);
   }
   if ((predfl = fopen (predfile, "w")) == NULL)
-  { perror (predfile); exit (1); }
+  { perror (predfile); C_EXIT (1); }
   a_max=learn_parm->epsilon_a;
   for(i=0;i<totdoc;i++) {
     if((unlabeled[i]) && (a[i]>a_max)) {
@@ -4117,16 +4118,16 @@ void write_prediction(char *predfile, MODEL *model, double *lin,
 	dist=(lin[i]-model->b);
       }
       if(dist>0) {
-	fprintf(predfl,"%.8g:+1 %.8g:-1\n",dist,-dist);
+	C_FPRINTF(predfl,"%.8g:+1 %.8g:-1\n",dist,-dist);
       }
       else {
-	fprintf(predfl,"%.8g:-1 %.8g:+1\n",-dist,dist);
+	C_FPRINTF(predfl,"%.8g:-1 %.8g:+1\n",-dist,dist);
       }
     }
   }
   fclose(predfl);
   if(verbosity>=1) {
-    printf("done\n");
+    C_PRINTF("done\n");
   }
 }
 
@@ -4137,16 +4138,16 @@ void write_alphas(char *alphafile, double *a,
   long i;
 
   if(verbosity>=1) {
-    printf("Writing alpha file..."); fflush(stdout);
+    C_PRINTF("Writing alpha file..."); C_FFLUSH(stdout);
   }
   if ((alphafl = fopen (alphafile, "w")) == NULL)
-  { perror (alphafile); exit (1); }
+  { perror (alphafile); C_EXIT (1); }
   for(i=0;i<totdoc;i++) {
-    fprintf(alphafl,"%.18g\n",a[i]*(double)label[i]);
+    C_FPRINTF(alphafl,"%.18g\n",a[i]*(double)label[i]);
   }
   fclose(alphafl);
   if(verbosity>=1) {
-    printf("done\n");
+    C_PRINTF("done\n");
   }
 }
 
