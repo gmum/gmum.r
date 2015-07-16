@@ -55,9 +55,6 @@ public:
 	// Calculates if growing the grid will payoff
 	bool check_grow();
 
-	// Print the grid
-	void print3d();
-
 	double getCellLength() const {
 		return m_l;
 	}
@@ -164,7 +161,7 @@ private:
 		return (x) >= 0 && (x) < m_grid.size();
 	}
 
-	bool isZero(double x) {
+	bool isZero(double x) { 
 		return x > -EPS && x < EPS;
 	}
 

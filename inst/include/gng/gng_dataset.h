@@ -126,8 +126,7 @@ public:
 			if (access_method_ == Sampling) {
 				return RANDOM_INT(mt_rand, 0, size() - 1);
 			} else {
-				exit(0);
-                const double * ex;
+        const double * ex;
 				unsigned int index;
 
 				do {

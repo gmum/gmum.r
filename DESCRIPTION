@@ -24,6 +24,7 @@ Suggests:
     car,
     caret,
     e1071,
+    klaR,
     methods,
     mlbench,
     rattle,
