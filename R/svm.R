@@ -392,7 +392,6 @@ evalqOnLoad({
       stop("bad kernel: %s" )
     if (prep != "2e" && prep != "none") stop(sprintf("bad preprocess: %s", prep ))
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
-    # if (C < 0 || gamma < 0 || degree < 1) stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
     if (C == 0 && core == "libsvm"){ # libsvm does not handle C=0, svmlight does
       warning("libsvm doesn't support C=0, switching to svmlight")
       core <- "svmlight"

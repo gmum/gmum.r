@@ -2,16 +2,18 @@
 #' 
 #' @title plot
 #' 
+#' @rdname cec-plot
+#' 
 #' @description Plot clustering found on 2D plot coloring by cluster.
 #' 
 #' @export
 #' 
-#' @usage plot(cec)
-#'
 #' @param x CEC model object.
 #' @param slice List of dimentions chosen for display since plot is 2D.
 #' @param ellipses Outline clusters.
 #' @param centers Marks center of every cluster.
+#' 
+#' @param method KAROL/MARCIN PLZ DOCUMENT THIS
 #' 
 #' @examples
 #' \dontrun{
@@ -21,12 +23,11 @@
 #' plot(cec, ellipses=TRUE, centers=FALSE)
 #' plot(cec, method='pca', ellipses=TRUE, centers=FALSE)
 #' }
-
 plot.cec <- NULL
 
 evalqOnLoad({
   
-  plot.cec <- function(x, slice = c(), method='normal', ellipses = FALSE, centers = FALSE) {
+  plot.cec <<- function(x, slice = c(), method='normal', ellipses = FALSE, centers = FALSE) {
     
     d <- x$x()
     if(method == 'pca'){

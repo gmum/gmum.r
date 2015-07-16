@@ -11,8 +11,6 @@
 #' 
 #' @export
 #' 
-#' @usage print.cec(cec)
-#' 
 print.cec <- NULL
 
 

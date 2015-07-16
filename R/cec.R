@@ -29,15 +29,14 @@
 #' @param params.cov Covariance matrix for covariance family.
 #' @param params.centroids List of centroids.
 #' @param params.mix List of cluster with mixed Gaussian types.
+#'  
+#' @param params.function KAROL/MARCIN PLZ DOCUMENT THIS
+#'
 #' @param control.nstart How many times to perform algorithm.
 #' @param control.eps What change of value should terminate algorithm.
 #' @param control.itmax Maximum number of iterations at each start.
 #' @param log.energy Records collected energy of all clusters in each iteration.
 #' @param log.ncluster Records number of clusters in each iteration.
-#' @param log.iters Records number of iterations.
-#' 
-#' @usage
-#' CEC
 #' 
 #' @examples
 #' \dontrun{
@@ -173,17 +172,6 @@ log.energy.cec <- NULL
 #' 
 log.iters.cec <- NULL
 
-#' @title nstart
-#' 
-#' @description Print number of times CEC algorithm is to be performed. The best outcome
-#' is chosen as result.
-#'  
-#' @docType methods
-#'
-#' @param c CEC model object.
-#' 
-nstart.cec <- NULL
-
 loadModule('cec', TRUE)
 
 CEC <- function(x = NULL,
@@ -298,6 +286,27 @@ log.iters.cec <- function(c) {
   c$log.iters()
 }
 
+predict.cec <- function(object, x) {
+  if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
+    stop("Wrong target class, please provide data.frame, matrix or numeric vector")
+  }
+  
+  if(is(x, "vector")){
+    x = matrix(x, nrow=1, byrow=TRUE)
+  }
+  else if (!is(x, "matrix")) {
+    x = data.matrix(x)
+  }
+  
+  if(dim(object$x())[2] != dim(x)[2]){
+    stop("Incompatible dimension!")
+  }
+  
+  apply(x, 1, function(row) {
+    object$predict(row)
+  })
+}
+
 setGeneric("runAll", function(c) standardGeneric("runAll"))
 setGeneric("runOneIteration", function(c) standardGeneric("runOneIteration"))
 setGeneric("energy", function(c) standardGeneric("energy"))
@@ -312,6 +321,8 @@ setGeneric("log.iters", function(c) standardGeneric("log.iters"))
 
 evalqOnLoad({
   
+    
+  
     setMethod("runAll", "Rcpp_CecModel", runAll.cec)
     setMethod("runOneIteration", "Rcpp_CecModel", runOneIteration.cec)
     setMethod("energy", "Rcpp_CecModel", energy.cec)
@@ -323,25 +334,5 @@ evalqOnLoad({
     setMethod("log.energy", "Rcpp_CecModel", log.energy.cec)
     setMethod("log.iters", "Rcpp_CecModel", log.iters.cec)
   
-    setMethod("predict", "Rcpp_CecModel", function(object, x) {
-      if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
-        stop("Wrong target class, please provide data.frame, matrix or numeric vector")
-      }
-      
-      if(is(x, "vector")){
-        x = matrix(x, nrow=1, byrow=TRUE)
-      }
-      else if (!is(x, "matrix")) {
-        x = data.matrix(x)
-      }
-      
-      if(dim(object$x())[2] != dim(x)[2]){
-        stop("Incompatible dimension!")
-      }
-      
-      apply(x, 1, function(row) {
-        object$predict(row)
-      })
-      
-    })
+    setMethod("predict", "Rcpp_CecModel", predict.cec)
 })
