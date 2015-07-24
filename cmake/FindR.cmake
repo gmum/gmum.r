@@ -1,10 +1,40 @@
 # Defines the following:
-#  R_COMMAND           - Path to R command
-#  R_HOME              - Path to 'R home', as reported by R
 #  R_INCLUDE_DIR       - Path to R include directories
-#  R_CXX_FLAGS         - Rcpp and RcppArmadillo CXX flags (include directories)
-#  R_LD_FLAGS          - -llib1 -llib2 -llib3 flags for linker used by R
-#  RCPPARMADILLO_CXX_FLAGS - CXX flags required by RcppArmadillo
+#  R_CXX_FLAGS         - R library compiler flags (include directories)
+#  R_LD_FLAGS          - R library linker flags 
+#  R_LIBS              - R libraries
+#  R_LIB_DIRS          - R library link directories
+
+function(GetItemsWithNoPrefix resultVar prefix)
+    set(result)
+    foreach(ITR ${ARGN})
+        if(NOT ITR MATCHES "^${prefix}.*")
+            list(APPEND result ${ITR})
+        endif()
+    endforeach()
+    set(${resultVar} ${result} PARENT_SCOPE)
+endfunction()
+
+function(GetItemsWithPrefix resultVar prefix)
+    set(result)
+    foreach(ITR ${ARGN})
+        if(ITR MATCHES "^${prefix}.*")
+            list(APPEND result ${ITR})
+        endif()
+    endforeach()
+    set(${resultVar} ${result} PARENT_SCOPE)
+endfunction()
+
+function(RemovePrefix resultVar prefix)
+    set(result)
+    foreach(ITR ${ARGN})
+        if(ITR MATCHES "^${prefix}.*")
+            STRING(REGEX REPLACE "^${prefix}" "" ITR ${ITR})
+        endif()
+        list(APPEND result ${ITR})
+    endforeach()
+    set(${resultVar} ${result} PARENT_SCOPE)
+endfunction()
 
 set(TEMP_CMAKE_FIND_APPBUNDLE ${CMAKE_FIND_APPBUNDLE})
 set(CMAKE_FIND_APPBUNDLE "NEVER")
@@ -40,34 +70,10 @@ if(R_COMMAND)
         OUTPUT_VARIABLE R_LD_FLAGS
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     
-    if(R_LD_FLAGS)
-        message("-- R_LD_FLAGS found: ${R_LD_FLAGS}")
-    else(R_LD_FLAGS)
+    if(NOT R_LD_FLAGS)
         message(FATAL_ERROR "R_LD_FLAGS not found" )
-    endif(R_LD_FLAGS)
- 
-    EXECUTE_PROCESS(
-        COMMAND ${R_COMMAND} --vanilla --slave -e "RcppArmadillo:::CxxFlags()"
-        OUTPUT_VARIABLE RCPPARMADILLO_CXX_FLAGS
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    endif(NOT R_LD_FLAGS)
 
-    if(RCPPARMADILLO_CXX_FLAGS)
-        message("-- RCPPARMADILLO_CXX_FLAGS found: ${RCPPARMADILLO_CXX_FLAGS}")
-    else(RCPPARMADILLO_CXX_FLAGS)
-        message(FATAL_ERROR "RCPPARMADILLO_CXX_FLAGS not found" )
-    endif(RCPPARMADILLO_CXX_FLAGS)
-
-    EXECUTE_PROCESS(
-        COMMAND ${R_COMMAND} --vanilla --slave -e "Rcpp:::CxxFlags()"
-        OUTPUT_VARIABLE RCPP_CXX_FLAGS
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-    if(RCPP_CXX_FLAGS)
-        message("-- RCPP_CXX_FLAGS found: ${RCPP_CXX_FLAGS}")
-    else(RCPP_CXX_FLAGS)
-        message(FATAL_ERROR "RCPP_CXX_FLAGS not found" )
-    endif(RCPP_CXX_FLAGS)
- 
     EXECUTE_PROCESS(
         COMMAND ${R_COMMAND} "CMD" "config" "LAPACK_LIBS"
         OUTPUT_VARIABLE R_LIBRARY_LAPACK
@@ -90,8 +96,46 @@ if(R_COMMAND)
         message(FATAL_ERROR "R_LIBRARY_BLAS not found" )
     endif(R_LIBRARY_BLAS)
 
-    set(R_LD_FLAGS "${R_LD_FLAGS} ${R_LIBRARY_LAPACK} ${R_LIBRARY_BLAS}" CACHE TYPE STRING)
+    set(R_LD_FLAGS "${R_LD_FLAGS} ${R_LIBRARY_LAPACK} ${R_LIBRARY_BLAS}")
+    SEPARATE_ARGUMENTS(R_LD_FLAGS)
+
+    GetItemsWithPrefix(R_LIBS "-l" ${R_LD_FLAGS}) 
+    RemovePrefix(R_LIBS "-l" ${R_LIBS}) 
+    message(STATUS "R_LIBS: ${R_LIBS}")
+    GetItemsWithNoPrefix(R_LD_FLAGS "-l" ${R_LD_FLAGS}) 
+
+    GetItemsWithPrefix(R_LIB_DIRS "-L" ${R_LD_FLAGS}) 
+    RemovePrefix(R_LIB_DIRS "-L" ${R_LIB_DIRS})
+    message(STATUS "R_LIB_DIRS: ${R_LIB_DIRS}")
+    GetItemsWithNoPrefix(R_LD_FLAGS "-L" ${R_LD_FLAGS}) 
+
+    string (REPLACE ";" " " R_LD_FLAGS "${R_LD_FLAGS}")
+
+    EXECUTE_PROCESS(
+        COMMAND ${R_COMMAND} --vanilla --slave -e "RcppArmadillo:::CxxFlags()"
+        OUTPUT_VARIABLE RCPPARMADILLO_CXX_FLAGS
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+    if(RCPPARMADILLO_CXX_FLAGS)
+        message("-- RCPPARMADILLO_CXX_FLAGS found: ${RCPPARMADILLO_CXX_FLAGS}")
+    else(RCPPARMADILLO_CXX_FLAGS)
+        message(FATAL_ERROR "RCPPARMADILLO_CXX_FLAGS not found" )
+    endif(RCPPARMADILLO_CXX_FLAGS)
+
+    EXECUTE_PROCESS(
+        COMMAND ${R_COMMAND} --vanilla --slave -e "Rcpp:::CxxFlags()"
+        OUTPUT_VARIABLE RCPP_CXX_FLAGS
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+    if(RCPP_CXX_FLAGS)
+        message("-- RCPP_CXX_FLAGS found: ${RCPP_CXX_FLAGS}")
+    else(RCPP_CXX_FLAGS)
+        message(FATAL_ERROR "RCPP_CXX_FLAGS not found" )
+    endif(RCPP_CXX_FLAGS)
+ 
+    message(STATUS "R_LD_FLAGS: ${R_LD_FLAGS}")
     set(R_CXX_FLAGS "${RCPP_CXX_FLAGS} ${RCPPARMADILLO_CXX_FLAGS}" CACHE TYPE STRING)
+    message(STATUS "R_CXX_FLAGS: ${R_CXX_FLAGS}")
 else()
     message(SEND_ERROR "FindR.cmake requires the following variables to be set: R_COMMAND")
 endif()
