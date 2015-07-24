@@ -11,8 +11,6 @@ file(GLOB GMUMR_SOURCES
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${R_LD_FLAGS}") 
 set(CMAKE_CXX_FLAGS "${R_CXX_FLAGS} -std=c++0x")
 
-link_directories(${R_LIB_DIRS})
-
 if(APPLE)
     set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
 endif()

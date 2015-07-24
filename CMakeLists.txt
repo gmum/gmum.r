@@ -17,6 +17,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 add_definitions(-DNDEBUG -DNDEBUG_GMUM -DNDEBUG_GMUM_2 -DRCPP_INTERFACE -DARMA_64BIT_WORD)
 include_directories(${GMUM_INCLUDE} ${R_INCLUDE_DIR})
+link_directories(${R_LIB_DIRS})
 
 add_subdirectory(${SRC_DIR})
 add_subdirectory(${TESTS_DIR})
