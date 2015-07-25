@@ -73,6 +73,7 @@ void GNGConfiguration::deserialize(std::istream & in)  {
 		/**Dimensionality of examples*/
 		out << dim << endl;
 
+		REPORT("Saving: ")
 		REPORT(dim);
 
 		for (size_t i = 0; i < dim; ++i) {
@@ -104,7 +105,7 @@ void GNGConfiguration::deserialize(std::istream & in)  {
 		/**Initial reserve memory for nodes */
 		out << starting_nodes << endl; //imporant not to add endl for binary correctness
 
-        out << max_iter;
+        out << max_iter << endl;
 	}
 
 
@@ -168,7 +169,7 @@ void GNGConfiguration::deserialize(std::istream & in)  {
 		if (!(dim < 20 || !uniformgrid_optimization)) {
 
 			CERR(
-					"WARNING: It might be too big dimensionality for OptimizedGNG."
+					"WARNING_LEVEL: It might be too big dimensionality for OptimizedGNG."
 							"OptimizedGNG works best for smaller dimensionality dataset"
 							"Consider using PCA or other dim. reduction technique"
 							"\n");

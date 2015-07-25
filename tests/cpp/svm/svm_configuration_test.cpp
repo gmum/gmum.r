@@ -8,7 +8,7 @@
 
 namespace {
 
-int log_level = LogLevel::DEBUG;
+int log_level = LogLevel::DEBUG_LEVEL;
 
 // The fixture
 class SVMConfigurationTest: public ::testing::Test {

@@ -47,7 +47,7 @@ SingleResult Hartigan::single_loop(const arma::mat &points,
     unsigned int npoints = points.n_rows;
     SingleResult sr;
 
-    //    LOG(m_logger, LogLevel::INFO, to_string(clusters.size()));
+    //    LOG(m_logger, LogLevel::INFO_LEVEL, to_string(clusters.size()));
 
     for (unsigned int i = 0; i < npoints; i++) {
         unsigned int source = assignment[i];
@@ -80,8 +80,8 @@ SingleResult Hartigan::single_loop(const arma::mat &points,
                     energy_change = target_energy_change
                             + source_energy_change;
                 } catch (std::exception &e) {
-                    LOG(m_logger, LogLevel::ERR, "Energy change calculation");
-                    LOG(m_logger, LogLevel::ERR, dimension);
+                    LOG(m_logger, LogLevel::ERR_LEVEL, "Energy change calculation");
+                    LOG(m_logger, LogLevel::ERR_LEVEL, dimension);
                     throw(e);
                     //return SingleResult(switched, clusters.size(), 0);
                 }
@@ -115,7 +115,7 @@ SingleResult Hartigan::single_loop(const arma::mat &points,
             } catch (std::exception &e) {
                 //LOG(LogLevel::ERR, e.what());
                 //TODO: why not terminating here?
-                LOG(m_logger, LogLevel::ERR, "removeCluster");
+                LOG(m_logger, LogLevel::ERR_LEVEL, "removeCluster");
                 throw(e);
             }
         }
@@ -145,7 +145,7 @@ SingleResult Hartigan::single_loop(const arma::mat &points,
         }
     } while(!end_cleaning);
 
-    //LOG(m_logger, LogLevel::INFO, energy);
+    //LOG(m_logger, LogLevel::INFO_LEVEL, energy);
 
     double energy = 0;
     for (unsigned int i = 0; i < clusters_raw.size(); ++i) {

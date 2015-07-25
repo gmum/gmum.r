@@ -55,10 +55,7 @@ public:
 	double extra_data; //7 - extra data that is voted among vertices when adapting
 	double * position; //8... 8+dim-1
 
-	/*
-	 * Construct empty GNGNode - not initialized storage! Non initialized because used only internally
-	 * in GNGGraph.
-	 */
+	// Construct empty GNGNode
 	GNGNode() {
 		//prevent memory corruption
 		_position_owner = false;
@@ -68,7 +65,6 @@ public:
 	~GNGNode() {
 		if (_position_owner) {
 			delete[] position;
-
 		}
 	}
 

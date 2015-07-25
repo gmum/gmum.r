@@ -378,8 +378,6 @@ std::pair<double, int> GNGAlgorithm::adapt(const double * ex,
 	//TODO: assuming here GNGNode not any arbitrary node :/
 	GNGNode::EdgeIterator edg = nearest_0->begin();
 	while (edg != nearest_0->end()) {
-		DBG_PTR(m_logger, 2, "Currently on edge to" + to_string((edg)->nr));
-
 		(*edg)->age++;
 		(((*edg)->rev))->age++;
 
@@ -389,12 +387,6 @@ std::pair<double, int> GNGAlgorithm::adapt(const double * ex,
 		}
 
 		if ((*edg)->age > m_max_age) {
-
-			DBG_PTR(m_logger, 3,
-					"GNGAlgorith::Adapt::Removing aged edge "
-							+ to_string(nearest_0->nr) + " - "
-							+ to_string((edg)->nr));
-
 			int nr = (*edg)->nr;
 
 			//Note that this is O(E), but average number of edges is very small, so it is OK
@@ -426,8 +418,8 @@ std::pair<double, int> GNGAlgorithm::adapt(const double * ex,
 			if (m_g[nearest_0->nr].edgesCount == 0
 					&& this->m_utility_option == None) {
 
-				DBG_PTR(m_logger, 49,
-						"WARNING: GNGAlgorithm::Adapt() remove node because no edges, shouldn't happen"); //Shouldn't happen
+				LOG_PTR(m_logger, 1,
+						"GNGAlgorithm::Adapt() remove node because no edges, shouldn't happen"); //Shouldn't happen
 
 				if (m_toggle_uniformgrid)
 					ug->remove(m_g[nearest_0->nr].position);
@@ -685,7 +677,7 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 
 		DBG_PTR(m_logger, 9, "GNGAlgorithm::iteration "+to_string(m_iteration));
 	}
-	m_gng_status = GNG_TERMINATED
+	m_gng_status = GNG_TERMINATED;
 	DBG_PTR(m_logger, 30, "GNGAlgorithm::Terminated server");
 }
 
@@ -824,6 +816,7 @@ std::pair<int, int> GNGAlgorithm::_getNearestNeurons(const double *ex){
 			return std::pair<int, int>(nearest_index[0], nearest_index[1]);
 		} else {
 			DBG_PTR(m_logger, 1, "GNGAlgorithm::just called TwoNearestNodes");
+
 			int start_index = 0;
 			while (!m_g.existsNode(start_index))
 				++start_index;

@@ -136,10 +136,10 @@ private:
         // This shouldn't be necessary but R behaves strangely in this matter.
 		GNGServer * gng_server = (GNGServer*) server;
 		try {
-			DBG(gng_server->m_logger,10, "GNGServer::run::proceeding to algorithm");
+			DBG_PTR(gng_server->m_logger,10, "GNGServer::run::proceeding to algorithm");
 			gng_server->getAlgorithm().runAlgorithm();
 		} catch (std::exception & e) {
-			DBG(gng_server->m_logger,10, e.what());
+			DBG_PTR(gng_server->m_logger,10, e.what());
 		}
 	}
 

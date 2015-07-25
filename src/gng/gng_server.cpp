@@ -30,10 +30,33 @@ void GNGServer::init(GNGConfiguration configuration,
 
 	m_index = gng_server_count++;
 
+
+	/* If verbosity > 0 and production and using RCPP then logging to file
+	 It is because Rcout doesn't work outside of main thread
+	 This is first time I used nested macro ifs. This might be refactored to choose during creation like "log_to_file"
+	 parameter
+	 */
+	#ifdef RCPP_INTERFACE
+	#ifdef DEBUG
+	m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity));
+	#else
+	if(configuration.verbosity != 0){
+		ofstream* log_file = new ofstream();
+		log_file->open("gng_" + to_string(m_index) + ".log");
+		// TODO: There is leaked resource here
+		m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity, *log_file));
+	} else {
+		m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity));
+	}
+	#endif
+	#else
+	m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity));
+	#endif
+
 	algorithm_thread = 0;
 	m_running_thread_created = false;
 
-	m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity));
+
 
     if(configuration.seed != -1){
         LOG_PTR(m_logger, 5, "GNGServer()::seeding to "+to_str(configuration.seed));
@@ -377,9 +400,6 @@ void GNGServer::RinsertLabeledExamples(Rcpp::NumericMatrix & r_points,
 
 	arma::inplace_trans( *points, "lowmem");
 
-
-
-
 	if(extra.size()) {
 		if(!(points->n_cols== extra.size())){
 			CERR("Error: please pass same number of labels as examples\n");
@@ -440,8 +460,9 @@ GNGServer::~GNGServer() {
 		algorithm_thread->join();
 	}
 
-	LOG_PTR(m_logger, 5, "GNGServer::destructor for "+to_str(m_index)+" finished");
 
+
+	LOG_PTR(m_logger, 5, "GNGServer::destructor for "+to_str(m_index)+" finished");
 }
 
 unsigned GNGServer::getDatasetSize() const{
