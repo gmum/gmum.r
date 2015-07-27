@@ -73,7 +73,8 @@ gng.type.utility<- function(k=1.3){
 #' exporting igraph with convertToGraph function 
 #' 
 #' @examples
-#' 
+#' \dontrun{
+#' gng <- GNG(scaled.wine)
 #' # Plots igraph using first 2 coordinates and colors according to clusters
 #' plot(gng, mode=gng.plot.2d.errors, layout=gng.plot.layout.v2d, vertex.color=gng.plot.color.cluster)
 #' 
@@ -81,6 +82,7 @@ gng.type.utility<- function(k=1.3){
 #' plot(gng, mode=gng.plot.3d, layout=gng.plot.layout.v2d, vertex.color=gng.plot.color.cluster)
 #' 
 #' # For more possibilities see gng.plot.* constants
+#' }
 #' 
 plot.gng <- NULL
 
@@ -144,8 +146,9 @@ gngLoad <- NULL
 #' @docType methods
 #'
 #' @examples
-#' # Print position of the first centroid
+#' \dontrun{
 #' print(node(gng, predictCentroids(gng)[1])$pos)
+#' }
 #' 
 #' @aliases predictCentroids
 #'  
@@ -171,9 +174,13 @@ predictCentroids <- NULL
 #' @param x Can be either \code{vector} or \code{data.frame.}
 #' 
 #' @examples
+#' \dontrun{
+#' gng <- GNG(scaled.wine)
 #' # Find closest centroid to c(1,1,1)
 #' found.centroids <- predictCentroids(gng)
-#' findClosest(gng, found.centroids, c(1,1,1))
+#' # FIXME
+#' #findClosest(gng, found.centroids, c(1,1,1))
+#' }
 #' 
 #' @aliases predictCentroid
 #' 
@@ -198,8 +205,12 @@ findClosest <- NULL
 #' @param x Can be either \code{vector} or \code{data.frame}.
 #' 
 #' @examples
+#' \dontrun{
+#' gng <- GNG(scaled.wine)
 #' # Find closest component to c(1,1,1)
-#' predictComponent(gng,  c(1,1,1))
+#' # FIXME: Use suitable vector param
+#' #predictComponent(gng,  c(1,1,1))
+#' }
 #' 
 #' @aliases predictComponent
 predictComponent <- NULL
@@ -222,7 +233,10 @@ predictComponent <- NULL
 #' @param gng_id Id of the node to retrieve. This is the id returned by functions like predict, or centroids
 #' 
 #' @examples
+#' \dontrun{
+#' gng <- GNG(scaled.wine)
 #' print(node(gng, 10)$pos)
+#' }
 #' 
 #' @aliases node
 #' 
@@ -243,7 +257,11 @@ node.gng <- NULL
 #' @docType methods
 #'
 #' @examples
+#' \dontrun{
+#' gng <- GNG(scaled.wine)
+#' # TODO: Better example
 #' run(gng)
+#' }
 #' 
 #' @aliases run
 #'
@@ -263,7 +281,11 @@ run.gng <- NULL
 #' @docType methods
 #'
 #' @examples
+#' \dontrun{
+#' gng <- GNG(scaled.wine)
+#' # TODO: Better example
 #' pause(gng)
+#' }
 #' 
 #' @aliases pause
 #'
@@ -283,7 +305,11 @@ pause.gng <- NULL
 #' @docType methods
 #'
 #' @examples
+#' \dontrun{
+#' gng <- GNG(scaled.wine)
+#' # TODO: Better example
 #' terminate(gng)
+#' }
 #' 
 #' @aliases terminate
 #'
@@ -303,7 +329,11 @@ terminate.gng <- NULL
 #' @docType methods
 #'
 #' @examples
+#' \dontrun{
+#' gng <- GNG(scaled.wine)
+#' # TODO: Better example
 #' meanError(gng)
+#' }
 #' 
 #' @aliases meanError
 #'
@@ -363,7 +393,7 @@ errorStatistics.gng <- NULL
 #' @param value.range All example features should be in this range, required for optimized version of the algorithm. Default \code{(0,1)} 
 #' 
 #' @examples
-#' 
+#' \dontrun{
 #' # Train online optimizedGNG. All values in this dataset are in the range (-4.3, 4.3)
 #' data(wine, package="rattle")
 #' gng <- OptimizedGNG(train.online = TRUE), value.range=c(min(scale(wine[-1]),max(scale(wine[-1]))), max.nodes=20)
@@ -371,6 +401,7 @@ errorStatistics.gng <- NULL
 #' run(gng)
 #' Sys.sleep(10)
 #' pause(gng)
+#' }
 OptimizedGNG <- NULL
 
 
@@ -405,8 +436,11 @@ clustering.gng <- NULL
 #' @docType methods
 #'
 #' @examples
+#' \dontrun{
+#' gng <- GNG(scaled.wine)
+#' # TODO: Better example
 #' errorStatistics(gng)
-#' 
+#' }
 #' @aliases errorStatistics
 #'
 errorStatistics.gng <- NULL
@@ -446,7 +480,7 @@ errorStatistics.gng <- NULL
 #' 
 #'
 #' @examples
-#' 
+#' \dontrun{
 #' data(wine, package="rattle")
 #' scaled.wine <- scale(wine[-1])
 #' # Train in an offline manner
@@ -455,13 +489,14 @@ errorStatistics.gng <- NULL
 #' plot(gng)
 #'
 #' # Train in an online manner with utility (erasing obsolete nodes)
-#' gng <- GNG(scaled.wine, labels=wine$Type, max.nodes=20, training=gng.train.online(), k=1.3)
+#' gng <- GNG(scaled.wine, labels=wine$Type, max.nodes=20, train.online=TRUE, k=1.3)
 #' insertExamples(gng, scale(wine[-1])
 #' run(gng)
 #' Sys.sleep(10)
 #' terminate(gng)
 #' # Plot
 #' plot(gng)
+#' }
 #'
 GNG <- NULL
 
@@ -511,18 +546,17 @@ generateExamples <- NULL
 #' @docType methods
 #'
 #' @examples
-#' 
-#' #Add preset examples
+#' \dontrun{
+#' data(wine, package="rattle")
+#' scaled.wine <- scale(wine[-1])
+#' gng <- GNG(scaled.wine)
+#' # Add preset examples
 #' M = generateExamples(preset=gng.preset.sphere)
 #' insertExamples(gng, M)
+#' }
 #' @aliases insertExamples
 #'
 insertExamples.Rcpp_GNGServer <- NULL
-
-
-
-
-
 
 .GNG <- function(x=NULL, labels=c(),
                   beta=0.99, 

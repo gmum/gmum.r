@@ -111,44 +111,43 @@ void GNGConfiguration::deserialize(std::istream & in)  {
 	/**Validate server configuration. *Not working now**/
 	bool GNGConfiguration::check_correctness() {
 		if(alpha <= 0 || alpha > 1){
-            cerr << "ERROR: alpha should be in range (0,1)\n";
+            CERR("ERROR: alpha should be in range (0,1)\n");
             return false;        
         }
 
         if(beta <= 0 || beta > 1){
-            cerr << "ERROR: beta should be in range [0,1]\n";
+            CERR("ERROR: beta should be in range [0,1]\n");
             return false;        
         }
 
         if(eps_w <= 0 || eps_w > 1){
-            cerr << "ERROR: eps_v  should be in range [0,1]\n";
+            CERR("ERROR: eps_v  should be in range [0,1]\n");
             return false;        
         }
 
         if(eps_n <= 0 || eps_n > 1){
-            cerr << "ERROR: eps_v  should be in range [0,1]\n";
+            CERR("ERROR: eps_v  should be in range [0,1]\n");
             return false;        
         }
 
         if(max_age <= 2 || max_age > 10000){
-            cerr << "ERROR: max_age  should be in range [2,10000]\n";
+            CERR("ERROR: max_age  should be in range [2,10000]\n");
             return false;        
         }
 
         if((max_iter <= 2 && max_iter != -1) || max_nodes <= 2){
-            cerr << "ERROR: max_iter and max_nodes  should be in range [3,+inf]\n";
-            cerr<<max_iter<< " "<<max_nodes<<endl;
+            CERR("ERROR: max_iter and max_nodes  should be in range [3,+inf]\n");
             return false;        
 
         }
 
         if(dim <= 0){
-            cerr << "ERROR: incorrect dimensionality\n";
+            CERR("ERROR: incorrect dimensionality\n");
             return false;            
         }
 
         if(lambda <= 0 || lambda > 100000){
-            cerr << "ERROR lambda should in range [0, 100000]\n";
+            CERR("ERROR lambda should in range [0, 100000]\n");
             return false;
         }
 
@@ -156,37 +155,35 @@ void GNGConfiguration::deserialize(std::istream & in)  {
 
         if (experimental_utility_option != UtilityOff){
             if(uniformgrid_optimization || lazyheap_optimization) {
-			    cerr << "ERROR: please turn OFF optimization when using experimental utility option\n";
+			    CERR("ERROR: please turn OFF optimization when using experimental utility option\n");
 			    return false;
 		    }
         }
 
 		if (datasetType > 3 or datasetType <= 0) {
-			cerr << "ERROR: wrong database specified\n";
+			 CERR("ERROR: wrong database specified\n");
 
 			return false;
 		}
 		if (!(dim < 20 || !uniformgrid_optimization)) {
 
-			cerr
-					<< "WARNING: It might be too big dimensionality for OptimizedGNG."
+			CERR(
+					"WARNING: It might be too big dimensionality for OptimizedGNG."
 							"OptimizedGNG works best for smaller dimensionality dataset"
 							"Consider using PCA or other dim. reduction technique"
-							"\n";
+							"\n");
 
 		}
 		if (!(distance_function == gmum::GNGGraph::Euclidean
 				|| !uniformgrid_optimization)) {
 
-			cerr
-					<< "ERROR: You can use only Euclidean distance function with uniformgrid optimization\n";
+			CERR("ERROR: You can use only Euclidean distance function with uniformgrid optimization\n");
 			return false;
 		}
 		if (!(!uniformgrid_optimization
 				or (dim == axis.size() && dim == orig.size()))) {
 
-			cerr << "ERROR: dimensionality doesn't agree with axis and orig"
-					<< endl;
+			CERR("ERROR: dimensionality doesn't agree with axis and orig");
 			return false;
 		}
 

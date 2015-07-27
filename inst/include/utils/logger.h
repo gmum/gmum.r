@@ -5,14 +5,24 @@
 #include <string>
 #include <sstream>
 
-#define LOG(logger, level, text) logger.log(level, text);
-#define LOG_PTR(logger, level, text) logger->log(level, text);
-#ifdef DEBUG
-#define DBG(logger, level, text) logger.log(level, text);
-#define DBG_PTR(logger, level, text) logger->log(level, text);
+#ifdef RCPP_INTERFACE
+#include <RcppArmadillo.h>
+using namespace Rcpp;
+#define COUT(x) Rcpp::Rcout<<(x)<<std::endl<<std::flush;
+#define CERR(x) Rcpp::Rcerr<<(x)<<std::endl<<std::flush;
 #else
-#define DBG(logger, level, text)
-#define DBG_PTR(logger, level, text)
+#define COUT(x) cout<<(x)<<std::endl<<std::flush;
+#define CERR(x) cerr<<(x)<<std::endl<<std::flush;
+#endif
+
+#define LOG(logger, level, text) logger.log(level, text);
+  #define LOG_PTR(logger, level, text) logger->log(level, text);
+    #ifdef DEBUG
+    #define DBG(logger, level, text) logger.log(level, text);
+    #define DBG_PTR(logger, level, text) logger->log(level, text);
+  #else
+    #define DBG(logger, level, text)
+    #define DBG_PTR(logger, level, text)
 #endif
 
 class LogLevel {
@@ -33,7 +43,7 @@ public:
 
     int verbosity;
 
-    Logger() {
+    Logger() { 
         verbosity = LogLevel::INFO;
     }
 
@@ -41,7 +51,7 @@ public:
 
     void log(int level, std::string text) {
         if (level <= verbosity) {
-            std::cout << text << std::endl << std::flush;
+            COUT(text);
         }
     }
 
@@ -49,7 +59,7 @@ public:
         if (level <= verbosity) {
             std::stringstream ss;
             ss << number;
-            std::cout << ss.str() << std::endl << std::flush;
+            COUT(ss.str());
         }
     }
 
@@ -57,7 +67,7 @@ public:
         if (level <= verbosity) {
             std::stringstream ss;
             ss << number;
-            std::cout << ss.str() << std::endl << std::flush;
+            COUT(ss.str());
         }
     }
 

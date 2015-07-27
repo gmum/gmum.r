@@ -143,7 +143,7 @@ struct GNGConfiguration {
 
     #ifdef RCPP_INTERFACE
     void show() const{
-        serialize(cerr);
+        serialize(Rcpp::Rcerr);
     }
     #endif
 

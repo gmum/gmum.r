@@ -148,6 +148,7 @@ void CecModel::find_best_cec() {
         assignment_type.reset(new CentroidsAssignment(params.dataset, params.nclusters, params.centroids));
         break;
     }
+    assignment_type->set_seed(params.seed);
 
     assignment.resize(params.dataset.n_rows);
     (*assignment_type)(assignment);
