@@ -317,5 +317,5 @@ void CecConfiguration::set_algorithm(const std::string algorithm)
 
 void CecConfiguration::set_seed(int seed)
 {
-    Assignment::set_seed(seed);
+    m_params.seed = seed;
 }

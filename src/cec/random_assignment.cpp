@@ -12,7 +12,7 @@ void RandomAssignment::operator()(std::vector<unsigned int> &assignment) {
     centers.reserve(m_nclusters);
 
     unsigned int npoints = assignment.size();
-    boost::random::mt19937 gen(seed);
+    boost::random::mt19937 gen(m_seed);
     boost::random::uniform_int_distribution<> dist(0, npoints - 1);
 
     if (m_nclusters > npoints) {

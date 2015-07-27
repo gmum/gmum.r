@@ -8,7 +8,7 @@ void KmeansppAssignment::operator()(std::vector<unsigned int> &assignment) {
 	centers.reserve(m_nclusters);
 
 	unsigned int npoints = assignment.size();
-	boost::random::mt19937 gen(seed);
+    boost::random::mt19937 gen(m_seed);
 
 	//select points for centers
 	std::list<Point> selected;
