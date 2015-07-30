@@ -51,6 +51,10 @@ public:
 
 	void terminate();
 
+	void setVerbosity(int verbosity) {
+		this->m_logger->verbosity = verbosity;
+	}
+
 	double nodeDistance(int id1, int id2) const;
 
 	void save(std::string filename);

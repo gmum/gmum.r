@@ -18,13 +18,14 @@
 
 #define LOG(logger, level, text) logger.log(level, text);
   #define LOG_PTR(logger, level, text) logger->log(level, text);
-  #ifdef DEBUG
+  #ifdef DEBUG_GMUM
     #define DBG(logger, level, text) logger.log(level, text);
     #define DBG_PTR(logger, level, text) logger->log(level, text);
   #else
     #define DBG(logger, level, text)
     #define DBG_PTR(logger, level, text)
 #endif
+
 
 class LogLevel {
 public:

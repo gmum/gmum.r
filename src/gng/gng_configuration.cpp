@@ -105,7 +105,9 @@ void GNGConfiguration::deserialize(std::istream & in)  {
 		/**Initial reserve memory for nodes */
 		out << starting_nodes << endl; //imporant not to add endl for binary correctness
 
-        out << max_iter << endl;
+        out << max_iter; // NOTE: don't put endl here, rest of the serialization is binary
+
+
 	}
 
 

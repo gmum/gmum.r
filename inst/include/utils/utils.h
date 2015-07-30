@@ -32,27 +32,28 @@ typedef vector<int> VI;
 #define FOREACH(i,c) BOOST_FOREACH(i, c) //for(VAR(i,(c).begin());i!=(c).end();++i)
 
 
-#ifdef DEBUG
-
+#ifdef DEBUG_GMUM
 	#ifdef RCPP_INTERFACE
 	  #include <RcppArmadillo.h>
 	  using namespace Rcpp;
-	  #define EXIT(x) Rcpp::stop("");
 	  #define DBG(logger, level, text) logger.log(level, text);
 	  #define REPORT(x) Rcpp::Rcout<<#x<<"="<<(x)<<endl<<std::flush;
-	  #define ASSERT(x)
 	#else
 	  #define EXIT(x) exit(x);
-		#define DBG(logger, level, text) logger.log(level, text);
-		#define REPORT(x) cout<<#x<<"="<<(x)<<endl<<std::flush;
-	  #define ASSERT(x) assert(x);
+	  #define DBG(logger, level, text) logger.log(level, text);
+	  #define REPORT(x) cout<<#x<<"="<<(x)<<endl<<std::flush;
 	#endif
-
+	#define ASSERT(x) assert(x);
 #else
 	#define DBG(verbosity, level, text)
 	#define REPORT(x)
 	#define ASSERT(x)
-	#define EXIT(x)
+#endif
+
+#ifdef RCPP_INTERFACE
+#define EXIT(x) Rcpp::stop("");
+#else
+#define EXIT(x) exit(x);
 #endif
 
 template<class T>
@@ -120,6 +121,8 @@ static void _write_bin(ostream & out, double v) {
 
 static void _write_bin_vect(ostream & out, vector<double> & v) {
 	_write_bin(out, (double) v.size());
+	// TODO: remove
+	REPORT(v.size());
 	for (size_t i = 0; i < v.size(); ++i) {
 		_write_bin(out, v[i]);
 	}

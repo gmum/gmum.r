@@ -71,6 +71,7 @@ RCPP_MODULE(gng_module){
 
 	class_<GNGServer>("GNGServer")
 			 .constructor<GNGConfiguration*>()
+			.method("setVerbosity", &GNGServer::setVerbosity)
 			.method(".save", &GNGServer::save)
 			.method("isRunning", &GNGServer::isRunning)
 			.method("run", &GNGServer::run)

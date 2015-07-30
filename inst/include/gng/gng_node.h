@@ -130,7 +130,7 @@ public:
 	void loadVertexData(vector<double>::iterator & itr, int gng_dim,
 			double * position_ptr) {
 		vector<double> dump;
-		dump.reserve(8 + dim);
+		dump.reserve(8 + gng_dim);
 
 		std::copy(itr + 1, itr + 9 + gng_dim, std::back_inserter(dump));
 		std::advance(itr, (8 + gng_dim));

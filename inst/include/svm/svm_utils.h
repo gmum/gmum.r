@@ -4,7 +4,7 @@
 #include <armadillo>
 #include <sstream>
 
-#ifndef DEBUG
+#ifndef DEBUG_GMUM
 #define ASSERT(x)
 #else
 #define ASSERT(x) \

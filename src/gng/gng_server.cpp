@@ -37,7 +37,7 @@ void GNGServer::init(GNGConfiguration configuration,
 	 parameter
 	 */
 	#ifdef RCPP_INTERFACE
-	#ifdef DEBUG
+	#ifdef DEBUG_GMUM
 	m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity));
 	#else
 	if(configuration.verbosity != 0){
@@ -70,6 +70,8 @@ void GNGServer::init(GNGConfiguration configuration,
     }
 
 	this->current_configuration = configuration; //assign configuration
+
+
 
 	if (current_configuration.graph_storage == GNGConfiguration::RAMMemory) {
 		//Nothing to do here
@@ -194,6 +196,12 @@ double GNGServer::nodeDistance(int id1, int id2) const {
 }
 
 void GNGServer::save(std::string filename) {
+	bool wasRunning = gngAlgorithm->isRunning();
+
+	gngAlgorithm->pause(true);
+
+	ASSERT(!gngAlgorithm->isRunning());
+
 	std::ofstream output;
 	output.open(filename.c_str(), ios::out | ios::binary);
 
@@ -205,12 +213,18 @@ void GNGServer::save(std::string filename) {
 		gngGraph->serialize(output);
 	} catch (...) {
 #ifdef DEBUG_GMUM
-		throw BasicException("Failed exporting to GraphML\n");
+		throw BasicException("Failed exporting to binary format\n");
 #endif
 		gngGraph->unlock(); //No RAII, yes..
+		output.close();
 		return;
 	}
 	gngGraph->unlock();
+	output.close();
+
+	if(wasRunning){
+		gngAlgorithm->run(false);
+	}
 }
 
 unsigned int GNGServer::getCurrentIteration() const {
@@ -379,7 +393,7 @@ void GNGServer::RinsertLabeledExamples(Rcpp::NumericMatrix & r_points,
 	arma::Row<double> diff_std = arma::abs(std_colwise - 1.0);
 	float max_diff_std = arma::max(diff_std), max_mean = arma::max(mean_colwise);
 	if(max_diff_std > 0.1 || max_mean > 0.1) {
-		CERR("Warning: it is advised to scale data for optimal algorithm behavior to mean=1 std=0 \n");
+		CERR("it is advised to scale data for optimal algorithm behavior to mean=1 std=0 \n");
 	}
 
 	//Check if data fits in bounding box
@@ -391,8 +405,8 @@ void GNGServer::RinsertLabeledExamples(Rcpp::NumericMatrix & r_points,
 
 		for(size_t i=0;i<current_configuration.dim; ++i) {
 			if(current_configuration.orig[i] > min_colwise[i] || current_configuration.orig[i]+current_configuration.axis[i] < max_colwise[i]) {
-				CERR("Error: each feature has to be in range <min, max> passed to gng.type.optimized \n");
-				CERR("Error: returning, did not insert examples\n");
+				CERR("Error: each feature has to be in range <min, max> passed to gng.type.optimized");
+				CERR("Error: returning, did not insert examples");
 				return;
 			}
 		}
@@ -424,16 +438,18 @@ void GNGServer::RinsertLabeledExamples(Rcpp::NumericMatrix & r_points,
 
 ///Pause algorithm
 void GNGServer::pause() {
+	if(!gngAlgorithm->isRunning()){
+		CERR("Called pause on not running gng object");
+		return;
+	}
 	gngAlgorithm->pause(/* synchronized*/ true);
 }
 
 ///Terminate algorithm
 void GNGServer::terminate() {
 	if(gngAlgorithm.get()){
-		LOG_PTR(m_logger,5, "GNGServer::getAlgorithm terminating");
-		LOG_PTR(m_logger,10, "GNGServer::isRunning ="+ to_str(gngAlgorithm->isRunning()));
+		LOG_PTR(m_logger,3, "GNGServer::getAlgorithm terminating");
 		gngAlgorithm->terminate(/*synchronized*/true);
-		LOG_PTR(m_logger,10, "GNGServer::isRunning ="+ to_str(gngAlgorithm->isRunning()));
 	}
 }
 

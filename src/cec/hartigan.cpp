@@ -2,6 +2,7 @@
 #include <cmath>
 #include "hartigan.hpp"
 
+
 namespace gmum {
 
 Hartigan::Hartigan(bool log_nclusters, bool log_energy, int max_iter) :
@@ -218,9 +219,7 @@ void Hartigan::remove_cluster(unsigned int source, const arma::mat &points,
                 }
 
             }
-#ifdef DEBUG
-            assert(min_energy_change_element_index > -1);
-#endif
+            ASSERT(min_energy_change_element_index > -1);
             if(min_energy_change_element_index == -1)
             {
                 // all clusters are degenerated, find first cluster that is not source cluster
