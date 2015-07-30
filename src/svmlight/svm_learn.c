@@ -598,7 +598,7 @@ void svm_learn_regression(DOC **docs, double *value, long int totdoc,
 
   /* caching makes no sense for linear kernel */
   if((kernel_parm->kernel_type == LINEAR) && (*kernel_cache)) {
-    printf("WARNING: Using a kernel cache for linear case will slow optimization down!\n");
+    printf("WARNING_LEVEL: Using a kernel cache for linear case will slow optimization down!\n");
   } 
 
   if(verbosity==1) {
@@ -1466,7 +1466,7 @@ long optimize_to_convergence(DOC **docs, long int *label, long int totdoc,
       terminate=1;
       retrain=0;
       if(verbosity>=1) 
-	printf("\nWARNING: Relaxing KT-Conditions due to slow progress! Terminating!\n");
+	printf("\nWARNING_LEVEL: Relaxing KT-Conditions due to slow progress! Terminating!\n");
     }
 
     noshrink=0;
@@ -1931,7 +1931,7 @@ long optimize_to_convergence_sharedslack(DOC **docs, long int *label,
       terminate=1;
       retrain=0;
       if(verbosity>=1) 
-	printf("\nWARNING: Relaxing KT-Conditions due to slow progress! Terminating!\n");
+	printf("\nWARNING_LEVEL: Relaxing KT-Conditions due to slow progress! Terminating!\n");
     }
 
     noshrink=0; 

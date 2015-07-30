@@ -122,7 +122,7 @@ void SVMLightRunner::processRequest(
 void SVMLightRunner::resultsToLabels(SVMConfiguration &config) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".resultsToLabels() Started."
     );
 
@@ -148,7 +148,7 @@ void SVMLightRunner::resultsToLabels(SVMConfiguration &config) {
 
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".resultsToLabels() Done."
     );
 }
@@ -181,7 +181,7 @@ int SVMLightRunner::librarySVMLearnMain(
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".librarySVMLearnMain() Started."
     );
     DOC **docs;  /* training examples */
@@ -265,7 +265,7 @@ int SVMLightRunner::librarySVMLearnMain(
 
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".librarySVMLearnMain() Done."
     );
 
@@ -280,7 +280,7 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".librarySVMClassifyReadInputParameters() Started."
     );
 
@@ -293,7 +293,7 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     strcpy (learn_parm->predfile, "trans_predictions");
     strcpy (learn_parm->alphafile, "");
     strcpy (restartfile, "");
-    // SVMLight verbosity = 1 corresponds to GMUM.R verbosity = 5 (DEBUG)
+    // SVMLight verbosity = 1 corresponds to GMUM.R verbosity = 5 (DEBUG_LEVEL)
     (*verbosity)=config.log.verbosity - 4;
     learn_parm->biased_hyperplane=1;
     learn_parm->sharedslack=0;
@@ -519,7 +519,7 @@ int SVMLightRunner::librarySVMClassifyMain(
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".librarySVMClassifyMain() Started."
     );
     DOC *doc;   /* test example */
@@ -692,7 +692,7 @@ void SVMLightRunner::librarySVMClassifyReadInputParameters(
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".librarySVMClassifyReadInputParameters() Started."
     );
     long i;
@@ -704,7 +704,7 @@ void SVMLightRunner::librarySVMClassifyReadInputParameters(
         strcpy (predictionsfile, "svm_predictions"); 
         (*verbosity)=2;
     } else {
-        // SVMLight verbosity = 1 corresponds to GMUM.R verbosity = 5 (DEBUG)
+        // SVMLight verbosity = 1 corresponds to GMUM.R verbosity = 5 (DEBUG_LEVEL)
         (*verbosity) = config.log.verbosity - 4;
     }
     // GMUM.R changes }
@@ -747,7 +747,7 @@ MODEL * SVMLightRunner::libraryReadModel(
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".libraryReadModel() Started."
     );
     FILE *modelfl;
@@ -799,7 +799,7 @@ MODEL * SVMLightRunner::libraryReadModel(
 
         LOG(
             config.log,
-            LogLevel::DEBUG,
+            LogLevel::DEBUG_LEVEL,
             __debug_prefix__ + ".libraryReadModel() Converting config to model..."
         );
 
@@ -831,7 +831,7 @@ MODEL * SVMLightRunner::libraryReadModel(
 
         LOG(
             config.log,
-            LogLevel::DEBUG,
+            LogLevel::DEBUG_LEVEL,
             __debug_prefix__ + ".libraryReadModel() Converting config done."
         );
     }
@@ -883,7 +883,7 @@ MODEL * SVMLightRunner::libraryReadModel(
 
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".libraryReadModel() Done."
     );
 
@@ -896,7 +896,7 @@ void SVMLightRunner::libraryReadDocuments (
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".libraryReadDocuments() Started."
     );
 
@@ -1028,7 +1028,7 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".SVMConfigurationToSVMLightLearnInputLine() Started."
     );
 
@@ -1101,7 +1101,7 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".SVMConfigurationToSVMLightModelSVLine() Started."
     );
 
@@ -1115,7 +1115,7 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
 
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".SVMConfigurationToSVMLightModelSVLine() Done."
     );
 
@@ -1143,7 +1143,7 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".SVMLightModelToSVMConfiguration() Started."
     );
 
@@ -1211,7 +1211,7 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
 
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".SVMLightModelToSVMConfiguration() Done."
     );
 

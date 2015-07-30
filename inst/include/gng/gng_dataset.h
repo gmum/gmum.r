@@ -104,7 +104,7 @@ public:
 	}
 
 	~GNGDatasetSimple() {
-		DBG(logger_,10, "GNGDatasetSimple:: destroying");
+		DBG_PTR(logger_,10, "GNGDatasetSimple:: destroying");
 	}
 
 	///Retrieves pointer to position
@@ -150,16 +150,16 @@ public:
 			const double *probability, unsigned int count) {
 
 		if (storage_.capacity() < storage_.size() + count * dim_) {
-			DBG(logger_,10, "Resizing storage_");
+			DBG_PTR(logger_,10, "Resizing storage_");
 			storage_.reserve(storage_.size() + count * dim_);
-			DBG(logger_,10, "Resized storage_");
+			DBG_PTR(logger_,10, "Resized storage_");
 		}
 
 		storage_.insert(storage_.end(), positions, positions + count * dim_);
 
 		if (store_extra_) {
 			if (storage_extra_.capacity() < storage_extra_.size() + count) {
-				DBG(logger_,10, "Resizing store_extra_");
+				DBG_PTR(logger_,10, "Resizing store_extra_");
 				storage_extra_.reserve(storage_extra_.size() + count);
 			}
 
@@ -176,7 +176,7 @@ public:
 
 			if (storage_probability_.capacity()
 					< storage_probability_.size() + count) {
-				DBG( logger_,10, "Resizing storage_probability_");
+				DBG_PTR( logger_,10, "Resizing storage_probability_");
 				storage_probability_.reserve(
 						storage_probability_.size() + count);
 			}

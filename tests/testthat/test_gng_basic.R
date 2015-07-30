@@ -3,14 +3,14 @@ library(testthat)
 #TODO: add test for checking GNGConfiguration serialization
 
 test_that("Basic saving/loading works", {
-  g <- GNG(train.online=TRUE, dim=3, verbosity=5); 
+  g <- GNG(train.online=TRUE, dim=3, verbosity=-1); 
   insertExamples(g, gng.preset.sphere(300))
+  Sys.sleep(1)
   pause(g)
   
   gngSave(g, file='mygraph.bin')
   
   g2 <- gngLoad("mygraph.bin")
-  
   # Check basic deserialization
   expect_that(g2$.getConfiguration()$alpha == g$.getConfiguration()$alpha &&
                 g2$.getConfiguration()$eps_n == g$.getConfiguration()$eps_n, is_true())
@@ -99,6 +99,7 @@ test_that("GNG converges on simple cases", {
       
       # Test memory
       terminate(gng)
+      print("Saving in sanity check:")
       gngSave(gng, "graph.bin")
     }
 

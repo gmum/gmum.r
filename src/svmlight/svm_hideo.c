@@ -315,7 +315,7 @@ int optimize_hildreth_despo(n,m,precision,epsilon_crit,epsilon_a,maxiter,goal,
   }
 
   /* in case both example vectors are linearly dependent */
-  /* WARNING: Assumes that ce[] in {-1,1} */
+  /* WARNING_LEVEL: Assumes that ce[] in {-1,1} */
   add=0;
   changed=0;
   if((b1 != b2) && (m==1)) {

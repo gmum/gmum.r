@@ -7,7 +7,7 @@ library(igraph)
   	    warning("Please install rgl package to plot 3d graphs")
   	}
   }
-  #' Draw igraph using rgl - assumes >=3 dimensions and draws 3 first
+  # Draw igraph using rgl - assumes >=3 dimensions and draws 3 first
   .visualizeIGraphRGL<-function(g, radius=NULL){
     if("rgl" %in% rownames(installed.packages()) == TRUE){
         # TODO: this code is so ugly I cannot believe it
@@ -117,9 +117,9 @@ library(igraph)
   .visualizeIGraph2d(ig, vertex.color, layout, vertex.size=vertex.size)
 }
 
-#' Visualize igraph using igraph plot
-#' It will layout graph using v0 and v1 coordinates
-#' @note It is quite slow, works for graphs < 2000 nodes, and for graphs <400 when using layout
+# Visualize igraph using igraph plot
+# It will layout graph using v0 and v1 coordinates
+# @note It is quite slow, works for graphs < 2000 nodes, and for graphs <400 when using layout
 .visualizeIGraph2d<-function(g, vertex.color, layout, vertex.size=3){
   L<-layout(g)
   if(vertex.color == 'cluster'){   
