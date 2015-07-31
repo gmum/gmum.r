@@ -141,10 +141,10 @@ test_that("GNG clustering and predict are returning the same", {
 })
 
 test_that("GNG synchronization looks ok", {
-    synchronization_test <- function(){
-
-        data(cec.mouse1.spherical)
-        dataset = cec.mouse1.spherical
+  
+  data(cec.mouse1.spherical)
+  dataset = cec.mouse1.spherical
+      synchronization_test <- function(){
         gng <- GNG(dataset, verbosity=3, max.nodes=20)
         gng$.updateClustering()
         sum_1 = (sum( gng$clustering() != predict(gng, dataset)))

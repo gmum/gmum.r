@@ -31,6 +31,9 @@ typedef vector<int> VI;
 #define SIZE(x) (int)(x).size()
 #define FOREACH(i,c) BOOST_FOREACH(i, c) //for(VAR(i,(c).begin());i!=(c).end();++i)
 
+#ifdef RCPP_INTERFACE
+#include <RcppArmadillo.h>
+#endif
 
 #ifdef DEBUG_GMUM
 	#ifdef RCPP_INTERFACE
@@ -55,6 +58,13 @@ typedef vector<int> VI;
 #else
 #define EXIT(x) exit(x);
 #endif
+
+#ifdef RCPP_INTERFACE
+  #define EXIT(x) Rcpp::stop("");
+#else
+    #define EXIT(x) exit(x);
+#endif
+
 
 template<class T>
 std::string to_str(const T& x) {
@@ -89,8 +99,14 @@ const int __one__ = 1;
 const bool isCpuLittleEndian = 1 == *(char*) (&__one__); // CPU endianness
 const bool isFileLittleEndian = false;  // output endianness - you choose :)
 
-static int __seed(int seed){
-    srand(seed);
+// ED - environment dependent utils
+
+int ed_c_rand();
+void ed_c_srand(unsigned int);
+
+static int __seed(int seed) {
+    ed_c_srand(seed);
+    return 0;
 }
 
 template<class T>
@@ -105,15 +121,15 @@ void write_array(T* begin, T*end) {
 #define RANDOM_INT(rng, min, max) (rng() % (max - min +1) + min)
 
 static int __rnd(int min, int max) {
-	return (rand() % (max - min + 1) + min);
+	return (ed_c_rand() % (max - min + 1) + min);
 }
 
 static int __int_rnd(int min, int max) {
-	return (rand() % (max - min + 1) + min);
+	return (ed_c_rand() % (max - min + 1) + min);
 }
 
 static double __double_rnd(double min, double max) {
-	return min + (max - min) * ((double) rand()) / RAND_MAX;
+	return min + (max - min) * ((double) ed_c_rand()) / RAND_MAX;
 }
 
 static void _write_bin(ostream & out, double v) {
@@ -170,5 +186,8 @@ int check_argc(const std::string);
 char** to_argv(const char*);
 char** to_argv(const std::string);
 char** free_argv(int argc, char** argv);
+
+/// C rand() implemented in RCpp
+int rcpp_c_rand();
 
 #endif	/* UTILS_H */

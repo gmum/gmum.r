@@ -20,6 +20,8 @@
 # include "svm_common.h"
 # include "kernel.h"           /* this contains a user supplied kernel */
 
+#include "utils/cutils.h"
+
 long   verbosity;              /* verbosity level (0-4) */
 long   kernel_cache_statistic;
 
@@ -91,7 +93,7 @@ double single_kernel(KERNEL_PARM *kernel_parm, SVECTOR *a, SVECTOR *b)
             return(tanh(kernel_parm->coef_lin*sprod_ss(a,b)+kernel_parm->coef_const)); 
     case 4: /* custom-kernel supplied in file kernel.h*/
             return(custom_kernel(kernel_parm,a,b)); 
-    default: printf("Error: Unknown kernel function\n"); exit(1);
+    default: C_PRINTF("Error: Unknown kernel function\n"); C_EXIT(1);
   }
 }
 
@@ -523,42 +525,42 @@ void write_model(char *modelfile, MODEL *model)
   SVECTOR *v;
 
   if(verbosity>=1) {
-    printf("Writing model file..."); fflush(stdout);
+    C_PRINTF("Writing model file..."); C_FFLUSH(stdout);
   }
   if ((modelfl = fopen (modelfile, "w")) == NULL)
-  { perror (modelfile); exit (1); }
-  fprintf(modelfl,"SVM-light Version %s\n",VERSION);
-  fprintf(modelfl,"%ld # kernel type\n",
+  { perror (modelfile); C_EXIT (1); }
+  C_FPRINTF(modelfl,"SVM-light Version %s\n",VERSION);
+  C_FPRINTF(modelfl,"%ld # kernel type\n",
 	  model->kernel_parm.kernel_type);
-  fprintf(modelfl,"%ld # kernel parameter -d \n",
+  C_FPRINTF(modelfl,"%ld # kernel parameter -d \n",
 	  model->kernel_parm.poly_degree);
-  fprintf(modelfl,"%.8g # kernel parameter -g \n",
+  C_FPRINTF(modelfl,"%.8g # kernel parameter -g \n",
 	  model->kernel_parm.rbf_gamma);
-  fprintf(modelfl,"%.8g # kernel parameter -s \n",
+  C_FPRINTF(modelfl,"%.8g # kernel parameter -s \n",
 	  model->kernel_parm.coef_lin);
-  fprintf(modelfl,"%.8g # kernel parameter -r \n",
+  C_FPRINTF(modelfl,"%.8g # kernel parameter -r \n",
 	  model->kernel_parm.coef_const);
-  fprintf(modelfl,"%s# kernel parameter -u \n",model->kernel_parm.custom);
-  fprintf(modelfl,"%ld # highest feature index \n",model->totwords);
-  fprintf(modelfl,"%ld # number of training documents \n",model->totdoc);
+  C_FPRINTF(modelfl,"%s# kernel parameter -u \n",model->kernel_parm.custom);
+  C_FPRINTF(modelfl,"%ld # highest feature index \n",model->totwords);
+  C_FPRINTF(modelfl,"%ld # number of training documents \n",model->totdoc);
  
   sv_num=1;
   for(i=1;i<model->sv_num;i++) {
     for(v=model->supvec[i]->fvec;v;v=v->next) 
       sv_num++;
   }
-  fprintf(modelfl,"%ld # number of support vectors plus 1 \n",sv_num);
-  fprintf(modelfl,"%.8g # threshold b, each following line is a SV (starting with alpha*y)\n",model->b);
+  C_FPRINTF(modelfl,"%ld # number of support vectors plus 1 \n",sv_num);
+  C_FPRINTF(modelfl,"%.8g # threshold b, each following line is a SV (starting with alpha*y)\n",model->b);
 
   for(i=1;i<model->sv_num;i++) {
     for(v=model->supvec[i]->fvec;v;v=v->next) {
-      fprintf(modelfl,"%.32g ",model->alpha[i]*v->factor);
+      C_FPRINTF(modelfl,"%.32g ",model->alpha[i]*v->factor);
       for (j=0; (v->words[j]).wnum; j++) {
-	fprintf(modelfl,"%ld:%.8g ",
+	C_FPRINTF(modelfl,"%ld:%.8g ",
 		(long)(v->words[j]).wnum,
 		(double)(v->words[j]).weight);
       }
-      fprintf(modelfl,"#%s\n",v->userdefined);
+      C_FPRINTF(modelfl,"#%s\n",v->userdefined);
     /* NOTE: this could be made more efficient by summing the
        alpha's of identical vectors before writing them to the
        file. */
@@ -566,7 +568,7 @@ void write_model(char *modelfile, MODEL *model)
   }
   fclose(modelfl);
   if(verbosity>=1) {
-    printf("done\n");
+    C_PRINTF("done\n");
   }
 }
 
@@ -583,7 +585,7 @@ MODEL *read_model(char *modelfile)
   MODEL *model;
 
   if(verbosity>=1) {
-    printf("Reading model..."); fflush(stdout);
+    C_PRINTF("Reading model..."); C_FFLUSH(stdout);
   }
 
   nol_ll(modelfile,&max_sv,&max_words,&ll); /* scan size of model file */
@@ -595,12 +597,12 @@ MODEL *read_model(char *modelfile)
   model = (MODEL *)my_malloc(sizeof(MODEL));
 
   if ((modelfl = fopen (modelfile, "r")) == NULL)
-  { perror (modelfile); exit (1); }
+  { perror (modelfile); C_EXIT (1); }
 
   fscanf(modelfl,"SVM-light Version %s\n",version_buffer);
   if(strcmp(version_buffer,VERSION)) {
     perror ("Version of model-file does not match version of svm_classify!"); 
-    exit (1); 
+    C_EXIT (1); 
   }
   fscanf(modelfl,"%ld%*[^\n]\n", &model->kernel_parm.kernel_type);  
   fscanf(modelfl,"%ld%*[^\n]\n", &model->kernel_parm.poly_degree);
@@ -623,9 +625,9 @@ MODEL *read_model(char *modelfile)
     fgets(line,(int)ll,modelfl);
     if(!parse_document(line,words,&(model->alpha[i]),&queryid,&slackid,
 		       &costfactor,&wpos,max_words,&comment)) {
-      printf("\nParsing error while reading model file in SV %ld!\n%s",
+      C_PRINTF("\nParsing error while reading model file in SV %ld!\n%s",
 	     i,line);
-      exit(1);
+      C_EXIT(1);
     }
     model->supvec[i] = create_example(-1,
 				      0,0,
@@ -636,7 +638,7 @@ MODEL *read_model(char *modelfile)
   free(line);
   free(words);
   if(verbosity>=1) {
-    fprintf(stdout, "OK. (%d support vectors read)\n",(int)(model->sv_num-1));
+    C_FPRINTF(stdout, "OK. (%d support vectors read)\n",(int)(model->sv_num-1));
   }
   return(model);
 }
@@ -698,14 +700,14 @@ void read_documents(char *docfile, DOC ***docs, double **label,
   FILE *docfl;
 
   if(verbosity>=1) {
-    printf("Scanning examples..."); fflush(stdout);
+    C_PRINTF("Scanning examples..."); C_FFLUSH(stdout);
   }
   nol_ll(docfile,&max_docs,&max_words_doc,&ll); /* scan size of input file */
   max_words_doc+=2;
   ll+=2;
   max_docs+=2;
   if(verbosity>=1) {
-    printf("done\n"); fflush(stdout);
+    C_PRINTF("done\n"); C_FFLUSH(stdout);
   }
 
   (*docs) = (DOC **)my_malloc(sizeof(DOC *)*max_docs);    /* feature vectors */
@@ -713,11 +715,11 @@ void read_documents(char *docfile, DOC ***docs, double **label,
   line = (char *)my_malloc(sizeof(char)*ll);
 
   if ((docfl = fopen (docfile, "r")) == NULL)
-  { perror (docfile); exit (1); }
+  { perror (docfile); C_EXIT (1); }
 
   words = (WORD *)my_malloc(sizeof(WORD)*(max_words_doc+10));
   if(verbosity>=1) {
-    printf("Reading examples into memory..."); fflush(stdout);
+    C_PRINTF("Reading examples into memory..."); C_FFLUSH(stdout);
   }
   dnum=0;
   (*totwords)=0;
@@ -725,28 +727,28 @@ void read_documents(char *docfile, DOC ***docs, double **label,
     if(line[0] == '#') continue;  /* line contains comments */
     if(!parse_document(line,words,&doc_label,&queryid,&slackid,&costfactor,
 		       &wpos,max_words_doc,&comment)) {
-      printf("\nParsing error in line %ld!\n%s",dnum,line);
-      exit(1);
+      C_PRINTF("\nParsing error in line %ld!\n%s",dnum,line);
+      C_EXIT(1);
     }
     (*label)[dnum]=doc_label;
-    /* printf("docnum=%ld: Class=%f ",dnum,doc_label); */
+    /* C_PRINTF("docnum=%ld: Class=%f ",dnum,doc_label); */
     if(doc_label > 0) dpos++;
     if (doc_label < 0) dneg++;
     if (doc_label == 0) dunlab++;
     if((wpos>1) && ((words[wpos-2]).wnum>(*totwords))) 
       (*totwords)=(words[wpos-2]).wnum;
     if((*totwords) > MAXFEATNUM) {
-      printf("\nMaximum feature number exceeds limit defined in MAXFEATNUM!\n");
-      printf("LINE: %s\n",line);
-      exit(1);
+      C_PRINTF("\nMaximum feature number exceeds limit defined in MAXFEATNUM!\n");
+      C_PRINTF("LINE: %s\n",line);
+      C_EXIT(1);
     }
     (*docs)[dnum] = create_example(dnum,queryid,slackid,costfactor,
 				   create_svector(words,comment,1.0));
-    /* printf("\nNorm=%f\n",((*docs)[dnum]->fvec)->twonorm_sq);  */
+    /* C_PRINTF("\nNorm=%f\n",((*docs)[dnum]->fvec)->twonorm_sq);  */
     dnum++;  
     if(verbosity>=1) {
       if((dnum % 100) == 0) {
-	printf("%ld..",dnum); fflush(stdout);
+	C_PRINTF("%ld..",dnum); C_FFLUSH(stdout);
       }
     }
   } 
@@ -755,7 +757,7 @@ void read_documents(char *docfile, DOC ***docs, double **label,
   free(line);
   free(words);
   if(verbosity>=1) {
-    fprintf(stdout, "OK. (%ld examples read)\n", dnum);
+    C_FPRINTF(stdout, "OK. (%ld examples read)\n", dnum);
   }
   (*totdoc)=dnum;
 }
@@ -788,7 +790,7 @@ int parse_document(char *line, WORD *words, double *label,
     pos++;
   }
   if(!(*comment)) (*comment)=&(line[pos]);
-  /* printf("Comment: '%s'\n",(*comment)); */
+  /* C_PRINTF("Comment: '%s'\n",(*comment)); */
 
   wpos=0;
   /* check, that line starts with target value or zero, but not with
@@ -798,8 +800,8 @@ int parse_document(char *line, WORD *words, double *label,
   while((featurepair[pos] != ':') && featurepair[pos]) pos++;
   if(featurepair[pos] == ':') {
 	perror ("Line must start with label or 0!!!\n"); 
-	printf("LINE: %s\n",line);
-	exit (1); 
+	C_PRINTF("LINE: %s\n",line);
+	C_EXIT (1); 
   }
   /* read the target value */
   if(sscanf(line,"%lf",label) == EOF) return(0);
@@ -809,7 +811,7 @@ int parse_document(char *line, WORD *words, double *label,
   while(((numread=sscanf(line+pos,"%s",featurepair)) != EOF) && 
 	(numread > 0) && 
 	(wpos<max_words_doc)) {
-    /* printf("%s\n",featurepair); */
+    /* C_PRINTF("%s\n",featurepair); */
     while(space_or_null((int)line[pos])) pos++;
     while((!space_or_null((int)line[pos])) && line[pos]) pos++;
     if(sscanf(featurepair,"qid:%ld%s",&wnum,junk)==1) {
@@ -822,8 +824,8 @@ int parse_document(char *line, WORD *words, double *label,
 	(*slackid)=(long)wnum;
       else {
 	perror ("Slack-id must be greater or equal to 1!!!\n"); 
-	printf("LINE: %s\n",line);
-	exit (1); 
+	C_PRINTF("LINE: %s\n",line);
+	C_EXIT (1); 
       }
     }
     else if(sscanf(featurepair,"cost:%lf%s",&weight,junk)==1) {
@@ -834,13 +836,13 @@ int parse_document(char *line, WORD *words, double *label,
       /* it is a regular feature */
       if(wnum<=0) { 
 	perror ("Feature numbers must be larger or equal to 1!!!\n"); 
-	printf("LINE: %s\n",line);
-	exit (1); 
+	C_PRINTF("LINE: %s\n",line);
+	C_EXIT (1); 
       }
       if((wpos>0) && ((words[wpos-1]).wnum >= wnum)) { 
 	perror ("Features must be in increasing order!!!\n"); 
-	printf("LINE: %s\n",line);
-	exit (1); 
+	C_PRINTF("LINE: %s\n",line);
+	C_EXIT (1); 
       }
       (words[wpos]).wnum=wnum;
       (words[wpos]).weight=(FVAL)weight; 
@@ -848,8 +850,8 @@ int parse_document(char *line, WORD *words, double *label,
     }
     else {
       perror ("Cannot parse feature/value pair!!!\n"); 
-      printf("'%s' in LINE: %s\n",featurepair,line);
-      exit (1); 
+      C_PRINTF("'%s' in LINE: %s\n",featurepair,line);
+      C_EXIT (1); 
     }
   }
   (words[wpos]).wnum=0;
@@ -866,22 +868,22 @@ double *read_alphas(char *alphafile,long totdoc)
   long dnum;
 
   if ((fl = fopen (alphafile, "r")) == NULL)
-  { perror (alphafile); exit (1); }
+  { perror (alphafile); C_EXIT (1); }
 
   alpha = (double *)my_malloc(sizeof(double)*totdoc);
   if(verbosity>=1) {
-    printf("Reading alphas..."); fflush(stdout);
+    C_PRINTF("Reading alphas..."); C_FFLUSH(stdout);
   }
   dnum=0;
   while((!feof(fl)) && fscanf(fl,"%lf\n",&alpha[dnum]) && (dnum<totdoc)) {
     dnum++;
   }
   if(dnum != totdoc)
-  { perror ("\nNot enough values in alpha file!"); exit (1); }
+  { perror ("\nNot enough values in alpha file!"); C_EXIT (1); }
   fclose(fl);
 
   if(verbosity>=1) {
-    printf("done\n"); fflush(stdout);
+    C_PRINTF("done\n"); C_FFLUSH(stdout);
   }
 
   return(alpha);
@@ -897,7 +899,7 @@ void nol_ll(char *file, long int *nol, long int *wol, long int *ll)
   long current_length,current_wol;
 
   if ((fl = fopen (file, "r")) == NULL)
-  { perror (file); exit (1); }
+  { perror (file); C_EXIT (1); }
   current_length=0;
   current_wol=0;
   (*ll)=0;
@@ -970,16 +972,16 @@ void *my_malloc(size_t size)
   ptr=(void *)malloc(size);
   if(!ptr) { 
     perror ("Out of memory!\n"); 
-    exit (1); 
+    C_EXIT (1); 
   }
   return(ptr);
 }
 
 void copyright_notice(void)
 {
-  printf("\nCopyright: Thorsten Joachims, thorsten@joachims.org\n\n");
-  printf("This software is available for non-commercial use only. It must not\n");
-  printf("be modified and distributed without prior permission of the author.\n");
-  printf("The author is not responsible for implications from the use of this\n");
-  printf("software.\n\n");
+  C_PRINTF("\nCopyright: Thorsten Joachims, thorsten@joachims.org\n\n");
+  C_PRINTF("This software is available for non-commercial use only. It must not\n");
+  C_PRINTF("be modified and distributed without prior permission of the author.\n");
+  C_PRINTF("The author is not responsible for implications from the use of this\n");
+  C_PRINTF("software.\n\n");
 }

@@ -14,6 +14,7 @@
 #include "libsvm_runner.h"
 #include "svm_basic.h"
 #include "svm_utils.h"
+#include "utils/cutils.h"
 #include "utils/utils.h"
 
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
@@ -477,7 +478,7 @@ void LibSVMRunner::libraryParseCommandLine(
 				nr_fold = atoi(argv[i]);
 				if(nr_fold < 2)
 				{
-					fprintf(stderr,"n-fold cross validation: n must >= 2\n");
+					C_FPRINTF(stderr,"n-fold cross validation: n must >= 2\n");
 					//exit_with_help();
 				}
 				break;
@@ -492,7 +493,7 @@ void LibSVMRunner::libraryParseCommandLine(
 				param.weight[param.nr_weight-1] = atof(argv[i]);
 				break;
 			default:
-				fprintf(stderr,"Unknown option: -%c\n", argv[i-1][1]);
+				C_FPRINTF(stderr,"Unknown option: -%c\n", argv[i-1][1]);
 				//exit_with_help();
 		}
 	}
