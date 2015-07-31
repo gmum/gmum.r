@@ -93,6 +93,15 @@ static int __seed(int seed){
     srand(seed);
 }
 
+template<class T>
+void write_array(T* begin, T*end) {
+        for (; begin != end; ++begin) {
+                    std::cerr << *begin << ",";
+                        }
+            std::cerr << endl;
+}
+
+
 #define RANDOM_INT(rng, min, max) (rng() % (max - min +1) + min)
 
 static int __rnd(int min, int max) {

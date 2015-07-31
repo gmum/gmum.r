@@ -42,9 +42,10 @@ void GNGServer::init(GNGConfiguration configuration,
 	#else
 	if(configuration.verbosity != 0){
 		ofstream* log_file = new ofstream();
-		log_file->open("gng_" + to_string(m_index) + ".log");
+		log_file->open("gng.log"); // Could create one for each gng, but this can create massive amount of files
 		// TODO: There is leaked resource here
 		m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity, *log_file));
+		COUT("Logging to gng.log");
 	} else {
 		m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity));
 	}
