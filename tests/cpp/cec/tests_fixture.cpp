@@ -1,3 +1,4 @@
+#include "cec_configuration.hpp"
 #include "tests_fixture.hpp"
 #include "cluster_params.hpp"
 
@@ -35,6 +36,7 @@ void TestsFixture::SetUp()
     params.dataset = p.reader.get_points_in_matrix();
     params.nstart = 3;
     times = p.times;
+    seed = 13371337;
 }
 
 void BigDataTests::SetUp()
@@ -45,6 +47,7 @@ void BigDataTests::SetUp()
     params.nstart = 1;
     iterations_limit = p.iterations_limit;
     times = p.times;
+    seed = 13371337;
 }
 
 void CoverageTests::SetUp()

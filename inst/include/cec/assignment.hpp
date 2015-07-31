@@ -15,14 +15,12 @@ class Assignment {
 protected:
 	const arma::mat &m_points;
 	const unsigned int m_nclusters;
+    int m_seed;
 public:
-	Assignment(const arma::mat &points, const unsigned int nclusters) :
-			m_points(points), m_nclusters(nclusters) {
-	}
-
+	Assignment(const arma::mat &points, const unsigned int nclusters); 
 	virtual void operator()(std::vector<unsigned int> &assignment) = 0;
-	virtual ~Assignment() {
-	}
+	virtual ~Assignment(); 
+    void set_seed(int seed);
 };
 
 /**

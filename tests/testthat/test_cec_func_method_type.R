@@ -9,8 +9,8 @@ expected_energy <- cec.simple1.extra[["energy"]]
 dataset_points <- cec.simple1
 
 test_that("Entropy is correct", {  
-  c1 <- CEC(k=1, x=dataset_points, method.type='func', params.function=f_standard)
-  c2 <- CEC(k=1, x=dataset_points, method.type='standard')
+  c1 <- CEC(k=1, x=dataset_points, method.type='func', params.function=f_standard, seed=13371337)
+  c2 <- CEC(k=1, x=dataset_points, method.type='standard', seed=13371337)
 	
   plot(c1)
   plot(c2)

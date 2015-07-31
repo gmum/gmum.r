@@ -56,7 +56,7 @@ public:
 
 	void set_it_max(int it_max);
     void set_algorithm(const std::string algorithm);
-
+    void set_seed(int seed);
 };
 
 #endif /* CECCONFIGURATION_HPP */
