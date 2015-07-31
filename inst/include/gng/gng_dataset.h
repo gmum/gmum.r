@@ -172,7 +172,7 @@ public:
 			}
 		}
 		if (access_method_ == SamplingProbability) {
-			assert(probability);
+			ASSERT(probability);
 
 			if (storage_probability_.capacity()
 					< storage_probability_.size() + count) {

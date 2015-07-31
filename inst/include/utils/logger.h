@@ -46,9 +46,16 @@ public:
     // And there will be master thread printing logs
     gmum::fast_mutex mutex;
 
+    // TODO: It is bad design to add that many macros. We should separate this logic during construction
+#ifdef RCPP_INTERFACE
+    Logger(int level=LogLevel::INFO_LEVEL,
+           std::ostream & out = Rcpp::Rcout): out(&out), verbosity(level) {
+    }
+#else
     Logger(int level=LogLevel::INFO_LEVEL,
            std::ostream & out = std::cout): out(&out), verbosity(level) {
     }
+#endif
 
     template<class T>
     void log(int level, T msg) {

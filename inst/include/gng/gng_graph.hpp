@@ -7,7 +7,6 @@
 #include <threading.h>
 #include <utils.h>
 #include <algorithm>
-#include <cassert>
 #include <cmath>
 #include <cstring>
 #include <iterator>
@@ -144,10 +143,7 @@ int RAMGNGGraph<Node, Edge, Mutex>::newNode(const double *position) {
 
     maximum_index = createdNode > maximum_index ? createdNode : maximum_index;
 
-    //Assuming it is clear here
-#ifdef GMUM_DEBUG
-	assert(g[createdNode].size() == 0);
-#endif
+    ASSERT(g[createdNode].size() == 0);
 
     // Initialize node
     g[createdNode].position = &positions[createdNode * gng_dim];
@@ -161,7 +157,6 @@ int RAMGNGGraph<Node, Edge, Mutex>::newNode(const double *position) {
 
     first_free = next_free[createdNode];
 
-    //zwiekszam licznik wierzcholkow //na koncu zeby sie nie wywalil przypadkowo
     ++this->nodes;
     memcpy(&(g[createdNode].position[0]), position,
            sizeof(double) * (this->gng_dim));        //param
@@ -180,7 +175,7 @@ bool RAMGNGGraph<Node, Edge, Mutex>::deleteNode(int x) {
     this->lock();
     if (existsNode(x)) {
         //TODO: add automatic erasing edges
-        assert(g[x].size() == 0);
+        ASSERT(g[x].size() == 0);
 
         --nodes;
         if (maximum_index == x)
