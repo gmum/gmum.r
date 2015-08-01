@@ -1,4 +1,5 @@
 #gmum.R
+[![Build Status](https://travis-ci.org/gmum/gmum.r.svg?branch=fix-r-check)](https://travis-ci.org/gmum/gmum.r/)
 
 gmum.R is a package consisting in various models. We focus on efficiency (underlying C++ implementation) and easy of usage.
 gmum.r is a close collaboration between GMUM group members (<a href="http://gmum.net">http://gmum.net</a>) and students.

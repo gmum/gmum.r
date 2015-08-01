@@ -9,6 +9,7 @@ This directory contains R code tests.
 * e1071 package
 * klaR package (and svmlight binaries in path, download from http://svmlight.joachims.org/. For Windows
 make sure you add appropriate path to PATH variable or drop them into root folder of package)
+* mlbench package
 
 ### Testthat
 
