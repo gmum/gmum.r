@@ -20,7 +20,7 @@ cec <- CEC(x=dataset_points, k=3, method.type = "spherical")
 plot(cec, slice=c(1,2,3,4))
 
 # Apply PCA in plotting;
-plot(cec, method='pca')
+plot(cec, pca=TRUE)
 
 # Show info about clustering
 summary(cec)

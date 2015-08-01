@@ -118,6 +118,7 @@ predict.MultiClassSVM <- NULL
 #'  \code{slam::simple_triplet_matrix}
 #' @param decision.function Uf \code{TRUE} returns SVMs decision function 
 #' (distance of a point from discriminant) instead of predicted labels, default: \code{FALSE}
+#' @param ... other arguments not used by this method.
 #' 
 #' @method predict svm.gmum
 #' 
@@ -161,6 +162,7 @@ print.svm <- NULL
 #' @param radius Radius of the plotted data points as float, default: \code{3}
 #' @param radius.max Maximum radius of data points can be plotted, when model is trained 
 #'  with example weights as float, default: \code{10}
+#' @param ... other arguments not used by this method.
 #' 
 #' @examples
 #' \dontrun{
@@ -179,6 +181,7 @@ plot.svm <- NULL
 #' 
 #' @export
 #' @param object Trained SVM object
+#' @param ... other arguments not used by this method.
 #' 
 #' @method summary svm
 #' 

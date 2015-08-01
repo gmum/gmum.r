@@ -7,6 +7,7 @@
 #' @docType methods
 #'
 #' @param object CEC model object.
+#' @param ... other arguments not used by this method.
 #' 
 summary.cec <- function(object, ...) {
   print.cec(object)

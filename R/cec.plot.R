@@ -12,8 +12,9 @@
 #' @param slice List of dimentions chosen for display since plot is 2D.
 #' @param ellipses Outline clusters.
 #' @param centers Marks center of every cluster.
+#' @param ... other arguments not used by this method.
 #' 
-#' @param method KAROL/MARCIN PLZ DOCUMENT THIS
+#' @param pca Apply PCA or not
 #' 
 #' @examples
 #' \dontrun{
@@ -21,12 +22,12 @@
 #' plot(cec, slice=c(1,3), ellipses=TRUE)
 #' plot(cec, slice=c(1,2,3))
 #' plot(cec, ellipses=TRUE, centers=FALSE)
-#' plot(cec, method='pca', ellipses=TRUE, centers=FALSE)
+#' plot(cec, pca=TRUE, ellipses=TRUE, centers=FALSE)
 #' }
-plot.cec <- function(x, slice = c(), method='normal', ellipses = FALSE, centers = FALSE, ...) {
+plot.cec <- function(x, slice = c(), pca=FALSE, ellipses = FALSE, centers = FALSE, ...) {
   
   d <- x$x()
-  if(method == 'pca'){
+  if(pca){
     if(ncol(d) <= 2){
       stop("CEC dataset should have dimension > 2 to use PCA")
     }
@@ -37,7 +38,7 @@ plot.cec <- function(x, slice = c(), method='normal', ellipses = FALSE, centers 
     d <- pca_data$x
   }
   if (length(slice) == 0) {
-    if(method == 'pca'){
+    if(pca){
       slice <- c(1,2)
     } else {
       slice <- c(1:(dim(d)[2]))        
@@ -54,7 +55,7 @@ plot.cec <- function(x, slice = c(), method='normal', ellipses = FALSE, centers 
   if (ellipses || centers) {
     cen <- x$centers()
     n <- length(cen)
-    if(method == 'pca'){
+    if(pca){
       for (i in 1:n) {
         # t(t(cen[[i]])) creates vector, t(v) is rotation matrix to lower dim subspace
         # t(everything) makes it again a row 
@@ -67,7 +68,7 @@ plot.cec <- function(x, slice = c(), method='normal', ellipses = FALSE, centers 
       for (i in 1:n) {
         data <- unlist(cov[i])
         covMat <- matrix(data,ncol=sqrt(length(data)))
-        if(method == 'pca'){
+        if(pca){
           covMat <- t(v) %*% covMat %*% v
         } else {
           covMat <- covMat[slice,slice]

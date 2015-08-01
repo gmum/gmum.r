@@ -1,6 +1,6 @@
 #' CEC
 #' 
-#' @title CEC
+#' @title Cross-Entropy Clustering
 #' 
 #' @description Create CEC model object
 #'
@@ -30,13 +30,14 @@
 #' @param params.centroids List of centroids.
 #' @param params.mix List of cluster with mixed Gaussian types.
 #'  
-#' @param params.function KAROL/MARCIN PLZ DOCUMENT THIS
+#' @param params.function User energy function
 #'
 #' @param control.nstart How many times to perform algorithm.
 #' @param control.eps What change of value should terminate algorithm.
 #' @param control.itmax Maximum number of iterations at each start.
 #' @param log.energy Records collected energy of all clusters in each iteration.
 #' @param log.ncluster Records number of clusters in each iteration.
+#' @param seed User seed
 #' 
 #' @examples
 #' \dontrun{
@@ -137,6 +138,7 @@ covMatrix.cec <- NULL
 #' 
 #' @param object Trained CEC model object.
 #' @param x Given point.
+#' @param ... other arguments not used by this method.
 #' 
 predict.cec <- NULL
 

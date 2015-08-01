@@ -63,6 +63,7 @@ gng.type.utility<- function(k=1.3){
 #' \code{gng.plot.color.label} (rounds to integer label if present), \code{list of integers} (colors vertices according to provided list), \code{gng.plot.color.none} (every node is white),
 #' 
 #' @param vertex.size Size of plotted vertices
+#' @param ... other arguments not used by this method.
 #' 
 #' @note If you want to "power-use" plotting and plot for instance a subgraph, you might be interested in
 #' exporting igraph with convertToGraph function 

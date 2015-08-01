@@ -8,6 +8,7 @@
 #' @docType methods
 #'
 #' @param x CEC object model.
+#' @param ... other arguments not used by this method.
 #' 
 #' @export
 #' 
