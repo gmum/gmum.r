@@ -1,3 +1,7 @@
+get.wine.dataset <- function(){
+  a <- GET("https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data")
+  read.csv(textConnection(content(a)), header=F)
+}
 
 .plane.point<-function(r,center){
   if(!hasArg(r)) r<-1.0

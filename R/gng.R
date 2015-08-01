@@ -1,4 +1,3 @@
-library(igraph)
 library(methods)
 
 
@@ -18,7 +17,6 @@ gng.plot.layout.igraph.fruchterman.fast <- layout.fruchterman.reingold
 gng.plot.layout.igraph.auto <- layout.auto
 
 gng.plot.2d <- 1
-gng.plot.3d <- 2
 gng.plot.2d.errors <- 3
 
 
@@ -47,7 +45,7 @@ gng.type.utility<- function(k=1.3){
 #'
 #' @title plot GNG object
 #' 
-#' @description Plot resulting graph using igraph plotting, or using rgl 3d engine.
+#' @description Plot resulting graph using igraph plotting
 #' 
 #' 
 #' @export
@@ -55,7 +53,7 @@ gng.type.utility<- function(k=1.3){
 #' @rdname gng-plot
 #'
 #' @param x GNG object
-#' @param mode \code{gng.plot.3d} (3d plot), \code{gng.plot.2d} (igraph plot)
+#' @param mode \code{gng.plot.2d} (igraph plot)
 #' \code{gng.plot.2d.errors} (igraph plot with mean error log plot)
 #' 
 #' @param layout Layout to be used when plotting. Possible values: \code{gng.plot.layour.igraph.v2d} (first two dimensions),
@@ -74,9 +72,6 @@ gng.type.utility<- function(k=1.3){
 #' gng <- GNG(scaled.wine)
 #' # Plots igraph using first 2 coordinates and colors according to clusters
 #' plot(gng, mode=gng.plot.2d.errors, layout=gng.plot.layout.v2d, vertex.color=gng.plot.color.cluster)
-#' 
-#' # Plot rgl (make sure you have installed rgl library)
-#' plot(gng, mode=gng.plot.3d, layout=gng.plot.layout.v2d, vertex.color=gng.plot.color.cluster)
 #' 
 #' # For more possibilities see gng.plot.* constants
 #' }
@@ -813,15 +808,7 @@ plot.gng <- function(x, vertex.color=gng.plot.color.cluster,
     return()
   }
   
-  if(mode == gng.plot.3d && !("rgl" %in% rownames(installed.packages()))){
-    warning("Please install rgl and reload the package to plot 3d")
-    return()
-  }
-  
-  if(mode == gng.plot.3d){
-    .gng.plot3d(x)
-  }
-  else if(mode == gng.plot.2d){
+  if(mode == gng.plot.2d){
     .gng.plot2d(x, vertex.color, layout, vertex.size=vertex.size)
   }
   else if(mode == gng.plot.2d.errors){

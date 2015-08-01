@@ -407,12 +407,9 @@ evalqOnLoad({
     # check data
     if(nrow(x) != length(y)) stop("x and y have different lengths")
     if(inherits(x, "Matrix")) {
-      library("SparseM")
-      library("Matrix")
       x <- as(x, "matrix.csr")
     }
     else if(inherits(x, "simple_triplet_matrix")) {
-      library("SparseM")
       ind <- order(data$i, data$j)
       x <- new("matrix.csr",
                ra = x$v[ind],
@@ -421,7 +418,6 @@ evalqOnLoad({
                dimension = c(x$nrow, data$ncol))
     }
     else if(inherits(x, "matrix.csr")) {
-      library("SparseM")
     }
     else if(is.data.frame(x)) {
       x <- data.matrix(x)
@@ -435,7 +431,6 @@ evalqOnLoad({
     sparse <- inherits(x, "matrix.csr")
     
     if (sparse) {
-      library("SparseM")
       if (is.null(y)) {
         stop("Please provide label vector y for sparse matrix classification")
       }
@@ -649,10 +644,12 @@ evalqOnLoad({
     }else{
       obj <- x
     }
+#   NOTE: Added SparseM to dependencies
+#   TODO: Do we need e1071?
     if(obj$isSparse()){
-      library(SparseM)
-      library(Matrix)
-      library(e1071)
+      if(!requireNamespace("e1071", quietly=TRUE) ){
+        stop("For sparse support install e1071 package")
+      }
     }
     
     #1. Get X and Y
@@ -1002,7 +999,7 @@ evalqOnLoad({
   caret.gmumSvmPoly.loc$parameters <- data.frame(parameter = gmum.r.svm.poly.params,
                                              class = gmum.r.svm.poly.params.classes,
                                              label = gmum.r.svm.poly.params)
-  
+   
   caret.gmumSvmPoly <<- caret.gmumSvmPoly.loc
   caret.gmumSvmLinear <<- caret.gmumSvmLinear.loc
   

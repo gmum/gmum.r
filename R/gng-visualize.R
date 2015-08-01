@@ -1,80 +1,4 @@
-library(igraph)
 
-  .gng.plot3d<-function(g, radius=NULL){
-  	if("rgl" %in% rownames(installed.packages()) == TRUE){
-  	    .visualizeIGraphRGL(convertToGraph(g), radius=radius)
-  	}else{
-  	    warning("Please install rgl package to plot 3d graphs")
-  	}
-  }
-  # Draw igraph using rgl - assumes >=3 dimensions and draws 3 first
-  .visualizeIGraphRGL<-function(g, radius=NULL){
-    if("rgl" %in% rownames(installed.packages()) == TRUE){
-        # TODO: this code is so ugly I cannot believe it
-        library(rgl)
-	    library(igraph)
-	    
-	    if(length(V(g))==0){
-            return()
-	    }
-
-	    iteration<-0
-	    nodes <- length(V(g))
-	    
-	    # Init 3d data
-	    x_lines <- c(1:2*length(E(g)))
-	    y_lines <- c(1:2*length(E(g)))
-	    z_lines <- c(1:2*length(E(g)))
-	    k<-1
-	    m<-1
-	    x<-c(1:nodes)
-	    y<-c(1:nodes)
-	    z<-c(1:nodes)
-	    
-	    # Write 3d positions
-	    for(i in 1:nodes){
-	      x[i]=V(g)[i]$v0
-	      y[i]=V(g)[i]$v1
-	      z[i]=V(g)[i]$v2
-	    }
-	    
-	    # TODO: edges might be huge..
-	    for(edg_idx in 1:length(E(g)))
-	    {
-	      edg <- get.edges(g, E(g)[edg_idx])
-	      x_lines[k] = V(g)[edg[1]]$v0
-	      y_lines[k] = V(g)[edg[1]]$v1
-	      z_lines[k] = V(g)[edg[1]]$v2
-	      
-	      x_lines[k+1] = V(g)[edg[2]]$v0
-	      y_lines[k+1] = V(g)[edg[2]]$v1
-	      z_lines[k+1] = V(g)[edg[2]]$v2
-	      k = k + 2
-	    }  
-	    
-	    if(is.null(radius)){
-	      radius <- 8.0*(0.3333* (abs(max(x) - min(x))+abs(max(y) - min(y))+abs(max(z) - min(z)))/(nodes+0.0))
-	    }
-	    
-	    cx <- abs(V(g)$error)/max(abs(V(g)$error))
-	    cy <- rep(0.1, nodes)
-	    cz <- rep(0.1, nodes)
-	    
-	    ### Draw graph ###
-	    rgl.clear()
-	    rgl.light()
-	    rgl.bg(color="white")
-	    axes3d(edges="bbox")
-	    
-        rgl.spheres(x,y,z, radius = rep(radius, length(cx)), 
-			col=rgb(cx,cy, cz)
-        )
-	    
-	    rgl.lines(x_lines[1:k-1],y_lines[1:k-1],z_lines[1:k-1],color="bisque")
-	}else{
-        warning("Please install rgl package to plot 3d graph")
-    }
-  }
 .gng.plot2d.errors<-function(gngServer, vertex.color, layout, vertex.size=3){
   ig <- convertToGraph(gngServer)
   
@@ -86,7 +10,7 @@ library(igraph)
     vertex.color = c(1:length(V(ig)))
     max_col = 0
     for(label in V(ig)$label)
-        max_col = max(max_col, round(label))
+      max_col = max(max_col, round(label))
     cols = rainbow(max_col+1)
     vertex.color = cols[as.double(lapply(V(ig)$label, round))]
   }
@@ -102,9 +26,9 @@ library(igraph)
   ig <- convertToGraph(gngServer)
   
   if(length(V(ig))==0){
-      return()
+    return()
   }
-
+  
   if(vertex.color == 'label'){
     vertex.color = c(1:length(V(ig)))
     max_col = 0
@@ -139,7 +63,7 @@ library(igraph)
   }else{
     # Passed something else as vector
   }
-    
+  
   plot.igraph(g,vertex.size=vertex.size,vertex.label=NA,vertex.color=vertex.color,layout=L)
 }
 
