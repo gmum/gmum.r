@@ -348,7 +348,7 @@ evalqOnLoad({
            max.iter    = -1,
            verbosity   = 4,
            class.type = 'one.versus.all',
-           svm.options = '') {
+           svm.options = '', ...) {
     force(x)
     force(y)
     
@@ -567,11 +567,11 @@ evalqOnLoad({
     client 
   } 
 
-  print.svm <- function(x) {
+  print.svm <- function(x, ...) {
     summary(x)
   }
   
-  summary.MultiClassSVM <<- function(object) {
+  summary.MultiClassSVM <<- function(object, ...) {
     print(sprintf("Support Vector Machine, multiclass.type: %s, core: %s, preprocess: %s",
                   object$class.type, 
                   object$core, 
@@ -603,7 +603,7 @@ evalqOnLoad({
     summary.MultiClassSVM(object)
   }
   
-  summary.svm <<- function(object) {
+  summary.svm <<- function(object, ...) {
     print(sprintf("Support Vector Machine, core: %s, preprocess: %s",
                   object$core(), 
                   object$kernel(), 
@@ -634,7 +634,7 @@ evalqOnLoad({
     plot.svm(x, X=X, cols=cols, mode=mode, radius=radius, radius.max=radius.max)
   }
   
-  plot.svm <<- function(x, X=NULL, mode="normal", cols=c(1,2), radius=3, radius.max=10) {
+  plot.svm <<- function(x, X=NULL, mode="normal", cols=c(1,2), radius=3, radius.max=10, ...) {
     #0. Some initial preparing
     if (mode != "pca" && mode != "normal" && mode != "contour" ) {
       stop("Wrong mode!") 
@@ -806,7 +806,7 @@ evalqOnLoad({
     plot(pl)
   }
   
-  predict.MultiClassSVM <<- function(object, x){
+  predict.MultiClassSVM <<- function(object, x, ...){
     # Sums votes
     prediction.row.oao <- function(r){
       object$levels[which.max(sapply(1:length(object$levels), function(cl){ sum(r==cl)}))]
@@ -844,7 +844,7 @@ evalqOnLoad({
     return(factor(ymat.preds, levels=object$levels))
   }
   
-  predict.svm.gmum <<- function(object, x_test, decision.function=FALSE) {
+  predict.svm.gmum <<- function(object, x_test, decision.function=FALSE, ...) {
     if ( !is(x_test, "data.frame") && 
          !is(x_test, "matrix") && 
          !is(x_test,"numeric") && 
@@ -904,7 +904,7 @@ evalqOnLoad({
   setMethod("predict", "Rcpp_SVMClient", predict.svm.gmum)
   setMethod("plot", "Rcpp_SVMClient",  plot.svm)
   setMethod("summary", "Rcpp_SVMClient", summary.svm)
-  setMethod("show", "Rcpp_SVMClient", summary.svm)
+  setMethod("show", "Rcpp_SVMClient", function(object) {summary.svm(object)})
 
 
 # Add (very basic) support for caret

@@ -789,7 +789,7 @@ predictComponent <- function(object, x){
 
 plot.gng <- function(x, vertex.color=gng.plot.color.cluster, 
                       layout=gng.plot.layout.v2d, mode=gng.plot.2d, 
-                      vertex.size=3){
+                      vertex.size=3, ...){
   if(vertex.size <= 0){
     stop("Please pass positivie vertex.size")
   }
@@ -818,12 +818,12 @@ plot.gng <- function(x, vertex.color=gng.plot.color.cluster,
   }
 }
 
-print.gng <- function(x){
+print.gng <- function(x, ...){
   print(sprintf("Growing Neural Gas, nodes %d with mean error %f", 
                 x$getNumberNodes(), x$getMeanError()))
 }
 
-summary.gng <- function(object){
+summary.gng <- function(object, ...){
   if(object$.getConfiguration()$.uniformgrid_optimization){
     print("(Optimized) Growing Neural Gas")
   }else{
@@ -1122,7 +1122,7 @@ evalqOnLoad( {
   setMethod("plot",  "Rcpp_GNGServer", plot.gng)
   setMethod("print",  "Rcpp_GNGServer", print.gng)
   setMethod("summary", "Rcpp_GNGServer", summary.gng)
-  setMethod("show", "Rcpp_GNGServer", summary.gng)
+  setMethod("show", "Rcpp_GNGServer", function(object){ summary.gng(object) })
   
   setMethod("node", signature("Rcpp_GNGServer","numeric"), node.gng)
   setMethod("run", "Rcpp_GNGServer", run.gng)
@@ -1154,7 +1154,7 @@ evalqOnLoad( {
 
   setMethod("predict" ,
             "Rcpp_GNGServer",
-            function(object, x){
+            function(object, x, ...){
                 if( is.vector(x)){
                     object$predict(x)
                 }else{

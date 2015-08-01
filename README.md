@@ -38,14 +38,13 @@ ds <- svm.breastcancer.dataset
 # Create new SVM object
 svm <- SVM( formula = X1~. ,
             data = ds,
-            lib = "libsvm",
+            core = "libsvm",
             kernel = "linear",
             prep = "none",
             C = 10) 
 
-# You can access the dataset 
-x <- dataset.X(svm)
-y <- dataset.Y(svm)
+x <- ds.X(svm)
+y <- ds.Y(svm)
 
 # Classify your dataset using predict function
 prediction <- predict(svm, x)
@@ -70,14 +69,14 @@ In this example we will construct a clustering of UCI wine dataset using offline
 library(gmum.r)
 
 # Load data
-data(wine, package="rattle")
+wine <- get.wine.dataset()
 scaled_wine <- scale(wine[-1])
 
 # Train in an offline manner
 gng <- GNG(scaled_wine, labels=wine$Type, max.nodes=20)
 
-# Find closest node to vector [1,1,1]
-predict(gng, c(1,1,1))
+# Find closest node to vector composed of 1
+predict(gng, rep(1,13))
 
 # Find mean error
 meanError(gng)

@@ -8,28 +8,25 @@
 #'
 #' @param object CEC model object.
 #' 
-summary.cec <- NULL
-
-evalqOnLoad({  
-  summary.cec <<- function(object) {
-    print.cec(object)
+summary.cec <- function(object, ...) {
+  print.cec(object)
   
-    if(isParameterOn(object$log.iters())){
-      print("Iterations: ")
-      print(object$log.iters())
-    }
-    if(isParameterOn(object$log.energy())){
-      print("Energy for every iteration: ")
-      print(object$log.energy())
-    }
-    if(isParameterOn(object$log.ncluster())){
-      print("Number of clusters for every iteration: ")
-      print(object$log.ncluster())
-    }
+  if(isParameterOn(object$log.iters())){
+    print("Iterations: ")
+    print(object$log.iters())
   }
-  
+  if(isParameterOn(object$log.energy())){
+    print("Energy for every iteration: ")
+    print(object$log.energy())
+  }
+  if(isParameterOn(object$log.ncluster())){
+    print("Number of clusters for every iteration: ")
+    print(object$log.ncluster())
+  }
+}
+evalqOnLoad({  
   setMethod("summary", "Rcpp_CecModel", summary.cec)
-  setMethod("show", "Rcpp_CecModel", summary.cec)
+  setMethod("show", "Rcpp_CecModel", function(object) { summary.cec(object) } )
 })
 
 isParameterOn <- function(x) {

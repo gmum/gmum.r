@@ -140,7 +140,7 @@ covMatrix.cec <- NULL
 #' 
 predict.cec <- NULL
 
-#' @title log.ncluster.cec
+#' @title logClusters
 #' 
 #' @description Print number of clusters that has been recorded at each stage of learning.
 #' Data is recorded only if you have chosen to when you created CEC model object.
@@ -149,9 +149,9 @@ predict.cec <- NULL
 #'
 #' @param c CEC model object.
 #' 
-log.ncluster.cec <- NULL
+logClusters <- NULL
 
-#' @title log.energy.cec
+#' @title logEnergy
 #' 
 #' @description Print energy that has been recorded at each stage of learning.
 #' Data is recorded only if you have chosen to when you created CEC model object.
@@ -160,9 +160,9 @@ log.ncluster.cec <- NULL
 #'
 #' @param c CEC model object.
 #' 
-log.energy.cec <- NULL
+logEnergy <- NULL
 
-#' @title log.iters.cec
+#' @title logIterations
 #' 
 #' @description Print how many iterations it took to learn CEC model
 #'  
@@ -170,7 +170,7 @@ log.energy.cec <- NULL
 #'
 #' @param c CEC model object.
 #' 
-log.iters.cec <- NULL
+logIterations <- NULL
 
 loadModule('cec', TRUE)
 
@@ -279,19 +279,19 @@ covMatrix.cec <- function(c) {
   c$covMatrix()
 }
 
-log.ncluster.cec <- function(c) {
+logClusters <- function(c) {
   c$log.ncluster()
 }
 
-log.energy.cec <- function(c) {
+logEnergy <- function(c) {
   c$log.energy()
 }
 
-log.iters.cec <- function(c) {
+logIterations <- function(c) {
   c$log.iters()
 }
 
-predict.cec <- function(object, x) {
+predict.cec <- function(object, x, ...) {
   if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
     stop("Wrong target class, please provide data.frame, matrix or numeric vector")
   }
@@ -319,15 +319,8 @@ setGeneric("clustering", function(c) standardGeneric("clustering"))
 setGeneric("x", function(c) standardGeneric("x"))
 setGeneric("centers", function(c) standardGeneric("centers"))
 setGeneric("covMatrix", function(c) standardGeneric("covMatrix"))
-setGeneric("log.ncluster", function(c) standardGeneric("log.ncluster"))
-setGeneric("log.energy", function(c) standardGeneric("log.energy"))
-setGeneric("log.iters", function(c) standardGeneric("log.iters"))
-
 
 evalqOnLoad({
-  
-    
-  
     setMethod("runAll", "Rcpp_CecModel", runAll.cec)
     setMethod("runOneIteration", "Rcpp_CecModel", runOneIteration.cec)
     setMethod("energy", "Rcpp_CecModel", energy.cec)
@@ -335,9 +328,5 @@ evalqOnLoad({
     setMethod("x", "Rcpp_CecModel", x.cec)
     setMethod("centers", "Rcpp_CecModel", centers.cec)
     setMethod("covMatrix", "Rcpp_CecModel", covMatrix.cec)
-    setMethod("log.ncluster", "Rcpp_CecModel", log.ncluster.cec)
-    setMethod("log.energy", "Rcpp_CecModel", log.energy.cec)
-    setMethod("log.iters", "Rcpp_CecModel", log.iters.cec)
-  
     setMethod("predict", "Rcpp_CecModel", predict.cec)
 })

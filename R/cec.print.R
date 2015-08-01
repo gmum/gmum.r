@@ -15,7 +15,7 @@ print.cec <- NULL
 
 
   
-print.cec <- function(x) {
+print.cec <- function(x, ...) {
     print(sprintf("CEC clustering; %d clusters with energy = %f",
                   length(x$centers()), x$energy()))
     print("Centers: ")
