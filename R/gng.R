@@ -1,6 +1,5 @@
 library(methods)
 
-
 gng.plot.color.label <- 'label'
 gng.plot.color.fast.cluster <- 'fast.cluster'
 gng.plot.color.cluster <- 'cluster'
