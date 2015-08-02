@@ -1,12 +1,14 @@
 #' CEC
 #' 
+#' @name Wrapper function CEC
+#' 
+#' @rdname cec-classes 
+#'
 #' @title Cross-Entropy Clustering
 #' 
 #' @description Create CEC model object
 #'
 #' @export
-#'
-#' @rdname cec-methods
 #'
 #' @docType methods
 #'
@@ -58,74 +60,92 @@ CEC <- NULL
 
 #' @title runAll
 #' 
+#' @rdname cec-methods 
+#' 
 #' @description Starts whole algorithm again with same parameters
 #'
 #' @docType methods
 #'
-#' @param c CEC model object.
+#' @aliases runAll,Rcpp_CecModel-method
 #' 
 runAll.cec <- NULL
 
+#' @rdname cec-methods
+#' 
+#' @aliases runOneIteration,Rcpp_CecModel-method
+#' 
 #' @title runOneIteration
 #' 
 #' @description runs one iteration of algorithm
 #'
 #' @docType methods
 #'
-#' @param c CEC model object.
-#' 
 runOneIteration.cec <- NULL
 
+#' @rdname cec-methods
+#' 
+#' @aliases energy,Rcpp_CecModel-method
+#'
 #' @title energy 
 #' 
 #' @description Print result energy of clustering found
 #' 
 #' @docType methods
 #'
-#' @param c CEC model object.
-#' 
 energy.cec <- NULL
 
+#' @rdname cec-methods
+#' 
+#' @aliases clustering,Rcpp_CecModel-method
+#'
 #' @title clustering
 #' 
 #' @description Print labels assigned
 #' 
 #' @docType methods
 #'
-#' @param c CEC model object.
-#' 
 clustering.cec <- NULL
 
-#' @title x
+#' @rdname cec-methods
+#' 
+#' @aliases x,Rcpp_CecModel-method
 #' 
 #' @description Print input dataset 
 #' 
 #' @docType methods
 #'
-#' @param c CEC model object.
-#' 
 x.cec <- NULL
 
+#' @rdname cec-methods
+#' 
+#' @aliases centers,Rcpp_CecModel-method
+#'
 #' @title centers
 #' 
 #' @description Print centers of clusters
 #'
 #' @docType methods
 #' 
-#' @param c CEC model object.
-#' 
 centers.cec <- NULL
 
+#' @rdname cec-methods
+#' 
+#' @aliases covMatrix,Rcpp_CecModel-method
+#'
+#' @title energy 
+#' 
 #' @title covMatrix
 #' 
 #' @description Print covariances of clusters
 #'
 #' @docType methods
 #'
-#' @param c CEC model object.
-#' 
 covMatrix.cec <- NULL
 
+#' @rdname cec-methods
+#' 
+#' @aliases predict,Rcpp_CecModel-method
+#'
 #' @title predict
 #' 
 #' @description Classify a new point according to the model (returns index of cluster where given point belong to)
@@ -142,6 +162,11 @@ covMatrix.cec <- NULL
 #' 
 predict.cec <- NULL
 
+
+#' @rdname cec-methods
+#' 
+#' @aliases logClusters,Rcpp_CecModel-method
+#'
 #' @title logClusters
 #' 
 #' @description Print number of clusters that has been recorded at each stage of learning.
@@ -153,6 +178,10 @@ predict.cec <- NULL
 #' 
 logClusters <- NULL
 
+#' @rdname cec-methods
+#' 
+#' @aliases logEnergy,Rcpp_CecModel-method
+#'
 #' @title logEnergy
 #' 
 #' @description Print energy that has been recorded at each stage of learning.
@@ -164,6 +193,10 @@ logClusters <- NULL
 #' 
 logEnergy <- NULL
 
+#' @rdname cec-methods
+#' 
+#' @aliases logIterations,Rcpp_CecModel-method
+#'
 #' @title logIterations
 #' 
 #' @description Print how many iterations it took to learn CEC model
@@ -253,10 +286,6 @@ CEC <- function(x = NULL,
   model
 }
 
-runAll.cec <- function(c) {
-  c$runAll()
-}
-
 runOneIteration.cec <- function(c) {
   c$runOneIteration()
 }
@@ -314,6 +343,24 @@ predict.cec <- function(object, x, ...) {
   })
 }
 
+#' Class Rcpp_CecModel.
+#'
+#' Class \code{Rcpp_CecModel} defines a CEC model class. 
+#'
+#' @name Rcpp_CecModel-class
+#' @rdname cec-classes 
+#' @exportClass Rcpp_CecModel
+setClass(Class = "Rcpp_CecModel")
+
+#' Class Rcpp_CecConfiguration.
+#'
+#' Class \code{Rcpp_CecConfiguration} defines a CEC model configuration class. 
+#'
+#' @name Rcpp_CecConfiguration-class
+#' @rdname cec-classes 
+#' @exportClass Rcpp_CecConfiguration
+setClass(Class = "Rcpp_CecConfiguration")
+
 setGeneric("runAll", function(c) standardGeneric("runAll"))
 setGeneric("runOneIteration", function(c) standardGeneric("runOneIteration"))
 setGeneric("energy", function(c) standardGeneric("energy"))
@@ -323,7 +370,7 @@ setGeneric("centers", function(c) standardGeneric("centers"))
 setGeneric("covMatrix", function(c) standardGeneric("covMatrix"))
 
 evalqOnLoad({
-    setMethod("runAll", "Rcpp_CecModel", runAll.cec)
+    setMethod("runAll", "Rcpp_CecModel", runAll.cec) 
     setMethod("runOneIteration", "Rcpp_CecModel", runOneIteration.cec)
     setMethod("energy", "Rcpp_CecModel", energy.cec)
     setMethod("clustering", "Rcpp_CecModel", clustering.cec)
