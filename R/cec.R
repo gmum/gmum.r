@@ -286,6 +286,10 @@ CEC <- function(x = NULL,
   model
 }
 
+runAll.cec <- function(c) {
+  c$runAll()
+}
+
 runOneIteration.cec <- function(c) {
   c$runOneIteration()
 }
