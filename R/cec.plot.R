@@ -1,12 +1,14 @@
 #' Plot CEC
-#' 
+#' @name plot
+#' @export plot.Rcpp_CecModel
+#' @method plot Rcpp_CecModel 
+#'
 #' @title plot
 #' 
 #' @rdname cec-plot
 #' 
 #' @description Plot clustering found on 2D plot coloring by cluster.
 #' 
-#' @export
 #' 
 #' @param x CEC model object.
 #' @param slice List of dimentions chosen for display since plot is 2D.
@@ -24,7 +26,7 @@
 #' plot(cec, ellipses=TRUE, centers=FALSE)
 #' plot(cec, pca=TRUE, ellipses=TRUE, centers=FALSE)
 #' }
-plot.cec <- function(x, slice = c(), pca=FALSE, ellipses = FALSE, centers = FALSE, ...) {
+plot.Rcpp_CecModel <- function(x, slice = c(), pca=FALSE, ellipses = FALSE, centers = FALSE, ...) {
   
   d <- x$x()
   if(pca){
@@ -97,6 +99,3 @@ plot.cec <- function(x, slice = c(), pca=FALSE, ellipses = FALSE, centers = FALS
     }
   }
 }
-evalqOnLoad({
-    setMethod("plot", "Rcpp_CecModel", plot.cec)  
-})

@@ -1,4 +1,7 @@
 #' Summary CEC
+#' @name summary
+#' @export summary.Rcpp_CecModel
+#' @method summary Rcpp_CecModel 
 #' 
 #' @title summary
 #' 
@@ -9,8 +12,8 @@
 #' @param object CEC model object.
 #' @param ... other arguments not used by this method.
 #' 
-summary.cec <- function(object, ...) {
-  print.cec(object)
+summary.Rcpp_CecModel <- function(object, ...) {
+  print(object)
   
   if(isParameterOn(object$log.iters())){
     print("Iterations: ")
@@ -25,10 +28,10 @@ summary.cec <- function(object, ...) {
     print(object$log.ncluster())
   }
 }
-evalqOnLoad({  
-  setMethod("summary", "Rcpp_CecModel", summary.cec)
-  setMethod("show", "Rcpp_CecModel", function(object) { summary.cec(object) } )
-})
+
+show.Rcpp_CecModel <- function(object) {
+    summary(object)
+}
 
 isParameterOn <- function(x) {
   return(length(x) != 0)

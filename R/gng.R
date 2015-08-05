@@ -396,26 +396,23 @@ errorStatistics.gng <- NULL
 #' }
 OptimizedGNG <- NULL
 
-
+#' @name clustering
 #' @title clustering
 #' 
 #' @description Gets vector with node indexes assigned to examples in the dataset
 #' 
+#' @method clustering Rcpp_GNGServer 
 #' @export
-#' 
-#' @param c GNG object # STASZEK PLZ MAKE SURE THIS IS RIGHT
 #' 
 #' @rdname clustering-methods
 #' 
 #' @docType methods
 #'
-#' @aliases clustering
-#'
 #' @examples
 #' \dontrun{
 #' clustering(gng)
 #' } 
-clustering.gng <- NULL
+clustering.Rcpp_GNGServer <- NULL
 
 #' @title Constructor of GrowingNeuralGas object. 
 #' 
@@ -884,7 +881,7 @@ errorStatistics.gng <- function(object){
   object$getErrorStatistics()
 }  
 
-clustering.gng <- function(c){
+clustering.Rcpp_GNGServer <- function(c){
   c$clustering()
 }  
 
@@ -1064,11 +1061,16 @@ generateExamples <- function(preset, N, r=1.0, center=c(0.5,0.5,0.5)){
 
 loadModule('gng_module', TRUE)
 
+#' Class Rcpp_GNGServer.
+#'
+#' Class \code{Rcpp_GNGServer} defines a GNGServer class. 
+#'
+#' @name Rcpp_GNGServer-class
+#' @exportClass Rcpp_GNGServer
+setClass(Class = "Rcpp_GNGServer")
+
 setGeneric("node", 
            function(x, gng_id, ...) standardGeneric("node"))
-
-setGeneric("clustering", 
-           function(c) standardGeneric("clustering"))
 
 
 setGeneric("convertToGraph", 
@@ -1144,12 +1146,6 @@ evalqOnLoad( {
   setMethod("convertToGraph" ,
             "Rcpp_GNGServer",
             convertToGraph.gng)
-
-
-  setMethod("clustering" ,
-            "Rcpp_GNGServer",
-            clustering.gng)
-
 
 
   setMethod("predict" ,
