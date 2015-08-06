@@ -399,9 +399,9 @@ clustering.Rcpp_GNGServer <- NULL
 #'
 GNG <- NULL
 
-print.gng <- NULL
+print.Rcpp_GNGServer <- NULL
 
-summary.gng <- NULL
+summary.Rcpp_GNGServer <- NULL
 
 #' @title convertToGraph
 #' @description Converts GNG to igraph object.
@@ -727,12 +727,12 @@ plot.Rcpp_GNGServer <- function(x, vertex.color=gng.plot.color.cluster,
   }
 }
 
-print.gng <- function(x, ...){
+print.Rcpp_GNGServer <- function(x, ...){
   print(sprintf("Growing Neural Gas, nodes %d with mean error %f", 
                 x$getNumberNodes(), x$getMeanError()))
 }
 
-summary.gng <- function(object, ...){
+summary.Rcpp_GNGServer <- function(object, ...){
   if(object$.getConfiguration()$.uniformgrid_optimization){
     print("(Optimized) Growing Neural Gas")
   }else{
