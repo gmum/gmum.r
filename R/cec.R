@@ -1,7 +1,6 @@
 #' @useDynLib gmum.r
 
 #' @name CEC
-#' 
 #' @title Cross-Entropy Clustering
 #' 
 #' @description Create CEC model object
@@ -50,6 +49,7 @@
 #' p2 = list(method.type='diagonal', k=2)
 #' CEC(x=dataset, params.mix=list(p1, p2))
 #' }
+#' @import Rcpp
 #' @export
 CEC <- NULL
 
@@ -369,7 +369,6 @@ predict.Rcpp_CecModel <- function(object, x, ...) {
 #' Class \code{Rcpp_CecModel} defines a CEC model class. 
 #'
 #' @name Rcpp_CecModel-class
-#' @rdname cec-classes 
 #' @exportClass Rcpp_CecModel
 setClass(Class = "Rcpp_CecModel")
 
@@ -378,6 +377,5 @@ setClass(Class = "Rcpp_CecModel")
 #' Class \code{Rcpp_CecConfiguration} defines a CEC model configuration class. 
 #'
 #' @name Rcpp_CecConfiguration-class
-#' @rdname cec-classes 
 #' @exportClass Rcpp_CecConfiguration
 setClass(Class = "Rcpp_CecConfiguration")
