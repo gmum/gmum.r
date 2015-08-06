@@ -38,18 +38,13 @@ gng.type.utility<- function(k=1.3){
 
 .GNG <- NULL
 
-
-
 #' Plot GNG
 #'
 #' @title plot GNG object
-#' 
 #' @description Plot resulting graph using igraph plotting
-#' 
-#' 
-#' @export
-#' 
 #' @rdname gng-plot
+#' @export plot.Rcpp_GNGServer
+#' @method plot Rcpp_GNGServer
 #'
 #' @param x GNG object
 #' @param mode \code{gng.plot.2d} (igraph plot)
@@ -75,88 +70,50 @@ gng.type.utility<- function(k=1.3){
 #' 
 #' # For more possibilities see gng.plot.* constants
 #' }
-#' 
-#' @method plot gng
-plot.gng <- NULL
+plot.Rcpp_GNGServer <- NULL
 
 #' Save model to binary format
-#'
 #' @title gngSave
-#' 
 #' @description Writes model to a disk space efficient binary format. 
-#' 
 #' @export
-#' 
+#'  
 #' @param object GNG object
 #' @param filename File where binary will be saved
-#' 
-#' @rdname gngSave-methods
-#' 
-#' @docType methods
-#'
-#' @aliases gngSave
-#'
 gngSave <- NULL
-
 
 
 #' Load model from binary format
 #'
 #' @title gngLoad
-#' 
 #' @description Writes model to a disk space efficient binary format. 
-#' 
 #' @export
 #' 
 #' @param filename Binary file location
-#' 
-#' @rdname gngLoad-methods
-#' 
-#' @docType methods
-#'
-#' @aliases gngLoad
-#'
 gngLoad <- NULL
 
 #' Get centroids
 #'
 #' @title predictCentroids
-#' 
 #' @description Using infomap.communities finds communities and for each community pick node with biggest betweenness score
+#' @export
 #' 
 #' @param object GNG object
 #' @param community.detection.algorithm # STASZEK PLZ DOCUMENT THIS
 #' 
-#' @export
-#' 
-#' @rdname predictCentroids-methods
-#' 
-#' @docType methods
-#'
 #' @examples
 #' \dontrun{
 #' print(node(gng, predictCentroids(gng)[1])$pos)
 #' }
-#' 
-#' @aliases predictCentroids
-#'  
 predictCentroids <- NULL
 
 #' Find closest centroid
 #'
 #' @title findClosests
-#' 
 #' @description Finds closest node from given list to vector
-#' 
 #' @export
-#' 
-#' @rdname findClosest-methods
-#' 
-#' @docType methods
-#'
+
 #' @param object GNG object
 #' @param node.ids List of indexes of nodes in gng. 
-#' 
 #' @param x Can be either \code{vector} or \code{data.frame.}
 #' 
 #' @examples
@@ -171,17 +128,12 @@ predictCentroids <- NULL
 #' 
 findClosests <- NULL
 
-
 #' Find closest component
-#'
+#' @name predictComponent
 #' @title predictComponent
-#' 
 #' @description Finds connected component closest to given vector(s).
-#' 
 #' @export
-#' 
 #' @rdname predictComponent-methods
-#' 
 #' @docType methods
 #'
 #' @param object GNG object
@@ -198,17 +150,12 @@ findClosests <- NULL
 predictComponent <- NULL
 
 #' Get GNG node
-#'
+#' @name node
 #' @title node
-#' 
 #' @description Retrieves node from resulting graph
-#' 
+#' @rdname node-methods
 #' @export
 #' 
-#' @rdname node-methods
-#' 
-#' @docType methods
-#'
 #' @param x GNG object
 #' @param gng_id Id of the node to retrieve. This is the id returned by functions like predict, or centroids
 #' 
@@ -220,66 +167,56 @@ predictComponent <- NULL
 #' 
 #' @aliases node
 #' 
-node.gng <- NULL
+node <- function(c, ...) UseMethod("node")
 
+#' @export 
+node.Rcpp_GNGServer <- NULL
 
+#' @name run
 #' @title run
-#' 
+#' @rdname run-methods
 #' @description Run algorithm (in parallel)
-#' 
 #' @export
 #' 
 #' @param object GNG object
 #' 
-#' @rdname run-methods
-#' 
-#' @docType methods
-#'
 #' @examples
 #' \dontrun{
 #' gng <- GNG(scaled.wine)
-#' # TODO: Better example
 #' run(gng)
 #' }
 #' 
 #' @aliases run
 #'
-run.gng <- NULL
+run <- function(c) UseMethod("run")
+
+#' @export
+run.Rcpp_GNGServer <- NULL
 
 #' @title pause
-#' 
 #' @description Pause algorithm
-#' 
+#' @export
+#'
 #' @param object GNG object
 #' 
-#' @export
-#' 
-#' @rdname pause-methods
-#' 
-#' @docType methods
-#'
 #' @examples
 #' \dontrun{
 #' gng <- GNG(scaled.wine)
 #' # TODO: Better example
 #' pause(gng)
 #' }
-#' 
-#' @aliases pause
-#'
-pause.gng <- NULL
+pause <- function(c) UseMethod("pause")
+
+#' @export
+pause.Rcpp_GNGServer <- NULL
 
 #' @title pause
-#' 
 #' @description Terminate algorithm
-#' 
 #' @export
-#' 
 #' @rdname terminate-methods
+#' @docType methods
 #' 
 #' @param object GNG object
-#' 
-#' @docType methods
 #'
 #' @examples
 #' \dontrun{
@@ -290,19 +227,16 @@ pause.gng <- NULL
 #' 
 #' @aliases terminate
 #'
-terminate.gng <- NULL
+terminate <- function(c) UseMethod("terminate")
+
+#' @export
+terminate.Rcpp_GNGServer <- NULL
 
 #' @title meanError
-#' 
 #' @description Gets mean error of the graph (note: blocks the execution, O(n))
-#' 
 #' @param object GNG object
 #' 
 #' @export
-#' 
-#' @rdname meanError-methods
-#' 
-#' @docType methods
 #'
 #' @examples
 #' \dontrun{
@@ -310,41 +244,22 @@ terminate.gng <- NULL
 #' # TODO: Better example
 #' meanError(gng)
 #' }
-#' 
-#' @aliases meanError
-#'
-meanError.gng <- NULL
-
+meanError <- NULL
 
 #' @title errorStatistics
-#' 
 #' @description Gets vector with errors for every second of execution
-#' 
 #' @export
 #' 
 #' @param object GNG object
 #' 
-#' @rdname errorStatistics-methods
-#' 
-#' @docType methods
-#'
-#' 
-#' @aliases errorStatistics
-#'
 #' @examples
 #' \dontrun{
 #' gng <- GNG(scaled.wine)
-#' # TODO: Better example
 #' errorStatistics(gng)
 #' }
-#' 
-#' @aliases meanError
-#'
-errorStatistics.gng <- NULL
-
+errorStatistics <- NULL
 
 #' @title Constructor of Optimized GrowingNeuralGas object. 
-#' 
 #' @rdname optimized-gng
 #' 
 #' @export 
@@ -378,11 +293,15 @@ errorStatistics.gng <- NULL
 #'
 #' @param value.range All example features should be in this range, required for optimized version of the algorithm. Default \code{(0,1)} 
 #' 
-#' @param x STASZEK PLZ DOCUMENT THIS
-#' @param labels STASZEK PLZ DOCUMENT THIS
-#' @param max.edge.age STASZEK PLZ DOCUMENT THIS
-#' @param verbosity STASZEK PLZ DOCUMENT THIS
-#' @param seed STASZEK PLZ DOCUMENT THIS
+#' @param x Passed data (matrix of data.frame) for offline training
+#' 
+#' @param labels Every example can be associated with labels that are added to nodes later. By default empty
+#' 
+#' @param max.edge.age Maximum edge age. Decrease to increase speed of change of graph topology. Default \code{200}
+#' 
+#' @param verbosity How verbose should the process be, as integer from \eqn{[0,6]}, default: \code{0}
+#' 
+#' @param seed Seed for internal randomization
 #' 
 #' @examples
 #' \dontrun{
@@ -449,13 +368,16 @@ clustering.Rcpp_GNGServer <- NULL
 #' @param k Utility constant, by default turned off. Good value is 1.3. Constant controlling speed of erasing obsolete nodes, 
 #' see \url{http://sund.de/netze/applets/gng/full/tex/DemoGNG/node20.html}
 #' 
-#' @param x STASZEK PLZ DOCUMENT THIS
-#' @param labels STASZEK PLZ DOCUMENT THIS
-#' @param max.edge.age STASZEK PLZ DOCUMENT THIS
-#' @param verbosity STASZEK PLZ DOCUMENT THIS
-#' @param seed STASZEK PLZ DOCUMENT THIS
+#' @param x Passed data (matrix of data.frame) for offline training
 #' 
-#'
+#' @param labels Every example can be associated with labels that are added to nodes later. By default empty
+#' 
+#' @param max.edge.age Maximum edge age. Decrease to increase speed of change of graph topology. Default \code{200}
+#' 
+#' @param verbosity How verbose should the process be, as integer from \eqn{[0,6]}, default: \code{0}
+#' 
+#' @param seed Seed for internal randomization
+#' 
 #' @examples
 #' \dontrun{
 #' data(wine, package="rattle")
@@ -482,45 +404,37 @@ print.gng <- NULL
 summary.gng <- NULL
 
 #' @title convertToGraph
-#' 
 #' @description Converts GNG to igraph object.
 #' 
 #' @param object GNG object
-#' 
-#' @param gng Learned GNG object
-#' 
-#' @param calculate.dist STASZEK PLZ DOCUMENT THIS
+#' @param calculate.dist If true will calculate all \code{n^2} distances in the graph
 #' 
 #' @export
-#' 
-#' @rdname convertToGraph-methods
-#' 
-#' @docType methods
-#'
-#' @aliases convertToGraph
-#'
-convertToGraph.gng <- NULL
+convertToGraph <- NULL
 
+#' @title numberNodes
+#' @description Get current number of nodes in the graph
+#' 
+#' @param object GNG object
+#' 
+#' @export
+numberNodes <- function(object){
+  object$getNumberNodes()
+}
 
 generateExamples <- NULL
 
+#' @name insertExamples
 #' @title insertExamples
-#' 
 #' @description Insert examples with optional labels.
 #' 
 #' @export
 #' 
 #' @param object GNG object
-#' 
 #' @param examples \code{matrix} or \code{data.frame} with rows as examples. Note: if training online make sure
 #' number of columns matches dim parameter passed to GNG constructor.
-#' 
 #' @param labels \code{vector} of labels, that will be associated with nodes in the graph. GNG will assign to each
 #' node a mean of labels of closest examples.
-#' 
-#' @rdname insertExamples-methods
-#' 
-#' @docType methods
 #'
 #' @examples
 #' \dontrun{
@@ -531,13 +445,11 @@ generateExamples <- NULL
 #' M = generateExamples(preset=gng.preset.sphere)
 #' insertExamples(gng, M)
 #' }
-#' @aliases insertExamples
 #' 
 #' @note It copies your examples twice in RAM. You might want to use object$insertExamples, or
 #' not to copy at all set_memory_move_examples (when using this function, remember not to modify the matrix
 #' and after removing the object delete it aswell)
-#'
-insertExamples.Rcpp_GNGServer <- NULL
+insertExamples <- NULL
 
 .GNG <- function(x=NULL, labels=c(),
                   beta=0.99, 
@@ -784,7 +696,7 @@ predictComponent <- function(object, x){
   object$components.membership[predict(object, x)]
 }
 
-plot.gng <- function(x, vertex.color=gng.plot.color.cluster, 
+plot.Rcpp_GNGServer <- function(x, vertex.color=gng.plot.color.cluster, 
                       layout=gng.plot.layout.v2d, mode=gng.plot.2d, 
                       vertex.size=3, ...){
   if(vertex.size <= 0){
@@ -845,17 +757,17 @@ summary.gng <- function(object, ...){
 }
 
 
-node.gng <- function(x, gng_id){
+node.Rcpp_GNGServer  <- function(x, gng_id){
   x$getNode(gng_id)
 }
 
-run.gng <- function(object){
+run.Rcpp_GNGServer  <- function(object){
   # Invalidate components
   assign("components.membership", NULL, object)
   object$run()
 }
 
-pause.gng <- function(object){
+pause.Rcpp_GNGServer  <- function(object){
   object$pause()
   n = 0.0
   sleep = 0.1
@@ -869,15 +781,15 @@ pause.gng <- function(object){
   }
 }
 
-terminate.gng <- function(object){
+terminate.Rcpp_GNGServer <- function(object){
   object$terminate()
 }
 
-meanError.gng <- function(object){
+meanError <- function(object){
   object$getMeanError()
 }  
 
-errorStatistics.gng <- function(object){
+errorStatistics <- function(object){
   object$getErrorStatistics()
 }  
 
@@ -894,8 +806,6 @@ gngLoad <- function(filename){
   warning("Saving does not preserve training history")
   fromFileGNG(filename)
 }
-
-
 
 predictCentroids  <- function(object, community.detection.algorithm=spinglass.community){
   ig <- convertToGraph(object)
@@ -919,7 +829,7 @@ predictCentroids  <- function(object, community.detection.algorithm=spinglass.co
 }
 
 
-convertToGraph.gng <- function(object, calculate.dist=TRUE){
+convertToGraph <- function(object, calculate.dist=TRUE){
   was_running = object$isRunning()
   if(was_running){
     pause(object)
@@ -1000,7 +910,6 @@ convertToGraph.gng <- function(object, calculate.dist=TRUE){
   g
 }
 
-
 findClosests <- function(object, node.ids, x){
   .findClosests <- function(object, node.ids, x){
     # Returns all dists from given pos to given nodes
@@ -1031,9 +940,7 @@ findClosests <- function(object, node.ids, x){
   }
 }
 
-insertExamples.Rcpp_GNGServer <- function(object, examples, labels=c()){   
-  
-  
+insertExamples <- function(object, examples, labels=c()){    
   if(length(labels) == 0){
     object$insertExamples(examples)
   }else if(typeof(labels) == "character"){
@@ -1069,42 +976,6 @@ loadModule('gng_module', TRUE)
 #' @exportClass Rcpp_GNGServer
 setClass(Class = "Rcpp_GNGServer")
 
-setGeneric("node", 
-           function(x, gng_id, ...) standardGeneric("node"))
-
-
-setGeneric("convertToGraph", 
-           function(object, ...) standardGeneric("convertToGraph"))
-
-
-
-setGeneric("run", 
-           function(object, ...) standardGeneric("run"))
-
-setGeneric("pause", 
-           function(object, ...) standardGeneric("pause"))
-
-setGeneric("terminate", 
-           function(object, ...) standardGeneric("terminate"))
-
-
-setGeneric("insertExamples", 
-           function(object, ...) standardGeneric("insertExamples"))
-
-
-
-setGeneric("meanError", 
-           function(object, ...) standardGeneric("meanError"))
-
-
-setGeneric("errorStatistics", 
-           function(object, ...) standardGeneric("errorStatistics"))
-
-
-setGeneric("numberNodes", 
-           function(object, ...) standardGeneric("numberNodes"))
-
-
 # Lazy loading to allow for discovery of all files
 evalqOnLoad( {
     
@@ -1113,40 +984,6 @@ evalqOnLoad( {
   .GlobalEnv$`.DollarNames.C++Object` <- function( x, pattern ){
     grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE)[! (substr(grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE),1,1)==".")]
   }
-  
-  #.GlobalEnv$DollarNamesGmumr <- function( x, pattern ){
-  #  asNamespace("Rcpp")$`.DollarNames.C++Object`(x, pattern)[! (substr(asNamespace("Rcpp")$`.DollarNames.C++Object`(x, pattern),1,1)==".")]
-  #}
-  #environment(.GlobalEnv$DollarNamesGmumr) <- .GlobalEnv
-  #setMethod( ".DollarNames", "C++Object", .GlobalEnv$DollarNamesGmumr )
-
-  setMethod("insertExamples", "Rcpp_GNGServer", insertExamples.Rcpp_GNGServer)
-  setMethod("plot",  "Rcpp_GNGServer", plot.gng)
-  setMethod("print",  "Rcpp_GNGServer", print.gng)
-  setMethod("summary", "Rcpp_GNGServer", summary.gng)
-  setMethod("show", "Rcpp_GNGServer", function(object){ summary.gng(object) })
-  
-  setMethod("node", signature("Rcpp_GNGServer","numeric"), node.gng)
-  setMethod("run", "Rcpp_GNGServer", run.gng)
-  setMethod("pause", "Rcpp_GNGServer", pause.gng)
-  setMethod("terminate", "Rcpp_GNGServer", terminate.gng)
-  setMethod("meanError", "Rcpp_GNGServer", meanError.gng) 
-  setMethod("errorStatistics", "Rcpp_GNGServer", errorStatistics.gng) 
-  
-  #'Get number of nodes
-  setMethod("numberNodes" ,
-            "Rcpp_GNGServer",
-            function(object){
-              object$getNumberNodes()
-            })
-  
-  
-    
-
-  setMethod("convertToGraph" ,
-            "Rcpp_GNGServer",
-            convertToGraph.gng)
-
 
   setMethod("predict" ,
             "Rcpp_GNGServer",
