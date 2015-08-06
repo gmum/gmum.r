@@ -140,6 +140,13 @@ test_that("GNG clustering and predict are returning the same", {
   expect_that(all(gng$clustering() == predict(gng,X)), is_true())
 })
 
+test_that("GNG errorStatistics and node retrieval work", {
+  X <- replicate(10, rnorm(20))
+  gng <- GNG(X)
+  expect_that(length(errorStatistics(gng)) > 1, is_true())
+  node(gng, 1)
+})
+
 test_that("GNG synchronization looks ok", {
   
   data(cec.mouse1.spherical)

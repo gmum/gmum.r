@@ -192,11 +192,8 @@ caret.gmumSvmRadial <- NULL
 caret.gmumSvmLinear <- NULL
 caret.gmumSvmPoly <- NULL
 
-#' @export
 #' @rdname svm
 SVM.formula <- NULL
-
-#' @export
 #' @rdname svm
 SVM.default <- NULL
 
