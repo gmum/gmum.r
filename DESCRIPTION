@@ -16,7 +16,7 @@ Depends:
     httr,
     Matrix,
     MASS (>= 7.3),
-    Rcpp (>= 0.12.0)
+    Rcpp (>= 0.11.6)
 LinkingTo: Rcpp, RcppArmadillo, BH
 NeedsCompilation: yes
 LazyData: yes

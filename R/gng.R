@@ -169,6 +169,43 @@ predictComponent <- NULL
 #' 
 node <- function(c, ...) UseMethod("node")
 
+#' Predict 
+#' @name predict
+#' @title predict
+#' @description Retrieves prediction from GNG
+#' @rdname predict-methods
+#' @export
+#' 
+#' @param gng GNG object
+#' @param x Vector or matrix of examples
+#' @examples
+#' \dontrun{
+#' predict(gng, c(1,2,2))
+#' }
+#' 
+#' @aliases predict
+predict.Rcpp_GNGServer <- function(object, x, ...){
+  if( is.vector(x)){
+    object$predict(x)
+  }else{
+    if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
+      stop(gmum.error(GMUM_WRONG_PARAMS, "Wrong target class, please provide data.frame, matrix or numeric vector"))
+    }
+    
+    if (!is(x, "matrix")) {
+      x <- data.matrix(x)
+    }
+    
+    y <- rep(NA, nrow(x))
+    
+    for(i in 1:nrow(x)){
+      y[i] <- object$predict(x[i,])
+    }
+    
+    y
+  }
+}
+
 #' @export 
 node.Rcpp_GNGServer <- NULL
 
@@ -984,31 +1021,6 @@ evalqOnLoad( {
   .GlobalEnv$`.DollarNames.C++Object` <- function( x, pattern ){
     grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE)[! (substr(grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE),1,1)==".")]
   }
-
-  setMethod("predict" ,
-            "Rcpp_GNGServer",
-            function(object, x, ...){
-                if( is.vector(x)){
-                    object$predict(x)
-                }else{
-                  if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
-                    stop(gmum.error(GMUM_WRONG_PARAMS, "Wrong target class, please provide data.frame, matrix or numeric vector"))
-                  }
-                  
-                  if (!is(x, "matrix")) {
-                    x <- data.matrix(x)
-                  }
-                  
-                  y <- rep(NA, nrow(x))
-                  
-                  for(i in 1:nrow(x)){
-                    y[i] <- object$predict(x[i,])
-                  }
-                  
-                  y
-                }
-            })
-  
   
   methods = list()
   for(name in names(GNGConfiguration@methods)){

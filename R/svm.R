@@ -127,18 +127,7 @@ predict.MultiClassSVM <- NULL
 #' svm <- SVM(x, y, core="libsvm", kernel="linear", C=1)
 #' predcit(svm, x_test)
 #' }
-predict.svm.gmum <- NULL
-
-#' @title print SVM object
-#' @rdname svm-print
-#' 
-#' @method print svm
-#' 
-#' @description Prints short summary of the SVM object and its parameters.
-#' 
-#' @export
-#' 
-print.svm <- NULL
+predict.Rcpp_SVMClient <- NULL
 
 #' @title plot SVM object
 #' @rdname svm-plot
@@ -172,7 +161,7 @@ print.svm <- NULL
 #' }
 #' 
 #' @method plot svm
-plot.svm <- NULL
+plot.Rcpp_SVMClient <- NULL
 
 #' @title summary of SVM object
 #' @rdname svm-summary
@@ -185,7 +174,7 @@ plot.svm <- NULL
 #' 
 #' @method summary svm
 #' 
-summary.svm <- NULL
+summary.Rcpp_SVMClient <- NULL
 
 # Support for caret
 caret.gmumSvmRadial <- NULL
@@ -603,7 +592,7 @@ evalqOnLoad({
     summary.MultiClassSVM(object)
   }
   
-  summary.svm <<- function(object, ...) {
+  summary.Rcpp_SVMClient <<- function(object, ...) {
     print(sprintf("Support Vector Machine, core: %s, preprocess: %s",
                   object$core(), 
                   object$kernel(), 
@@ -631,10 +620,10 @@ evalqOnLoad({
   }
   
   plot.MultiClassSVM <<- function(x, X=NULL, mode="normal", cols=c(1,2), radius=3, radius.max=10) {
-    plot.svm(x, X=X, cols=cols, mode=mode, radius=radius, radius.max=radius.max)
+    plot.Rcpp_SVMClient(x, X=X, cols=cols, mode=mode, radius=radius, radius.max=radius.max)
   }
   
-  plot.svm <<- function(x, X=NULL, mode="normal", cols=c(1,2), radius=3, radius.max=10, ...) {
+  plot.Rcpp_SVMClient <<- function(x, X=NULL, mode="normal", cols=c(1,2), radius=3, radius.max=10, ...) {
     #0. Some initial preparing
     if (mode != "pca" && mode != "normal" && mode != "contour" ) {
       stop("Wrong mode!") 
@@ -844,7 +833,7 @@ evalqOnLoad({
     return(factor(ymat.preds, levels=object$levels))
   }
   
-  predict.svm.gmum <<- function(object, x_test, decision.function=FALSE, ...) {
+  predict.Rcpp_SVMClient <<- function(object, x_test, decision.function=FALSE, ...) {
     if ( !is(x_test, "data.frame") && 
          !is(x_test, "matrix") && 
          !is(x_test,"numeric") && 
@@ -899,13 +888,6 @@ evalqOnLoad({
       prediction
     }
   }
-
-  setMethod("print", "Rcpp_SVMClient", print.svm)
-  setMethod("predict", "Rcpp_SVMClient", predict.svm.gmum)
-  setMethod("plot", "Rcpp_SVMClient",  plot.svm)
-  setMethod("summary", "Rcpp_SVMClient", summary.svm)
-  setMethod("show", "Rcpp_SVMClient", function(object) {summary.svm(object)})
-
 
 # Add (very basic) support for caret
   
