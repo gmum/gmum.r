@@ -120,7 +120,7 @@ predict.MultiClassSVM <- NULL
 #' (distance of a point from discriminant) instead of predicted labels, default: \code{FALSE}
 #' @param ... other arguments not used by this method.
 #' 
-#' @method predict svm.gmum
+#' @method predict Rcpp_SVMClient
 #' 
 #' @examples
 #' \dontrun{
@@ -160,7 +160,7 @@ predict.Rcpp_SVMClient <- NULL
 #' plot(svm, mode="pca", radius=5)
 #' }
 #' 
-#' @method plot svm
+#' @method plot Rcpp_SVMClient
 plot.Rcpp_SVMClient <- NULL
 
 #' @title summary of SVM object
@@ -172,7 +172,7 @@ plot.Rcpp_SVMClient <- NULL
 #' @param object Trained SVM object
 #' @param ... other arguments not used by this method.
 #' 
-#' @method summary svm
+#' @method summary Rcpp_SVMClient
 #' 
 summary.Rcpp_SVMClient <- NULL
 
