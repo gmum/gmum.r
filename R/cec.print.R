@@ -1,5 +1,6 @@
 #' Print CEC
 #' @export print.Rcpp_CecModel
+#' @rdname print-methods
 #' @method print Rcpp_CecModel 
 #'
 #' @title print

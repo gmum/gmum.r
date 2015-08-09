@@ -247,7 +247,8 @@ pause <- function(c) UseMethod("pause")
 #' @export
 pause.Rcpp_GNGServer <- NULL
 
-#' @title pause
+#' @title terminate
+#' @name terminate
 #' @description Terminate algorithm
 #' @export
 #' @rdname terminate-methods
@@ -436,8 +437,34 @@ clustering.Rcpp_GNGServer <- NULL
 #'
 GNG <- NULL
 
+#' Print CEC
+#' @export print.Rcpp_GNGServer
+#' @rdname print-methods
+#' @method print Rcpp_GNGServer
+#'
+#' @title print
+#' 
+#' @description Print basic information about GNG object
+#'
+#' @docType methods
+#'
+#' @param x GNG object model.
+#' @param ... other arguments not used by this method.
 print.Rcpp_GNGServer <- NULL
 
+#' Summary of CEC
+#' @export summary.Rcpp_GNGServer
+#' @rdname summary-methods
+#' @method summary Rcpp_GNGServer
+#'
+#' @title summary
+#' 
+#' @description Print basic information about GNG object
+#'
+#' @docType methods
+#'
+#' @param x GNG object model.
+#' @param ... other arguments not used by this method.
 summary.Rcpp_GNGServer <- NULL
 
 #' @title convertToGraph

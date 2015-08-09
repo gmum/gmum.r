@@ -106,7 +106,7 @@ plot.MulticlassSVM <- NULL
 predict.MultiClassSVM <- NULL
 
 #' @title Predict using SVM object
-#' @rdname svm-predict
+#' @rdname predict-methods
 #' 
 #' @description Returns predicted classes or distance to discriminative for provided test examples.
 #' 
@@ -130,7 +130,7 @@ predict.MultiClassSVM <- NULL
 predict.Rcpp_SVMClient <- NULL
 
 #' @title plot SVM object
-#' @rdname svm-plot
+#' @rdname plot-methods
 #' 
 #' @description Plots trained svm data and models disciriminative
 #' 
@@ -164,7 +164,7 @@ predict.Rcpp_SVMClient <- NULL
 plot.Rcpp_SVMClient <- NULL
 
 #' @title summary of SVM object
-#' @rdname svm-summary
+#' @rdname summary-methods
 #' 
 #' @description Prints short summary of a trained model.
 #' 
@@ -175,6 +175,19 @@ plot.Rcpp_SVMClient <- NULL
 #' @method summary Rcpp_SVMClient
 #' 
 summary.Rcpp_SVMClient <- NULL
+
+#' @title print SVM object
+#' @rdname print-methods
+#' 
+#' @description Prints short summary of a trained model.
+#' 
+#' @export
+#' @param object Trained SVM object
+#' @param ... other arguments not used by this method.
+#' 
+#' @method print Rcpp_SVMClient
+#' 
+print.Rcpp_SVMClient <- NULL
 
 # Support for caret
 caret.gmumSvmRadial <- NULL
@@ -556,7 +569,7 @@ evalqOnLoad({
     client 
   } 
 
-  print.svm <- function(x, ...) {
+  print.Rcpp_SVMClient <<- function(x, ...) {
     summary(x)
   }
   

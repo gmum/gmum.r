@@ -1,6 +1,6 @@
 #' Summary CEC
-#' @name summary
 #' @export summary.Rcpp_CecModel
+#' @rdname summary-methods
 #' @method summary Rcpp_CecModel 
 #' 
 #' @title summary

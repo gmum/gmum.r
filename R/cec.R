@@ -160,6 +160,7 @@ centers <- NULL
 covMatrix <- NULL
 
 #' @name predict
+#' @rdname predict-methods
 #' @method predict Rcpp_CecModel
 #' @title predict
 #' 

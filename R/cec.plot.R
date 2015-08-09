@@ -1,10 +1,10 @@
 #' Plot CEC
 #' @export plot.Rcpp_CecModel
-#' @method plot Rcpp_CecModel 
+#' @method plot Rcpp_CecModel
 #'
 #' @title plot
 #' 
-#' @rdname cec-plot
+#' @rdname plot-methods
 #' 
 #' @description Plot clustering found on 2D plot coloring by cluster.
 #' 
