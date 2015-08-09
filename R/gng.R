@@ -167,7 +167,7 @@ predictComponent <- NULL
 #' 
 #' @aliases node
 #' 
-node <- function(c, ...) UseMethod("node")
+node <- function(x, gng_id) UseMethod("node")
 
 #' Predict 
 #' @name predict
@@ -225,7 +225,7 @@ node.Rcpp_GNGServer <- NULL
 #' 
 #' @aliases run
 #'
-run <- function(c) UseMethod("run")
+run <- function(object) UseMethod("run")
 
 #' @export
 run.Rcpp_GNGServer <- NULL
@@ -239,10 +239,10 @@ run.Rcpp_GNGServer <- NULL
 #' @examples
 #' \dontrun{
 #' gng <- GNG(scaled.wine)
-#' # TODO: Better example
 #' pause(gng)
+#' print(gng$isRunning())
 #' }
-pause <- function(c) UseMethod("pause")
+pause <- function(object) UseMethod("pause")
 
 #' @export
 pause.Rcpp_GNGServer <- NULL
@@ -259,13 +259,12 @@ pause.Rcpp_GNGServer <- NULL
 #' @examples
 #' \dontrun{
 #' gng <- GNG(scaled.wine)
-#' # TODO: Better example
 #' terminate(gng)
 #' }
 #' 
 #' @aliases terminate
 #'
-terminate <- function(c) UseMethod("terminate")
+terminate <- function(object) UseMethod("terminate")
 
 #' @export
 terminate.Rcpp_GNGServer <- NULL
@@ -279,7 +278,6 @@ terminate.Rcpp_GNGServer <- NULL
 #' @examples
 #' \dontrun{
 #' gng <- GNG(scaled.wine)
-#' # TODO: Better example
 #' meanError(gng)
 #' }
 meanError <- NULL
