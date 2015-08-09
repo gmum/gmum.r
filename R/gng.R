@@ -790,8 +790,12 @@ plot.Rcpp_GNGServer <- function(x, vertex.color=gng.plot.color.cluster,
 }
 
 print.Rcpp_GNGServer <- function(x, ...){
-  print(sprintf("Growing Neural Gas, nodes %d with mean error %f", 
+  print(sprintf("Growing Neural Gas, %d nodes with mean error %f", 
                 x$getNumberNodes(), x$getMeanError()))
+}
+
+show.print.Rcpp_GNGServer <- function(object) {
+  summary(object)
 }
 
 summary.Rcpp_GNGServer <- function(object, ...){
