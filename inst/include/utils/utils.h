@@ -36,21 +36,21 @@ typedef vector<int> VI;
 #endif
 
 #ifdef DEBUG_GMUM
-	#ifdef RCPP_INTERFACE
-	  #include <RcppArmadillo.h>
-	  using namespace Rcpp;
-	  #define DBG(logger, level, text) logger.log(level, text);
-	  #define REPORT(x) Rcpp::Rcout<<#x<<"="<<(x)<<endl<<std::flush;
-	#else
-	  #define EXIT(x) exit(x);
-	  #define DBG(logger, level, text) logger.log(level, text);
-	  #define REPORT(x) cout<<#x<<"="<<(x)<<endl<<std::flush;
-	#endif
-	#define ASSERT(x) assert(x);
+#ifdef RCPP_INTERFACE
+#include <RcppArmadillo.h>
+using namespace Rcpp;
+#define DBG(logger, level, text) logger.log(level, text);
+#define REPORT(x) Rcpp::Rcout<<#x<<"="<<(x)<<endl<<std::flush;
 #else
-	#define DBG(verbosity, level, text)
-	#define REPORT(x)
-	#define ASSERT(x)
+#define EXIT(x) exit(x);
+#define DBG(logger, level, text) logger.log(level, text);
+#define REPORT(x) cout<<#x<<"="<<(x)<<endl<<std::flush;
+#endif
+#define ASSERT(x) assert(x);
+#else
+#define DBG(verbosity, level, text)
+#define REPORT(x)
+#define ASSERT(x)
 #endif
 
 #ifdef RCPP_INTERFACE
@@ -60,39 +60,39 @@ typedef vector<int> VI;
 #endif
 
 #ifdef RCPP_INTERFACE
-  #define EXIT(x) Rcpp::stop("");
+#define EXIT(x) Rcpp::stop("");
 #else
-    #define EXIT(x) exit(x);
+#define EXIT(x) exit(x);
 #endif
 
 
 template<class T>
 std::string to_str(const T& x) {
-	stringstream ss;
-	ss << x;
-	return ss.str();
+  stringstream ss;
+  ss << x;
+  return ss.str();
 }
 
 struct BasicException: public std::exception {
-	std::string s;
-	BasicException(std::string ss) :
-			s(ss) {
-	}
-	~BasicException() throw () {
-	} // Updated
-	const char* what() const throw () {
-		return s.c_str();
-	}
+  std::string s;
+  BasicException(std::string ss) :
+    s(ss) {
+    }
+  ~BasicException() throw () {
+  } // Updated
+  const char* what() const throw () {
+    return s.c_str();
+  }
 };
 
 //conflicting with boost namespace
 namespace gmum {
-  template<class T>
-  std::string to_string(const T& x) {
-  	stringstream ss;
-  	ss << x;
-  	return ss.str();
-  }
+template<class T>
+std::string to_string(const T& x) {
+  stringstream ss;
+  ss << x;
+  return ss.str();
+}
 }
 
 const int __one__ = 1;
@@ -105,80 +105,80 @@ int ed_c_rand();
 void ed_c_srand(unsigned int);
 
 static int __seed(int seed) {
-    ed_c_srand(seed);
-    return 0;
+  ed_c_srand(seed);
+  return 0;
 }
 
 template<class T>
 void write_array(T* begin, T*end) {
-        for (; begin != end; ++begin) {
-                    std::cerr << *begin << ",";
-                        }
-            std::cerr << endl;
+  for (; begin != end; ++begin) {
+    std::cerr << *begin << ",";
+  }
+  std::cerr << endl;
 }
 
 
 #define RANDOM_INT(rng, min, max) (rng() % (max - min +1) + min)
 
 static int __rnd(int min, int max) {
-	return (ed_c_rand() % (max - min + 1) + min);
+  return (ed_c_rand() % (max - min + 1) + min);
 }
 
 static int __int_rnd(int min, int max) {
-	return (ed_c_rand() % (max - min + 1) + min);
+  return (ed_c_rand() % (max - min + 1) + min);
 }
 
 static double __double_rnd(double min, double max) {
-	return min + (max - min) * ((double) ed_c_rand()) / RAND_MAX;
+  return min + (max - min) * ((double) ed_c_rand()) / RAND_MAX;
 }
 
 static void _write_bin(ostream & out, double v) {
-	if (isCpuLittleEndian ^ isFileLittleEndian) {
-		// Switch between the two
-		char data[8], *pDouble = (char*) (double*) (&v);
-		for (int i = 0; i < 8; ++i) {
-			data[i] = pDouble[7 - i];
-		}
-		out.write(data, 8);
-	} else
-		out.write((char*) (&v), 8);
+  if (isCpuLittleEndian ^ isFileLittleEndian) {
+    // Switch between the two
+    char data[8], *pDouble = (char*) (double*) (&v);
+    for (int i = 0; i < 8; ++i) {
+      data[i] = pDouble[7 - i];
+    }
+    out.write(data, 8);
+  } else
+    out.write((char*) (&v), 8);
 }
 
-static void _write_bin_vect(ostream & out, vector<double> & v) {
-	_write_bin(out, (double) v.size());
-	// TODO: remove
-	REPORT(v.size());
-	for (size_t i = 0; i < v.size(); ++i) {
-		_write_bin(out, v[i]);
-	}
+static inline void _write_bin_vect(ostream & out, vector<double> & v) {
+  _write_bin(out, (double) v.size());
+  // TODO: remove
+  REPORT(v.size());
+  for (size_t i = 0; i < v.size(); ++i) {
+    _write_bin(out, v[i]);
+  }
 }
 
-static double _load_bin(istream & in) {
-	char data[8];
-	double res;
-	in.read(data, 8);
-	if (isCpuLittleEndian ^ isFileLittleEndian) {
-		char data_load[8];
-		// Switch between the two
-		for (int i = 0; i < 8; ++i) {
-			data_load[i] = data[7 - i];
-		}
-		memcpy((char*) &res, &data_load[0], 8);
-	} else
-		memcpy((char*) &res, &data[0], 8);
-
-	return res;
+static inline double _load_bin(istream & in) {
+  char data[8];
+  double res;
+  in.read(data, 8);
+  if (isCpuLittleEndian ^ isFileLittleEndian) {
+    char data_load[8];
+    // Switch between the two
+    for (int i = 0; i < 8; ++i) {
+      data_load[i] = data[7 - i];
+    }
+    memcpy((char*) &res, &data_load[0], 8);
+  } else
+    memcpy((char*) &res, &data[0], 8);
+  
+  return res;
 }
 
-static vector<double> _load_bin_vector(istream & in) {
-	int N = (int) _load_bin(in);
-	vector<double> x;
-	x.reserve(N);
-	REPORT(N);
-	for (int i = 0; i < N; ++i) {
-		x.push_back(_load_bin(in));
-	}
-	return x;
+static inline vector<double> _load_bin_vector(istream & in) {
+  int N = (int) _load_bin(in);
+  vector<double> x;
+  x.reserve(N);
+  REPORT(N);
+  for (int i = 0; i < N; ++i) {
+    x.push_back(_load_bin(in));
+  }
+  return x;
 }
 
 int check_argc(const char*);
