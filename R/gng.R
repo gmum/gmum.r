@@ -43,7 +43,7 @@ gng.type.utility<- function(k=1.3){
 #' @title plot GNG object
 #' @description Plot resulting graph using igraph plotting
 #' @rdname plot.gng
-#' @export plot.Rcpp_GNGServer
+#' @export
 #' @method plot Rcpp_GNGServer
 #'
 #' @param x GNG object
@@ -170,7 +170,7 @@ predictComponent <- NULL
 node <- function(x, gng_id) UseMethod("node")
 
 #' Predict 
-#' @name predict
+#' @name predict.gng
 #' @title predict
 #' @description Retrieves prediction from trained GNG model
 #' @rdname predict.gng
@@ -178,6 +178,7 @@ node <- function(x, gng_id) UseMethod("node")
 #' 
 #' @param object Trained model
 #' @param x Vector or matrix of examples
+#' @param ... other arguments not used by this method
 #' @examples
 #' \dontrun{
 #' predict(gng, c(1,2,2))
@@ -341,7 +342,9 @@ errorStatistics <- NULL
 #' \dontrun{
 #' # Train online optimizedGNG. All values in this dataset are in the range (-4.3, 4.3)
 #' data(wine, package="rattle")
-#' gng <- OptimizedGNG(train.online = TRUE), value.range=c(min(scale(wine[-1]),max(scale(wine[-1]))), max.nodes=20)
+#' gng <- OptimizedGNG(train.online = TRUE, 
+#'                     value.range=c(min(scale(wine[-1]),max(scale(wine[-1]))), 
+#'                     max.nodes=20)
 #' insertExamples(gng, scale(wine[-1]))
 #' run(gng)
 #' Sys.sleep(10)

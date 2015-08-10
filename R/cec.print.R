@@ -1,5 +1,5 @@
 #' Print CEC
-#' @export print.Rcpp_CecModel
+#' @export
 #' @rdname print.cec
 #' @method print Rcpp_CecModel 
 #'

@@ -7,4 +7,738 @@
 \description{
 Class \code{Rcpp_GNGServer} defines a GNGServer class.
 }
+\section{Methods}{
+
+\describe{
+\item{\code{clustering()}}{Rcpp::NumericVector clustering()
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  
+Rcpp::NumericVector clustering()  
+  }
+
+\item{\code{getCurrentIteration()}}{unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  
+unsigned int getCurrentIteration()  const 
+  }
+
+\item{\code{getDatasetSize()}}{unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  
+unsigned int getDatasetSize()  const 
+  }
+
+\item{\code{getErrorStatistics()}}{Rcpp::NumericVector getErrorStatistics()
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  
+Rcpp::NumericVector getErrorStatistics()  
+  }
+
+\item{\code{getMeanError()}}{double getMeanError()
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  
+double getMeanError()  
+  }
+
+\item{\code{getNode(...)}}{Rcpp::List getNode(int)
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  
+Rcpp::List getNode(int)  
+  }
+
+\item{\code{getNumberNodes()}}{unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  
+unsigned int getNumberNodes()  const 
+  }
+
+\item{\code{hasStarted()}}{bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  
+bool hasStarted()  const 
+  }
+
+\item{\code{insertExamples(...)}}{void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  }
+
+\item{\code{insertLabeledExamples(...)}}{void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  
+void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)  
+  }
+
+\item{\code{isRunning()}}{bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  
+bool isRunning()  const 
+  }
+
+\item{\code{nodeDistance(...)}}{double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  
+double nodeDistance(int, int)  const 
+  }
+
+\item{\code{pause()}}{void pause()
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  
+void pause()  
+  }
+
+\item{\code{predict(...)}}{int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  
+int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)  
+  }
+
+\item{\code{run()}}{void run()
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  
+void run()  
+  }
+
+\item{\code{setVerbosity(...)}}{void setVerbosity(int)
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  
+void setVerbosity(int)  
+  }
+
+\item{\code{terminate()}}{void terminate()
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  
+void terminate()  
+  }
+}}
 

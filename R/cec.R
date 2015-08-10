@@ -38,13 +38,28 @@
 #' \dontrun{
 #' CEC(k=3, x=dataset)
 #' CEC(k=3, x=dataset, control.nstart=10, method.type='spherical', control.eps=0.05)
-#' CEC(k=2, x=dataset, method.type='spherical', method.init='centroids', params.centroids=list(c(-0.5,0.5),c(0,0)))
-#' CEC(k=5, x=dataset, method.type='fixed_spherical', params.r=0.01, control.nstart=10, control.eps=0.07)
-#' CEC(k=5, x=dataset, method.type='fixed_covariance', params.cov=matrix(c(0.03,0,0,0.01),2), control.nstart=10, control.eps=0.06)
+#' CEC(k=2, x=dataset, method.type='spherical', 
+#'     method.init='centroids', params.centroids=list(c(-0.5,0.5),c(0,0)))
+#'     
+#' CEC(k=5, x=dataset, method.type='fixed_spherical', 
+#'     params.r=0.01, control.nstart=10, control.eps=0.07)
+#'     
+#' CEC(k=5, x=dataset, method.type='fixed_covariance', 
+#'     params.cov=matrix(c(0.03,0,0,0.01),2), control.nstart=10, control.eps=0.06)
+#'     
 #' CEC(k=1, x=dataset, method.type='func', params.function='name_of_my_own_function')
+#' 
 #' fixed_spherical_cluster_param = list(method.type = 'fixed_spherical', params.r = 0.001)
-#' covariance_cluster_param = list(method.type = 'fixed_covariance', params.cov=matrix(c(0.05, 0, 0, 0.001), 2))
-#' CEC(x = dataset, params.mix = list(covariance_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param), control.nstart = 10)
+#' covariance_cluster_param = list(method.type = 'fixed_covariance', 
+#'                                 params.cov = matrix(c(0.05, 0, 0, 0.001), 2))
+#' CEC(x = dataset, 
+#'         params.mix = list(covariance_cluster_param, 
+#'                           fixed_spherical_cluster_param, 
+#'                           fixed_spherical_cluster_param, 
+#'                           fixed_spherical_cluster_param, 
+#'                           fixed_spherical_cluster_param), 
+#'         control.nstart = 10)
+#'         
 #' p1 = list(method.type='spherical', k=3)
 #' p2 = list(method.type='diagonal', k=2)
 #' CEC(x=dataset, params.mix=list(p1, p2))
@@ -159,12 +174,12 @@ centers <- NULL
 #' @export
 covMatrix <- NULL
 
-#' @name predict
+#' @name predict.cec
 #' @rdname predict.cec
 #' @method predict Rcpp_CecModel
 #' @title predict
 #' 
-#' @aliases predict,Rcpp_CecModel-method
+#' @aliases predict.Rcpp_CecModel-method
 #'
 #' @description Classify a new point according to the model (returns index of cluster where given point belong to)
 #' 

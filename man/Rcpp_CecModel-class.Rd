@@ -7,4 +7,480 @@
 \description{
 Class \code{Rcpp_CecModel} defines a CEC model class.
 }
+\section{Methods}{
+
+\describe{
+\item{\code{centers()}}{std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  
+std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const 
+  }
+
+\item{\code{clustering()}}{std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  
+std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const 
+  }
+
+\item{\code{covMatrix()}}{std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  
+std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const 
+  }
+
+\item{\code{energy()}}{double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  
+double energy()  const 
+  }
+
+\item{\code{log.energy()}}{std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  
+std::list<double, std::allocator<double> > log.energy()  const 
+  }
+
+\item{\code{log.iters()}}{unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  
+unsigned int log.iters()  const 
+  }
+
+\item{\code{log.ncluster()}}{std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  
+std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const 
+  }
+
+\item{\code{predict(...)}}{unsigned int predict(std::vector<double, std::allocator<double> >)
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  
+unsigned int predict(std::vector<double, std::allocator<double> >)  
+  }
+
+\item{\code{runAll()}}{void runAll()
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  
+void runAll()  
+  }
+
+\item{\code{runOneIteration()}}{void runOneIteration()
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  
+void runOneIteration()  
+  }
+
+\item{\code{x()}}{arma::Mat<double> x()
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  
+arma::Mat<double> x()  
+  }
+}}
 

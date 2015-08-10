@@ -1,6 +1,6 @@
 library(ggplot2)
 
-#' @title create SVM object
+#' @title Create SVM object
 #' @rdname svm
 #' @export
 #' 
@@ -129,7 +129,7 @@ predict.MultiClassSVM <- NULL
 #' }
 predict.Rcpp_SVMClient <- NULL
 
-#' @title plot SVM object
+#' @title Plot SVM object
 #' @rdname plot.svm
 #' 
 #' @description Plots trained svm data and models disciriminative
@@ -163,7 +163,7 @@ predict.Rcpp_SVMClient <- NULL
 #' @method plot Rcpp_SVMClient
 plot.Rcpp_SVMClient <- NULL
 
-#' @title summary of SVM object
+#' @title Summary of SVM object
 #' @rdname summary.svm
 #' 
 #' @description Prints short summary of a trained model.
@@ -176,13 +176,13 @@ plot.Rcpp_SVMClient <- NULL
 #' 
 summary.Rcpp_SVMClient <- NULL
 
-#' @title print SVM object
+#' @title Print SVM object
 #' @rdname print.svm
 #' 
 #' @description Prints short summary of a trained model.
 #' 
 #' @export
-#' @param object Trained SVM object
+#' @param x Trained SVM object
 #' @param ... other arguments not used by this method.
 #' 
 #' @method print Rcpp_SVMClient

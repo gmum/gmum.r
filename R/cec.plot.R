@@ -1,5 +1,5 @@
 #' Plot CEC
-#' @export plot.Rcpp_CecModel
+#' @export
 #' @method plot Rcpp_CecModel
 #'
 #' @title plot

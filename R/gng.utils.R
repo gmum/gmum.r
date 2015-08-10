@@ -1,7 +1,4 @@
-
-
-#' Print CEC
-#' @export print.Rcpp_GNGServer
+#' @export
 #' @rdname print.gng
 #' @method print Rcpp_GNGServer
 #'
@@ -16,7 +13,7 @@
 print.Rcpp_GNGServer <- NULL
 
 #' Summary of GNG object
-#' @export summary.Rcpp_GNGServer
+#' @export
 #' @rdname summary.gng
 #' @method summary Rcpp_GNGServer
 #'
