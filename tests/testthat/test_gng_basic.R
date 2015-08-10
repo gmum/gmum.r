@@ -3,14 +3,14 @@ library(testthat)
 #TODO: add test for checking GNGConfiguration serialization
 
 test_that("Basic saving/loading works", {
-  g <- GNG(train.online=TRUE, dim=3, verbosity=5); 
+  g <- GNG(train.online=TRUE, dim=3, verbosity=-1); 
   insertExamples(g, gng.preset.sphere(300))
+  Sys.sleep(1)
   pause(g)
   
   gngSave(g, file='mygraph.bin')
   
   g2 <- gngLoad("mygraph.bin")
-  
   # Check basic deserialization
   expect_that(g2$.getConfiguration()$alpha == g$.getConfiguration()$alpha &&
                 g2$.getConfiguration()$eps_n == g$.getConfiguration()$eps_n, is_true())
@@ -99,6 +99,7 @@ test_that("GNG converges on simple cases", {
       
       # Test memory
       terminate(gng)
+      print("Saving in sanity check:")
       gngSave(gng, "graph.bin")
     }
 
@@ -139,11 +140,18 @@ test_that("GNG clustering and predict are returning the same", {
   expect_that(all(gng$clustering() == predict(gng,X)), is_true())
 })
 
-test_that("GNG synchronization looks ok", {
-    synchronization_test <- function(){
+test_that("GNG errorStatistics and node retrieval work", {
+  X <- replicate(10, rnorm(20))
+  gng <- GNG(X)
+  expect_that(length(errorStatistics(gng)) > 1, is_true())
+  node(gng, 1)
+})
 
-        data(cec.mouse1.spherical)
-        dataset = cec.mouse1.spherical
+test_that("GNG synchronization looks ok", {
+  
+  data(cec.mouse1.spherical)
+  dataset = cec.mouse1.spherical
+      synchronization_test <- function(){
         gng <- GNG(dataset, verbosity=3, max.nodes=20)
         gng$.updateClustering()
         sum_1 = (sum( gng$clustering() != predict(gng, dataset)))

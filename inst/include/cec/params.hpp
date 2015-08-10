@@ -33,6 +33,7 @@ public:
 	bool radius_set;
 	double radius;
     boost::shared_ptr<gmum::Algorithm> algorithm;
+    int seed;
 
 #ifdef RCPP_INTERFACE
 	boost::shared_ptr<Rcpp::Function> function;
@@ -51,7 +52,9 @@ public:
         cov_mat_set(false),
         radius_set(false),
         radius(1.5)
-        { }
+    {
+        seed = time(0);
+    }
 };
 
 }

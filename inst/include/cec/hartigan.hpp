@@ -1,23 +1,17 @@
 #ifndef HARTIGAN_HPP
 #define HARTIGAN_HPP
 
+
 #include <cmath>
 #include <limits>
 #include <vector>
 #include "algorithm.hpp"
 #include "cluster.hpp"
-#include "../utils/logger.h"
+#include "logger.h"
+#include "utils.h"
 #include <sstream>
 
 namespace gmum {
-
-//TODO: clean 3 loggers (:P) and include utils/utils.h with this function
-template<class T>
-static std::string to_string(const T& x) {
-	std::stringstream ss;
-	ss << x;
-	return ss.str();
-}
 
 class Hartigan: public Algorithm {
 private:

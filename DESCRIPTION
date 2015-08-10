@@ -1,23 +1,32 @@
 Package: gmum.r
+Version: 0.2
+Date: 2015-08-05
+Title: Efficient C++ Implementations of SVM, GNG and CEC Models
 Type: Package
-Title: Package with models proposed by GMUM at Jagiellonian University
-Version: 1.0
-Date: 2014-02-25
-Author: Stanislaw Jastrzebski, Marcin Data, Karol Jurek, Igor Sieradzki, Konrad Talik,Piotr Kowenzowski, Mateusz Bruno-Kaminski, Maciej Zgliczynski, Michal Pletty, Wojciech Czarnecki
-Maintainer: Stanislaw Jastrzebski <grimghil@gmail.com>
-Description: More about what it does (maybe more than one line)
-License: MIT
+Author: Stanislaw Jastrzebski, Marcin Data, Karol Jurek, Igor Sieradzki, Konrad Talik, Piotr Kowenzowski, Mateusz Bruno-Kaminski, Maciej Zgliczynski, Michal Pletty, Wojciech Czarnecki
+Maintainer: Stanislaw Jastrzebski <staszek.jastrzebski@gmail.com>
+Description: Package focusing on efficiency (C++ implementations) and intuitive API. gmum.r is a close collaboration between GMUM group members (http://gmum.net) and students.
+License: MIT + file LICENSE
+Repository: CRAN
 Depends:
-    MASS (>= 7.3),
+    ggplot2 (>= 1.0.0),
+    stats, 
+    igraph,
+    SparseM,
+    httr,
     Matrix,
-    Rcpp (>= 0.11.0),
-    RcppArmadillo(>= 0.4.600.0),
-    ggplot2(>= 1.0.0),
-    BH,
-    igraph
+    MASS (>= 7.3),
+    Rcpp (>= 0.11.6)
 LinkingTo: Rcpp, RcppArmadillo, BH
 NeedsCompilation: yes
 LazyData: yes
 Suggests:
+    car,
+    caret,
+    e1071,
+    klaR,
     testthat,
-    SparseM
+    methods,
+    mlbench
+URL: https://github.com/gmum/gmum.r
+BugReports: https://github.com/gmum/gmum.r/issues

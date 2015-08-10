@@ -11,7 +11,7 @@
 
 namespace {
 
-int log_level = LogLevel::DEBUG;
+int log_level = LogLevel::DEBUG_LEVEL;
 
 double *null_double_ptr = 0;
 long *null_long_ptr = 0;

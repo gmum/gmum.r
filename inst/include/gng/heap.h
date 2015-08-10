@@ -66,27 +66,24 @@ public:
 	}
 public:
 
-	void print() {
-		REP(i, m_size)
-			cout << m_heap[i]->val << ",";
-		cout << endl;
-	}
 	bool isEmpty() const {
 		return (int) m_heap.size() == 0;
 	}
-	int getSize() const {
+
+  	int getSize() const {
 		return m_size;
 	}
 
+  Heap(int size = 100) : m_size(0) {
+    m_heap.resize(size);
+  }  
+  
 	~Heap() {
 		for (int i = 0; i < m_size; ++i) {
 			delete m_heap[i];
 		}
 	}
-	Heap(int size = 100) :
-			m_size(0) {
-		m_heap.resize(size);
-	}
+
 
 	int moveUp(int i, HeapNode * node) {
 		if (m_size == 0)
@@ -174,17 +171,12 @@ public:
 
 		node = m_heap[i];
 
-		//REPORT(i);
-		//REPORT(node->val);
-		//if(leftChild(i)<m_size) REPORT(m_heap[leftChild(i)]->val)
-
 		if (i != 0 && *node > *m_heap[parent(i)])
 			moveUp(i, node);
 		else {
 			if ((leftChild(i) < m_size && *m_heap[leftChild(i)] > *node)
 					|| (rightChild(i) < m_size && *m_heap[rightChild(i)] > *node)) {
 				moveDown(i);
-				//cout<<"moveDown("<<i<<")\n";
 			}
 		}
 
@@ -196,7 +188,7 @@ public:
 			throw "Zero sized Heap max extraction?";
 
 		HeapNode * tmp = m_heap[0];
-		T extracted = tmp->val;
+		T extracted = tmp->val; 
 
 		delete tmp;
 

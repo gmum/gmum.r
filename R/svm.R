@@ -1,6 +1,7 @@
 library(ggplot2)
 
-#' @title SVM
+#' @title create SVM object
+#' @rdname svm
 #' @export
 #' 
 #' @description Create and train SVM model object. 
@@ -56,9 +57,15 @@ library(ggplot2)
 #' @param class.type Multiclass algorithm type as string, 
 #' available are: \code{'one.versus.all', 'one.versus.one'}; default: \code{'one.versus.one'}
 #' @param verbosity How verbose should the process be, as integer from \eqn{[1,6]}, default: \code{4}
+#' @param svm.options enables to pass all svmlight command lines arguments for more advanced options, 
+#' for details see \url{http://svmlight.joachims.org/}
+#' @param probability ignore
+#' @param shrinking ignore
+#' @param ... ignore
 #'  
 #' @return SVM model object
 #' @examples 
+#' \dontrun{
 #' # train SVM from data in x and labels in y 
 #' svm <- SVM(x, y, core="libsvm", kernel="linear", C=1)
 #' 
@@ -88,7 +95,8 @@ library(ggplot2)
 #' # suppose we have a labels y with missing labels marked as zeros
 #' svm.transduction <- SVM(x, y, transductive.learning=TRUE, core="svmlight")
 #' 
-#' # for more in-depth examples visit \url{http://r.gmum.net/getting_started.html}                     
+#' # for more in-depth examples visit \url{http://r.gmum.net/getting_started.html}
+#' }                     
 SVM <- NULL
 
 .createMultiClassSVM <- NULL
@@ -97,45 +105,38 @@ show.MultiClassSVM <- NULL
 plot.MulticlassSVM <- NULL
 predict.MultiClassSVM <- NULL
 
-#' @title Predict
+#' @title Predict using SVM object
+#' @rdname predict.svm
 #' 
 #' @description Returns predicted classes or distance to discriminative for provided test examples.
 #' 
 #' @export
 #' 
-#' @usage predict(svm, x)
-#' 
-#' @param object Trained SVM object.
-#' @param x Unlabeled data, in one of the following formats:
+#' @param object Trained SVM object
+#' @param x_test Unlabeled data, in one of the following formats:
 #'  \code{data.frame}, \code{data.matrix}, \code{SparseM::matrix.csr}, \code{Matrix::Matrix},
 #'  \code{slam::simple_triplet_matrix}
 #' @param decision.function Uf \code{TRUE} returns SVMs decision function 
 #' (distance of a point from discriminant) instead of predicted labels, default: \code{FALSE}
+#' @param ... other arguments not used by this method.
 #' 
-#' @docType methods
+#' @method predict Rcpp_SVMClient
 #' 
-predict.svm.gmum <- NULL
+#' @examples
+#' \dontrun{
+#' svm <- SVM(x, y, core="libsvm", kernel="linear", C=1)
+#' predcit(svm, x_test)
+#' }
+predict.Rcpp_SVMClient <- NULL
 
-#' @title print
-#' 
-#' @description Prints short summary of the SVM object and its parameters.
-#' 
-#' @export
-#' 
-#' @usage print(svm)
-#' 
-#' @param object SVM object
-#' 
-#' @docType methods
-print.svm <- NULL
-
-#' @title plot
+#' @title plot SVM object
+#' @rdname plot.svm
 #' 
 #' @description Plots trained svm data and models disciriminative
 #' 
 #' @export
 #' 
-#' @param x Trained svm object
+#' @param x Trained SVM object
 #' @param X Optional new data points to be predicted and plotted in one of the following formats:
 #'  \code{data.frame}, \code{data.matrix}; default: \code{NULL}
 #' @param mode Which plotting mode to use as string, available are: 
@@ -150,32 +151,52 @@ print.svm <- NULL
 #' @param radius Radius of the plotted data points as float, default: \code{3}
 #' @param radius.max Maximum radius of data points can be plotted, when model is trained 
 #'  with example weights as float, default: \code{10}
+#' @param ... other arguments not used by this method.
 #' 
-#' @usage plot(svm)
-#' @usage plot(svm, X=x, cols=c(1,3))
-#' @usage plot(svm, mode="pca", radius=5)
+#' @examples
+#' \dontrun{
+#' plot(svm)
+#' plot(svm, X=x, cols=c(1,3))
+#' plot(svm, mode="pca", radius=5)
+#' }
 #' 
-plot.svm <- NULL
+#' @method plot Rcpp_SVMClient
+plot.Rcpp_SVMClient <- NULL
 
-#' @title summary
+#' @title summary of SVM object
+#' @rdname summary.svm
 #' 
 #' @description Prints short summary of a trained model.
 #' 
 #' @export
+#' @param object Trained SVM object
+#' @param ... other arguments not used by this method.
 #' 
-#' @usage summary(svm)
+#' @method summary Rcpp_SVMClient
 #' 
-#' @param svm SVM object 
+summary.Rcpp_SVMClient <- NULL
+
+#' @title print SVM object
+#' @rdname print.svm
 #' 
-summary.svm <- NULL
+#' @description Prints short summary of a trained model.
+#' 
+#' @export
+#' @param object Trained SVM object
+#' @param ... other arguments not used by this method.
+#' 
+#' @method print Rcpp_SVMClient
+#' 
+print.Rcpp_SVMClient <- NULL
 
 # Support for caret
 caret.gmumSvmRadial <- NULL
 caret.gmumSvmLinear <- NULL
 caret.gmumSvmPoly <- NULL
 
-
+#' @rdname svm
 SVM.formula <- NULL
+#' @rdname svm
 SVM.default <- NULL
 
 loadModule('svm_wrapper', TRUE)
@@ -216,6 +237,8 @@ evalqOnLoad({
   }
   
   .createMultiClassSVM <<- function(x, y, class.type, ...){
+    force(x) # Force non-lazy evaluation of arguments. This is just for devtools testthat to work, it has some strange issues. 
+    force(y)
     call <- match.call(expand.dots=TRUE)
     ys <- as.factor(y)
     tys <- table(ys)
@@ -327,8 +350,10 @@ evalqOnLoad({
            max.iter    = -1,
            verbosity   = 4,
            class.type = 'one.versus.all',
-           seed = NULL,
-           svm.options = '') {
+           svm.options = '', ...) {
+    force(x)
+    force(y)
+    
     # First check if we have binary or multiclass case
     if (!is.vector(y) && !is.factor(y)) {
       stop("y is of a wrong class, please provide vector or factor")
@@ -369,7 +394,6 @@ evalqOnLoad({
       stop("bad kernel: %s" )
     if (prep != "2e" && prep != "none") stop(sprintf("bad preprocess: %s", prep ))
     if (verbosity < 0 || verbosity > 6) stop("Wrong verbosity level, should be from 0 to 6")
-    # if (C < 0 || gamma < 0 || degree < 1) stop(paste(GMUM_WRONG_PARAMS, ": bad SVM parameters" ))
     if (C == 0 && core == "libsvm"){ # libsvm does not handle C=0, svmlight does
       warning("libsvm doesn't support C=0, switching to svmlight")
       core <- "svmlight"
@@ -385,12 +409,9 @@ evalqOnLoad({
     # check data
     if(nrow(x) != length(y)) stop("x and y have different lengths")
     if(inherits(x, "Matrix")) {
-      library("SparseM")
-      library("Matrix")
       x <- as(x, "matrix.csr")
     }
     else if(inherits(x, "simple_triplet_matrix")) {
-      library("SparseM")
       ind <- order(data$i, data$j)
       x <- new("matrix.csr",
                ra = x$v[ind],
@@ -399,7 +420,6 @@ evalqOnLoad({
                dimension = c(x$nrow, data$ncol))
     }
     else if(inherits(x, "matrix.csr")) {
-      library("SparseM")
     }
     else if(is.data.frame(x)) {
       x <- data.matrix(x)
@@ -413,7 +433,6 @@ evalqOnLoad({
     sparse <- inherits(x, "matrix.csr")
     
     if (sparse) {
-      library("SparseM")
       if (is.null(y)) {
         stop("Please provide label vector y for sparse matrix classification")
       }
@@ -550,11 +569,11 @@ evalqOnLoad({
     client 
   } 
 
-  print.svm <- function(x) {
+  print.Rcpp_SVMClient <<- function(x, ...) {
     summary(x)
   }
   
-  summary.MultiClassSVM <<- function(object) {
+  summary.MultiClassSVM <<- function(object, ...) {
     print(sprintf("Support Vector Machine, multiclass.type: %s, core: %s, preprocess: %s",
                   object$class.type, 
                   object$core, 
@@ -586,7 +605,7 @@ evalqOnLoad({
     summary.MultiClassSVM(object)
   }
   
-  summary.svm <<- function(object) {
+  summary.Rcpp_SVMClient <<- function(object, ...) {
     print(sprintf("Support Vector Machine, core: %s, preprocess: %s",
                   object$core(), 
                   object$kernel(), 
@@ -614,10 +633,10 @@ evalqOnLoad({
   }
   
   plot.MultiClassSVM <<- function(x, X=NULL, mode="normal", cols=c(1,2), radius=3, radius.max=10) {
-    plot.svm(x, X=X, cols=cols, mode=mode, radius=radius, radius.max=radius.max)
+    plot.Rcpp_SVMClient(x, X=X, cols=cols, mode=mode, radius=radius, radius.max=radius.max)
   }
   
-  plot.svm <<- function(x, X=NULL, mode="normal", cols=c(1,2), radius=3, radius.max=10) {
+  plot.Rcpp_SVMClient <<- function(x, X=NULL, mode="normal", cols=c(1,2), radius=3, radius.max=10, ...) {
     #0. Some initial preparing
     if (mode != "pca" && mode != "normal" && mode != "contour" ) {
       stop("Wrong mode!") 
@@ -627,10 +646,12 @@ evalqOnLoad({
     }else{
       obj <- x
     }
+#   NOTE: Added SparseM to dependencies
+#   TODO: Do we need e1071?
     if(obj$isSparse()){
-      library(SparseM)
-      library(Matrix)
-      library(e1071)
+      if(!requireNamespace("e1071", quietly=TRUE) ){
+        stop("For sparse support install e1071 package")
+      }
     }
     
     #1. Get X and Y
@@ -787,7 +808,7 @@ evalqOnLoad({
     plot(pl)
   }
   
-  predict.MultiClassSVM <<- function(object, x){
+  predict.MultiClassSVM <<- function(object, x, ...){
     # Sums votes
     prediction.row.oao <- function(r){
       object$levels[which.max(sapply(1:length(object$levels), function(cl){ sum(r==cl)}))]
@@ -825,34 +846,34 @@ evalqOnLoad({
     return(factor(ymat.preds, levels=object$levels))
   }
   
-  predict.svm.gmum <<- function(object, x, decision.function=FALSE) {
-    if ( !is(x, "data.frame") && 
-         !is(x, "matrix") && 
-         !is(x,"numeric") && 
-         !is(x,"matrix.csr")) {
+  predict.Rcpp_SVMClient <<- function(object, x_test, decision.function=FALSE, ...) {
+    if ( !is(x_test, "data.frame") && 
+         !is(x_test, "matrix") && 
+         !is(x_test,"numeric") && 
+         !is(x_test,"matrix.csr")) {
       stop("Wrong target class, please provide data.frame, matrix or numeric vector")
     }
     if (!object$isSparse()) {
-      if (!is(x, "matrix") && 
-          !is(x, "data.frame") &&
-          !is.vector(x)) {
+      if (!is(x_test, "matrix") && 
+          !is(x_test, "data.frame") &&
+          !is.vector(x_test)) {
         stop("Please provide matrix or data.frame")
       }
-      if (!is(x, "matrix")) {
-        if (is.vector(x)){
-          x <- t(as.matrix(x))
+      if (!is(x_test, "matrix")) {
+        if (is.vector(x_test)){
+          x_test <- t(as.matrix(x_test))
         } 
         else {
-          x <- data.matrix(x)
+          x_test <- data.matrix(x_test)
         }
       }
-      object$.predict(x)
+      object$.predict(x_test)
     }
     else {
-      if (!is(x, "matrix.csr")) {
+      if (!is(x_test, "matrix.csr")) {
         stop("Please provide sparse matrix")
       }
-      object$.sparse_predict(x@ia, x@ja, x@ra, nrow(x), ncol(x))
+      object$.sparse_predict(x_test@ia, x_test@ja, x_test@ra, nrow(x_test), ncol(x_test))
     }
     
     if(decision.function){
@@ -880,13 +901,6 @@ evalqOnLoad({
       prediction
     }
   }
-
-  setMethod("print", "Rcpp_SVMClient", print.svm)
-  setMethod("predict", "Rcpp_SVMClient", predict.svm.gmum)
-  setMethod("plot", "Rcpp_SVMClient",  plot.svm)
-  setMethod("summary", "Rcpp_SVMClient", summary.svm)
-  setMethod("show", "Rcpp_SVMClient", summary.svm)
-
 
 # Add (very basic) support for caret
   
@@ -980,7 +994,7 @@ evalqOnLoad({
   caret.gmumSvmPoly.loc$parameters <- data.frame(parameter = gmum.r.svm.poly.params,
                                              class = gmum.r.svm.poly.params.classes,
                                              label = gmum.r.svm.poly.params)
-  
+   
   caret.gmumSvmPoly <<- caret.gmumSvmPoly.loc
   caret.gmumSvmLinear <<- caret.gmumSvmLinear.loc
   

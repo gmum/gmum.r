@@ -1,4 +1,7 @@
 #' Print CEC
+#' @export print.Rcpp_CecModel
+#' @rdname print.cec
+#' @method print Rcpp_CecModel 
 #'
 #' @title print
 #' 
@@ -8,22 +11,13 @@
 #' @docType methods
 #'
 #' @param x CEC object model.
+#' @param ... other arguments not used by this method.
 #' 
-#' @export
-#' 
-#' @usage print(cec)
-print.cec <- NULL
-
-evalqOnLoad({
-  
-    print.cec <<- function(x) {
-        print(sprintf("CEC clustering; %d clusters with energy = %f",
-                      length(x$centers()), x$energy()))
-        print("Centers: ")
-        print(x$centers())
-        print("Covariances: ")
-        print(x$covMatrix())
-    }
-
-    setMethod("print","Rcpp_CecModel", print.cec)    
-})
+print.Rcpp_CecModel <- function(x, ...) {
+    print(sprintf("CEC clustering; %d clusters with energy = %f",
+                  length(x$centers()), x$energy()))
+    print("Centers: ")
+    print(x$centers())
+    print("Covariances: ")
+    print(x$covMatrix())
+}

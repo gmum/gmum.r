@@ -14,6 +14,7 @@
 #include "libsvm_runner.h"
 #include "svm_basic.h"
 #include "svm_utils.h"
+#include "utils/cutils.h"
 #include "utils/utils.h"
 
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
@@ -66,7 +67,7 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 	error_msg = svm_check_parameter(&prob, param, config.log);
 
 	if (error_msg) {
-		LOG(config.log, LogLevel::ERR, "ERROR: " + to_string(error_msg))
+		LOG(config.log, LogLevel::ERR_LEVEL, "ERROR: " + to_string(error_msg))
 		return false;
 	}
 	//int* nr = Malloc(int, 1);
@@ -76,7 +77,7 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 	//*nr = config.support_vectors.n_rows; //support vectors
 	*nclasses = model->nr_class;
 	config.nr_class = model->nr_class;
-	LOG(config.log, LogLevel::TRACE, "save_model_to_config writing down alphas, nclasses= " + svm_to_str(config.nr_class));
+	LOG(config.log, LogLevel::TRACE_LEVEL, "save_model_to_config writing down alphas, nclasses= " + svm_to_str(config.nr_class));
 
 	int nr_support_vectors = model->l;
     //conversion vec->SpCol
@@ -105,10 +106,10 @@ bool LibSVMRunner::save_model_to_config(SVMConfiguration& config,
 	ASSERT(dim > 0);
 	//config.support_vectors = SvmUtils::libtoarma(model->SV, nr_support_vectors, dim);
     //
-	LOG(config.log, LogLevel::TRACE, "save_model_to_config writing down SV, n_SV = " + svm_to_str(nr_support_vectors));
+	LOG(config.log, LogLevel::TRACE_LEVEL, "save_model_to_config writing down SV, n_SV = " + svm_to_str(nr_support_vectors));
 	config.support_vectors = SvmUtils::SvmNodeToArmaSpMat(model->SV, nr_support_vectors, dim);
-	LOG(config.log, LogLevel::TRACE, "save_model_to_config wrote down SV, n_SV = " + svm_to_str(config.support_vectors.n_cols));
-	LOG(config.log, LogLevel::TRACE, "save_model_to_config wrote down SV, dim = " + svm_to_str(config.support_vectors.n_rows));
+	LOG(config.log, LogLevel::TRACE_LEVEL, "save_model_to_config wrote down SV, n_SV = " + svm_to_str(config.support_vectors.n_cols));
+	LOG(config.log, LogLevel::TRACE_LEVEL, "save_model_to_config wrote down SV, dim = " + svm_to_str(config.support_vectors.n_rows));
 
 	//	TODO: WTF!!!!!???
 	if (config.svm_type < 2) {
@@ -134,7 +135,7 @@ svm_model* LibSVMRunner::load_model_from_config(SVMConfiguration& config,
 	error_msg = svm_check_parameter(&prob, param,config.log);
 
 	if (error_msg) {
-		LOG(config.log, LogLevel::ERR, "ERROR: " + to_string(error_msg))
+		LOG(config.log, LogLevel::ERR_LEVEL, "ERROR: " + to_string(error_msg))
 		return 0;
 	}
 
@@ -468,7 +469,7 @@ void LibSVMRunner::libraryParseCommandLine(
                 // TODO: We need to wrap more functions from svm-train.c
                 LOG(
                     config.log,
-                    LogLevel::ERR,
+                    LogLevel::ERR_LEVEL,
                     "-v n: n-fold cross validation mode: not implemented."
                 );
                 break;
@@ -477,7 +478,7 @@ void LibSVMRunner::libraryParseCommandLine(
 				nr_fold = atoi(argv[i]);
 				if(nr_fold < 2)
 				{
-					fprintf(stderr,"n-fold cross validation: n must >= 2\n");
+					C_FPRINTF(stderr,"n-fold cross validation: n must >= 2\n");
 					//exit_with_help();
 				}
 				break;
@@ -492,7 +493,7 @@ void LibSVMRunner::libraryParseCommandLine(
 				param.weight[param.nr_weight-1] = atof(argv[i]);
 				break;
 			default:
-				fprintf(stderr,"Unknown option: -%c\n", argv[i-1][1]);
+				C_FPRINTF(stderr,"Unknown option: -%c\n", argv[i-1][1]);
 				//exit_with_help();
 		}
 	}

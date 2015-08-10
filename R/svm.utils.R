@@ -20,8 +20,6 @@ svm.dataset.breast_cancer <- function() {
   return (svm.breastcancer.dataset)
 }
 
-require(Matrix)
-
 read.libsvm = function( filename, dimensionality ) {
   
   content = readLines( filename )
@@ -85,10 +83,8 @@ svm.accuracy <- function(prediction, target) {
     acc <- sum(diff == 0) / length(target)
     return(acc) 
 }
-
+ 
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
-  require(grid)
-  
   # Make a list from the ... arguments and plotlist
   plots <- c(list(...), plotlist)
   

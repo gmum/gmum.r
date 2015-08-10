@@ -8,7 +8,7 @@ SVMLIGHT_OBJECTS = svmlight/svm_common.o svmlight/svm_hideo.o svmlight/svm_learn
 COMPILED_LIBRARIES_OBJECTS = $(SVMLIGHT_OBJECTS)
 OBJECTS = $(CPP_SOURCES:.cpp=.o) $(COMPILED_LIBRARIES_OBJECTS)
 
-DEBUG := -DNDEBUG_GMUM -DNDEBUG_GMUM_2
+DEBUG := -DNDEBUG_GMUM
 PREPROCESS := $(DEBUG) -DARMA_DONT_USE_CXX11 -DRCPP_INTERFACE -DARMA_64BIT_WORD
 
 R_LIBS :=    $(shell R CMD config --ldflags)  $(shell echo 'Rcpp:::LdFlags()'  | R --vanilla --slave)

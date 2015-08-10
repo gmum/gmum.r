@@ -5,9 +5,11 @@
 \alias{predictComponent}
 \title{predictComponent}
 \usage{
-predictComponent(gng, c(1,1,1))
+predictComponent(object, x)
 }
 \arguments{
+\item{object}{GNG object}
+
 \item{x}{Can be either \code{vector} or \code{data.frame}.}
 }
 \description{
@@ -17,7 +19,10 @@ Finds connected component closest to given vector(s).
 Find closest component
 }
 \examples{
+\dontrun{
+gng <- GNG(scaled.wine)
 # Find closest component to c(1,1,1)
 predictComponent(gng,  c(1,1,1))
+}
 }
 

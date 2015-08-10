@@ -4,7 +4,7 @@
 #include <armadillo>
 #include <sstream>
 
-#ifndef DEBUG
+#ifndef DEBUG_GMUM
 #define ASSERT(x)
 #else
 #define ASSERT(x) \
@@ -62,8 +62,6 @@ public:
 		for (int row = 0; row < nr_sv; row++) {
 			svm_node* tmp_row = svm_nodes[row];
 			for (int j = 0; tmp_row[j].index != -1; j++) {
-				// cout << "Row, j, index, value" << row << " " << j << " " <<
-				// tmp_row[j].index << " " << tmp_row[j].value << endl;
 				ret(row, tmp_row[j].index - 1) = tmp_row[j].value;
 			}
 		}
@@ -80,8 +78,6 @@ public:
 
 			svm_node* tmp_row = svm_nodes[row];
 			for (int j = 0; tmp_row[j].index != -1; j++) {
-				// cout << "Row, j, index, value" << row << " " << j << " " <<
-				// tmp_row[j].index << " " << tmp_row[j].value << endl;
 				ret(row, tmp_row[j].index - 1) = tmp_row[j].value;
 			}
 		}
@@ -104,7 +100,7 @@ public:
 	static arma::vec arrtoarmavec(double** arr, int size) {
 		return arrtoarmavec(arr[0], size);
 	}
-
+ 
 	static arma::mat matrixByValue(arma::mat &data, arma::vec &targets,
 			double value) {
 		return data.rows(find(targets == value));

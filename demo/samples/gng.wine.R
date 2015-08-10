@@ -9,14 +9,15 @@
 #' 
 library(gmum.r)
 library(caret) # For ConfusionMatrix
-library(rattle) # For dataset
+
+wine <- get.wine.dataset()
 
 # Prepare data
 scaled.wine <- as.matrix(scale(wine[-1]))
 
 
 # Train in an offline manner
-gng <- GNG(scaled.wine, labels=as.integer(wine$Type), max.nodes=20, 
+gng <- GNG(scaled.wine, labels=as.integer(wine[,1]), max.nodes=20, 
            max.iter=10000, min.improvement=1e-1)
 
 # Print number of nodes
@@ -47,4 +48,4 @@ for(i in 1:nrow(scaled.wine)){
 }
 
 # Print prediction statistics
-confusionMatrix(table(preds, wine$Type))
+confusionMatrix(table(preds, wine[,1]))
