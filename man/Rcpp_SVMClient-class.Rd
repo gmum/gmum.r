@@ -22,7 +22,7 @@ Class \code{Rcpp_SVMClient} defines a SVM model class.
 
 \item{\code{coef0()}}{double coef0()}
 
-\item{\code{core()}}{std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > core()}
+\item{\code{core()}}{std::string core()}
 
 \item{\code{degree()}}{int degree()}
 
@@ -48,9 +48,9 @@ Class \code{Rcpp_SVMClient} defines a SVM model class.
 
 \item{\code{isSparse()}}{bool isSparse()}
 
-\item{\code{kernel()}}{std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > kernel()}
+\item{\code{kernel()}}{std::string kernel()}
 
-\item{\code{prep()}}{std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > prep()}
+\item{\code{prep()}}{std::string prep()}
 
 \item{\code{setAlpha(...)}}{void setAlpha(arma::Col<double>)}
 
@@ -68,11 +68,11 @@ Class \code{Rcpp_SVMClient} defines a SVM model class.
 
 \item{\code{setGamma(...)}}{void setGamma(double)}
 
-\item{\code{setKernel(...)}}{void setKernel(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >)}
+\item{\code{setKernel(...)}}{void setKernel(std::string)}
 
-\item{\code{setLibrary(...)}}{void setLibrary(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >)}
+\item{\code{setLibrary(...)}}{void setLibrary(std::string)}
 
-\item{\code{setPreprocess(...)}}{void setPreprocess(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >)}
+\item{\code{setPreprocess(...)}}{void setPreprocess(std::string)}
 
 \item{\code{setProbability(...)}}{void setProbability(int)}
 

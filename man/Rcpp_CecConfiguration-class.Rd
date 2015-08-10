@@ -10,7 +10,7 @@ Class \code{Rcpp_CecConfiguration} defines a CEC model configuration class.
 \section{Methods}{
 
 \describe{
-\item{\code{setAlgorithm(...)}}{void setAlgorithm(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >)}
+\item{\code{setAlgorithm(...)}}{void setAlgorithm(std::string)}
 
 \item{\code{setCentroids(...)}}{void setCentroids(Rcpp::List)}
 
@@ -28,9 +28,9 @@ Class \code{Rcpp_CecConfiguration} defines a CEC model configuration class.
 
 \item{\code{setLogEnergy(...)}}{void setLogEnergy(bool)}
 
-\item{\code{setMethodInit(...)}}{void setMethodInit(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >)}
+\item{\code{setMethodInit(...)}}{void setMethodInit(std::string)}
 
-\item{\code{setMethodType(...)}}{void setMethodType(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >)}
+\item{\code{setMethodType(...)}}{void setMethodType(std::string)}
 
 \item{\code{setMix(...)}}{void setMix(Rcpp::List)}
 
