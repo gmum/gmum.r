@@ -106,7 +106,7 @@ plot.MulticlassSVM <- NULL
 predict.MultiClassSVM <- NULL
 
 #' @title Predict using SVM object
-#' @rdname predict-methods
+#' @rdname predict.svm
 #' 
 #' @description Returns predicted classes or distance to discriminative for provided test examples.
 #' 
@@ -130,7 +130,7 @@ predict.MultiClassSVM <- NULL
 predict.Rcpp_SVMClient <- NULL
 
 #' @title plot SVM object
-#' @rdname plot-methods
+#' @rdname plot.svm
 #' 
 #' @description Plots trained svm data and models disciriminative
 #' 
@@ -164,7 +164,7 @@ predict.Rcpp_SVMClient <- NULL
 plot.Rcpp_SVMClient <- NULL
 
 #' @title summary of SVM object
-#' @rdname summary-methods
+#' @rdname summary.svm
 #' 
 #' @description Prints short summary of a trained model.
 #' 
@@ -177,7 +177,7 @@ plot.Rcpp_SVMClient <- NULL
 summary.Rcpp_SVMClient <- NULL
 
 #' @title print SVM object
-#' @rdname print-methods
+#' @rdname print.svm
 #' 
 #' @description Prints short summary of a trained model.
 #' 

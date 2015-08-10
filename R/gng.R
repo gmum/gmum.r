@@ -42,7 +42,7 @@ gng.type.utility<- function(k=1.3){
 #'
 #' @title plot GNG object
 #' @description Plot resulting graph using igraph plotting
-#' @rdname gng-plot
+#' @rdname plot.gng
 #' @export plot.Rcpp_GNGServer
 #' @method plot Rcpp_GNGServer
 #'
@@ -172,18 +172,16 @@ node <- function(x, gng_id) UseMethod("node")
 #' Predict 
 #' @name predict
 #' @title predict
-#' @description Retrieves prediction from GNG
-#' @rdname predict-methods
+#' @description Retrieves prediction from trained GNG model
+#' @rdname predict.gng
 #' @export
 #' 
-#' @param gng GNG object
+#' @param object Trained model
 #' @param x Vector or matrix of examples
 #' @examples
 #' \dontrun{
 #' predict(gng, c(1,2,2))
 #' }
-#' 
-#' @aliases predict
 predict.Rcpp_GNGServer <- function(object, x, ...){
   if( is.vector(x)){
     object$predict(x)
@@ -434,36 +432,6 @@ clustering.Rcpp_GNGServer <- NULL
 #' }
 #'
 GNG <- NULL
-
-#' Print CEC
-#' @export print.Rcpp_GNGServer
-#' @rdname print-methods
-#' @method print Rcpp_GNGServer
-#'
-#' @title print
-#' 
-#' @description Print basic information about GNG object
-#'
-#' @docType methods
-#'
-#' @param x GNG object model.
-#' @param ... other arguments not used by this method.
-print.Rcpp_GNGServer <- NULL
-
-#' Summary of CEC
-#' @export summary.Rcpp_GNGServer
-#' @rdname summary-methods
-#' @method summary Rcpp_GNGServer
-#'
-#' @title summary
-#' 
-#' @description Print basic information about GNG object
-#'
-#' @docType methods
-#'
-#' @param x GNG object model.
-#' @param ... other arguments not used by this method.
-summary.Rcpp_GNGServer <- NULL
 
 #' @title convertToGraph
 #' @description Converts GNG to igraph object.
@@ -786,39 +754,6 @@ plot.Rcpp_GNGServer <- function(x, vertex.color=gng.plot.color.cluster,
     .gng.plot2d.errors(x, vertex.color, layout, vertex.size=vertex.size)
   }else{
     stop("Unrecognized mode")
-  }
-}
-
-print.Rcpp_GNGServer <- function(x, ...){
-  print(sprintf("Growing Neural Gas, %d nodes with mean error %f", 
-                x$getNumberNodes(), x$getMeanError()))
-}
-
-show.print.Rcpp_GNGServer <- function(object) {
-  summary(object)
-}
-
-summary.Rcpp_GNGServer <- function(object, ...){
-  if(object$.getConfiguration()$.uniformgrid_optimization){
-    print("(Optimized) Growing Neural Gas")
-  }else{
-    print("Growing Neural Gas")
-  }
-  if(exists("object$call")){
-    print(object$call)
-  }
-  if(object$hasStarted()){
-    print(sprintf("%d nodes with mean error %f", 
-                  object$getNumberNodes(), object$getMeanError()))
-    
-    print(sprintf("Trained %d iterations", object$getCurrentIteration()))
-    print("Mean errors[s]: ")
-    errors = object$getErrorStatistics()
-    if(length(errors) > 10){
-      errors = errors[(length(errors)-10):length(errors)]
-    }
-    
-    print(errors)
   }
 }
 

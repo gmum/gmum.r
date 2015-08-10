@@ -14,6 +14,7 @@ rsync -rP --exclude=".*" --exclude="cmake/*" --exclude="build/*" --exclude="doc/
 cp DESCRIPTION $1
 cp LICENSE $1
 cp NAMESPACE $1
+cp demo/00Index $1/demo
 cp src/Makevars $1/src
 cp inst/include/svmlight/Makefile $1/inst/include/svmlight/
 cp inst/include/svmlight/LICENSE.txt $1/inst/include/svmlight/

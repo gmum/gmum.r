@@ -4,7 +4,7 @@
 #'
 #' @title plot
 #' 
-#' @rdname plot-methods
+#' @rdname plot.cec
 #' 
 #' @description Plot clustering found on 2D plot coloring by cluster.
 #' 
