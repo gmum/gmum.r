@@ -27,7 +27,7 @@
 #' }
 plot.Rcpp_CecModel <- function(x, slice = c(), pca=FALSE, ellipses = FALSE, centers = FALSE, ...) {
   
-  d <- x$x()
+  d <- x$getDataset()
   if(pca){
     if(ncol(d) <= 2){
       stop("CEC dataset should have dimension > 2 to use PCA")

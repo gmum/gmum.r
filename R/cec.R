@@ -135,18 +135,18 @@ clustering <- function(c) UseMethod("clustering", c)
 #' @export 
 clustering.Rcpp_CecModel <- NULL
 
-#' @name x
-#' @title x
+#' @name getDataset 
+#' @title getDataset 
 #' 
-#' @aliases x,Rcpp_CecModel-method
+#' @aliases getDataset,Rcpp_CecModel-method
 #' 
 #' @description Print input dataset 
 #' @examples
 #' \dontrun{
-#' x(c) 
+#' getDataset(c) 
 #' }
 #' @export
-x <- NULL
+getDataset <- NULL
 
 #' @name centers
 #' @title centers
@@ -319,15 +319,15 @@ CEC <- function(x = NULL,
   model
 }
 
-runAll.Rcpp_CecModel <- function(c) {
+runAll <- function(c) {
   c$runAll()
 }
 
-runOneIteration.Rcpp_CecModel <- function(c) {
+runOneIteration <- function(c) {
   c$runOneIteration()
 }
 
-energy.Rcpp_CecModel <- function(c) {
+energy <- function(c) {
   c$energy()
 }
 
@@ -335,15 +335,15 @@ clustering.Rcpp_CecModel <- function(c) {
   c$clustering()
 }
 
-x.Rcpp_CecModel <- function(c) {
-  c$x()
+getDataset <- function(c) {
+  c$getDataset()
 }
 
-centers.Rcpp_CecModel <- function(c) {
+centers <- function(c) {
   c$centers()
 }
 
-covMatrix.Rcpp_CecModel <- function(c) {
+covMatrix <- function(c) {
   c$covMatrix()
 }
 
@@ -371,7 +371,7 @@ predict.Rcpp_CecModel <- function(object, x, ...) {
     x = data.matrix(x)
   }
   
-  if(dim(object$x())[2] != dim(x)[2]){
+  if(dim(object$getDataset())[2] != dim(x)[2]){
     stop("Incompatible dimension!")
   }
   

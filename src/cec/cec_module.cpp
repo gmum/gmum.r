@@ -46,6 +46,6 @@ RCPP_MODULE(cec) {
 	.method("log.ncluster", &CecModel::get_nclusters)
 	.method("log.energy", &CecModel::get_energy_history)
 	.method("log.iters", &CecModel::iters)
-	.method("x", &CecModel::get_points);
+	.method("getDataset", &CecModel::get_points);
 }
 #endif
