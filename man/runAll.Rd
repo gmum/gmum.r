@@ -13,10 +13,5 @@ runAll
 \description{
 Starts whole algorithm again with same parameters
 }
-\examples{
-\dontrun{
-runAll(c)
-}
-}
 \keyword{datasets}
 

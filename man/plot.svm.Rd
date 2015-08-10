@@ -36,6 +36,7 @@ Plots trained svm data and models disciriminative
 }
 \examples{
 \dontrun{
+# here we ause svm is a trained SVM model
 plot(svm)
 plot(svm, X=x, cols=c(1,3))
 plot(svm, mode="pca", radius=5)

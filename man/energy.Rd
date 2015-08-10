@@ -13,10 +13,5 @@ energy
 \description{
 Print result energy of clustering found
 }
-\examples{
-\dontrun{
-energy(c)
-}
-}
 \keyword{datasets}
 

@@ -13,10 +13,5 @@ runOneIteration
 \description{
 runs one iteration of algorithm
 }
-\examples{
-\dontrun{
-runOneIteration(c)
-}
-}
 \keyword{datasets}
 

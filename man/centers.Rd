@@ -13,10 +13,5 @@ centers
 \description{
 Print centers of clusters
 }
-\examples{
-\dontrun{
-centers(c)
-}
-}
 \keyword{datasets}
 

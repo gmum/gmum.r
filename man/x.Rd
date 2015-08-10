@@ -13,10 +13,5 @@ x
 \description{
 Print input dataset
 }
-\examples{
-\dontrun{
-x(c)
-}
-}
 \keyword{datasets}
 

@@ -14,9 +14,4 @@ logEnergy(c)
 Print energy that has been recorded at each stage of learning.
 Data is recorded only if you have chosen to when you created CEC model object.
 }
-\examples{
-\dontrun{
-logEnergy(c)
-}
-}
 

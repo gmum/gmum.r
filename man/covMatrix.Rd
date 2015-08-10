@@ -13,10 +13,5 @@ covMatrix
 \description{
 Print covariances of clusters
 }
-\examples{
-\dontrun{
-covMatrix(c)
-}
-}
 \keyword{datasets}
 
