@@ -24,7 +24,9 @@ Returns predicted classes or distance to discriminative for provided test exampl
 }
 \examples{
 \dontrun{
+# firstly, SVM model needs to be trained
 svm <- SVM(x, y, core="libsvm", kernel="linear", C=1)
+# then we can use it to predict unknown samples
 predcit(svm, x_test)
 }
 }

@@ -124,7 +124,9 @@ predict.MultiClassSVM <- NULL
 #' 
 #' @examples
 #' \dontrun{
+#' # firstly, SVM model needs to be trained
 #' svm <- SVM(x, y, core="libsvm", kernel="linear", C=1)
+#' # then we can use it to predict unknown samples
 #' predcit(svm, x_test)
 #' }
 predict.Rcpp_SVMClient <- NULL
@@ -155,6 +157,7 @@ predict.Rcpp_SVMClient <- NULL
 #' 
 #' @examples
 #' \dontrun{
+#' # here we ause svm is a trained SVM model
 #' plot(svm)
 #' plot(svm, X=x, cols=c(1,3))
 #' plot(svm, mode="pca", radius=5)

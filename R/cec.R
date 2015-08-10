@@ -75,11 +75,6 @@ CEC <- NULL
 #' @aliases runAll,Rcpp_CecModel-method
 #'
 #' @description Starts whole algorithm again with same parameters
-#' @examples
-#' \dontrun{
-#' runAll(c) 
-#' }
-#' @export
 runAll <- NULL
 
 #' @name runOneIteration
@@ -88,10 +83,6 @@ runAll <- NULL
 #' @aliases runOneIteration,Rcpp_CecModel-method
 #' 
 #' @description runs one iteration of algorithm
-#' @examples
-#' \dontrun{
-#' runOneIteration(c) 
-#' }
 #' @export
 runOneIteration <- NULL
 
@@ -101,10 +92,6 @@ runOneIteration <- NULL
 #' @aliases energy,Rcpp_CecModel-method
 #'
 #' @description Print result energy of clustering found
-#' @examples
-#' \dontrun{
-#' energy(c) 
-#' }
 #' @export
 energy <- NULL
 
@@ -115,10 +102,6 @@ energy <- NULL
 #' @description Print labels assigned
 #'
 #' @param c Object with clusters
-#' @examples
-#' \dontrun{
-#' clustering(c) 
-#' }
 #' @export 
 clustering <- function(c) UseMethod("clustering", c)
 
@@ -128,10 +111,6 @@ clustering <- function(c) UseMethod("clustering", c)
 #' @rdname clustering-methods
 #' 
 #' @description Print labels assigned
-#' @examples
-#' \dontrun{
-#' clustering(c) 
-#' }
 #' @export 
 clustering.Rcpp_CecModel <- NULL
 
@@ -141,10 +120,6 @@ clustering.Rcpp_CecModel <- NULL
 #' @aliases getDataset,Rcpp_CecModel-method
 #' 
 #' @description Print input dataset 
-#' @examples
-#' \dontrun{
-#' getDataset(c) 
-#' }
 #' @export
 getDataset <- NULL
 
@@ -154,10 +129,6 @@ getDataset <- NULL
 #' @aliases centers,Rcpp_CecModel-method
 #'
 #' @description Print centers of clusters
-#' @examples
-#' \dontrun{
-#' centers(c) 
-#' }
 #' @export
 centers <- NULL
 
@@ -167,10 +138,6 @@ centers <- NULL
 #' @aliases covMatrix,Rcpp_CecModel-method
 #'
 #' @description Print covariances of clusters
-#' @examples
-#' \dontrun{
-#' covMatrix(c) 
-#' }
 #' @export
 covMatrix <- NULL
 
@@ -198,11 +165,6 @@ predict.Rcpp_CecModel <- NULL
 #' Data is recorded only if you have chosen to when you created CEC model object.
 #'
 #' @param c object Trained CEC model object.
-#' 
-#' @examples
-#' \dontrun{
-#' logClusters(c) 
-#' }
 #' @export
 logClusters <- NULL
 
@@ -215,11 +177,6 @@ logClusters <- NULL
 #' Data is recorded only if you have chosen to when you created CEC model object.
 #'  
 #' @param c object Trained CEC model object.
-#'
-#' @examples
-#' \dontrun{
-#' logEnergy(c) 
-#' }
 #' @export
 logEnergy <- NULL
 
@@ -233,10 +190,6 @@ logEnergy <- NULL
 #' @description Print how many iterations it took to learn CEC model
 #'
 #' @param c object Trained CEC model object.
-#' @examples
-#' \dontrun{
-#' logIterations(c) 
-#' }
 #' @export
 logIterations <- NULL
 
