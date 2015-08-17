@@ -7,6 +7,9 @@
 \usage{
 runOneIteration(c)
 }
+\arguments{
+\item{c}{Trained CEC model object.}
+}
 \description{
 runs one iteration of algorithm
 }

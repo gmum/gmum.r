@@ -7,6 +7,9 @@
 \usage{
 covMatrix(c)
 }
+\arguments{
+\item{c}{Trained CEC model object.}
+}
 \description{
 Print covariances of clusters
 }

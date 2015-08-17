@@ -8,7 +8,7 @@ echo "Creating folder structure"
 mkdir -p $1
 
 echo "Copy necessary files"
-rsync -rP --exclude=".*" --exclude="cmake/*" --exclude="build/*" --exclude="doc/*" --exclude="libs/*" --exclude="tests/*" --exclude="..Rcheck/*" --include="*.cpp" --include="*.h" --include="*.hpp" --include="*.Rd" --include="*.c" --include="*.R" --include="*.RData" --include="*/" --exclude="*" . $1
+rsync -rP --exclude=".*" --exclude="cmake/*" --exclude="build/*" --exclude="doc/*" --exclude="libs/*" --exclude="tests/*" --exclude="..Rcheck/*" --include="*.cpp" --include="*.h" --include="*.hpp" --include="*.Rd" --include="*.c" --include="*.R" --include="*.RData" --include="*/" --exclude="*" --exclude="R/R_scripts/*.*" . $1
 
 # Some individual files
 cp DESCRIPTION $1

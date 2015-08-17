@@ -13,9 +13,221 @@ Class \code{Rcpp_CecConfiguration} defines a CEC model configuration class.
 \item{\code{setAlgorithm(...)}}{void setAlgorithm(std::string)
   
 void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
+  
+void setAlgorithm(std::string)  
   }
 
 \item{\code{setCentroids(...)}}{void setCentroids(Rcpp::List)
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
+  
+void setCentroids(Rcpp::List)  
   
 void setCentroids(Rcpp::List)  
   }
@@ -23,9 +235,221 @@ void setCentroids(Rcpp::List)
 \item{\code{setCov(...)}}{void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)
   
 void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
   }
 
 \item{\code{setDataSet(...)}}{void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
+  
+void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
   
 void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)  
   }
@@ -33,9 +457,221 @@ void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)
 \item{\code{setEps(...)}}{void setEps(double)
   
 void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
+  
+void setEps(double)  
   }
 
 \item{\code{setFunction(...)}}{void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
+  
+void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
   
 void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)  
   }
@@ -43,9 +679,221 @@ void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)
 \item{\code{setItmax(...)}}{void setItmax(int)
   
 void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
+  
+void setItmax(int)  
   }
 
 \item{\code{setLogCluster(...)}}{void setLogCluster(bool)
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
+  
+void setLogCluster(bool)  
   
 void setLogCluster(bool)  
   }
@@ -53,9 +901,221 @@ void setLogCluster(bool)
 \item{\code{setLogEnergy(...)}}{void setLogEnergy(bool)
   
 void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
+  
+void setLogEnergy(bool)  
   }
 
 \item{\code{setMethodInit(...)}}{void setMethodInit(std::string)
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
+  
+void setMethodInit(std::string)  
   
 void setMethodInit(std::string)  
   }
@@ -63,9 +1123,221 @@ void setMethodInit(std::string)
 \item{\code{setMethodType(...)}}{void setMethodType(std::string)
   
 void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
+  
+void setMethodType(std::string)  
   }
 
 \item{\code{setMix(...)}}{void setMix(Rcpp::List)
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
+  
+void setMix(Rcpp::List)  
   
 void setMix(Rcpp::List)  
   }
@@ -73,9 +1345,221 @@ void setMix(Rcpp::List)
 \item{\code{setNrOfClusters(...)}}{void setNrOfClusters(unsigned int)
   
 void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
+  
+void setNrOfClusters(unsigned int)  
   }
 
 \item{\code{setNstart(...)}}{void setNstart(unsigned int)
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
+  
+void setNstart(unsigned int)  
   
 void setNstart(unsigned int)  
   }
@@ -83,9 +1567,221 @@ void setNstart(unsigned int)
 \item{\code{setR(...)}}{void setR(double)
   
 void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
+  
+void setR(double)  
   }
 
 \item{\code{setSeed(...)}}{void setSeed(int)
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
+  
+void setSeed(int)  
   
 void setSeed(int)  
   }

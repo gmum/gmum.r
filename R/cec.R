@@ -73,12 +73,16 @@ CEC <- NULL
 #' @title runAll
 #' 
 #' @aliases runAll,Rcpp_CecModel-method
+#' 
+#' @param c Trained CEC model object.
 #'
 #' @description Starts whole algorithm again with same parameters
 runAll <- NULL
 
 #' @name runOneIteration
 #' @title runOneIteration
+#' 
+#' @param c Trained CEC model object.
 #'
 #' @aliases runOneIteration,Rcpp_CecModel-method
 #' 
@@ -88,6 +92,8 @@ runOneIteration <- NULL
 
 #' @name energy
 #' @title energy
+#'
+#' @param c Trained CEC model object.
 #'
 #' @aliases energy,Rcpp_CecModel-method
 #'
@@ -117,6 +123,8 @@ clustering.Rcpp_CecModel <- NULL
 #' @name getDataset 
 #' @title getDataset 
 #' 
+#' @param c Trained CEC model object.
+#' 
 #' @aliases getDataset,Rcpp_CecModel-method
 #' 
 #' @description Print input dataset 
@@ -126,6 +134,8 @@ getDataset <- NULL
 #' @name centers
 #' @title centers
 #' 
+#' @param c Trained CEC model object.
+#' 
 #' @aliases centers,Rcpp_CecModel-method
 #'
 #' @description Print centers of clusters
@@ -134,6 +144,8 @@ centers <- NULL
 
 #' @name covMatrix
 #' @title covMatrix
+#' 
+#' @param c Trained CEC model object.
 #' 
 #' @aliases covMatrix,Rcpp_CecModel-method
 #'

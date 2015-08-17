@@ -13,17 +13,16 @@ SVM(x, ...)
 \method{SVM}{default}(x, y, core = "libsvm", kernel = "linear",
   prep = "none", transductive.learning = FALSE,
   transductive.posratio = -1, C = 1, gamma = if (is.vector(x)) 1 else
-  1/ncol(x), coef0 = 0, degree = 3, shrinking = TRUE,
-  probability = FALSE, class.weights = NULL, example.weights = NULL,
-  cache_size = 100, tol = 0.001, max.iter = -1, verbosity = 4,
-  class.type = "one.versus.all", svm.options = "", ...)
+  1/ncol(x), coef0 = 0, degree = 3, class.weights = NULL,
+  example.weights = NULL, cache_size = 100, tol = 0.001, max.iter = -1,
+  verbosity = 4, class.type = "one.versus.all", svm.options = "", ...)
 }
 \arguments{
 \item{x}{Training data without labels in one of the following formats:
 \code{data.frame}, \code{data.matrix}, \code{SparseM::matrix.csr}, \code{Matrix::Matrix},
 \code{slam::simple_triplet_matrix}}
 
-\item{...}{ignore}
+\item{...}{other arguments not used by this method.}
 
 \item{formula}{Can be passed with \code{data}  instead of \code{x}, \code{y} pair,
 formula needs to point to lables column, for example: \code{target~.}}
@@ -69,10 +68,6 @@ default: \code{1/n_features}}
 \item{coef0}{For \code{poly} and \code{sigmoid} kernels, default: \code{0}}
 
 \item{degree}{For \code{poly} kernel, default: \code{3}}
-
-\item{shrinking}{ignore}
-
-\item{probability}{ignore}
 
 \item{class.weights}{Named vector with weight fir each class, default: \code{NULL}}
 

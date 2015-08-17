@@ -7,6 +7,9 @@
 \usage{
 centers(c)
 }
+\arguments{
+\item{c}{Trained CEC model object.}
+}
 \description{
 Print centers of clusters
 }

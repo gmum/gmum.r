@@ -7,6 +7,9 @@
 \usage{
 runAll(c)
 }
+\arguments{
+\item{c}{Trained CEC model object.}
+}
 \description{
 Starts whole algorithm again with same parameters
 }

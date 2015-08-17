@@ -7,6 +7,9 @@
 \usage{
 energy(c)
 }
+\arguments{
+\item{c}{Trained CEC model object.}
+}
 \description{
 Print result energy of clustering found
 }

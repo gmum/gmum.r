@@ -59,9 +59,7 @@ library(ggplot2)
 #' @param verbosity How verbose should the process be, as integer from \eqn{[1,6]}, default: \code{4}
 #' @param svm.options enables to pass all svmlight command lines arguments for more advanced options, 
 #' for details see \url{http://svmlight.joachims.org/}
-#' @param probability ignore
-#' @param shrinking ignore
-#' @param ... ignore
+#' @param ... other arguments not used by this method.
 #'  
 #' @return SVM model object
 #' @examples 
@@ -101,9 +99,9 @@ SVM <- NULL
 
 .createMultiClassSVM <- NULL
 summary.MultiClassSVM <- NULL
-show.MultiClassSVM <- NULL
 plot.MulticlassSVM <- NULL
 predict.MultiClassSVM <- NULL
+print.MultiClassSVM <- NULL
 
 #' @title Predict using SVM object
 #' @rdname predict.svm
@@ -214,7 +212,7 @@ evalqOnLoad({
     call <- match.call(expand.dots = TRUE)
     
     if (!inherits(formula, "formula")) stop("Please provide valid formula for this method.")
-    if(inherits(data, "Matrix") || inherits(x, "simple_triplet_matrix") || inherits(x, "matrix.csr")) 
+    if(inherits(data, "Matrix") || inherits(data, "simple_triplet_matrix") || inherits(data, "matrix.csr")) 
       stop("Please provide dense data for this method")
   
     labels <- all.vars(update(formula, .~0))
@@ -344,8 +342,6 @@ evalqOnLoad({
            gamma       = if (is.vector(x)) 1 else 1 / ncol(x),
            coef0       = 0,
            degree      = 3,
-           shrinking   = TRUE,
-           probability = FALSE,
            class.weights    = NULL,
            example.weights    = NULL,
            cache_size  = 100,
@@ -353,7 +349,8 @@ evalqOnLoad({
            max.iter    = -1,
            verbosity   = 4,
            class.type = 'one.versus.all',
-           svm.options = '', ...) {
+           svm.options = '', 
+           ...) {
     force(x)
     force(y)
     
@@ -552,6 +549,10 @@ evalqOnLoad({
       config$example_weights <- example.weights
     }
     
+    # default for now
+    shrinking   = TRUE
+    probability = FALSE
+    
     if (shrinking) {
       config$shrinking <- 1
     } else {
@@ -575,6 +576,12 @@ evalqOnLoad({
   print.Rcpp_SVMClient <<- function(x, ...) {
     summary(x)
   }
+  
+  show.Rcpp_SVMClient <- function(object){
+    summary(object)
+  }
+  
+  setMethod("show", "Rcpp_SVMClient", show.Rcpp_SVMClient)
   
   summary.MultiClassSVM <<- function(object, ...) {
     print(sprintf("Support Vector Machine, multiclass.type: %s, core: %s, preprocess: %s",
@@ -635,7 +642,7 @@ evalqOnLoad({
                   object$getNumberSV()))
   }
   
-  plot.MultiClassSVM <<- function(x, X=NULL, mode="normal", cols=c(1,2), radius=3, radius.max=10) {
+  plot.MultiClassSVM <- function(x, X=NULL, mode="normal", cols=c(1,2), radius=3, radius.max=10) {
     plot.Rcpp_SVMClient(x, X=X, cols=cols, mode=mode, radius=radius, radius.max=radius.max)
   }
   

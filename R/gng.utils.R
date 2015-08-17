@@ -33,10 +33,6 @@ print.Rcpp_GNGServer <- function(x, ...){
                 x$getNumberNodes(), x$getMeanError()))
 }
 
-show.print.Rcpp_GNGServer <- function(object) {
-  summary(object)
-}
-
 summary.Rcpp_GNGServer <- function(object, ...){
   if(object$.getConfiguration()$.uniformgrid_optimization){
     print("(Optimized) Growing Neural Gas")
@@ -61,6 +57,11 @@ summary.Rcpp_GNGServer <- function(object, ...){
   }
 }
 
+show.Rcpp_GNGServer <- function(object) {
+  summary(object)
+}
+
+setMethod("show", "Rcpp_GNGServer", show.Rcpp_GNGServer)
 
 get.wine.dataset <- function(){
   a <- GET("https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data")

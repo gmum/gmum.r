@@ -21,3 +21,9 @@ print.Rcpp_CecModel <- function(x, ...) {
     print("Covariances: ")
     print(x$covMatrix())
 }
+
+show.Rcpp_CecModel <- function(object){
+  print(object)
+}
+
+setMethod("show", "Rcpp_CecModel", show.Rcpp_CecModel)
