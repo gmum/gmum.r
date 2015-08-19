@@ -100,8 +100,8 @@ Cross-entropy clustering (shortly CEC) joins advantages of classical k-means wit
 ```R
 library(gmum.r)
 
-data(cec_mouse_1_spherical)
-dataset = input
+data(cec.mouse1.spherical)
+dataset = cec.mouse1.spherical
 
 # That is the dataset we want to cluster
 plot(dataset)
