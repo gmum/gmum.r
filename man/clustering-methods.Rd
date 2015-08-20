@@ -25,6 +25,12 @@ Gets vector with node indexes assigned to examples in the dataset
 }
 \examples{
 \dontrun{
+clustering(c)
+}
+\dontrun{
+clustering(c)
+}
+\dontrun{
 clustering(gng)
 }
 }

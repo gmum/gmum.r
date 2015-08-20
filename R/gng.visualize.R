@@ -23,7 +23,7 @@
 }
 
 .gng.plot2d<-function(gngServer, vertex.color, layout, vertex.size=3){
-  ig <- convertToGraph(gngServer)
+  ig <- convertToIGraph(gngServer)
   
   if(length(V(ig))==0){
     return()

@@ -23,3 +23,4 @@ c <- CEC(x = Tset, params.mix = list(standard_cluster_param, spherical_cluster_p
 
 # Plot centroids with elipses and centers
 plot(c, ellipses = TRUE, centers = TRUE)
+

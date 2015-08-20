@@ -11,13 +11,13 @@
 library(gmum.r)
 
 # Fitting to mouse like data set
-data(cec_mouse_1_spherical)
+data(cec.mouse1.spherical)
 
 # Look at Mouse-like data set
-plot(cec.mouse1spherical, main="Mouse-like data set")
+plot(cec.mouse1.spherical, main="Mouse-like data set")
 
 # Fit spherical gaussians to the data set
-cec <- CEC(k=3, x=cec.mouse1spherical, control.nstart=10, method.type="spherical")
+cec <- CEC(k=3, x=cec.mouse1.spherical, control.nstart=10, method.type="spherical")
 
 # Plot results
 plot(cec, centers=TRUE, ellipses=TRUE)

@@ -31,7 +31,7 @@ Plot GNG
 }
 \note{
 If you want to "power-use" plotting and plot for instance a subgraph, you might be interested in
-exporting igraph with convertToGraph function
+exporting igraph with convertToIGraph function
 }
 \examples{
 \dontrun{

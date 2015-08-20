@@ -1,33 +1,50 @@
 library(methods)
 
+#' @export
 gng.plot.color.label <- 'label'
+
+#' @export
 gng.plot.color.fast.cluster <- 'fast.cluster'
+
+#' @export
 gng.plot.color.cluster <- 'cluster'
+
+#' @export
 gng.plot.color.none <- 'none'
 
-
+#' @export
 gng.plot.layout.v2d <- function(g){
   cbind(V(g)$v0, V(g)$v1)
 }
+
+#' @export
 gng.plot.layout.igraph.fruchterman <- function(g){
   layout.fruchterman.reingold(g, niter=10000, area=4*vcount(g)^2)
 }
+
+#' @export
 gng.plot.layout.igraph.fruchterman.fast <- layout.fruchterman.reingold
+
+#' @export
 gng.plot.layout.igraph.auto <- layout.auto
 
+#' @export
 gng.plot.2d <- 1
+
+#' @export
 gng.plot.2d.errors <- 3
 
-
-
+#' @export
 gng.type.default <- function(){
 	c(2)
 }
 
+#' @export
 gng.type.optimized <- function(minimum=0, maximum=10){
   c(0, minimum, maximum)
 }
 
+#' @export
 gng.type.utility<- function(k=1.3){
   c(1, k)
 }
@@ -60,7 +77,7 @@ gng.type.utility<- function(k=1.3){
 #' @param ... other arguments not used by this method.
 #' 
 #' @note If you want to "power-use" plotting and plot for instance a subgraph, you might be interested in
-#' exporting igraph with convertToGraph function 
+#' exporting igraph with convertToIGraph function 
 #' 
 #' @examples
 #' \dontrun{
@@ -93,23 +110,23 @@ gngLoad <- NULL
 
 #' Get centroids
 #'
-#' @title predictCentroids
-#' @description Using infomap.communities finds communities and for each community pick node with biggest betweenness score
+#' @title calculateCentroids
+#' @description Using passed community.detection finds communities and for each community pick node with biggest betweenness score
 #' @export
 #' 
 #' @param object GNG object
-#' @param community.detection.algorithm # STASZEK PLZ DOCUMENT THIS
+#' @param community.detection.algorithm Used algorithm from igraph package, by default spinglass.community
 #' 
 #' @examples
 #' \dontrun{
-#' print(node(gng, predictCentroids(gng)[1])$pos)
+#' print(node(gng, calculateCentroids(gng)[1])$pos)
 #' }
-predictCentroids <- NULL
+calculateCentroids <- NULL
 
-#' Find closest centroid
+#' Find closest node
 #'
 #' @title findClosests
-#' @description Finds closest node from given list to vector
+#' @description Finds closest node from given list to vector. Often used together with calculateCentroids
 #' @export
 
 #' @param object GNG object
@@ -120,11 +137,9 @@ predictCentroids <- NULL
 #' \dontrun{
 #' gng <- GNG(scaled.wine)
 #' # Find closest centroid to c(1,1,1)
-#' found.centroids <- predictCentroids(gng)
+#' found.centroids <- calculateCentroids(gng)
 #' findClosest(gng, found.centroids, c(1,1,1))
 #' }
-#' 
-#' @aliases predictCentroid
 #' 
 findClosests <- NULL
 
@@ -436,14 +451,15 @@ clustering.Rcpp_GNGServer <- NULL
 #'
 GNG <- NULL
 
-#' @title convertToGraph
-#' @description Converts GNG to igraph object.
+#' @title convertToIGraph
+#' @description Converts GNG to igraph object, where every vertex contains attributes gng.index, error, data.label and 3 first spatial coordinates (as attributes v0, v1, v2).
+#' Additionally utility attribute is present if utility GNG is used.
 #' 
 #' @param object GNG object
 #' @param calculate.dist If true will calculate all \code{n^2} distances in the graph
 #' 
 #' @export
-convertToGraph <- NULL
+convertToIGraph <- NULL
 
 #' @title numberNodes
 #' @description Get current number of nodes in the graph
@@ -722,9 +738,9 @@ OptimizedGNG <- function(x=NULL, labels=c(),
 
 predictComponent <- function(object, x){
   tryCatch(if(is.null(object$components.membership)){
-    assign("components.membership", clusters(convertToGraph(object))$membership, object)
+    assign("components.membership", clusters(convertToIGraph(object))$membership, object)
   }, error=function(...) 
-    assign("components.membership", clusters(convertToGraph(object))$membership, object))
+    assign("components.membership", clusters(convertToIGraph(object))$membership, object))
   
   object$components.membership[predict(object, x)]
 }
@@ -811,8 +827,8 @@ gngLoad <- function(filename){
   fromFileGNG(filename)
 }
 
-predictCentroids  <- function(object, community.detection.algorithm=spinglass.community){
-  ig <- convertToGraph(object)
+calculateCentroids  <- function(object, community.detection.algorithm=spinglass.community){
+  ig <- convertToIGraph(object)
   
   cl = clusters(ig)
   components = lapply(levels(as.factor(cl$membership)), function(x) induced.subgraph(ig, cl$membership==as.numeric(x)))
@@ -826,14 +842,14 @@ predictCentroids  <- function(object, community.detection.algorithm=spinglass.co
       #Get index of centroid (which is ordered by betwenness)
       centroid_index = which(order(betweenness(community_graph))==1)
       # Append
-      centroids<- c(centroids, V(community_graph)$index[centroid_index])
+      centroids<- c(centroids, V(community_graph)$gng.index[centroid_index])
     }
   }
   centroids
 }
 
 
-convertToGraph <- function(object, calculate.dist=TRUE){
+convertToIGraph <- function(object, calculate.dist=TRUE){
   was_running = object$isRunning()
   if(was_running){
     pause(object)
@@ -869,16 +885,14 @@ convertToGraph <- function(object, calculate.dist=TRUE){
     if(length(node) != 0){
       
       igraph_index = indexesGNGToIGraph[i]
-      #print(paste(object$.getLastNodeIndex(), length(indexesGNGToIGraph), object$isRunning()))
       #print(paste(igraph_index, node$neighbours))
       neighbours = node$neighbours[node$neighbours > i]
       adjlist[[igraph_index]] <- sapply(neighbours, function(x){ indexesGNGToIGraph[x] })
     } else{
-      #print("Empty node")
+      print("Empty node")
     }
   }
   
-  #print("Creating the graph")
   
   g <- graph.adjlist(adjlist, mode = "all", duplicate=FALSE)
   for(i in 1:object$.getLastNodeIndex()){
@@ -890,9 +904,10 @@ convertToGraph <- function(object, calculate.dist=TRUE){
       V(g)[igraph_index]$v0 <- node$pos[1]
       V(g)[igraph_index]$v1 <- node$pos[2]
       V(g)[igraph_index]$v2 <- node$pos[3]
-      V(g)[igraph_index]$label <- node$label
+      V(g)[igraph_index]$label <- node$index
+      V(g)[igraph_index]$data.label <- node$label
       V(g)[igraph_index]$error <- node$error
-      V(g)[igraph_index]$index <- node$index
+      V(g)[igraph_index]$gng.index <- node$index
       if(!is.null(node$utility)){
         V(g)[igraph_index]$utility = node$utility
       }

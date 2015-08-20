@@ -13,4 +13,9 @@ logIterations(c)
 \description{
 Print how many iterations it took to learn CEC model
 }
+\examples{
+\dontrun{
+logIterations(c)
+}
+}
 

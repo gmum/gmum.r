@@ -2,7 +2,6 @@
 % Please edit documentation in R/gng.R
 \name{findClosests}
 \alias{findClosests}
-\alias{predictCentroid}
 \title{findClosests}
 \usage{
 findClosests(object, node.ids, x)
@@ -15,16 +14,16 @@ findClosests(object, node.ids, x)
 \item{x}{Can be either \code{vector} or \code{data.frame.}}
 }
 \description{
-Finds closest node from given list to vector
+Finds closest node from given list to vector. Often used together with calculateCentroids
 }
 \details{
-Find closest centroid
+Find closest node
 }
 \examples{
 \dontrun{
 gng <- GNG(scaled.wine)
 # Find closest centroid to c(1,1,1)
-found.centroids <- predictCentroids(gng)
+found.centroids <- calculateCentroids(gng)
 findClosest(gng, found.centroids, c(1,1,1))
 }
 }
