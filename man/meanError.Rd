@@ -13,9 +13,7 @@ meanError(object)
 Gets mean error of the graph (note: blocks the execution, O(n))
 }
 \examples{
-\dontrun{
-gng <- GNG(scaled.wine)
+gng <- GNG(gng.preset.sphere(100))
 meanError(gng)
-}
 }
 

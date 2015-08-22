@@ -13,10 +13,8 @@ pause(object)
 Pause algorithm
 }
 \examples{
-\dontrun{
-gng <- GNG(scaled.wine)
+gng <- GNG(gng.preset.sphere(100))
 pause(gng)
 print(gng$isRunning())
-}
 }
 

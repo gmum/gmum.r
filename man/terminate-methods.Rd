@@ -14,9 +14,7 @@ terminate(object)
 Terminate algorithm
 }
 \examples{
-\dontrun{
-gng <- GNG(scaled.wine)
+gng <- GNG(gng.preset.sphere(100))
 terminate(gng)
-}
 }
 

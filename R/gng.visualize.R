@@ -32,10 +32,10 @@
   if(vertex.color == 'label'){
     vertex.color = c(1:length(V(ig)))
     max_col = 0
-    for(label in V(ig)$label)
+    for(label in V(ig)$data.label)
       max_col = max(max_col, round(label))
     cols = rainbow(max_col+1)
-    vertex.color = cols[as.double(lapply(V(ig)$label, round))]
+    vertex.color = cols[as.double(lapply(V(ig)$data.label, round))]
   }
   
   .visualizeIGraph2d(ig, vertex.color, layout, vertex.size=vertex.size)

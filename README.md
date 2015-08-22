@@ -69,20 +69,19 @@ In this example we will construct a clustering of UCI wine dataset using offline
 library(gmum.r)
 
 # Load data
-wine <- get.wine.dataset()
-scaled_wine <- scale(wine[-1])
+wine <- get.wine.dataset.X()
 
 # Train in an offline manner
-gng <- GNG(scaled_wine, labels=wine$Type, max.nodes=20)
+gng <- GNG(wine, labels=get.wine.dataset.y(), max.nodes=20)
 
 # Find closest node to vector composed of 1
-predict(gng, rep(1,13))
+predict(gng, rep(1,ncol(wine)))
 
 # Find mean error
 meanError(gng)
 
 # Plot with first 2 coordinates as position
-plot(gng, vertex.color=gng.plot.color.cluster)
+plot(gng, vertex.color="cluster")
 ```
 
 ## Cross Entropy Clustering

@@ -3,7 +3,7 @@ Version: 0.2
 Date: 2015-08-05
 Title: Efficient C++ Implementations of SVM, GNG and CEC Models
 Type: Package
-Author: Stanislaw Jastrzebski, Marcin Data, Karol Jurek, Igor Sieradzki, Konrad Talik, Piotr Kowenzowski, Mateusz Bruno-Kaminski, Maciej Zgliczynski, Michal Pletty, Wojciech Czarnecki
+Author: Wojciech Czarnecki, Stanislaw Jastrzebski, Marcin Data, Igor Sieradzki, Mateusz Bruno-Kaminski, Karol Jurek, Piotr Kowenzowski, Michal Pletty, Konrad Talik, Maciej Zgliczynski
 Maintainer: Stanislaw Jastrzebski <staszek.jastrzebski@gmail.com>
 Description: Package focusing on efficiency (C++ implementations) and intuitive API. gmum.r is a close collaboration between GMUM group members (http://gmum.net) and students.
 License: MIT + file LICENSE

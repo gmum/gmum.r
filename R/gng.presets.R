@@ -48,7 +48,7 @@
 #' @export
 
 #' @param N Number of points
-#' @param side Length of the side of cube
+#' @param r Length of the side of cube
 #' @param center Center of the plane
 #' 
 #' @examples
@@ -84,7 +84,7 @@ gng.preset.plane<-function(N, side=0.5, center=c(0.5,0.5,0.5)){
   mat<-matrix(0,N,3)
   
   for(i in 1:N){
-    mat[i,] = .gng.plane_point(side, center,prob)
+    mat[i,] = .gng.plane_point(side, center)
     mat[i,3] = mat[i,1]
   }
   
@@ -105,7 +105,6 @@ gng.preset.plane<-function(N, side=0.5, center=c(0.5,0.5,0.5)){
 #' @examples
 #' X <- gng.preset.sphere(100)
 #' gng <- GNG(X)
-#' 
 gng.preset.sphere<-function(N, r=0.5, center=c(0.5,0.5,0.5)){
   mat<-matrix(0,N,3)
   

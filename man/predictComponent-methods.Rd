@@ -13,16 +13,15 @@ predictComponent(object, x)
 \item{x}{Can be either \code{vector} or \code{data.frame}.}
 }
 \description{
-Finds connected component closest to given vector(s).
+Finds connected component closest to given vector(s). On the first
+execution of function strongly connected components are calculated using igraph::cluster function.
 }
 \details{
 Find closest component
 }
 \examples{
-\dontrun{
-gng <- GNG(scaled.wine)
+gng <- GNG(gng.preset.sphere(100))
 # Find closest component to c(1,1,1)
 predictComponent(gng,  c(1,1,1))
-}
 }
 

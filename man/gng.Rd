@@ -52,22 +52,20 @@ see \url{http://sund.de/netze/applets/gng/full/tex/DemoGNG/node20.html}}
 Construct GNG object. Can be used to train offline, or online.
 }
 \examples{
-\dontrun{
-data(wine, package="rattle")
-scaled.wine <- scale(wine[-1])
+X <- gng.preset.sphere(100)
+y <- round(runif(100))
 # Train in an offline manner
-gng <- GNG(scaled.wine, labels=wine$Type, max.nodes=20)
+gng <- GNG(X, labels=y, max.nodes=20)
 # Plot
 plot(gng)
 
 # Train in an online manner with utility (erasing obsolete nodes)
-gng <- GNG(scaled.wine, labels=wine$Type, max.nodes=20, train.online=TRUE, k=1.3)
-insertExamples(gng, scale(wine[-1])
+gng <- GNG(labels=y, max.nodes=20, train.online=TRUE, k=1.3)
+insertExamples(gng, X)
 run(gng)
 Sys.sleep(10)
 terminate(gng)
 # Plot
 plot(gng)
-}
 }
 

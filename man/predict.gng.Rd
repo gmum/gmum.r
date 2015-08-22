@@ -21,8 +21,7 @@ Retrieves prediction from trained GNG model
 Predict
 }
 \examples{
-\dontrun{
+gng <- GNG(gng.preset.sphere(100))
 predict(gng, c(1,2,2))
-}
 }
 

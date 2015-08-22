@@ -30,8 +30,7 @@ clustering(c)
 \dontrun{
 clustering(c)
 }
-\dontrun{
+gng <- GNG(gng.preset.sphere(100))
 clustering(gng)
-}
 }
 

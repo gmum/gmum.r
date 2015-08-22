@@ -11,7 +11,7 @@
 library(gmum.r)
 
 # Load T-like data set
-data(cec_ts)
+data(cec.tset)
 
 # We will be using 3 types of clusters
 standard_cluster_param = list(method.type = "standard")

@@ -18,9 +18,7 @@ Retrieves node from resulting graph
 Get GNG node
 }
 \examples{
-\dontrun{
-gng <- GNG(scaled.wine)
+gng <- GNG(gng.preset.sphere(100))
 print(node(gng, 10)$pos)
-}
 }
 

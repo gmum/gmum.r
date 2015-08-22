@@ -13,9 +13,7 @@ errorStatistics(object)
 Gets vector with errors for every second of execution
 }
 \examples{
-\dontrun{
-gng <- GNG(scaled.wine)
+gng <- GNG(gng.preset.sphere(100))
 errorStatistics(gng)
-}
 }
 

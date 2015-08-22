@@ -19,18 +19,13 @@ node a mean of labels of closest examples.}
 Insert examples with optional labels.
 }
 \note{
-It copies your examples twice in RAM. You might want to use object$insertExamples, or
-not to copy at all set_memory_move_examples (when using this function, remember not to modify the matrix
-and after removing the object delete it aswell)
+It copies your examples twice in RAM. You might want to use object$insertExamples.
 }
 \examples{
-\dontrun{
-data(wine, package="rattle")
-scaled.wine <- scale(wine[-1])
-gng <- GNG(scaled.wine)
+X <- gng.preset.sphere(100)
+gng <- GNG(X)
 # Add preset examples
-M = generateExamples(preset=gng.preset.sphere)
-insertExamples(gng, M)
-}
+X = generateExamples(preset=gng.preset.sphere)
+insertExamples(gng, X)
 }
 

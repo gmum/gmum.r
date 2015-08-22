@@ -13,9 +13,8 @@ run(object)
 Run algorithm (in parallel)
 }
 \examples{
-\dontrun{
-gng <- GNG(scaled.wine)
+gng <- GNG(gng.preset.sphere(100))
 run(gng)
-}
+print(isRunning(gng))
 }
 

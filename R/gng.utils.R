@@ -63,9 +63,41 @@ show.Rcpp_GNGServer <- function(object) {
 
 setMethod("show", "Rcpp_GNGServer", show.Rcpp_GNGServer)
 
-get.wine.dataset <- function(){
-  a <- GET("https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data")
-  read.csv(textConnection(content(a)), header=F)
+
+.wine <<- NULL
+
+#' Retrieves wine dataset design matrix from UCI repository
+#' 
+#' @title get.wine.dataset.X
+#' 
+#' @param scale if TRUE will perform feature scaling
+#' 
+#' @export
+get.wine.dataset.X <- function(scale=TRUE){
+  if(is.null(.wine)) {
+    a <- GET("https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data")
+    .wine <<- read.csv(textConnection(content(a)), header=F)
+  }
+  
+  if(scale) {
+    return(as.matrix(scale(.wine[-1])))
+  } else {
+    return(.wine[-1])
+  }
+}
+
+#' Retrieves wine dataset labels from UCI repository
+#' 
+#' @title get.wine.dataset.y
+#' 
+#' @export
+get.wine.dataset.y <- function(){
+  # Hack for R CMD check. Note that it is cleaner to assign (see predictComponent)
+  if(is.null(.wine)) {
+    a <- GET("https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data")
+    .wine <<- read.csv(textConnection(content(a)), header=F)
+  }
+  return(.wine[,1])
 }
 
 .plane.point<-function(r,center){

@@ -1,50 +1,40 @@
 library(methods)
 
-#' @export
-gng.plot.color.label <- 'label'
-
-#' @export
-gng.plot.color.fast.cluster <- 'fast.cluster'
-
-#' @export
-gng.plot.color.cluster <- 'cluster'
-
-#' @export
-gng.plot.color.none <- 'none'
-
+#' Use first two spatial coordinates as position in layout
+#' 
+#' @note You can pass any igraph layout algorithm to plot
+#' 
+#' @param g GNG object
+#' 
 #' @export
 gng.plot.layout.v2d <- function(g){
   cbind(V(g)$v0, V(g)$v1)
 }
 
-#' @export
-gng.plot.layout.igraph.fruchterman <- function(g){
-  layout.fruchterman.reingold(g, niter=10000, area=4*vcount(g)^2)
-}
+gng.plot.color.label <- 'label'
 
-#' @export
+gng.plot.color.fast.cluster <- 'fast.cluster'
+
+gng.plot.color.cluster <- 'cluster'
+
+gng.plot.color.none <- 'none'
+
 gng.plot.layout.igraph.fruchterman.fast <- layout.fruchterman.reingold
 
-#' @export
 gng.plot.layout.igraph.auto <- layout.auto
 
-#' @export
-gng.plot.2d <- 1
+gng.plot.2d <- "2d"
 
-#' @export
-gng.plot.2d.errors <- 3
+gng.plot.2d.errors <- "2d.errors"
 
-#' @export
 gng.type.default <- function(){
 	c(2)
 }
 
-#' @export
 gng.type.optimized <- function(minimum=0, maximum=10){
   c(0, minimum, maximum)
 }
 
-#' @export
 gng.type.utility<- function(k=1.3){
   c(1, k)
 }
@@ -64,14 +54,14 @@ gng.type.utility<- function(k=1.3){
 #' @method plot Rcpp_GNGServer
 #'
 #' @param x GNG object
-#' @param mode \code{gng.plot.2d} (igraph plot)
-#' \code{gng.plot.2d.errors} (igraph plot with mean error log plot)
+#' @param mode \code{"2d"} (igraph plot)
+#' \code{"2d.errors"} (igraph plot with mean error log plot)
 #' 
-#' @param layout Layout to be used when plotting. Possible values: \code{gng.plot.layour.igraph.v2d} (first two dimensions),
-#' \code{gng.plot.layout.igraph.auto} (auto layout from igraph)  \code{gng.plot.layout.igraph.fruchterman.fast} (fast fruchterman reingold layout),or any function accepting igraph graph and returning layout
+#' @param layout igraph layout to be used when plotting. Defaults to \code{layout.fruchterman.reingold}. 
+#' Other good choice is using \code{gng.plot.layout.v2d}, which returns two first spatial coordinates.
 #' 
-#' @param vertex.color How to color vertexes. Possible values: \code{gng.plot.color.cluster} (vertex color is set to fastgreedy.community clustering),
-#' \code{gng.plot.color.label} (rounds to integer label if present), \code{list of integers} (colors vertices according to provided list), \code{gng.plot.color.none} (every node is white),
+#' @param vertex.color How to color vertexes. Possible values: \code{"fast.cluster"} (vertex color is set to fastgreedy.community clustering),
+#' \code{"label"} (rounds to integer label if present), \code{list of integers} (colors vertices according to provided list), \code{"none"} (every node is white),
 #' 
 #' @param vertex.size Size of plotted vertices
 #' @param ... other arguments not used by this method.
@@ -118,9 +108,8 @@ gngLoad <- NULL
 #' @param community.detection.algorithm Used algorithm from igraph package, by default spinglass.community
 #' 
 #' @examples
-#' \dontrun{
+#' gng <- GNG(gng.preset.sphere(100))
 #' print(node(gng, calculateCentroids(gng)[1])$pos)
-#' }
 calculateCentroids <- NULL
 
 #' Find closest node
@@ -134,19 +123,18 @@ calculateCentroids <- NULL
 #' @param x Can be either \code{vector} or \code{data.frame.}
 #' 
 #' @examples
-#' \dontrun{
-#' gng <- GNG(scaled.wine)
+#' gng <- GNG(gng.preset.sphere(100))
 #' # Find closest centroid to c(1,1,1)
 #' found.centroids <- calculateCentroids(gng)
-#' findClosest(gng, found.centroids, c(1,1,1))
-#' }
+#' findClosests(gng, found.centroids, c(1,1,1))
 #' 
 findClosests <- NULL
 
 #' Find closest component
 #' @name predictComponent
 #' @title predictComponent
-#' @description Finds connected component closest to given vector(s).
+#' @description Finds connected component closest to given vector(s). On the first
+#' execution of function strongly connected components are calculated using igraph::cluster function.
 #' @export
 #' @rdname predictComponent-methods
 #' @docType methods
@@ -155,11 +143,9 @@ findClosests <- NULL
 #' @param x Can be either \code{vector} or \code{data.frame}.
 #' 
 #' @examples
-#' \dontrun{
-#' gng <- GNG(scaled.wine)
+#' gng <- GNG(gng.preset.sphere(100))
 #' # Find closest component to c(1,1,1)
 #' predictComponent(gng,  c(1,1,1))
-#' }
 #' 
 #' @aliases predictComponent
 predictComponent <- NULL
@@ -175,10 +161,8 @@ predictComponent <- NULL
 #' @param gng_id Id of the node to retrieve. This is the id returned by functions like predict, or centroids
 #' 
 #' @examples
-#' \dontrun{
-#' gng <- GNG(scaled.wine)
+#' gng <- GNG(gng.preset.sphere(100))
 #' print(node(gng, 10)$pos)
-#' }
 #' 
 #' @aliases node
 #' 
@@ -195,9 +179,8 @@ node <- function(x, gng_id) UseMethod("node")
 #' @param x Vector or matrix of examples
 #' @param ... other arguments not used by this method
 #' @examples
-#' \dontrun{
+#' gng <- GNG(gng.preset.sphere(100))
 #' predict(gng, c(1,2,2))
-#' }
 predict.Rcpp_GNGServer <- function(object, x, ...){
   if( is.vector(x)){
     object$predict(x)
@@ -232,13 +215,10 @@ node.Rcpp_GNGServer <- NULL
 #' @param object GNG object
 #' 
 #' @examples
-#' \dontrun{
-#' gng <- GNG(scaled.wine)
+#' gng <- GNG(gng.preset.sphere(100))
 #' run(gng)
-#' }
+#' print(isRunning(gng))
 #' 
-#' @aliases run
-#'
 run <- function(object) UseMethod("run")
 
 #' @export
@@ -251,11 +231,9 @@ run.Rcpp_GNGServer <- NULL
 #' @param object GNG object
 #' 
 #' @examples
-#' \dontrun{
-#' gng <- GNG(scaled.wine)
+#' gng <- GNG(gng.preset.sphere(100))
 #' pause(gng)
 #' print(gng$isRunning())
-#' }
 pause <- function(object) UseMethod("pause")
 
 #' @export
@@ -271,10 +249,8 @@ pause.Rcpp_GNGServer <- NULL
 #' @param object GNG object
 #'
 #' @examples
-#' \dontrun{
-#' gng <- GNG(scaled.wine)
+#' gng <- GNG(gng.preset.sphere(100))
 #' terminate(gng)
-#' }
 #' 
 #' @aliases terminate
 #'
@@ -288,12 +264,10 @@ terminate.Rcpp_GNGServer <- NULL
 #' @param object GNG object
 #' 
 #' @export
-#'
+#' 
 #' @examples
-#' \dontrun{
-#' gng <- GNG(scaled.wine)
+#' gng <- GNG(gng.preset.sphere(100))
 #' meanError(gng)
-#' }
 meanError <- NULL
 
 #' @title errorStatistics
@@ -303,10 +277,8 @@ meanError <- NULL
 #' @param object GNG object
 #' 
 #' @examples
-#' \dontrun{
-#' gng <- GNG(scaled.wine)
+#' gng <- GNG(gng.preset.sphere(100))
 #' errorStatistics(gng)
-#' }
 errorStatistics <- NULL
 
 #' @title Constructor of Optimized GrowingNeuralGas object. 
@@ -356,11 +328,9 @@ errorStatistics <- NULL
 #' @examples
 #' \dontrun{
 #' # Train online optimizedGNG. All values in this dataset are in the range (-4.3, 4.3)
-#' data(wine, package="rattle")
-#' gng <- OptimizedGNG(train.online = TRUE, 
-#'                     value.range=c(min(scale(wine[-1]),max(scale(wine[-1]))), 
-#'                     max.nodes=20)
-#' insertExamples(gng, scale(wine[-1]))
+#' X <- gng.preset.sphere(100)
+#' gng <- OptimizedGNG(train.online = TRUE, value.range=c(min(X), max(X)), max.nodes=20)
+#' insertExamples(gng, X)
 #' run(gng)
 #' Sys.sleep(10)
 #' pause(gng)
@@ -380,9 +350,8 @@ OptimizedGNG <- NULL
 #' @docType methods
 #'
 #' @examples
-#' \dontrun{
+#' gng <- GNG(gng.preset.sphere(100))
 #' clustering(gng)
-#' } 
 clustering.Rcpp_GNGServer <- NULL
 
 #' @title Constructor of GrowingNeuralGas object. 
@@ -431,23 +400,21 @@ clustering.Rcpp_GNGServer <- NULL
 #' @param seed Seed for internal randomization
 #' 
 #' @examples
-#' \dontrun{
-#' data(wine, package="rattle")
-#' scaled.wine <- scale(wine[-1])
+#' X <- gng.preset.sphere(100)
+#' y <- round(runif(100))
 #' # Train in an offline manner
-#' gng <- GNG(scaled.wine, labels=wine$Type, max.nodes=20)
+#' gng <- GNG(X, labels=y, max.nodes=20)
 #' # Plot
 #' plot(gng)
 #'
 #' # Train in an online manner with utility (erasing obsolete nodes)
-#' gng <- GNG(scaled.wine, labels=wine$Type, max.nodes=20, train.online=TRUE, k=1.3)
-#' insertExamples(gng, scale(wine[-1])
+#' gng <- GNG(labels=y, max.nodes=20, train.online=TRUE, k=1.3)
+#' insertExamples(gng, X)
 #' run(gng)
 #' Sys.sleep(10)
 #' terminate(gng)
 #' # Plot
 #' plot(gng)
-#' }
 #'
 GNG <- NULL
 
@@ -486,18 +453,13 @@ generateExamples <- NULL
 #' node a mean of labels of closest examples.
 #'
 #' @examples
-#' \dontrun{
-#' data(wine, package="rattle")
-#' scaled.wine <- scale(wine[-1])
-#' gng <- GNG(scaled.wine)
+#' X <- gng.preset.sphere(100)
+#' gng <- GNG(X)
 #' # Add preset examples
-#' M = generateExamples(preset=gng.preset.sphere)
-#' insertExamples(gng, M)
-#' }
+#' X = generateExamples(preset=gng.preset.sphere)
+#' insertExamples(gng, X)
 #' 
-#' @note It copies your examples twice in RAM. You might want to use object$insertExamples, or
-#' not to copy at all set_memory_move_examples (when using this function, remember not to modify the matrix
-#' and after removing the object delete it aswell)
+#' @note It copies your examples twice in RAM. You might want to use object$insertExamples.
 insertExamples <- NULL
 
 .GNG <- function(x=NULL, labels=c(),
@@ -746,7 +708,7 @@ predictComponent <- function(object, x){
 }
 
 plot.Rcpp_GNGServer <- function(x, vertex.color=gng.plot.color.cluster, 
-                      layout=gng.plot.layout.v2d, mode=gng.plot.2d, 
+                      layout=layout.fruchterman.reingold, mode=gng.plot.2d, 
                       vertex.size=3, ...){
   if(vertex.size <= 0){
     stop("Please pass positivie vertex.size")
@@ -759,8 +721,9 @@ plot.Rcpp_GNGServer <- function(x, vertex.color=gng.plot.color.cluster,
   
   
   if(x$getNumberNodes() > 4000){
-    warning("Trying to plot very large graph (>4000 nodes). It might take a while.")
+    warning("Trying to plot very large graph (>4000 nodes). It might take a long time especially if using layout function.")
   }
+  
   if(x$getNumberNodes() == 0){
     warning("Empty graph")
     return()

@@ -38,28 +38,13 @@
 #' \dontrun{
 #' CEC(k=3, x=dataset)
 #' CEC(k=3, x=dataset, control.nstart=10, method.type='spherical', control.eps=0.05)
-#' CEC(k=2, x=dataset, method.type='spherical', 
-#'     method.init='centroids', params.centroids=list(c(-0.5,0.5),c(0,0)))
-#'     
-#' CEC(k=5, x=dataset, method.type='fixed_spherical', 
-#'     params.r=0.01, control.nstart=10, control.eps=0.07)
-#'     
-#' CEC(k=5, x=dataset, method.type='fixed_covariance', 
-#'     params.cov=matrix(c(0.03,0,0,0.01),2), control.nstart=10, control.eps=0.06)
-#'     
+#' CEC(k=2, x=dataset, method.type='spherical', method.init='centroids', params.centroids=list(c(-0.5,0.5),c(0,0)))
+#' CEC(k=5, x=dataset, method.type='fixed_spherical', params.r=0.01, control.nstart=10, control.eps=0.07)
+#' CEC(k=5, x=dataset, method.type='fixed_covariance', params.cov=matrix(c(0.03,0,0,0.01),2), control.nstart=10, control.eps=0.06)
 #' CEC(k=1, x=dataset, method.type='func', params.function='name_of_my_own_function')
-#' 
 #' fixed_spherical_cluster_param = list(method.type = 'fixed_spherical', params.r = 0.001)
-#' covariance_cluster_param = list(method.type = 'fixed_covariance', 
-#'                                 params.cov = matrix(c(0.05, 0, 0, 0.001), 2))
-#' CEC(x = dataset, 
-#'         params.mix = list(covariance_cluster_param, 
-#'                           fixed_spherical_cluster_param, 
-#'                           fixed_spherical_cluster_param, 
-#'                           fixed_spherical_cluster_param, 
-#'                           fixed_spherical_cluster_param), 
-#'         control.nstart = 10)
-#'         
+#' covariance_cluster_param = list(method.type = 'fixed_covariance', params.cov=matrix(c(0.05, 0, 0, 0.001), 2))
+#' CEC(x = dataset, params.mix = list(covariance_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param, fixed_spherical_cluster_param), control.nstart = 10)
 #' p1 = list(method.type='spherical', k=3)
 #' p2 = list(method.type='diagonal', k=2)
 #' CEC(x=dataset, params.mix=list(p1, p2))
@@ -73,31 +58,38 @@ CEC <- NULL
 #' @title runAll
 #' 
 #' @aliases runAll,Rcpp_CecModel-method
-#' 
-#' @param c Trained CEC model object.
 #'
 #' @description Starts whole algorithm again with same parameters
+#' @examples
+#' \dontrun{
+#' runAll(c) 
+#' }
+#' @export
 runAll <- NULL
 
 #' @name runOneIteration
 #' @title runOneIteration
-#' 
-#' @param c Trained CEC model object.
 #'
 #' @aliases runOneIteration,Rcpp_CecModel-method
 #' 
 #' @description runs one iteration of algorithm
+#' @examples
+#' \dontrun{
+#' runOneIteration(c) 
+#' }
 #' @export
 runOneIteration <- NULL
 
 #' @name energy
 #' @title energy
 #'
-#' @param c Trained CEC model object.
-#'
 #' @aliases energy,Rcpp_CecModel-method
 #'
 #' @description Print result energy of clustering found
+#' @examples
+#' \dontrun{
+#' energy(c) 
+#' }
 #' @export
 energy <- NULL
 
@@ -108,6 +100,10 @@ energy <- NULL
 #' @description Print labels assigned
 #'
 #' @param c Object with clusters
+#' @examples
+#' \dontrun{
+#' clustering(c) 
+#' }
 #' @export 
 clustering <- function(c) UseMethod("clustering", c)
 
@@ -117,48 +113,58 @@ clustering <- function(c) UseMethod("clustering", c)
 #' @rdname clustering-methods
 #' 
 #' @description Print labels assigned
+#' @examples
+#' \dontrun{
+#' clustering(c) 
+#' }
 #' @export 
 clustering.Rcpp_CecModel <- NULL
 
-#' @name getDataset 
-#' @title getDataset 
+#' @name x
+#' @title x
 #' 
-#' @param c Trained CEC model object.
-#' 
-#' @aliases getDataset,Rcpp_CecModel-method
+#' @aliases x,Rcpp_CecModel-method
 #' 
 #' @description Print input dataset 
+#' @examples
+#' \dontrun{
+#' x(c) 
+#' }
 #' @export
-getDataset <- NULL
+x <- NULL
 
 #' @name centers
 #' @title centers
 #' 
-#' @param c Trained CEC model object.
-#' 
 #' @aliases centers,Rcpp_CecModel-method
 #'
 #' @description Print centers of clusters
+#' @examples
+#' \dontrun{
+#' centers(c) 
+#' }
 #' @export
 centers <- NULL
 
 #' @name covMatrix
 #' @title covMatrix
 #' 
-#' @param c Trained CEC model object.
-#' 
 #' @aliases covMatrix,Rcpp_CecModel-method
-#'
+#' 
 #' @description Print covariances of clusters
+#' @examples
+#' \dontrun{
+#' covMatrix(c) 
+#' }
 #' @export
 covMatrix <- NULL
 
-#' @name predict.cec
+#' @name predict
 #' @rdname predict.cec
 #' @method predict Rcpp_CecModel
 #' @title predict
 #' 
-#' @aliases predict.Rcpp_CecModel-method
+#' @aliases predict,Rcpp_CecModel-method
 #'
 #' @description Classify a new point according to the model (returns index of cluster where given point belong to)
 #' 
@@ -177,6 +183,11 @@ predict.Rcpp_CecModel <- NULL
 #' Data is recorded only if you have chosen to when you created CEC model object.
 #'
 #' @param c object Trained CEC model object.
+#' 
+#' @examples
+#' \dontrun{
+#' logClusters(c) 
+#' }
 #' @export
 logClusters <- NULL
 
@@ -189,6 +200,11 @@ logClusters <- NULL
 #' Data is recorded only if you have chosen to when you created CEC model object.
 #'  
 #' @param c object Trained CEC model object.
+#'
+#' @examples
+#' \dontrun{
+#' logEnergy(c) 
+#' }
 #' @export
 logEnergy <- NULL
 
@@ -202,6 +218,10 @@ logEnergy <- NULL
 #' @description Print how many iterations it took to learn CEC model
 #'
 #' @param c object Trained CEC model object.
+#' @examples
+#' \dontrun{
+#' logIterations(c) 
+#' }
 #' @export
 logIterations <- NULL
 
@@ -284,15 +304,15 @@ CEC <- function(x = NULL,
   model
 }
 
-runAll <- function(c) {
+runAll.Rcpp_CecModel <- function(c) {
   c$runAll()
 }
 
-runOneIteration <- function(c) {
+runOneIteration.Rcpp_CecModel <- function(c) {
   c$runOneIteration()
 }
 
-energy <- function(c) {
+energy.Rcpp_CecModel <- function(c) {
   c$energy()
 }
 
@@ -300,15 +320,15 @@ clustering.Rcpp_CecModel <- function(c) {
   c$clustering()
 }
 
-getDataset <- function(c) {
-  c$getDataset()
+x.Rcpp_CecModel <- function(c) {
+  c$x()
 }
 
-centers <- function(c) {
+centers.Rcpp_CecModel <- function(c) {
   c$centers()
 }
 
-covMatrix <- function(c) {
+covMatrix.Rcpp_CecModel <- function(c) {
   c$covMatrix()
 }
 
@@ -336,7 +356,7 @@ predict.Rcpp_CecModel <- function(object, x, ...) {
     x = data.matrix(x)
   }
   
-  if(dim(object$getDataset())[2] != dim(x)[2]){
+  if(dim(object$x())[2] != dim(x)[2]){
     stop("Incompatible dimension!")
   }
   

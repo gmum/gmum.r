@@ -5,19 +5,20 @@
 \title{plot GNG object}
 \usage{
 \method{plot}{Rcpp_GNGServer}(x, vertex.color = gng.plot.color.cluster,
-  layout = gng.plot.layout.v2d, mode = gng.plot.2d, vertex.size = 3, ...)
+  layout = layout.fruchterman.reingold, mode = gng.plot.2d,
+  vertex.size = 3, ...)
 }
 \arguments{
 \item{x}{GNG object}
 
-\item{vertex.color}{How to color vertexes. Possible values: \code{gng.plot.color.cluster} (vertex color is set to fastgreedy.community clustering),
-\code{gng.plot.color.label} (rounds to integer label if present), \code{list of integers} (colors vertices according to provided list), \code{gng.plot.color.none} (every node is white),}
+\item{vertex.color}{How to color vertexes. Possible values: \code{"fast.cluster"} (vertex color is set to fastgreedy.community clustering),
+\code{"label"} (rounds to integer label if present), \code{list of integers} (colors vertices according to provided list), \code{"none"} (every node is white),}
 
-\item{layout}{Layout to be used when plotting. Possible values: \code{gng.plot.layour.igraph.v2d} (first two dimensions),
-\code{gng.plot.layout.igraph.auto} (auto layout from igraph)  \code{gng.plot.layout.igraph.fruchterman.fast} (fast fruchterman reingold layout),or any function accepting igraph graph and returning layout}
+\item{layout}{igraph layout to be used when plotting. Defaults to \code{layout.fruchterman.reingold}.
+Other good choice is using \code{gng.plot.layout.v2d}, which returns two first spatial coordinates.}
 
-\item{mode}{\code{gng.plot.2d} (igraph plot)
-\code{gng.plot.2d.errors} (igraph plot with mean error log plot)}
+\item{mode}{\code{"2d"} (igraph plot)
+\code{"2d.errors"} (igraph plot with mean error log plot)}
 
 \item{vertex.size}{Size of plotted vertices}
 

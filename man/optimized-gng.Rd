@@ -54,11 +54,9 @@ it is consider using dimensionality reduction techniques.
 \examples{
 \dontrun{
 # Train online optimizedGNG. All values in this dataset are in the range (-4.3, 4.3)
-data(wine, package="rattle")
-gng <- OptimizedGNG(train.online = TRUE,
-                    value.range=c(min(scale(wine[-1]),max(scale(wine[-1]))),
-                    max.nodes=20)
-insertExamples(gng, scale(wine[-1]))
+X <- gng.preset.sphere(100)
+gng <- OptimizedGNG(train.online = TRUE, value.range=c(min(X), max(X)), max.nodes=20)
+insertExamples(gng, X)
 run(gng)
 Sys.sleep(10)
 pause(gng)

@@ -27,7 +27,7 @@ test_that("Basic saving/loading works", {
 test_that("predictCluster returns sensible results", {
   data(cec.mouse1.spherical)
   g <- GNG(cec.mouse1.spherical, max.nodes=50)
-  mouse_centr <- predictCentroids(g)
+  mouse_centr <- calculateCentroids(g)
   
   m = as.data.frame(cec.mouse1.spherical)
   colnames(m) = c("x", "y")
@@ -62,7 +62,7 @@ test_that("predictCluster returns sensible results", {
   expect_that(all(sapply(table(target), function(x) x>40)), is_true())
   
   # At least catches most important clusters
-  expect_that(length(predictCentroids(g)) > 3, is_true())
+  expect_that(length(calculateCentroids(g)) > 3, is_true())
   
 })
 
@@ -85,7 +85,7 @@ test_that("GNG converges on simple cases", {
       predict(gng, c(1,1,1))
       
       # # Get igraph
-      ig <- convertToGraph(gng)
+      ig <- convertToIGraph(gng)
       
       # # Running testthat unit tests (almost)
       test_that("GNG has not isolated vertexes", {
