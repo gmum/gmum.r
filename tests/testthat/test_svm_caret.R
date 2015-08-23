@@ -1,4 +1,5 @@
 library(testthat)
+library(gmum.r)
 
 test_that("Basic caret support for SVM works ", {
   library(caret)

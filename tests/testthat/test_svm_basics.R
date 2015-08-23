@@ -1,5 +1,5 @@
 library(testthat)
-library('gmum.r')
+library(gmum.r)
 
 data(svm_two_ellipsoids_dataset)
 data(svm_breast_cancer_dataset)
