@@ -408,8 +408,8 @@ clustering.Rcpp_GNGServer <- NULL
 #' plot(gng)
 #'
 #' # Train in an online manner with utility (erasing obsolete nodes)
-#' gng <- GNG(labels=y, max.nodes=20, train.online=TRUE, k=1.3)
-#' insertExamples(gng, X)
+#' gng <- GNG(max.nodes=20, train.online=TRUE, k=1.3)
+#' insertExamples(gng, X, labels=y)
 #' run(gng)
 #' Sys.sleep(10)
 #' terminate(gng)

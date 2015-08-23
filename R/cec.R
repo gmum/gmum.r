@@ -120,19 +120,6 @@ clustering <- function(c) UseMethod("clustering", c)
 #' @export 
 clustering.Rcpp_CecModel <- NULL
 
-#' @name x
-#' @title x
-#' 
-#' @aliases x,Rcpp_CecModel-method
-#' 
-#' @description Print input dataset 
-#' @examples
-#' \dontrun{
-#' x(c) 
-#' }
-#' @export
-x <- NULL
-
 #' @name centers
 #' @title centers
 #' 
