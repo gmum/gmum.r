@@ -110,13 +110,14 @@ double RAMGNGGraph<Node, Edge, Mutex>::get_euclidean_dist(const double *pos_a,
 template<class Node, class Edge, class Mutex>
 double RAMGNGGraph<Node, Edge, Mutex>::get_dist(const double *pos_a,
                                                 const double *pos_b) const {
+    ASSERT(dist_fnc == Euclidean || dist_fnc == Cosine);
     if (dist_fnc == Euclidean) {
         double distance = 0;
         for (size_t i = 0; i < this->gng_dim; ++i)
             distance += (pos_a[i] - pos_b[i]) * (pos_a[i] - pos_b[i]);
 
         return distance;
-    } else if (dist_fnc == Cosine) {
+    } else {
         double norm_1 = 0, norm_2 = 0, distance = 0;
 
         for (size_t i = 0; i < this->gng_dim; ++i) {

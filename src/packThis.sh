@@ -8,7 +8,7 @@ echo "Creating folder structure"
 mkdir -p $1
 
 echo "Copy necessary files"
-rsync -rP --exclude=".*" --exclude="cmake/*" --exclude="build/*" --exclude="doc/*" --exclude="libs/*" --exclude="tests/*" --exclude="..Rcheck/*" --include="*.cpp" --include="*.h" --include="*.hpp" --include="*.Rd" --include="*.c" --include="*.R" --exclude="*" --exclude="R/R_scripts/*.*" . $1
+rsync -rP --exclude=".*" --exclude="demo/samples/*" --exclude="inst/data_sets/*" --exclude="cmake/*" --exclude="build/*" --exclude="doc/*" --exclude="libs/*" --exclude="tests/*" --exclude="..Rcheck/*" --include="*.cpp" --include="*.h" --include="*.hpp" --include="*.Rd" --include="*.c" --include="*.R" --include="*/" --exclude="*" . $1
 
 # Copy datasets
 mkdir $1/data
@@ -17,6 +17,7 @@ cp data/cec.tset.RData $1/data
 cp data/cec.ellipsegauss.RData $1/data
 cp data/svm.transduction.RData $1/data
 cp data/svm_breast_cancer_dataset.RData $1/data
+
 
 # Some individual files
 cp DESCRIPTION $1
@@ -33,5 +34,4 @@ cp inst/include/svmlight/LICENSE.txt $1/inst/include/svmlight/
 rm -r $1/..Rcheck
 rm -r $1/.git
 rm -r $1/.idea
-
 

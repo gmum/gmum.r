@@ -1128,17 +1128,6 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
     return(c_line);
 }
 
-
-// TODO: Remove
-char ** SVMLightRunner::SVMConfigurationToSVMLightModelFile(
-    SVMConfiguration &config
-) {
-    char **result;
-    std::string line_string = "";
-    //result = malloc(sizeof(char *) * number_of_lines);
-}
-
-
 void SVMLightRunner::SVMLightModelToSVMConfiguration(
     MODEL *model, SVMConfiguration &config
 ) {

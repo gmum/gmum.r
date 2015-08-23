@@ -93,7 +93,7 @@ double single_kernel(KERNEL_PARM *kernel_parm, SVECTOR *a, SVECTOR *b)
             return(tanh(kernel_parm->coef_lin*sprod_ss(a,b)+kernel_parm->coef_const)); 
     case 4: /* custom-kernel supplied in file kernel.h*/
             return(custom_kernel(kernel_parm,a,b)); 
-    default: C_PRINTF("Error: Unknown kernel function\n"); C_EXIT(1);
+    default: C_PRINTF("Error: Unknown kernel function\n"); C_EXIT(1); return -1.0;
   }
 }
 

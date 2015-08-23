@@ -30,9 +30,9 @@ NULL
 
 #' UCI breast cancer dataset
 #'
-#' @name svm_breast_cancer_dataset
+#' @name svm.breastcancer.dataset
 #' 
-#' @title svm_breast_cancer_dataset
+#' @title svm.breastcancer.dataset
 #' 
 #' @docType data
 #' @keywords data
