@@ -23,9 +23,9 @@ It copies your examples twice in RAM. You might want to use object$insertExample
 }
 \examples{
 X <- gng.preset.sphere(100)
-gng <- GNG(X)
-# Add preset examples
-X = generateExamples(preset=gng.preset.sphere)
+gng <- GNG(X, train.online=TRUE)
+# Add more examples
+X = gng.preset.sphere(100)
 insertExamples(gng, X)
 }
 

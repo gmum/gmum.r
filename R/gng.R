@@ -130,6 +130,22 @@ calculateCentroids <- NULL
 #' 
 findClosests <- NULL
 
+#' Check if GNG is running
+#'
+#' @title isRunning
+#' @description Returns TRUE if GNG object is training
+#' @export
+#' @param object GNG object
+#' 
+#' @examples
+#' gng <- GNG(gng.preset.sphere(100))
+#' # FALSE, because did not pass train.online to constructor
+#' print(isRunning(gng))
+#' 
+isRunning <- function(object) {
+  return(object$isRunning())
+}
+
 #' Find closest component
 #' @name predictComponent
 #' @title predictComponent
@@ -329,7 +345,7 @@ errorStatistics <- NULL
 #' \dontrun{
 #' # Train online optimizedGNG. All values in this dataset are in the range (-4.3, 4.3)
 #' X <- gng.preset.sphere(100)
-#' gng <- OptimizedGNG(train.online = TRUE, value.range=c(min(X), max(X)), max.nodes=20)
+#' gng <- OptimizedGNG(train.online = TRUE, value.range=c(min(X), max(X)), dim=3, max.nodes=20)
 #' insertExamples(gng, X)
 #' run(gng)
 #' Sys.sleep(10)
@@ -408,7 +424,7 @@ clustering.Rcpp_GNGServer <- NULL
 #' plot(gng)
 #'
 #' # Train in an online manner with utility (erasing obsolete nodes)
-#' gng <- GNG(max.nodes=20, train.online=TRUE, k=1.3)
+#' gng <- GNG(max.nodes=20, train.online=TRUE, k=1.3, dim=3)
 #' insertExamples(gng, X, labels=y)
 #' run(gng)
 #' Sys.sleep(10)
@@ -438,8 +454,6 @@ numberNodes <- function(object){
   object$getNumberNodes()
 }
 
-generateExamples <- NULL
-
 #' @name insertExamples
 #' @title insertExamples
 #' @description Insert examples with optional labels.
@@ -454,9 +468,9 @@ generateExamples <- NULL
 #'
 #' @examples
 #' X <- gng.preset.sphere(100)
-#' gng <- GNG(X)
-#' # Add preset examples
-#' X = generateExamples(preset=gng.preset.sphere)
+#' gng <- GNG(X, train.online=TRUE)
+#' # Add more examples
+#' X = gng.preset.sphere(100)
 #' insertExamples(gng, X)
 #' 
 #' @note It copies your examples twice in RAM. You might want to use object$insertExamples.
@@ -474,7 +488,7 @@ insertExamples <- NULL
                   train.online=FALSE,
                   min.improvement=1e-3,
                   lambda=200,
-                  dim=0,
+                  dim=-1,
                   verbosity=0,
                   seed=-1
 ){
@@ -492,6 +506,9 @@ insertExamples <- NULL
   # Fill in configuration
   if(train.online){
     if(is.null(x)){
+      if (dim == -1) {
+        stop(gmum.error(GMUM_WRONG_PARAMS, "To train online, please pass desired dimensionality in dim parameter"))
+      }
       config$dim = dim
     }else{
       config$dim = ncol(x)
@@ -651,7 +668,7 @@ GNG <- function(x=NULL, labels=c(),
                  max.edge.age=200,
                  train.online=FALSE,
                  max.iter=200,
-                 dim=0,
+                 dim=-1,
                  min.improvement=1e-3,
                  lambda=200,
                  verbosity=0,
@@ -941,12 +958,6 @@ insertExamples <- function(object, examples, labels=c()){
     object$insertLabeledExamples(examples, labels)
   }    
 }
-
-
-generateExamples <- function(preset, N, r=1.0, center=c(0.5,0.5,0.5)){
-  preset(N, center=center, r=r, prob=-1)
-}
-
 
 loadModule('gng_module', TRUE)
 

@@ -55,7 +55,7 @@ it is consider using dimensionality reduction techniques.
 \dontrun{
 # Train online optimizedGNG. All values in this dataset are in the range (-4.3, 4.3)
 X <- gng.preset.sphere(100)
-gng <- OptimizedGNG(train.online = TRUE, value.range=c(min(X), max(X)), max.nodes=20)
+gng <- OptimizedGNG(train.online = TRUE, value.range=c(min(X), max(X)), dim=3, max.nodes=20)
 insertExamples(gng, X)
 run(gng)
 Sys.sleep(10)

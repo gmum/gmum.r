@@ -6,7 +6,7 @@
 \usage{
 GNG(x = NULL, labels = c(), beta = 0.99, alpha = 0.5,
   max.nodes = 1000, eps.n = 6e-04, eps.w = 0.05, max.edge.age = 200,
-  train.online = FALSE, max.iter = 200, dim = 0,
+  train.online = FALSE, max.iter = 200, dim = -1,
   min.improvement = 0.001, lambda = 200, verbosity = 0, seed = -1,
   k = NULL)
 }
@@ -60,7 +60,7 @@ gng <- GNG(X, labels=y, max.nodes=20)
 plot(gng)
 
 # Train in an online manner with utility (erasing obsolete nodes)
-gng <- GNG(max.nodes=20, train.online=TRUE, k=1.3)
+gng <- GNG(max.nodes=20, train.online=TRUE, k=1.3, dim=3)
 insertExamples(gng, X, labels=y)
 run(gng)
 Sys.sleep(10)
