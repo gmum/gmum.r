@@ -28,6 +28,16 @@ NULL
 #' @keywords data
 NULL
 
+#' UCI breast cancer dataset
+#'
+#' @name svm_breast_cancer_dataset
+#' 
+#' @title svm_breast_cancer_dataset
+#' 
+#' @docType data
+#' @keywords data
+NULL
+
 #' Simple dataset in the form of T letter
 #'
 #' @name cec.tset
