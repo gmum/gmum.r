@@ -18,6 +18,26 @@ NULL
 #' @keywords data
 NULL
 
+#' Extra information for dataset cec.mouse1.extra (energy and cluster assignment)
+#'
+#' @name cec.mouse1.spherical.extra
+#' 
+#' @title cec.mouse1.spherical.extra
+#' 
+#' @docType data
+#' @keywords data
+NULL
+
+#' Extra information for dataset cec.ellipsegauss (energy and cluster assignment)
+#'
+#' @name cec.ellipsegauss.extra
+#' 
+#' @title cec.ellipsegauss.extra
+#' 
+#' @docType data
+#' @keywords data
+NULL
+
 #' Dataset used in transduction demo on website
 #'
 #' @name svm.transduction
@@ -40,9 +60,9 @@ NULL
 
 #' Simple dataset in the form of T letter
 #'
-#' @name cec.tset
+#' @name Tset
 #' 
-#' @title cec.tset
+#' @title Tset
 #' 
 #' @docType data
 #' @keywords data

@@ -1,4 +1,5 @@
 rm(list=ls())
+rm(.Random.seed)
 
 #EllipseGauss
 energy <- as.numeric(read.table(system.file("data_sets", "cec", "EllipseGauss","energy.txt", package="gmum.r")));
@@ -12,9 +13,11 @@ typeof(cluster);
 cec.ellipsegauss.extra=list("energy"=energy, "cluster"=cluster)
 
 rm("energy", "cluster")
+rm(.Random.seed)
 save.image("cec.ellipsegauss.RData");
 
 env <- c(ls())
+rm(.Random.seed)
 rm(env, list = env)
 
 #mouse_1
@@ -29,9 +32,11 @@ typeof(cluster);
 cec.mouse1.extra=list("energy"=energy, "cluster"=cluster)
 
 rm("energy", "cluster")
+rm(.Random.seed)
 save.image("cec.mouse1.RData");
 
 env <- c(ls())
+rm(.Random.seed)
 rm(env, list = env)
 
 #mouse_1_classic
@@ -55,10 +60,12 @@ typeof(type);
 
 cec.mouse1.classic.extra=list("energy"=energy, "cluster"=cluster, "aproximation"=aproximation, "dimension"=dimension, "iteration"=iteration, "type"=type)
 
+rm(.Random.seed)
 rm("energy", "cluster", "aproximation", "dimension", "iteration", "type")
 save.image("cec.mouse1.classic.RData");
 
 env <- c(ls())
+rm(.Random.seed)
 rm(env, list = env)
 
 #mouse_1_spherical
@@ -83,10 +90,12 @@ typeof(type);
 cec.mouse1.spherical.extra=list("energy"=energy, "cluster"=cluster, "aproximation"=aproximation, "dimension"=dimension, "iteration"=iteration, "type"=type)
 
 rm("energy", "cluster", "aproximation", "dimension", "iteration", "type")
+rm(.Random.seed)
 save.image("cec.mouse1.spherical.RData");
 
 env <- c(ls())
 rm(env, list = env)
+rm(.Random.seed)
 
 #mouse_2_spherical
 energy <- as.numeric(read.table(system.file("data_sets", "cec", "mouse_2_spherical","energy.txt", package="gmum.r")));
@@ -109,10 +118,12 @@ typeof(type);
 
 cec.mouse2.spherical.extra=list("energy"=energy, "cluster"=cluster, "aproximation"=aproximation, "dimension"=dimension, "iteration"=iteration, "type"=type)
 
+rm(.Random.seed)
 rm("energy", "cluster", "aproximation", "dimension", "iteration", "type")
 save.image("cec.mouse2.spherical.RData");
 
 env <- c(ls())
+rm(.Random.seed)
 rm(env, list = env)
 
 #simple_1
@@ -127,7 +138,9 @@ typeof(cluster);
 cec.simple1.extra=list("energy"=energy, "cluster"=cluster)
 
 rm("energy", "cluster")
+rm(.Random.seed)
 save.image("cec.simple1.RData");
 
 env <- c(ls())
 rm(env, list = env)
+rm(.Random.seed)
