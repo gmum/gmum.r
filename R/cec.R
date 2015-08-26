@@ -7,19 +7,19 @@
 #'
 #' @param x Numeric matrix of data.
 #' @param k Initial number of clusters.
-#' @param method.type Type of clustering (Gauss family).
+#' @param method.type Type of clustering (Gaussian family).
 #' \enumerate{
-#' \item \code{"diagonal"} Gaussians with diagonal covariance. The clustering will try to divide the data into ellipsoid with radiuses parallel to coordinate axes
-#' \item \code{"fixed_spherical"} Spherical (radial) Gaussian densities (additional parameter - radius)
-#' \item \code{"fixed_covariance"} The clustering will have the tendency to divide the data into clusters resembling the unit circles in the Mahalanobis distance (additional parameter - covaraince matrix required)
-#' \item \code{"func"} Own function dependent on m and sigma (additional parameter)
-#' \item \code{"standard"} We divide dataset into ellipsoid-like clusters without any preferences (default)
-#' \item \code{"spherical"} The clustering will try to divide the data into circles of arbitrary sizes}
+#' \item 'diagonal' Gaussians with diagonal covariance. The clustering will try to divide the data into ellipsoid with radiuses parallel to coordinate axes
+#' \item 'fixed_spherical' Spherical (radial) Gaussian densities (additional parameter - radius)
+#' \item 'fixed_covariance' The clustering will have the tendency to divide the data into clusters resembling the unit circles in the Mahalanobis distance (additional parameter - covaraince matrix required)
+#' \item 'func' Own function dependent on m and sigma (additional parameter)
+#' \item 'standard' We divide dataset into ellipsoid-like clusters without any preferences (default)
+#' \item 'spherical' The clustering will try to divide the data into circles of arbitrary sizes}
 #' @param method.init Method to initialize clusters.
 #' \enumerate{
-#' \item \code{"centroids"}
-#' \item \code{"kmeans++"}
-#' \item \code{"random"}}
+#' \item 'centroids'
+#' \item 'kmeans++'
+#' \item 'random'}
 #' @param params.r Radius for spherical family.
 #' @param params.cov Covariance matrix for covariance family.
 #' @param params.centroids List of centroids.
