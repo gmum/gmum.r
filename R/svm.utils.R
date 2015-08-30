@@ -61,12 +61,7 @@ svm.dataset.2e <- function() {
   return(svm.twoellipsoids.dataset)
 }
 
-svm.dataset.circles <- function() {
-  data(svm_two_circles_dataset)
-  return(svm.twocircles.dataset)
-}
-
-svm.dataset.xor <- function() {
+svm.dataset.circles <- function() { 
   matrix( 
     c(0,1,0,1,0,0,1,1,0,1,1,0),
     ncol=3,
@@ -74,6 +69,24 @@ svm.dataset.xor <- function() {
     dimnames=list(c(),c("x","y","t")))
 }
 
+#' @title Measure accuracy scoreof a prediction
+#' 
+#' @description Calculates accuracy of a prediction, returns precent of correctly predicted examples 
+#' over all test examples.
+#' @export
+#' @rdname svm.accuracy
+#' 
+#' @param prediction factor or 1 dim vector with predicted classes
+#' @param target  factor or 1 dim vector with true classes
+#' 
+#' #' @examples
+#' \dontrun{
+#' # firstly, SVM model needs to be trained
+#' svm <- SVM(x, y, core="libsvm", kernel="linear", C=1)
+#' # then we can use it to predict unknown samples
+#' p <- predcit(svm, x_test)
+#' acc <- svm.accuracy(p, y)
+#' }
 svm.accuracy <- function(prediction, target) {
     if ( length(target) != length(prediction)) {
       stop("Prediction's and target's length don't match!")

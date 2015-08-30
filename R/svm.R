@@ -215,8 +215,11 @@ summary.Rcpp_SVMClient <- NULL
 print.Rcpp_SVMClient <- NULL
 
 # Support for caret
+#' @export
 caret.gmumSvmRadial <- NULL
+#' @export
 caret.gmumSvmLinear <- NULL
+#' @export
 caret.gmumSvmPoly <- NULL
 
 #' @rdname svm
@@ -785,7 +788,7 @@ plot.Rcpp_SVMClient <-
     
     #2. Do some checking
     
-    if (ncol(X) > 2) {
+    if (ncol(X) > 2 && mode != "pca") {
       warning(
         "Only 2 dimension plotting is supported for multiclass. Plotting using cols parameter"
       )
@@ -899,7 +902,7 @@ plot.Rcpp_SVMClient <-
         scale_size
       
     }else{
-      if (ncol(X) > 2)
+      if (ncol(X) > 2 && mode != "pca")
         warning("Only limited plotting is currently supported for multidimensional data")
       
       if (new_data)
