@@ -293,7 +293,7 @@ CEC <- function(x = NULL,
     if(is.null(seed) == FALSE) {
         config$setSeed(seed)
     }
-  config$setDataSet(x)
+  config$.setDataSet(x)
   config$setEps(control.eps)      
   config$setNrOfClusters(k)
   
@@ -310,7 +310,7 @@ CEC <- function(x = NULL,
   config$setNstart(control.nstart)
   config$setCentroids(params.centroids)
   config$setMethodType(method.type)             
-  config$setCov(params.cov)
+  config$.setCov(params.cov)
   config$setR(params.r)
   config$setMethodInit(method.init) 
   config$setItmax(control.itmax)
@@ -379,7 +379,7 @@ predict.Rcpp_CecModel <- function(object, x, ...) {
   }
   
   apply(x, 1, function(row) {
-    object$predict(row)
+    object$.predict(row)
   })
 }
 
