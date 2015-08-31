@@ -4,14 +4,18 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include "threading.h"
 
 #ifdef RCPP_INTERFACE
     #include <RcppArmadillo.h>
-    #include "threading.h"
+    // TODO: remove it
     using namespace Rcpp;
     #define COUT(x) Rcpp::Rcout<<(x)<<std::endl<<std::flush;
     #define CERR(x) Rcpp::Rcerr<<(x)<<std::endl<<std::flush;
 #else
+    #include <armadillo>
+    // TODO: remove it
+    using namespace arma;
     #define COUT(x) std::cout<<(x)<<std::endl<<std::flush;
     #define CERR(x) std::cerr<<(x)<<std::endl<<std::flush;
 #endif

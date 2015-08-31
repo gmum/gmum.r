@@ -1,6 +1,8 @@
 #ifndef CEC_MODULE_H
 #define CEC_MODULE_H
 
+#ifdef RCPP_INTERFACE
+
 #include <RcppArmadillo.h>
 using namespace Rcpp;
 
@@ -48,4 +50,7 @@ RCPP_MODULE(cec) {
 	.method("log.iters", &CecModel::iters)
 	.method("getDataset", &CecModel::get_points);
 }
+
+#endif
+
 #endif
