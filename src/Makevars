@@ -13,10 +13,9 @@ OBJECTS = $(CPP_SOURCES:.cpp=.o) $(COMPILED_LIBRARIES_OBJECTS)
 DEBUG = -DNDEBUG_GMUM
 PREPROCESS = $(DEBUG) -DRCPP_INTERFACE -DARMA_64BIT_WORD -DBOOST_DISABLE_ASSERTS
 
-R_LIBS = `$(R_HOME)/bin/R CMD config --ldflags`  `echo 'Rcpp:::LdFlags()'  | $(R_HOME)/bin/R --vanilla --slave` 
-R_CPPFLAGS = `$(R_HOME)/bin/Rscript -e "RcppArmadillo:::CxxFlags()"` 
-LAPACK_LIBS = `${R_HOME}/bin/R CMD config LAPACK_LIBS`
-BLAS_LIBS = `${R_HOME}/bin/R CMD config BLAS_LIBS`
+R_LIBS = `$(R_HOME)/bin/R CMD config --ldflags` 
+LAPACK_LIBS = `$(R_HOME)/bin/R CMD config LAPACK_LIBS`
+BLAS_LIBS = `$(R_HOME)/bin/R CMD config BLAS_LIBS`
 
 PKG_CPPFLAGS =  $(GCC_STD) $(PREPROCESS) $(R_CPPFLAGS) $(INCLUDES) -pthread
 PKG_CXXFLAGS = --std=c++0x

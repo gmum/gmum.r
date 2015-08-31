@@ -1,3 +1,6 @@
+R_HOME=$(shell R RHOME)
+R_CPPFLAGS = $(shell $(R_HOME)/bin/R CMD config --cppflags) $(shell $(R_HOME)/bin/Rscript -e "RcppArmadillo:::CxxFlags()") $(shell $(R_HOME)/bin/Rscript -e "Rcpp:::CxxFlags()")  
+
 include ../../src/Makevars
 
 # Explicit Makevars inheritances adn overrides
