@@ -1,6 +1,8 @@
 #ifndef CEC_MODULE_H
 #define CEC_MODULE_H
 
+#ifdef RCPP_INTERFACE
+
 #include <RcppArmadillo.h>
 using namespace Rcpp;
 
@@ -17,7 +19,7 @@ using namespace gmum;
 RCPP_MODULE(cec) {
 	class_<CecConfiguration>("CecConfiguration")
 	.constructor()
-	.method("setDataSet", &CecConfiguration::set_data_set)
+	.method(".setDataSet", &CecConfiguration::set_data_set)
 	.method("setEps", &CecConfiguration::set_eps)
 	.method("setMix", &CecConfiguration::set_mix)
 	.method("setNrOfClusters", &CecConfiguration::set_nclusters)
@@ -27,7 +29,7 @@ RCPP_MODULE(cec) {
 	.method("setCentroids", &CecConfiguration::set_centroids)
 	.method("setMethodInit", &CecConfiguration::set_method_init)
 	.method("setMethodType", &CecConfiguration::set_method_type)
-	.method("setCov", &CecConfiguration::set_cov)
+	.method(".setCov", &CecConfiguration::set_cov)
 	.method("setR", &CecConfiguration::set_r)
 	.method("setFunction", &CecConfiguration::set_function)
     .method("setItmax", &CecConfiguration::set_it_max)
@@ -42,10 +44,13 @@ RCPP_MODULE(cec) {
 	.method("clustering", &CecModel::get_assignment)
 	.method("centers", &CecModel::centers)
 	.method("covMatrix", &CecModel::cov)
-	.method("predict", &CecModel::predict)
+	.method(".predict", &CecModel::predict)
 	.method("log.ncluster", &CecModel::get_nclusters)
 	.method("log.energy", &CecModel::get_energy_history)
 	.method("log.iters", &CecModel::iters)
 	.method("getDataset", &CecModel::get_points);
 }
+
+#endif
+
 #endif

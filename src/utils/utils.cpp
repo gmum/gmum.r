@@ -78,9 +78,11 @@ char** free_argv(int argc, char** argv) {
     return NULL;
 }
 
+#ifdef RCPP_INTERFACE
 int rcpp_c_rand() {
     return int(Rcpp::runif(1)[0] * INT_MAX);
 }
+#endif
 
 int ed_c_rand() {
 #ifdef RCPP_INTERFACE

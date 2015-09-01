@@ -1,6 +1,8 @@
 #ifndef SVM_WRAPPER_MODULE_H
 #define SVM_WRAPPER_MODULE_H
 
+#ifdef RCPP_INTERFACE
+
 #include "svm_basic.h"
 #include "svm_client.h"
 using namespace Rcpp;
@@ -102,5 +104,7 @@ RCPP_MODULE(svm_wrapper) {
 			;
 
 }
+
+#endif
 
 #endif

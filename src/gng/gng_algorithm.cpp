@@ -224,7 +224,7 @@ void GNGAlgorithm::addNewNode() {
 
 	
 
-	double position[this->dim]; //param
+	double * position = new double[this->dim]; //param
 
 	//TODO: < GNG_DIM?
 	for (int i = 0; i < this->dim; ++i) //param

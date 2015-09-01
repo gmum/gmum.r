@@ -1,6 +1,6 @@
 # NOTE: R is overwriting all optimization flags, if you are a dev you can change flags in ~/.R/Makevars 
 # NOTE: R package should use POSIX Makefile
-# TODO: How to do wildcard in POSIX Makefile?
+
 CPP_SOURCES = svm/libsvm_runner.cpp  svm/svm_client.cpp  svm/svmlight_runner.cpp  svm/svm_wrapper_module.cpp  svm/two_e_svm_pre.cpp svm/svm_basic.cpp      svm/svm.cpp         svm/svm_utils.cpp        svm/two_e_svm_post.cpp      svm/validator_runner.cpp cec/assignment.cpp         cec/cec.cpp         cec/centroids_assignment.cpp  cec/cluster_custom_function.cpp  cec/kmeanspp_assignment.cpp cec/cec_configuration.cpp  cec/cec_module.cpp  cec/cluster.cpp               cec/hartigan.cpp                 cec/random_assignment.cpp utils/threading.cpp  utils/tinythread.cpp  utils/utils.cpp gng/gng_algorithm.cpp  gng/gng_configuration.cpp  gng/gng_module.cpp  gng/gng_server.cpp 
 SOURCES = $(CPP_SOURCES) svmlight/svm_common.c  svmlight/svm_hideo.c  svmlight/svm_learn.c
 
@@ -13,11 +13,11 @@ OBJECTS = $(CPP_SOURCES:.cpp=.o) $(COMPILED_LIBRARIES_OBJECTS)
 DEBUG = -DNDEBUG_GMUM
 PREPROCESS = $(DEBUG) -DRCPP_INTERFACE -DARMA_64BIT_WORD -DBOOST_DISABLE_ASSERTS
 
-R_LIBS = `$(R_HOME)/bin/R CMD config --ldflags`  `echo 'Rcpp:::LdFlags()'  | $(R_HOME)/bin/R --vanilla --slave` 
-R_CPPFLAGS = `$(R_HOME)/bin/Rscript -e "RcppArmadillo:::CxxFlags()"` 
-LAPACK_LIBS = `${R_HOME}/bin/R CMD config LAPACK_LIBS`
-BLAS_LIBS = `${R_HOME}/bin/R CMD config BLAS_LIBS`
+R_LIBS = `$(R_HOME)/bin/R CMD config --ldflags` 
+LAPACK_LIBS = `$(R_HOME)/bin/R CMD config LAPACK_LIBS`
+BLAS_LIBS = `$(R_HOME)/bin/R CMD config BLAS_LIBS`
 
-PKG_CPPFLAGS =  $(GCC_STD) $(PREPROCESS) $(R_CPPFLAGS) $(INCLUDES) -pthread
+# Do not delete R_CPPFLAGS, it will break tests
+PKG_CPPFLAGS = $(GCC_STD) $(PREPROCESS) $(R_CPPFLAGS) $(INCLUDES) -pthread
 PKG_CXXFLAGS = --std=c++0x
 PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(R_LIBS) $(FLIBS)
