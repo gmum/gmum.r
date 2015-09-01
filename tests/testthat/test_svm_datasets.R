@@ -58,7 +58,11 @@ print("test::2 circles dataset")
 
 test_that('xor dataset works', {
   
-  ds <- as.data.frame(svm.dataset.xor())
+  ds <- as.data.frame(ds <- matrix( 
+    c(0,1,0,1,0,0,1,1,0,1,1,0),
+    ncol=3,
+    nrow=4,
+    dimnames=list(c(),c("x","y","t"))))
   ds[,3] <- as.factor(ds[,3])
   formula <- t ~ .
   svm <- SVM(formula, ds, core="svmlight", kernel="linear", C=1)
