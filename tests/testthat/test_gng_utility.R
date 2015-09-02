@@ -2,6 +2,8 @@ library(igraph)
 library(testthat)
 
 test_that("GNG Utility works", {
+    print("GNG Utility works")
+  
     max_nodes <- 500
 
     # Construct gng object
@@ -61,7 +63,7 @@ test_that("GNG Utility works", {
 
     print("Test::Convergence test")
 
-
-
     terminate(gng)
+    
+    expect_that(isRunning(gng) == TRUE, is_true())
 })

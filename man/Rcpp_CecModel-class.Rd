@@ -26,8 +26,6 @@ Class \code{Rcpp_CecModel} defines a CEC model class.
 
 \item{\code{log.ncluster()}}{std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const }
 
-\item{\code{predict(...)}}{unsigned int predict(std::vector<double, std::allocator<double> >)}
-
 \item{\code{runAll()}}{void runAll()}
 
 \item{\code{runOneIteration()}}{void runOneIteration()}

@@ -3,6 +3,7 @@ library(testthat)
 #TODO: add test for checking GNGConfiguration serialization
 
 test_that("Basic saving/loading works", {
+  print("Basic saving/loading works")
   g <- GNG(train.online=TRUE, dim=3, verbosity=-1); 
   insertExamples(g, gng.preset.sphere(300))
   Sys.sleep(1)
@@ -22,9 +23,12 @@ test_that("Basic saving/loading works", {
   }
   
   file.remove("mygraph.bin")
+  
+  expect_that(isRunning(g), is_false())
 })
 
 test_that("predictCluster returns sensible results", {
+  print("predictCluster returns sensible results")
   data(cec.mouse1.spherical)
   g <- GNG(cec.mouse1.spherical, max.nodes=50)
   mouse_centr <- calculateCentroids(g)
@@ -63,11 +67,10 @@ test_that("predictCluster returns sensible results", {
   
   # At least catches most important clusters
   expect_that(length(calculateCentroids(g)) > 3, is_true())
-  
 })
 
 test_that("GNG converges on simple cases", {
-
+    print("GNG converges on simple cases")
     online_converged <- function(gng){
         n <- 0
         print("Waiting to converge")
@@ -121,9 +124,12 @@ test_that("GNG converges on simple cases", {
     run(gng)
     online_converged(gng)
     sanity_check(gng) 
+    
+    expect_that(isRunning(gng), is_false())
 })
 
 test_that("GNG is working on mouse dataset", {
+  print("GNG is working on mouse dataset")
     data(cec.mouse1.spherical)
     dataset = cec.mouse1.spherical
     gng <- GNG(dataset, seed=778)
@@ -135,20 +141,24 @@ test_that("GNG is working on mouse dataset", {
 })
 
 test_that("GNG clustering and predict are returning the same", {
+  print("GNG clustering and predict are returning the same")
   X <- replicate(10, rnorm(20))
   gng <- GNG(X)
   expect_that(all(gng$clustering() == predict(gng,X)), is_true())
 })
 
 test_that("GNG errorStatistics and node retrieval work", {
+  print("GNG errorStatistics and node retrieval work")
   X <- replicate(10, rnorm(20))
   gng <- GNG(X)
   expect_that(length(errorStatistics(gng)) > 1, is_true())
   node(gng, 1)
+  pause(gng)
+  expect_that(isRunning(gng), is_false())
 })
 
 test_that("GNG synchronization looks ok", {
-  
+  print("GNG synchronization looks ok")
   data(cec.mouse1.spherical)
   dataset = cec.mouse1.spherical
       synchronization_test <- function(){
@@ -164,8 +174,11 @@ test_that("GNG synchronization looks ok", {
         sum_2 = (sum( gng$clustering() != predict(gng, dataset)))
         
         expect_that(sum_1 == 0 && sum_2 == 0, is_true())
+        expect_that(isRunning(gng), is_false())
     }
     for(i in 1:3){
         synchronization_test()
     }
+  
+   
 })

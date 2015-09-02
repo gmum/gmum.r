@@ -14,10 +14,6 @@ Class \code{Rcpp_CecConfiguration} defines a CEC model configuration class.
 
 \item{\code{setCentroids(...)}}{void setCentroids(Rcpp::List)}
 
-\item{\code{setCov(...)}}{void setCov(Rcpp::Matrix<14, Rcpp::PreserveStorage>)}
-
-\item{\code{setDataSet(...)}}{void setDataSet(Rcpp::Matrix<14, Rcpp::PreserveStorage>)}
-
 \item{\code{setEps(...)}}{void setEps(double)}
 
 \item{\code{setFunction(...)}}{void setFunction(Rcpp::Function_Impl<Rcpp::PreserveStorage>)}
