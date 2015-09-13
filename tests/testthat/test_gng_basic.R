@@ -1,7 +1,5 @@
 library(testthat)
 
-#TODO: add test for checking GNGConfiguration serialization
-
 test_that("Basic saving/loading works", {
   print("Basic saving/loading works")
   g <- GNG(train.online=TRUE, dim=3, verbosity=-1); 

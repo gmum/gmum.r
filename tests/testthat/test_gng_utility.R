@@ -65,5 +65,5 @@ test_that("GNG Utility works", {
 
     terminate(gng)
     
-    expect_that(isRunning(gng) == TRUE, is_true())
+    expect_that(isRunning(gng) == FALSE, is_true())
 })
