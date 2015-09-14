@@ -4,36 +4,19 @@
 \name{caret.gmumSvmPoly}
 \alias{caret.gmumSvmPoly}
 \title{Caret model representation for SVM with linear kernel}
-\format{\preformatted{List of 11
- $ label     : chr "gmum.r.svmRadial"
- $ library   : chr "gmum.r"
- $ type      : chr "Classification"
- $ parameters:'data.frame':	4 obs. of  3 variables:
-  ..$ parameter: Factor w/ 4 levels "C","coef0","degree",..: 1 4 3 2
-  ..$ class    : Factor w/ 1 level "double": 1 1 1 1
-  ..$ label    : Factor w/ 4 levels "C","coef0","degree",..: 1 4 3 2
- $ grid      :function (x, y, len = NULL)  
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 1139 31 1143 1 31 1 1139 1143
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x10fd4c4a0> 
- $ fit       :function (x, y, wts, param, lev, last, classProbs, ...)  
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 1075 9 1111 3 9 3 1075 1111
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x10fd4c4a0> 
- $ predict   :function (modelFit, newdata, submodels = NULL)  
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 1112 13 1114 3 13 3 1112 1114
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x10fd4c4a0> 
- $ prob      :function (modelFit, newdata, submodels = NULL)  
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 1115 10 1117 3 10 3 1115 1117
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x10fd4c4a0> 
- $ varImp    : NULL
- $ levels    :function (x)  
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 1119 12 1121 3 12 3 1119 1121
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x10fd4c4a0> 
- $ sort      :function (x)  
-  ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 1122 10 1123 20 10 20 1122 1123
-  .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x10fd4c4a0> 
-}}
+\format{List of caret specific values}
 \usage{
-caret.gmumSvmPoly
+\donrun{
+model <- train(Class ~ ., data = training,
+method = caret.gmumSvmPoly,
+preProc = c("center", "scale"),
+tuneLength = 8,
+trControl = fitControl,
+tuneGrid = expand.grid(C=10^(c(-4:4)), gamma=10^(c(-4:4))),
+core = "libsvm", # gmum.R parameter - pick library
+verbosity = 0 # no outputs
+)
+}
 }
 \description{
 Supply as parameter "method" in the caret::poly function

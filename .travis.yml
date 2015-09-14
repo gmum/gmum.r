@@ -12,8 +12,8 @@ before_install:
   - chmod 755 ./travis-tool.sh
   - ./travis-tool.sh bootstrap
   # Test datasets
-  - cd inst/dev/datasets/svm/ && ./download_large.sh && cd ../../..
-  - cd inst/dev/datasets/svm/ && ./download_transduction.sh && cd ../../..
+  - cd inst/dev/datasets/svm/ && ./download_large.sh && cd ../../../..
+  - cd inst/dev/datasets/svm/ && ./download_transduction.sh && cd ../../../..
 
 install:
   - ./travis-tool.sh install_deps

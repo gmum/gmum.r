@@ -217,7 +217,21 @@ print.Rcpp_SVMClient <- NULL
 #' @title Caret model representation for SVM with radial kernel
 #' 
 #' @description Supply as parameter "method" in the caret::train function
-#' 
+#'
+#' @format List of caret specific values
+#'
+#' @usage 
+#' \donrun{
+#' model <- train(Class ~ ., data = training,
+#' method = caret.gmumSvmRadial,
+#' preProc = c("center", "scale"),
+#' tuneLength = 8,             
+#' trControl = fitControl,
+#' tuneGrid = expand.grid(C=10^(c(-4:4)), gamma=10^(c(-4:4))),
+#' core = "libsvm", # gmum.R parameter - pick library
+#' verbosity = 0 # no outputs
+#' )
+#' }
 #' @export
 caret.gmumSvmRadial <- NULL
 
@@ -225,12 +239,41 @@ caret.gmumSvmRadial <- NULL
 #' 
 #' @description Supply as parameter "method" in the caret::train function
 #' 
+#' @format List of caret specific values
+#' 
+#' @usage 
+#' \donrun{
+#' model <- train(Class ~ ., data = training,
+#' method = caret.gmumSvmLinear,
+#' preProc = c("center", "scale"),
+#' tuneLength = 8,             
+#' trControl = fitControl,
+#' tuneGrid = expand.grid(C=10^(c(-4:4)), gamma=10^(c(-4:4))),
+#' core = "libsvm", # gmum.R parameter - pick library
+#' verbosity = 0 # no outputs
+#' )
+#' }
 #' @export
 caret.gmumSvmLinear <- NULL
 
 #' @title Caret model representation for SVM with linear kernel
 #' 
 #' @description Supply as parameter "method" in the caret::poly function
+#' 
+#' @format List of caret specific values
+#' 
+#' @usage 
+#' \donrun{
+#' model <- train(Class ~ ., data = training,
+#' method = caret.gmumSvmPoly,
+#' preProc = c("center", "scale"),
+#' tuneLength = 8,             
+#' trControl = fitControl,
+#' tuneGrid = expand.grid(C=10^(c(-4:4)), gamma=10^(c(-4:4))),
+#' core = "libsvm", # gmum.R parameter - pick library
+#' verbosity = 0 # no outputs
+#' )
+#' }
 #' 
 #' @export
 caret.gmumSvmPoly <- NULL
