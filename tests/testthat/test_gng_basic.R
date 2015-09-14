@@ -165,6 +165,7 @@ test_that("GNG synchronization looks ok", {
 
         gng <- GNG(train.online=TRUE, dim=2, verbosity=3, max.nodes=20)
         gng$insertExamples(dataset) 
+        Sys.sleep(1)
         gng$pause()
         gng$.updateClustering()
 

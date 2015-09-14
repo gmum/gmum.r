@@ -439,11 +439,13 @@ void GNGServer::RinsertLabeledExamples(Rcpp::NumericMatrix & r_points,
 
 ///Pause algorithm
 void GNGServer::pause() {
-	if(!gngAlgorithm->isRunning()){
-        //CERR("Called pause on not running gng object");
-		//return;
-	}
-	gngAlgorithm->pause(/* synchronized*/ true);
+  if(gngAlgorithm.get()){
+  	if(!gngAlgorithm->isRunning()){
+          //CERR("Called pause on not running gng object");
+  		//return;
+  	}
+  	gngAlgorithm->pause(/* synchronized*/ true);
+  }
 }
 
 ///Terminate algorithm

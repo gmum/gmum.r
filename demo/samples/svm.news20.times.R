@@ -10,10 +10,14 @@
 library(gmum.r)
 library(caret)
 library(e1071)
+library(R.utils)
 
-# load the dataset
-data_file <- system.file("data_sets", "svm", "large", "news20_part.RData", mustWork=TRUE, package="gmum.r")
-load(data_file)
+# download news20 dataset
+download.file("http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/news20.binary.bz2", destfile="news20.binary.bz2")
+bunzip2("news20.binary.bz2")
+news20 <- read.matrix.csr("news20.binary")
+file.remove("news20.binary")
+news20.part <- list(y=(news20$y)[1:5000], x=news20$x[1:5000, ])
 
 # acquire data and labels
 x <- news20.part$x
