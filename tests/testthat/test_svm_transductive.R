@@ -82,8 +82,8 @@ test_that("Transduction improves score", {
   library(gmum.r)
   set.seed(777)
   
-  x <- read.matrix.csr(system.file("data_sets", "svm", "dexter_train.data", mustWork=TRUE, package="gmum.r"))
-  y <- as.factor(unlist(read.table(system.file("data_sets", "svm", "dexter_train.labels", mustWork=TRUE, package="gmum.r"))))
+  x <- read.matrix.csr(system.file("dev", "datasets", "svm", "dexter_train.data", mustWork=TRUE, package="gmum.r"))
+  y <- as.factor(unlist(read.table(system.file("dev", "datasets", "svm", "dexter_train.labels", mustWork=TRUE, package="gmum.r"))))
   
   X <- SparseM::as.matrix(x)
   Y <- as.numeric(y)

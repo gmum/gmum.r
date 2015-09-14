@@ -63,9 +63,6 @@ show.Rcpp_GNGServer <- function(object) {
 
 setMethod("show", "Rcpp_GNGServer", show.Rcpp_GNGServer)
 
-
-.wine <<- NULL
-
 #' Retrieves wine dataset design matrix from UCI repository
 #' 
 #' @title get.wine.dataset.X
@@ -74,7 +71,7 @@ setMethod("show", "Rcpp_GNGServer", show.Rcpp_GNGServer)
 #' 
 #' @export
 get.wine.dataset.X <- function(scale=TRUE){
-  if(is.null(.wine)) {
+  if(!exists(".wine") || is.null(.wine)) {
     a <- GET("https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data")
     .wine <<- read.csv(textConnection(content(a)), header=F)
   }
@@ -93,7 +90,7 @@ get.wine.dataset.X <- function(scale=TRUE){
 #' @export
 get.wine.dataset.y <- function(){
   # Hack for R CMD check. Note that it is cleaner to assign (see predictComponent)
-  if(is.null(.wine)) {
+  if(!exists(".wine") || is.null(.wine)) {
     a <- GET("https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data")
     .wine <<- read.csv(textConnection(content(a)), header=F)
   }

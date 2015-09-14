@@ -9,7 +9,7 @@ test_that('Simple test that class.weights works for libsvm and svmlight', {
   
   for(weight_pos in c(1,2,10)){
     for(core in c("svmlight", "libsvm")){
-      liver <- read.matrix.csr(system.file("data_sets", "svm", "liver-disorders", mustWork=TRUE, package="gmum.r"))
+      liver <- read.matrix.csr(system.file("dev", "datasets", "svm", "liver-disorders", mustWork=TRUE, package="gmum.r"))
       x <- liver$x
       # Ugly change of level 
       y <- liver$y
@@ -43,7 +43,7 @@ print("test::svm class weights")
 test_that("auto class weighting works for svm" ,{
   library(caret)
   library(e1071)
-  liver <- read.matrix.csr(system.file("data_sets", "svm", "liver-disorders", mustWork=TRUE, package="gmum.r"))
+  liver <- read.matrix.csr(system.file("dev", "datasets", "svm", "liver-disorders", mustWork=TRUE, package="gmum.r"))
   x <- liver$x
   y <- as.factor(liver$y)
   set.seed(777)

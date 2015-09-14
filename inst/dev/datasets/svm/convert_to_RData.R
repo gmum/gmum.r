@@ -1,15 +1,15 @@
 # RUN IN inst/data_sets/svm FOLDER!
 
 # 2e
-svm.twocircles.dataset <- data.frame(read.table(system.file("data_sets", "svm","circles.data", package="gmum.r")));
+svm.twocircles.dataset <- data.frame(read.table(system.file("dev", "datasets", "svm","circles.data", package="gmum.r")));
 save(svm.twocircles.dataset, file="svm_two_circles_dataset.RData", compress=TRUE);
 
 # 2e
-svm.twoellipsoids.dataset <- data.frame(read.table(system.file("data_sets", "svm","2e.data", package="gmum.r")));
+svm.twoellipsoids.dataset <- data.frame(read.table(system.file("dev", "datasets", "svm","2e.data", package="gmum.r")));
 save(svm.twoellipsoids.dataset, file="svm_two_ellipsoids_dataset.RData", compress=TRUE);
 
 # Breast Cancer
-svm.breastcancer.dataset <- data.frame(read.table(system.file("data_sets", "svm","breast_cancer.data", package="gmum.r"),  quote="\""));
+svm.breastcancer.dataset <- data.frame(read.table(system.file("dev", "datasets", "svm","breast_cancer.data", package="gmum.r"),  quote="\""));
 save(svm.breastcancer.dataset, file="svm_breast_cancer_dataset.RData", compress=TRUE);
 
 
@@ -17,7 +17,7 @@ save(svm.breastcancer.dataset, file="svm_breast_cancer_dataset.RData", compress=
 
 library(SparseM)
 library(e1071)
-system(system.file("data_sets", "svm", "download_transduction.sh",
+system(system.file("dev", "datasets", "svm", "download_transduction.sh",
                    mustWork=TRUE, package="gmum.r"))
 
 train.transduction <- read.matrix.csr("transductive/train_transduction.dat")

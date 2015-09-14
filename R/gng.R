@@ -971,7 +971,8 @@ setClass(Class = "Rcpp_GNGServer")
 
 # Lazy loading to allow for discovery of all files
 evalqOnLoad( {
-    
+  .wine <<- NULL
+  
   # Autocompletion fix
 
   .GlobalEnv$`.DollarNames.C++Object` <- function( x, pattern ){
