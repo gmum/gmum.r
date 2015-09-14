@@ -24,7 +24,7 @@ test_that("Basic saving/loading works", {
   
   expect_that(isRunning(g), is_false())
 })
-
+# 
 test_that("predictCluster returns sensible results", {
   print("predictCluster returns sensible results")
   data(cec.mouse1.spherical)
@@ -49,13 +49,12 @@ test_that("predictCluster returns sensible results", {
   target <- findClosests(g, node.ids=mouse_centr, x=grid)
   target_loopy <- apply(grid, 1, function(x) findClosests(g, node.ids=mouse_centr, x=x))
   
+  print(target)
+  print(target_loopy)
+  
   grid["target"] <- target
   library(ggplot2)
-  
-  pl <- ggplot()+ 
-    geom_tile(data=grid, aes(x=x,y=y, fill=factor(target))) + theme(legend.position="none") +
-    geom_point(data=m, aes(x,y), color='white') + scale_size_continuous(range = c(3, 6))
-  plot(pl)
+
   
   # Equivalent
   expect_that(all(target==target_loopy), is_true())
@@ -177,6 +176,5 @@ test_that("GNG synchronization looks ok", {
     for(i in 1:3){
         synchronization_test()
     }
-  
    
 })

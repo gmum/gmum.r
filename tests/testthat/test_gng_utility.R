@@ -20,7 +20,7 @@ test_that("GNG Utility works", {
 
 
     # Wait for it to converge
-    print("Adding jumped distribution. 15s sleep")
+    print("Adding juped distribution. 15s sleep")
     Sys.sleep(15.0)
     pause(gng)
     plot(gng, mode="2d.errors") #0.068 without utility , 10 times less with
