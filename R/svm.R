@@ -214,11 +214,24 @@ summary.Rcpp_SVMClient <- NULL
 #'
 print.Rcpp_SVMClient <- NULL
 
-# Support for caret
+#' @title Caret model representation for SVM with radial kernel
+#' 
+#' @description Supply as parameter "method" in the caret::train function
+#' 
 #' @export
 caret.gmumSvmRadial <- NULL
+
+#' @title Caret model representation for SVM with linear kernel
+#' 
+#' @description Supply as parameter "method" in the caret::train function
+#' 
 #' @export
 caret.gmumSvmLinear <- NULL
+
+#' @title Caret model representation for SVM with linear kernel
+#' 
+#' @description Supply as parameter "method" in the caret::poly function
+#' 
 #' @export
 caret.gmumSvmPoly <- NULL
 

@@ -10,21 +10,21 @@ Class \code{Rcpp_CecModel} defines a CEC model class.
 \section{Methods}{
 
 \describe{
-\item{\code{centers()}}{std::vector<arma::Row<double>, std::allocator<arma::Row<double> > > centers()  const }
+\item{\code{centers()}}{std::__1::vector<arma::Row<double>, std::__1::allocator<arma::Row<double> > > centers()  const }
 
-\item{\code{clustering()}}{std::vector<unsigned int, std::allocator<unsigned int> > clustering()  const }
+\item{\code{clustering()}}{std::__1::vector<unsigned int, std::__1::allocator<unsigned int> > clustering()  const }
 
-\item{\code{covMatrix()}}{std::vector<arma::Mat<double>, std::allocator<arma::Mat<double> > > covMatrix()  const }
+\item{\code{covMatrix()}}{std::__1::vector<arma::Mat<double>, std::__1::allocator<arma::Mat<double> > > covMatrix()  const }
 
 \item{\code{energy()}}{double energy()  const }
 
 \item{\code{getDataset()}}{arma::Mat<double> getDataset()}
 
-\item{\code{log.energy()}}{std::list<double, std::allocator<double> > log.energy()  const }
+\item{\code{log.energy()}}{std::__1::list<double, std::__1::allocator<double> > log.energy()  const }
 
 \item{\code{log.iters()}}{unsigned int log.iters()  const }
 
-\item{\code{log.ncluster()}}{std::list<unsigned int, std::allocator<unsigned int> > log.ncluster()  const }
+\item{\code{log.ncluster()}}{std::__1::list<unsigned int, std::__1::allocator<unsigned int> > log.ncluster()  const }
 
 \item{\code{runAll()}}{void runAll()}
 
