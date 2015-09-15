@@ -69,18 +69,58 @@ img {
 <pre class="r"><code># For linear kernel gmum.R provides new preprocessing technique
 # called Two Ellipsoid SVM, which accounts for different covariances
 # of classes
-library(gmum.r)
-library(caret)
-data(svm_breast_cancer_dataset)
+library(gmum.r)</code></pre>
+<pre><code>## Loading required package: ggplot2
+## Loading required package: igraph
+## 
+## Attaching package: &#39;igraph&#39;
+## 
+## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     decompose, spectrum
+## 
+## The following object is masked from &#39;package:base&#39;:
+## 
+##     union
+## 
+## Loading required package: SparseM
+## 
+## Attaching package: &#39;SparseM&#39;
+## 
+## The following object is masked from &#39;package:base&#39;:
+## 
+##     backsolve
+## 
+## Loading required package: httr
+## Loading required package: Matrix
+## Loading required package: MASS
+## Loading required package: Rcpp
+## 
+## Attaching package: &#39;gmum.r&#39;
+## 
+## The following object is masked from &#39;package:rmarkdown&#39;:
+## 
+##     run</code></pre>
+<pre class="r"><code>library(caret)</code></pre>
+<pre><code>## Loading required package: lattice
+## 
+## Attaching package: &#39;caret&#39;
+## 
+## The following object is masked from &#39;package:httr&#39;:
+## 
+##     progress</code></pre>
+<pre class="r"><code>data(svm_breast_cancer_dataset)
 ds &lt;- svm.breastcancer.dataset
 
 # We can trigger 2e by passing prep parameter. It can work with either of the libraries
-svm.2e &lt;- SVM(x=ds[,-1], y=ds[,1], core=&quot;libsvm&quot;, kernel=&quot;linear&quot;, prep = &quot;2e&quot;, C=10);
-acc.2e &lt;- svm.accuracy(prediction=predict(svm.2e, ds[,-1]), target=ds[,1])
+svm.2e &lt;- SVM(x=ds[,-1], y=ds[,1], core=&quot;libsvm&quot;, kernel=&quot;linear&quot;, prep = &quot;2e&quot;, C=10);</code></pre>
+<pre><code>## optimization finished, #iter = 20211</code></pre>
+<pre class="r"><code>acc.2e &lt;- svm.accuracy(prediction=predict(svm.2e, ds[,-1]), target=ds[,1])
 
 
-svm &lt;- SVM(x=ds[,-1], y=ds[,1], core=&quot;libsvm&quot;, kernel=&quot;linear&quot;, C=10);
-acc &lt;- svm.accuracy(prediction=predict(svm, ds[,-1]), target=ds[,1])
+svm &lt;- SVM(x=ds[,-1], y=ds[,1], core=&quot;libsvm&quot;, kernel=&quot;linear&quot;, C=10);</code></pre>
+<pre><code>## optimization finished, #iter = 8980</code></pre>
+<pre class="r"><code>acc &lt;- svm.accuracy(prediction=predict(svm, ds[,-1]), target=ds[,1])
 
 # Seems that 2e preprocessing helps! 
 
@@ -135,9 +175,9 @@ acc &lt;- svm.accuracy(predict(fit.results$finalModel, testing[,-1]), testing[,1
 acc.2e &lt;- svm.accuracy(predict(fit.results.2e$finalModel, testing[,-1]), testing[,1])
 
 print(paste(&quot;LIBSVM + linear kernel 8 CV accuracy: &quot;, round(acc,3), sep=&quot;&quot;))</code></pre>
-<pre><code>## [1] &quot;LIBSVM + linear kernel 8 CV accuracy: 0.841&quot;</code></pre>
+<pre><code>## [1] &quot;LIBSVM + linear kernel 8 CV accuracy: 0.835&quot;</code></pre>
 <pre class="r"><code>print(paste(&quot;LIBSVM + linear kernel + 2e 8 CV accuracy: &quot;, round(acc.2e,3), sep=&quot;&quot;))</code></pre>
-<pre><code>## [1] &quot;LIBSVM + linear kernel + 2e 8 CV accuracy: 0.929&quot;</code></pre>
+<pre><code>## [1] &quot;LIBSVM + linear kernel + 2e 8 CV accuracy: 0.876&quot;</code></pre>
 
 
 </div>

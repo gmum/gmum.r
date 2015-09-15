@@ -66,15 +66,21 @@ img {
 </div>
 
 
-<pre class="r"><code>library(gmum.r)
+<pre class="r"><code># Load our library
+library(gmum.r)
 
-data(cec_ts)
+# Load T-like data set
+data(cec.tset)
+
+# We will be using 3 types of clusters
 standard_cluster_param = list(method.type = &quot;standard&quot;)
-spherical_cluster_param = list(method.type = &quot;sphere&quot;)
-diagonal_cluster_param = list(method.type = &#39;diagonal&#39;)
+spherical_cluster_param = list(method.type = &quot;spherical&quot;)
+diagonal_cluster_param = list(method.type = &quot;diagonal&quot;)
 
-c &lt;- CEC(x = Tset, k = 4, params.mix = list(standard_cluster_param, spherical_cluster_param, diagonal_cluster_param, diagonal_cluster_param), control.nstart = 100, control.eps=0.09)
+# 100 times run CEC algorithm on the T-like dataset. We start with standard, spherical and 2 diagonal cluster.
+c &lt;- CEC(x = Tset, params.mix = list(standard_cluster_param, spherical_cluster_param, diagonal_cluster_param, diagonal_cluster_param), control.nstart = 100, control.eps=0.09)
 
+# Plot centroids with elipses and centers
 plot(c, ellipses = TRUE, centers = TRUE)</code></pre>
 <p><img src="http://gmum.net/files/gmum.r/sample/cec.T.dataset_files/figure-html/unnamed-chunk-1-1.png" title="" alt="" width="672" /></p>
 

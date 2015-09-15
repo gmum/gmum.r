@@ -79,8 +79,9 @@ weights &lt;- c(1.04855297,  1.42001794,  1.70627019,  1.9507754,   0.50965218, 
 
 df &lt;- data.frame(x, y)
 
-svm.rbf &lt;- SVM(formula=y~., data=df, core=&quot;libsvm&quot;, kernel=&quot;rbf&quot;, C=1.0, gamma=0.5)
-weighted.svm.rbf &lt;- SVM(formula=y~., data=df, core=&quot;svmlight&quot;, kernel=&quot;rbf&quot;, C=1.0, 
+svm.rbf &lt;- SVM(formula=y~., data=df, core=&quot;libsvm&quot;, kernel=&quot;rbf&quot;, C=1.0, gamma=0.5)</code></pre>
+<pre><code>## optimization finished, #iter = 22</code></pre>
+<pre class="r"><code>weighted.svm.rbf &lt;- SVM(formula=y~., data=df, core=&quot;svmlight&quot;, kernel=&quot;rbf&quot;, C=1.0, 
                         gamma=0.5, example.weights=weights)
 
 # Plot to see how decision boundary is affected

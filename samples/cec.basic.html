@@ -66,18 +66,26 @@ img {
 </div>
 
 
-<pre class="r"><code>library(gmum.r)
+<pre class="r"><code># Load our library
+library(gmum.r)
 
-# Fitting to mouse like dataset
-data(cec_mouse_1_spherical)
-plot(cec.mouse1spherical, main=&quot;Mouse-like dataset&quot;)</code></pre>
+# Fitting to mouse like data set
+data(cec.mouse1.spherical)
+
+# Look at Mouse-like data set
+plot(cec.mouse1.spherical, main=&quot;Mouse-like data set&quot;)</code></pre>
 <p><img src="http://gmum.net/files/gmum.r/sample/cec.basic_files/figure-html/unnamed-chunk-1-1.png" title="" alt="" width="672" /></p>
-<pre class="r"><code># Fit spherical gaussians to the dataset
-cec &lt;- CEC(k=3, x=cec.mouse1spherical, control.nstart=10, method.type=&quot;sphere&quot;)
+<pre class="r"><code># Fit spherical gaussians to the data set
+cec &lt;- CEC(k=3, x=cec.mouse1.spherical, control.nstart=10, method.type=&quot;spherical&quot;)
 
 # Plot results
 plot(cec, centers=TRUE, ellipses=TRUE)</code></pre>
 <p><img src="http://gmum.net/files/gmum.r/sample/cec.basic_files/figure-html/unnamed-chunk-1-2.png" title="" alt="" width="672" /></p>
+<pre class="r"><code># Predict cluster which given points (1,1) and (2,2) would belong to:
+predict(cec, c(1,1))</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>predict(cec, c(2,2))</code></pre>
+<pre><code>## [1] 2</code></pre>
 
 
 </div>

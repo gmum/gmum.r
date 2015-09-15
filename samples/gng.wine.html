@@ -68,81 +68,77 @@ img {
 
 <pre class="r"><code>library(gmum.r)
 library(caret) # For ConfusionMatrix
-library(rattle) # For dataset
 
-# Prepare data
-scaled.wine &lt;- as.matrix(scale(wine[-1]))
+wine &lt;- get.wine.dataset.X(scale=TRUE)
 
 # Train in an offline manner
-gng &lt;- GNG(scaled.wine, labels=as.integer(wine$Type), max.nodes=20, 
+gng &lt;- GNG(wine, labels=get.wine.dataset.y(), max.nodes=20, 
            max.iter=10000, min.improvement=1e-1)</code></pre>
 <pre><code>## [1] &quot;Training offline&quot;
-## [1] &quot;Iteration 2900&quot;
 ## [1] &quot;Iteration 10000&quot;
 ## [1] &quot;Iteration 10000&quot;</code></pre>
 <pre class="r"><code># Print number of nodes
 numberNodes(gng)</code></pre>
 <pre><code>## [1] 20</code></pre>
 <pre class="r"><code># Convert to igraph directly!
-ig = convertToGraph(gng)
+ig = convertToIGraph(gng)
 
 # Print mean degree of the network
 mean(degree(ig))</code></pre>
-<pre><code>## [1] 4.9</code></pre>
+<pre><code>## [1] 5.2</code></pre>
 <pre class="r"><code># You can access different attributes of the nodes
 V(ig)$error[1]</code></pre>
-<pre><code>## [1] 5565.55</code></pre>
+<pre><code>## [1] 7037.935</code></pre>
 <pre class="r"><code># Plot using igraph layout
-plot(gng, mode = gng.plot.2d, 
-     vertex.color=gng.plot.color.label, layout=igraph::layout.fruchterman.reingold, 
+plot(gng, vertex.color=&quot;label&quot;, layout=igraph::layout.fruchterman.reingold, 
      vertex.size=9)</code></pre>
 <p><img src="http://gmum.net/files/gmum.r/sample/gng.wine_files/figure-html/unnamed-chunk-1-1.png" title="" alt="" width="672" /></p>
 <pre class="r"><code># Print summary of trained object
 summary(gng)</code></pre>
 <pre><code>## [1] &quot;Growing Neural Gas&quot;
-## [1] &quot;20 nodes with mean error 3.470823&quot;
+## [1] &quot;20 nodes with mean error 3.476649&quot;
 ## [1] &quot;Trained 10000 iterations&quot;
 ## [1] &quot;Mean errors[s]: &quot;
-##  [1] 3.403782 3.569636 3.529606 3.540371 3.515125 3.435761 3.680685
-##  [8] 3.670515 3.608835 3.303317 3.470823</code></pre>
+##  [1] 3.430407 3.457238 3.505368 3.497008 3.618063 3.425084 3.373586
+##  [8] 3.515994 3.477688 3.521820 3.476649</code></pre>
 <pre class="r"><code># You can use graph to predict new samples 
 # (in a closest neighbour way)
 preds &lt;- c()
-for(i in 1:nrow(scaled.wine)){
-  preds &lt;- c(preds,round(node(gng, predict(gng, scaled.wine[i,]))$label))
+for(i in 1:nrow(wine)){
+  preds &lt;- c(preds,round(node(gng, predict(gng, wine[i,]))$label))
 }
 
 # Print prediction statistics
-confusionMatrix(table(preds, wine$Type))</code></pre>
+confusionMatrix(table(preds, get.wine.dataset.y()))</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##      
 ## preds  1  2  3
-##     1 58  0  0
-##     2  1 68  3
-##     3  0  3 45
+##     1 59  2  0
+##     2  0 51  0
+##     3  0 18 48
 ## 
 ## Overall Statistics
-##                                          
-##                Accuracy : 0.9607         
-##                  95% CI : (0.9207, 0.984)
-##     No Information Rate : 0.3989         
-##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16      
-##                                          
-##                   Kappa : 0.9402         
-##  Mcnemar&#39;s Test P-Value : NA             
+##                                         
+##                Accuracy : 0.8876        
+##                  95% CI : (0.8318, 0.93)
+##     No Information Rate : 0.3989        
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16     
+##                                         
+##                   Kappa : 0.8328        
+##  Mcnemar&#39;s Test P-Value : NA            
 ## 
 ## Statistics by Class:
 ## 
 ##                      Class: 1 Class: 2 Class: 3
-## Sensitivity            0.9831   0.9577   0.9375
-## Specificity            1.0000   0.9626   0.9769
-## Pos Pred Value         1.0000   0.9444   0.9375
-## Neg Pred Value         0.9917   0.9717   0.9769
+## Sensitivity            1.0000   0.7183   1.0000
+## Specificity            0.9832   1.0000   0.8615
+## Pos Pred Value         0.9672   1.0000   0.7273
+## Neg Pred Value         1.0000   0.8425   1.0000
 ## Prevalence             0.3315   0.3989   0.2697
-## Detection Rate         0.3258   0.3820   0.2528
-## Detection Prevalence   0.3258   0.4045   0.2697
-## Balanced Accuracy      0.9915   0.9602   0.9572</code></pre>
+## Detection Rate         0.3315   0.2865   0.2697
+## Detection Prevalence   0.3427   0.2865   0.3708
+## Balanced Accuracy      0.9916   0.8592   0.9308</code></pre>
 
 
 </div>

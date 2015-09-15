@@ -66,51 +66,53 @@ img {
 </div>
 
 
-<pre class="r"><code>library(gmum.r)
-data(cec_ellipse_gauss)
+<pre class="r"><code># Load our library
+library(gmum.r)
 
-# Try to fit 5 gaussians to the dataset
+# Load ellipse_gauss data set
+data(cec.ellipsegauss)
+
+# Try to fit 5 gaussians to the data set
 cec &lt;- CEC(k=5, x=cec.ellipsegauss, method.init=&quot;random&quot;)
 
 # Note that we set 5 cluster. Only 4 was needed.
 plot(cec, centers=TRUE, ellipses=TRUE)</code></pre>
 <p><img src="http://gmum.net/files/gmum.r/sample/cec.ellipse_files/figure-html/unnamed-chunk-1-1.png" title="" alt="" width="672" /></p>
-<pre class="r"><code>summary(cec)</code></pre>
-<pre><code>## [1] &quot;CEC clustering; 4 clusters with energy = 2.110620&quot;
+<pre class="r"><code># Show information about clustering
+summary(cec)</code></pre>
+<pre><code>## [1] &quot;CEC clustering; 4 clusters with energy = 2.110623&quot;
 ## [1] &quot;Centers: &quot;
 ## [[1]]
 ## [1] -0.2890172  2.6470621
 ## 
 ## [[2]]
-## [1] 1.3672348 0.5750617
+## [1] 1.3644708 0.5763381
 ## 
 ## [[3]]
-## [1] -0.3183161 -0.1658170
+## [1] -0.3125684 -0.1750293
 ## 
 ## [[4]]
-## [1] -2.7566512  0.6794486
+## [1] -2.7552786  0.6812336
 ## 
 ## [1] &quot;Covariances: &quot;
 ## [[1]]
 ## [1]  2.408135 -2.554040 -2.554040  2.709406
 ## 
 ## [[2]]
-## [1]  0.8118959 -0.3807661 -0.3807661  0.1810435
+## [1]  0.8190445 -0.3840616 -0.3840616  0.1825603
 ## 
 ## [[3]]
-## [1]  1.0126073 -0.9325932 -0.9325932  1.5563309
+## [1]  1.0093865 -0.9245016 -0.9245016  1.5436587
 ## 
 ## [[4]]
-## [1] 0.2664490 0.5719522 0.5719522 3.7691690
+## [1] 0.2674504 0.5729444 0.5729444 3.7662978
 ## 
 ## [1] &quot;Iterations: &quot;
-## [1] 15
+## [1] 8
 ## [1] &quot;Energy for every iteration: &quot;
-##  [1] 3.455284 3.018930 2.618880 2.310972 2.191509 2.171501 2.155542
-##  [8] 2.145907 2.142549 2.140951 2.140341 2.138980 2.137267 2.110620
-## [15] 2.110620
+## [1] 3.286816 2.929120 2.690234 2.324630 2.118048 2.110739 2.110623 2.110623
 ## [1] &quot;Number of clusters for every iteration: &quot;
-##  [1] 5 5 5 5 5 5 5 5 5 5 5 5 5 4 4</code></pre>
+## [1] 5 4 4 4 4 4 4 4</code></pre>
 
 
 </div>

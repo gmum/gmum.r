@@ -70,23 +70,26 @@ img {
 library(ggplot2)
 
 # Load our library dataset
-data(cec_mouse_1_spherical)
+data(cec.mouse1.spherical)
 
 # Train GNG model and find centroids of the resulting graph
-g &lt;- GNG(cec.mouse1spherical, max.nodes=50)</code></pre>
+g &lt;- GNG(cec.mouse1.spherical, max.nodes=40)</code></pre>
 <pre><code>## [1] &quot;Training offline&quot;
 ## [1] &quot;Iteration 200&quot;
 ## [1] &quot;Iteration 200&quot;</code></pre>
+<pre class="r"><code># Convert to igraph and plot resulting graph
+plot(convertToIGraph(g))</code></pre>
+<p><img src="http://gmum.net/files/gmum.r/sample/gng.mouse_files/figure-html/unnamed-chunk-1-1.png" title="" alt="" width="672" /></p>
 <pre class="r"><code># GNG aims at making it easy to work with its graph.
 # Here we will predict closest centroid 
-mouse.centr &lt;- centroids(g)
+mouse.centr &lt;- calculateCentroids(g)
 
 # Now we can plot results to see decision boundary for assigning node to centroid
-m = as.data.frame(cec.mouse1spherical)
+m = as.data.frame(cec.mouse1.spherical)
 colnames(m) = c(&quot;x&quot;, &quot;y&quot;)
 
-x_col &lt;- cec.mouse1spherical[,1]
-y_col &lt;- cec.mouse1spherical[,2]
+x_col &lt;- cec.mouse1.spherical[,1]
+y_col &lt;- cec.mouse1.spherical[,2]
 
 x_max &lt;- max(x_col)
 x_min &lt;- min(x_col) 
@@ -98,7 +101,9 @@ y_axis &lt;- seq(from=y_min, to=y_max, length.out=30)
 grid &lt;- data.frame(x_axis,y_axis)
 grid &lt;- expand.grid(x=x_axis,y=y_axis)
 
-target &lt;- predictCentroid(g, centroids=mouse.centr, x=grid)
+
+
+target &lt;- findClosests(g, node.ids=mouse.centr, x=grid)
 grid[&quot;target&quot;] &lt;- target
 
 
@@ -106,7 +111,7 @@ pl &lt;- ggplot()+
   geom_tile(data=grid, aes(x=x,y=y, fill=factor(target))) + theme(legend.position=&quot;none&quot;) +
   geom_point(data=m, aes(x,y), color=&#39;white&#39;) + scale_size_continuous(range = c(3, 6))
 plot(pl)</code></pre>
-<p><img src="http://gmum.net/files/gmum.r/sample/gng.mouse_files/figure-html/unnamed-chunk-1-1.png" title="" alt="" width="672" /></p>
+<p><img src="http://gmum.net/files/gmum.r/sample/gng.mouse_files/figure-html/unnamed-chunk-1-2.png" title="" alt="" width="672" /></p>
 
 
 </div>

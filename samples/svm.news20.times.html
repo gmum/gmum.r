@@ -69,10 +69,48 @@ img {
 <pre class="r"><code>library(gmum.r)
 library(caret)
 library(e1071)
-
-# load the dataset
-data_file &lt;- system.file(&quot;data_sets&quot;, &quot;svm&quot;, &quot;large&quot;, &quot;news20_part.RData&quot;, mustWork=TRUE, package=&quot;gmum.r&quot;)
-load(data_file)
+library(R.utils)</code></pre>
+<pre><code>## Loading required package: R.oo
+## Loading required package: R.methodsS3
+## R.methodsS3 v1.7.0 (2015-02-19) successfully loaded. See ?R.methodsS3 for help.
+## R.oo v1.19.0 (2015-02-27) successfully loaded. See ?R.oo for help.
+## 
+## Attaching package: &#39;R.oo&#39;
+## 
+## The following object is masked from &#39;package:igraph&#39;:
+## 
+##     hierarchy
+## 
+## The following objects are masked from &#39;package:methods&#39;:
+## 
+##     getClasses, getMethods
+## 
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     attach, detach, gc, load, save
+## 
+## R.utils v2.1.0 (2015-05-27) successfully loaded. See ?R.utils for help.
+## 
+## Attaching package: &#39;R.utils&#39;
+## 
+## The following object is masked from &#39;package:igraph&#39;:
+## 
+##     %&lt;-%
+## 
+## The following object is masked from &#39;package:utils&#39;:
+## 
+##     timestamp
+## 
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     cat, commandArgs, getOption, inherits, isOpen, parse, warnings</code></pre>
+<pre class="r"><code># download news20 dataset
+download.file(&quot;http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/news20.binary.bz2&quot;, destfile=&quot;news20.binary.bz2&quot;)
+bunzip2(&quot;news20.binary.bz2&quot;)
+news20 &lt;- read.matrix.csr(&quot;news20.binary&quot;)
+file.remove(&quot;news20.binary&quot;)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>news20.part &lt;- list(y=(news20$y)[1:5000], x=news20$x[1:5000, ])
 
 # acquire data and labels
 x &lt;- news20.part$x
