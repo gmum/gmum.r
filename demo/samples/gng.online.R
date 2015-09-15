@@ -30,8 +30,8 @@ Sys.sleep(5.0)
 plot(gng, mode="2d.errors", vertex.size=6)
 
 # We can add another dataset
-box.dataset <- gng.preset.box(N=10000, r=1.0, center=c(1.0,1.0,1.0))
-insertExamples(gng, box.dataset)
+cube.dataset <- gng.preset.cube(N=10000, r=1.0, center=c(1.0,1.0,1.0))
+insertExamples(gng, cube.dataset)
 
 # Wait for it to converge
 Sys.sleep(5.0)

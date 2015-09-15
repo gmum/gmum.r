@@ -26,7 +26,7 @@ gng <- OptimizedGNG(sphere.dataset, max.nodes=1000, max.iter=10000, dim=3,
 # GNG would much longer, you can check it yourself
 # gng <- GNG(sphere.dataset, max.nodes=1000, max.iter=10000, dim=3)
 
-predictCentroid(gng, centroids(gng), sphere.dataset)
+findClosests(gng, calculateCentroids(gng), sphere.dataset)
 
 # Plot results using spatial coordinates
 plot(gng, layout=gng.plot.layout.v2d, vertex.size=6)

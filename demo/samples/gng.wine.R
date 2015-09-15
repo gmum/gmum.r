@@ -20,7 +20,7 @@ gng <- GNG(wine, labels=get.wine.dataset.y(), max.nodes=20,
 numberNodes(gng)
 
 # Convert to igraph directly!
-ig = convertToGraph(gng)
+ig = convertToIGraph(gng)
 
 # Print mean degree of the network
 mean(degree(ig))
