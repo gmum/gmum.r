@@ -220,8 +220,8 @@ print.Rcpp_SVMClient <- NULL
 #'
 #' @format List of caret specific values
 #'
-#' @usage 
-#' \donrun{
+#' @examples 
+#' \dontrun{
 #' model <- train(Class ~ ., data = training,
 #' method = caret.gmumSvmRadial,
 #' preProc = c("center", "scale"),
@@ -241,8 +241,8 @@ caret.gmumSvmRadial <- NULL
 #' 
 #' @format List of caret specific values
 #' 
-#' @usage 
-#' \donrun{
+#' @examples 
+#' \dontrun{
 #' model <- train(Class ~ ., data = training,
 #' method = caret.gmumSvmLinear,
 #' preProc = c("center", "scale"),
@@ -262,8 +262,8 @@ caret.gmumSvmLinear <- NULL
 #' 
 #' @format List of caret specific values
 #' 
-#' @usage 
-#' \donrun{
+#' @examples 
+#' \dontrun{
 #' model <- train(Class ~ ., data = training,
 #' method = caret.gmumSvmPoly,
 #' preProc = c("center", "scale"),

@@ -6,7 +6,13 @@
 \title{Caret model representation for SVM with linear kernel}
 \format{List of caret specific values}
 \usage{
-\donrun{
+caret.gmumSvmPoly
+}
+\description{
+Supply as parameter "method" in the caret::poly function
+}
+\examples{
+\dontrun{
 model <- train(Class ~ ., data = training,
 method = caret.gmumSvmPoly,
 preProc = c("center", "scale"),
@@ -17,9 +23,6 @@ core = "libsvm", # gmum.R parameter - pick library
 verbosity = 0 # no outputs
 )
 }
-}
-\description{
-Supply as parameter "method" in the caret::poly function
 }
 \keyword{datasets}
 

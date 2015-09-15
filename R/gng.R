@@ -1,5 +1,10 @@
 library(methods)
 
+#' @import igraph
+#' @importFrom ggplot2 scale_size_continuous scale_size_identity geom_point aes ggplot geom_tile scale_fill_brewer scale_alpha_identity scale_colour_brewer geom_abline
+NULL
+
+
 #' Use first two spatial coordinates as position in layout
 #' 
 #' @note You can pass any igraph layout algorithm to plot
@@ -710,7 +715,7 @@ OptimizedGNG <- function(x=NULL, labels=c(),
   }
   call <- match.call(expand.dots = TRUE)
   gng <- .GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
-              eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min=value.range[1], max=value.range[2]), train.online=train.online, max.iter=max.iter, dim=dim, min.improvement=min.improvement, lambda=lambda, verbosity=verbosity, seed=seed)
+              eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(minimum=value.range[1], maximum=value.range[2]), train.online=train.online, max.iter=max.iter, dim=dim, min.improvement=min.improvement, lambda=lambda, verbosity=verbosity, seed=seed)
   assign("call", call, gng)
   gng
 }    
