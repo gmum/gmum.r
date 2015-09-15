@@ -305,30 +305,30 @@ CEC <- function(x = NULL,
   config <- new(CecConfiguration)
 
     if(is.null(seed) == FALSE) {
-        config$setSeed(seed)
+        config$.setSeed(seed)
     }
   config$.setDataSet(x)
-  config$setEps(control.eps)      
-  config$setNrOfClusters(k)
+  config$.setEps(control.eps)      
+  config$.setNrOfClusters(k)
   
   if(is.null(params.mix) == FALSE) {
-    config$setMix(params.mix) 
+    config$.setMix(params.mix) 
   }
   
   if(is.null(params.function) == FALSE) {
-    config$setFunction(params.function)
+    config$.setFunction(params.function)
   }
 
-  config$setLogEnergy(log.energy)
-  config$setLogCluster(log.ncluster)      
-  config$setNstart(control.nstart)
-  config$setCentroids(params.centroids)
-  config$setMethodType(method.type)             
+  config$.setLogEnergy(log.energy)
+  config$.setLogCluster(log.ncluster)      
+  config$.setNstart(control.nstart)
+  config$.setCentroids(params.centroids)
+  config$.setMethodType(method.type)             
   config$.setCov(params.cov)
-  config$setR(params.r)
-  config$setMethodInit(method.init) 
-  config$setItmax(control.itmax)
-  config$setAlgorithm('hartigan')
+  config$.setR(params.r)
+  config$.setMethodInit(method.init) 
+  config$.setItmax(control.itmax)
+  config$.setAlgorithm('hartigan')
   
   model <- new(CecModel, config)
   
@@ -337,11 +337,11 @@ CEC <- function(x = NULL,
 }
 
 runAll <- function(c) {
-  c$runAll()
+  c$.runAll()
 }
 
 runOneIteration <- function(c) {
-  c$runOneIteration()
+  c$.runOneIteration()
 }
 
 energy <- function(c) {

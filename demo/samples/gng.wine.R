@@ -20,7 +20,7 @@ gng <- GNG(wine, labels=get.wine.dataset.y(), max.nodes=20,
 numberNodes(gng)
 
 # Convert to igraph directly!
-ig = convertToIGraph(gng)
+ig <- convertToIGraph(gng)
 
 # Print mean degree of the network
 mean(degree(ig))
@@ -44,3 +44,4 @@ for(i in 1:nrow(wine)){
 
 # Print prediction statistics
 confusionMatrix(table(preds, get.wine.dataset.y()))
+
