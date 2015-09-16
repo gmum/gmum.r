@@ -49,7 +49,7 @@ test_that("auto class weighting works for svm" ,{
   set.seed(777)
   i <- as.numeric(createDataPartition(y, times=1, list=FALSE))  
   svm <- SVM(x[i],y[i], C=1, class.weights = 'auto')
-  w <- svm$getClassWeights() 
+  w <- svm$classWeights
   p <- predict(svm, x[-i])
   acc <- svm.accuracy(p, y[-i])
   

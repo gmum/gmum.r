@@ -317,10 +317,7 @@ SVM.formula <- function(formula, data, ...) {
     x <- data.matrix(x)
   
   ret <- SVM.default(x, y, ...)
-  
-  call[[1]] <- as.name("SVM")
-  assign("call", call, ret)
-  
+  assign("call", as.name("SVM"), ret) # SVM.formula call is different so overwriting
   return(ret)
 }
 
@@ -383,7 +380,7 @@ SVM.formula <- function(formula, data, ...) {
       x.model <- xlist[[j]]
       y.model <- ymat[[j]]
     }
-    #TODO: uncomment
+    
     p <- as.list(match.call(expand.dots = TRUE))
     p$x <- x.model
     p$y <- as.factor(y.model)
@@ -411,14 +408,14 @@ SVM.formula <- function(formula, data, ...) {
   obj <- list(
     models = models,
     class.type = class.type,
-    X = x,
-    Y = y,
-    .pick = pick,
-    levels = lev,
+    .X = x, # getter also private
+    .Y = y, # getter also private
+    .pick = pick, # getter also private
+    .levels = lev,
     call = call,
     core = core,
     kernel = kernel,
-    prep = prep
+    preprocessing = prep
   )
   
   class(obj) <- "MultiClassSVM"
@@ -488,41 +485,52 @@ SVM.default <-
     call[[1]] <- as.name("SVM")
     
     # check for errors
-    if (core != "libsvm" && core != "svmlight")
+    if (core != "libsvm" && core != "svmlight") {
       stop(sprintf("bad core: %s, available are: libsvm, svmlight", core))
+    }
     if (kernel != "linear" &&
-        kernel != "poly" && kernel != "rbf" && kernel != "sigmoid")
+        kernel != "poly" && kernel != "rbf" && kernel != "sigmoid") {
       stop("bad kernel: %s")
+    }
     if (prep != "2e" &&
-        prep != "none")
+        prep != "none") {
       stop(sprintf("bad preprocess: %s", prep))
+    }
     if (verbosity < 0 ||
-        verbosity > 6)
+        verbosity > 6) {
       stop("Wrong verbosity level, should be from 0 to 6")
+    }
     if (C == 0 &&
         core == "libsvm") {
       # libsvm does not handle C=0, svmlight does
       warning("libsvm doesn't support C=0, switching to svmlight")
       core <- "svmlight"
     }
-    else if (C < 0)
+    else if (C < 0) {
       stop(sprintf("C parameter can't be negative: %f", C))
-    if (gamma <= 0)
+    }
+    
+    if (gamma <= 0) {
       stop(sprintf("gamma parameter must be positive: %f", gamma))
+    }
     if (degree < 1 ||
-        degree %% 1 != 0)
+        degree %% 1 != 0) {
       stop(sprintf("degree parameter must be positive integer: %.2f", degree))
+    }
     
     if (verbosity < 0 ||
-        verbosity > 6)
+        verbosity > 6) {
       stop("Wrong verbosity level, should be from 0 to 6")
+    }
     if ((transductive.posratio < 0 &&
-         transductive.posratio != -1) || transductive.posratio > 1)
+         transductive.posratio != -1) || transductive.posratio > 1) {
       stop("Please pass transductive.posratio in range [0,1]")
+    }
     
     # check data
-    if (nrow(x) != length(y))
+    if (nrow(x) != length(y)) {
       stop("x and y have different lengths")
+    }
     if (inherits(x, "Matrix")) {
       x <- as(x, "matrix.csr")
     }
@@ -559,10 +567,7 @@ SVM.default <-
         stop("Please provide label vector y for sparse matrix classification")
       }
     }
-    
-    
-    
-    
+
     # Binary classification or 2 classes + unlabeled (for transductive learning)
     if ((length(levels) != 2 && !transductive.learning) ||
         (length(levels) != 3 && transductive.learning)) {
@@ -690,10 +695,38 @@ SVM.default <-
     }
     
     client <- new(SVMClient, config)
-    client$train()
+    client$.train()
     
+    call[[1]] <- as.name("SVM")
+    
+    # R object often have fields that don't change accessible through $ notation
     assign("call", call, client)
-    assign("levels", levels, client)
+    assign(".levels", levels, client)
+    assign("core", client$.getCore(), client)
+    assign("kernel", client$.getKernel(), client)
+    assign("preprocessing", client$.getPreprocess(), client)
+    assign("degree", client$.getDegree(), client)
+    assign("gamma", client$.getGamma(), client)
+    assign("C", client$.getC(), client)
+    assign("alpha", client$.getAlpha(), client)
+    assign("bias", client$.getBias(), client)
+    if(client$kernel == "linear") {
+      assign("w", client$.getW(), client)
+    }
+    assign("SV", client$.getSV(), client)
+    assign("numberSV", client$.getNumberSV(), client)
+    assign("numberClasses", client$.getNumberClass(), client)
+    assign("iterations", client$.getIterations(), client)
+    assign("isShrinking", client$.isShrinking(), client)
+    assign("isProbability", client$.isProbability(), client)
+    assign("areExamplesWeighted", client$.areExamplesWeighted(), client)
+    assign("exampleWeights", client$.getExampleWeights(), client)
+    assign("classWeights", client$.getClassWeights(), client)
+    
+    assign(".staticFields", c("call", "core", "kernel", "preprocessing", "degree", "gamma", "C", "alpha", "bias", "w", "SV", 
+                              "numberSV", "numberClasses", "iterations", "isShrinking", "isProbability", "areExamplesWeighted", 
+                              "exampleWeights", "classWeights"), client)
+    
     client
     }
 
@@ -723,29 +756,29 @@ summary.MultiClassSVM <- function(object, ...) {
     )
   )
   print(sprintf("%d classes",
-                length(object$levels)))
+                length(object$.levels)))
   object <- object$models[[1]]
-  print(sprintf("Parameters: kernel: %s, C: %f", object$kernel(), object$C()))
+  print(sprintf("Parameters: kernel: %s, C: %f", object$kernel, object$C))
   
-  if (object$kernel() == "rbf") {
+  if (object$kernel == "rbf") {
     print(sprintf("Kernel parameters: gamma: %f",
-                  object$gamma()))
+                  object$gamma))
   }
-  else if (object$kernel() == "poly") {
+  else if (object$kernel == "poly") {
     print(
       sprintf(
         "Kernel parameters: gamma: %f, degree: %d, coef0: %f",
-        object$gamma(),
-        object$degree(),
-        object$coef0()
+        object$gamma,
+        object$degree,
+        object$coef0
       )
     )
   }
-  else if (object$kernel() == "sigmoid") {
+  else if (object$kernel == "sigmoid") {
     print(sprintf(
       "Kernel parameters: gamma: %f, coef0: %f",
-      object$gamma(),
-      object$coef0()
+      object$gamma,
+      object$coef0
     ))
   }
 }
@@ -758,39 +791,38 @@ summary.Rcpp_SVMClient <- function(object, ...) {
   print(
     sprintf(
       "Support Vector Machine, core: %s, preprocess: %s",
-      object$core(),
-      object$kernel(),
-      object$prep()
+      object$core,
+      object$preprocessing
     )
   )
-  print(sprintf("Parameters: kernel: %s, C: %f", object$kernel(), object$C()))
+  print(sprintf("Parameters: kernel: %s, C: %f", object$kernel, object$C))
   
-  if (object$kernel() == "rbf") {
+  if (object$kernel == "rbf") {
     print(sprintf("Kernel parameters: gamma: %f",
-                  object$gamma()))
+                  object$gamma))
   }
-  else if (object$kernel() == "poly") {
+  else if (object$kernel == "poly") {
     print(
       sprintf(
         "Kernel parameters: gamma: %f, degree: %d, coef0: %f",
-        object$gamma(),
-        object$degree(),
-        object$coef0()
+        object$gamma,
+        object$degree,
+        object$coef0
       )
     )
   }
-  else if (object$kernel() == "sigmoid") {
+  else if (object$kernel == "sigmoid") {
     print(sprintf(
       "Kernel parameters: gamma: %f, coef0: %f",
-      object$gamma(),
-      object$coef0()
+      object$gamma,
+      object$coef0
     ))
   }
   print(
     sprintf(
       "%d classes with %d support vectors",
-      object$getNumberClass(),
-      object$getNumberSV()
+      object$numberClasses,
+      object$numberSV
     )
   )
 }
@@ -813,7 +845,7 @@ plot.Rcpp_SVMClient <-
     }
     #   NOTE: Added SparseM to dependencies
     #   TODO: Do we need e1071?
-    if (obj$isSparse()) {
+    if (obj$.isSparse()) {
       if (!requireNamespace("e1071", quietly = TRUE)) {
         stop("For sparse support install e1071 package")
       }
@@ -823,11 +855,11 @@ plot.Rcpp_SVMClient <-
     if (is.null(X)) {
       new_data <- FALSE
       if (class(x) == "MultiClassSVM") {
-        X <- x$X
-        true_target <- as.factor(x$Y)
+        X <- x$.X
+        true_target <- as.factor(x$.Y)
       }else{
         true_target <- as.factor(x$.getY())
-        if (obj$isSparse()) {
+        if (obj$.isSparse()) {
           X <- Matrix::t(obj$.getSparseX())
         }else{
           X <- obj$.getX()
@@ -857,7 +889,7 @@ plot.Rcpp_SVMClient <-
     }
     
     #3. Prepare df. This is ugly copy so that we can do whatever we want
-    if (obj$isSparse()) {
+    if (obj$.isSparse()) {
       df <- data.frame(SparseM::as.matrix(X[,cols]))
     }else{
       df <- data.frame(X[,cols])
@@ -866,18 +898,18 @@ plot.Rcpp_SVMClient <-
     df['prediction'] <- as.factor(t)
     
     if (!new_data) {
-      if (length(levels(true_target)) > length(x$levels)) {
-        levels(true_target) <- c(x$levels, "0")
+      if (length(levels(true_target)) > length(x$.levels)) {
+        levels(true_target) <- c(x$.levels, "0")
       }
       else {
-        levels(true_target) <- x$levels
+        levels(true_target) <- x$.levels
       }
       df['label'] <- true_target
     }
     
     #4. Prepare data for plotting
-    if (obj$areExamplesWeighted()) {
-      df['sizes'] <- obj$getExampleWeights()
+    if (obj$.areExamplesWeighted()) {
+      df['sizes'] <- obj$.getExampleWeights()
       scale_size <-
         scale_size_continuous(range = c(radius,radius.max))
     }else {
@@ -886,7 +918,7 @@ plot.Rcpp_SVMClient <-
     }
     
     #5. Support parameters
-    kernel <- obj$kernel()
+    kernel <- obj$.getKernel()
     
     
     if (mode == "pca") {
@@ -901,10 +933,10 @@ plot.Rcpp_SVMClient <-
     if (kernel == "linear" && class(x) != "MultiClassSVM") {
       # W will be used only for binary model
       if (mode == "pca") {
-        w <- c(obj$w())
+        w <- c(obj$.getW())
         w <- (w - mx) %*% pca_data$rotation
       }else if (ncol(X) == 2) {
-        w <- c(obj$w())
+        w <- c(obj$.getW())
       }
     }
     
@@ -980,7 +1012,7 @@ plot.Rcpp_SVMClient <-
     if (!is.null(w) &&
         ncol(X) && mode != "pca" && mode != "contour") {
       s <- -w[1] / w[2]
-      int <- -obj$bias() / w[2]
+      int <- -obj$.getBias() / w[2]
       pl <- pl + geom_abline(slope = s, intercept = int)
     }
     
@@ -990,13 +1022,13 @@ plot.Rcpp_SVMClient <-
 predict.MultiClassSVM <- function(object, x, ...) {
   # Sums votes
   prediction.row.oao <- function(r) {
-    object$levels[which.max(sapply(1:length(object$levels), function(cl) {
+    object$.levels[which.max(sapply(1:length(object$.levels), function(cl) {
       sum(r == cl)
     }))]
   }
   # Argmax of decision function
   prediction.row.oaa <- function(r) {
-    object$levels[which.max(r)]
+    object$.levels[which.max(r)]
   }
   ymat <- c()
   for (i in 1:length(object$models)) {
@@ -1024,7 +1056,7 @@ predict.MultiClassSVM <- function(object, x, ...) {
   }else{
     stop("Unrecognized class.type")
   }
-  return(factor(ymat.preds, levels = object$levels))
+  return(factor(ymat.preds, levels = object$.levels))
 }
 
 predict.Rcpp_SVMClient <-
@@ -1035,7 +1067,7 @@ predict.Rcpp_SVMClient <-
         !is(x_test,"matrix.csr")) {
       stop("Wrong target class, please provide data.frame, matrix or numeric vector")
     }
-    if (!object$isSparse()) {
+    if (!object$.isSparse()) {
       if (!is(x_test, "matrix") &&
           !is(x_test, "data.frame") &&
           !is.vector(x_test)) {
@@ -1064,21 +1096,21 @@ predict.Rcpp_SVMClient <-
       prediction <- object$.getPrediction()
       
       if (any(prediction == 0) ||
-          length(unique(prediction)) > length(object$levels)) {
+          length(unique(prediction)) > length(object$.levels)) {
         stop("Failed prediction, returned too many unique labels from library.")
       }
       
       
-      if (!is.null(object$levels)) {
+      if (!is.null(object$.levels)) {
         # This line works because we do as.numeric() which transforms into 1 and 2
         # And we expect SVM to return same labels as passed
-        if (length(object$levels) == 2) {
+        if (length(object$.levels) == 2) {
           # Binary case
           prediction <-
-            factor(object$levels[(prediction + 1) / 2 + 1], levels = object$levels)
+            factor(object$.levels[(prediction + 1) / 2 + 1], levels = object$.levels)
         }else{
           prediction <-
-            factor(object$levels[prediction], levels = object$levels)
+            factor(object$.levels[prediction], levels = object$.levels)
         }
         
       }

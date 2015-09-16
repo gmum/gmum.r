@@ -51,7 +51,7 @@ for (lib_i in libs) {
       print(sprintf("gmum.r %s %s test time: %.2f", lib_i, kernel_i, gmum_test_time))
       print(sprintf("e1071 %s test time: %.2f", kernel_i, e_test_time))
       print("---")
-      print(sprintf("gmum.r %s %s nSV: %i", lib_i, kernel_i, svm$getNumberSV()))
+      print(sprintf("gmum.r %s %s nSV: %i", lib_i, kernel_i, svm$numberSV))
       print(sprintf("e1071 %s nSV: %i", kernel_i, nrow(e_svm$SV)))
       print("---")
       print("======================================")

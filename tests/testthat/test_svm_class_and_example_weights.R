@@ -31,7 +31,7 @@ ex_weights_svm <- SVM(formula=y~., data=df, core="svmlight", kernel="linear", C=
 cl_weights_svm <- SVM(formula=y~., data=df, core="svmlight", kernel="linear", C=1.0, class.weights=cl_weights)
 ex_cl_weights_svm <- SVM(formula=y~., data=df, core="svmlight", kernel="linear", C=1.0, class.weights=cl_weights, example.weights=ex_weights)
 
-ex_SV <- ex_weights_svm$getSV()
+ex_SV <- ex_weights_svm$SV
 
 print(length(ex_SV))
 print(length(sk_ex_SV))

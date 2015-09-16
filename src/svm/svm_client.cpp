@@ -107,18 +107,18 @@ arma::vec SVMClient::getDecisionFunction() {
 }
 std::string SVMClient::getLibrary(){
     switch(config.library) {
-    case LIBSVM : return "libsvm";
-    case SVMLIGHT : return "svmlight";
-    default : return "error"; 
+      case LIBSVM : return "libsvm";
+      case SVMLIGHT : return "svmlight";
+      default : return "error"; 
     }
 }
 std::string SVMClient::getKernel(){
     switch(config.kernel_type) {
-    case _LINEAR : return "linear";
-    case _POLY : return "poly"; 
-    case _RBF : return "rbf"; 
-    case _SIGMOID : return "sigmoid"; 
-  default : return "error"; 
+      case _LINEAR : return "linear";
+      case _POLY : return "poly"; 
+      case _RBF : return "rbf"; 
+      case _SIGMOID : return "sigmoid"; 
+      default : return "error"; 
     }
 }
 std::string SVMClient::getPreprocess() {

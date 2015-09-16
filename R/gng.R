@@ -977,22 +977,5 @@ setClass(Class = "Rcpp_GNGServer")
 # Lazy loading to allow for discovery of all files
 evalqOnLoad( {
   .wine <<- NULL
-  
-  # Autocompletion fix
-
-  .GlobalEnv$`.DollarNames.C++Object` <- function( x, pattern ){
-    grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE)[! (substr(grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE),1,1)==".")]
-  }
-  
-  methods = list()
-  for(name in names(GNGConfiguration@methods)){
-    methods[[name]] = eval(substitute(
-      function(...) .CppObject$WHAT(...), list(WHAT = as.name(name)))) 
-  }
-  
-  methods[["initialize"]] <- function(...){
-    
-  }
-
 })
 
