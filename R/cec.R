@@ -240,22 +240,22 @@ logClusters <- NULL
 #' @export
 logEnergy <- NULL
 
-#' @name logIterations
-#' @title logIterations
+#' @name iterations
+#' @title iterations
 #' 
-#' @aliases logIterations,Rcpp_CecModel-method
+#' @aliases iterations,Rcpp_CecModel-method
 #'
-#' @title logIterations
+#' @title iterations
 #' 
 #' @description Print how many iterations it took to learn CEC model
 #'
 #' @param c object Trained CEC model object.
 #' @examples
 #' \dontrun{
-#' logIterations(c) 
+#' iterations(c) 
 #' }
 #' @export
-logIterations <- NULL
+iterations <- NULL
 
 loadModule('cec', TRUE)
 
@@ -332,7 +332,21 @@ CEC <- function(x = NULL,
   
   model <- new(CecModel, config)
   
+  
+  
   assign("call", call, model)
+  assign("energy", model$.getEnergy(), model)
+  assign("clustering", model$.getClustering(), model)
+  assign("centers", model$.getCenters(), model)
+  assign("covMatrix", model$.getCovMatrix(), model)
+  assign("logEnergy", model$.getLogEnergy(), model)
+  assign("logNumberOfClusters", model$.getLogNumberOfClusters(), model)
+  
+  assign("iterations", model$.getIterations(), model)
+
+  assign(".staticFields", c("call", "energy", "clustering", "centers", "covMatrix", 
+                            "logNumberOfClusters", "logEnergy", "iterations"), model)
+  
   model
 }
 
@@ -345,35 +359,36 @@ runOneIteration <- function(c) {
 }
 
 energy <- function(c) {
-  c$energy()
+  c$.getEnergy()
 }
 
 clustering.Rcpp_CecModel <- function(c) {
-  c$clustering()
+  c$.getClustering()
 }
 
 getDataset <- function(c) {
-  c$getDataset()
+  c$.getDataset()
 }
 
 centers <- function(c) {
-  c$centers()
+  c$.getCenters()
 }
 
 covMatrix <- function(c) {
-  c$covMatrix()
-}
-
-logClusters <- function(c) {
-  c$log.ncluster()
+  c$.getCovMatrix()
 }
 
 logEnergy <- function(c) {
-  c$log.energy()
+  c$.getLogEnergy()
 }
 
-logIterations <- function(c) {
-  c$log.iters()
+logNumberOfClusters <- function(c) {
+  c$.getLogNumberOfClusters()
+}
+
+
+iterations <- function(c) {
+  c$.getIterations()
 }
 
 predict.Rcpp_CecModel <- function(object, x, ...) {
@@ -388,7 +403,7 @@ predict.Rcpp_CecModel <- function(object, x, ...) {
     x = data.matrix(x)
   }
   
-  if(dim(object$getDataset())[2] != dim(x)[2]){
+  if(dim(object$.getDataset())[2] != dim(x)[2]){
     stop("Incompatible dimension!")
   }
   

@@ -15,17 +15,17 @@
 summary.Rcpp_CecModel <- function(object, ...) {
   print(object)
   
-  if(isParameterOn(object$log.iters())){
+  if(isParameterOn(object$iterations)){
     print("Iterations: ")
-    print(object$log.iters())
+    print(object$iterations)
   }
-  if(isParameterOn(object$log.energy())){
+  if(isParameterOn(object$logEnergy)){
     print("Energy for every iteration: ")
-    print(object$log.energy())
+    print(object$logEnergy)
   }
-  if(isParameterOn(object$log.ncluster())){
+  if(isParameterOn(object$logNumberOfClusters)){
     print("Number of clusters for every iteration: ")
-    print(object$log.ncluster())
+    print(object$logNumberOfClusters)
   }
 }
 

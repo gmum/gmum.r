@@ -279,11 +279,11 @@ caret.gmumSvmLinear <- NULL
 caret.gmumSvmPoly <- NULL
 
 #' @rdname svm
-#' @export
+#' @export SVM.formula
 SVM.formula <- NULL
 
 #' @rdname svm
-#' @export
+#' @export SVM.default
 SVM.default <- NULL
 
 loadModule('svm_wrapper', TRUE)
@@ -317,7 +317,7 @@ SVM.formula <- function(formula, data, ...) {
     x <- data.matrix(x)
   
   ret <- SVM.default(x, y, ...)
-  assign("call", as.name("SVM"), ret) # SVM.formula call is different so overwriting
+  assign("call", call, ret) 
   return(ret)
 }
 
@@ -365,8 +365,7 @@ SVM.formula <- function(formula, data, ...) {
   }
   
   models <- list()
-  call[[1]] <- as.name("SVM")
-  
+
   # Fit one model after another
   for (j in J) {
     x.model <- NULL
@@ -482,8 +481,7 @@ SVM.default <-
       core <- "svmlight"
     
     call <- match.call(expand.dots = TRUE)
-    call[[1]] <- as.name("SVM")
-    
+
     # check for errors
     if (core != "libsvm" && core != "svmlight") {
       stop(sprintf("bad core: %s, available are: libsvm, svmlight", core))
@@ -696,8 +694,6 @@ SVM.default <-
     
     client <- new(SVMClient, config)
     client$.train()
-    
-    call[[1]] <- as.name("SVM")
     
     # R object often have fields that don't change accessible through $ notation
     assign("call", call, client)

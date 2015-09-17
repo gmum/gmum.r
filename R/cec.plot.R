@@ -27,7 +27,7 @@
 #' }
 plot.Rcpp_CecModel <- function(x, slice = c(), pca=FALSE, ellipses = FALSE, centers = FALSE, ...) {
   
-  d <- x$getDataset()
+  d <- x$.getDataset()
   if(pca){
     if(ncol(d) <= 2){
       stop("CEC dataset should have dimension > 2 to use PCA")
@@ -44,17 +44,17 @@ plot.Rcpp_CecModel <- function(x, slice = c(), pca=FALSE, ellipses = FALSE, cent
     } else {
       slice <- c(1:(dim(d)[2]))        
     }
-    plot(d[,slice], col = (x$clustering() + 1), pch=20)
+    plot(d[,slice], col = (x$clustering + 1), pch=20)
   }
   else if (length(slice) == 1 || length(slice) == 2) {
-    plot(d[,slice], col = (x$clustering() + 1), pch=20)
+    plot(d[,slice], col = (x$clustering + 1), pch=20)
   }
   else{
-    pairs(d[,slice], col = (x$clustering() + 1))
+    pairs(d[,slice], col = (x$clustering + 1))
   }
   
   if (ellipses || centers) {
-    cen <- x$centers()
+    cen <- x$centers
     n <- length(cen)
     if(pca){
       for (i in 1:n) {
@@ -65,7 +65,7 @@ plot.Rcpp_CecModel <- function(x, slice = c(), pca=FALSE, ellipses = FALSE, cent
     }
     if (ellipses && length(slice) <= 2){
       #library("car")
-      cov <- x$covMatrix()        
+      cov <- x$covMatrix     
       for (i in 1:n) {
         data <- unlist(cov[i])
         covMat <- matrix(data,ncol=sqrt(length(data)))

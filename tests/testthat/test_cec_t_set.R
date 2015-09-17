@@ -8,7 +8,7 @@ test_that("spherical works", {
   
   expected_energy = -0.9294208
   
-  expect_that(all.equal(current = c$energy(), target = expected_energy, tolerance = 0.2), is_true())
+  expect_that(all.equal(current = c$energy, target = expected_energy, tolerance = 0.2), is_true())
   print("test_t_set: spherical works")
 })
 
@@ -19,7 +19,7 @@ test_that("fixed_spherical works", {
   
   expected_energy = -0.6100412
   
-  expect_that(all.equal(current = c$energy(), target = expected_energy, tolerance = 0.2), is_true())
+  expect_that(all.equal(current = c$energy, target = expected_energy, tolerance = 0.2), is_true())
   print("test_t_set: fixed_spherical works")
 })
 
@@ -30,7 +30,7 @@ test_that("diagonal works", {
   
   expected_energy = -0.9852
   
-  expect_that(all.equal(current = c$energy(), target = expected_energy, tolerance = 0.2), is_true())
+  expect_that(all.equal(current = c$energy, target = expected_energy, tolerance = 0.2), is_true())
   print("test_t_set: diagonal works")
 })
 
@@ -39,7 +39,7 @@ test_that("fixed_covariance works", {
   expected_energy = -0.2362521
   c <- CEC(x = Tset, k = 10, method.type = 'fixed_covariance', params.cov=matrix(c(0.04, 0, 0, 0.01), 2), control.nstart = 100, control.eps = 0.07, seed=2)
   plot(c, ellipses = TRUE, centers = TRUE)
-  expect_that(all.equal(current = c$energy(), target = expected_energy, tolerance = 0.2), is_true())
+  expect_that(all.equal(current = c$energy, target = expected_energy, tolerance = 0.2), is_true())
   print("test_t_set: fixed_covariance works")
 })
 
@@ -53,6 +53,6 @@ test_that("mix works", {
 
   expected_energy = 2.459158
   
-  expect_that(all.equal(current = c$energy(), target = expected_energy, tolerance = 0.2), is_true())
+  expect_that(all.equal(current = c$energy, target = expected_energy, tolerance = 0.2), is_true())
   print("test_t_set: mix works")
 })

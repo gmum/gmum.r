@@ -21,7 +21,7 @@ test_that("sparse matrices work", {
             pred_start_time <- Sys.time()
             pred <- predict(svm, x)
             pred_time <- Sys.time() - pred_start_time
-            print(sprintf("Prediction %f", pred_time))
+            print(sprintf("Prediction time %f", pred_time))
 
             acc <- svm.accuracy(prediction=pred, target=y)
             print(sprintf("Sparse acc, %s prediction: %f", lib_i, acc))

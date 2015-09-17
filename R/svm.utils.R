@@ -73,8 +73,10 @@ svm.dataset.circles <- function() {
 #' 
 #' @description Calculates accuracy of a prediction, returns precent of correctly predicted examples 
 #' over all test examples.
-#' @export
+#' @export svm.accuracy
 #' @rdname svm.accuracy
+#' 
+#' @usage svm.accuracy(prediction, target)
 #' 
 #' @param prediction factor or 1 dim vector with predicted classes
 #' @param target  factor or 1 dim vector with true classes

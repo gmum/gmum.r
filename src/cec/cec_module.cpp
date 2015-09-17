@@ -40,15 +40,15 @@ RCPP_MODULE(cec) {
 	.constructor<CecConfiguration*>()
  .method(".runAll", &CecModel::loop)
  .method(".runOneIteration", &CecModel::single_loop)
-	.method("energy", &CecModel::get_energy)
-	.method("clustering", &CecModel::get_assignment)
-	.method("centers", &CecModel::centers)
-	.method("covMatrix", &CecModel::cov)
+ .method(".getEnergy", &CecModel::get_energy)
+ .method(".getClustering", &CecModel::get_assignment)
+ .method(".getCenters", &CecModel::centers)
+ .method(".getCovMatrix", &CecModel::cov)
 	.method(".predict", &CecModel::predict)
-	.method("log.ncluster", &CecModel::get_nclusters)
-	.method("log.energy", &CecModel::get_energy_history)
-	.method("log.iters", &CecModel::iters)
- .method("getDataset", &CecModel::get_points);
+ .method(".getLogNumberOfClusters", &CecModel::get_nclusters)
+ .method(".getLogEnergy", &CecModel::get_energy_history)
+ .method(".getIterations", &CecModel::iters)
+ .method(".getDataset", &CecModel::get_points);
 }
 
 #endif

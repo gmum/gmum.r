@@ -15,11 +15,11 @@
 #' 
 print.Rcpp_CecModel <- function(x, ...) {
     print(sprintf("CEC clustering; %d clusters with energy = %f",
-                  length(x$centers()), x$energy()))
+                  length(x$centers), x$energy))
     print("Centers: ")
-    print(x$centers())
+    print(x$centers)
     print("Covariances: ")
-    print(x$covMatrix())
+    print(x$covMatrix)
 }
 
 show.Rcpp_CecModel <- function(object){

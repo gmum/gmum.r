@@ -33,7 +33,7 @@ test_that("mouse_1_spherical kmeans coverage is correct", {
   {
     c <- CEC(k=3, x=dataset_points, control.nstart=1, method.type='spherical', method.init='kmeans++', seed=13371337)
     plot(c)
-    correct_percentage <- correctness(dataset_clusters, c$clustering(), npoints, nclusters)
+    correct_percentage <- correctness(dataset_clusters, c$clustering, npoints, nclusters)
     if(correct_percentage == 1) {
       accepted <- accepted + 1
     }
@@ -59,7 +59,7 @@ test_that("mouse_1_spherical kmeans energy is correct", {
     {
         c <- CEC(k=3, x=dataset_points, control.nstart=1, method.type='spherical', method.init='kmeans++', seed=13371337)
         plot(c)
-        actual_energy <- c$energy()
+        actual_energy <- c$energy
         
         if(isTRUE(all.equal(current = actual_energy, target=expected_energy, tolerance=.0001))) {
             accepted <- accepted + 1

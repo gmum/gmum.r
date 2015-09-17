@@ -1,8 +1,19 @@
 # Lazy loading to allow for discovery of all files
 evalqOnLoad( {
-  # Autocompletion fix
-  .GlobalEnv$`.DollarNames.C++Object` <- function( x, pattern ){
+  # Autocompletion override
+  autocompl <- function(x, pattern="") {
     targets <- c(asNamespace("Rcpp")$complete(x), x[['.staticFields']])
     grep(pattern, targets, value = TRUE)[! (substr(grep(pattern, targets, value = TRUE),1,1)==".")]
+  }
+  
+  `.DollarNames.Rcpp_C++Object` <<- autocompl
+  .DollarNames.Rcpp_SVMClient <<- autocompl
+  .DollarNames.Rcpp_GNGServer <<- autocompl
+  .DollarNames.Rcpp_CecModel <<- autocompl
+  
+  # Workaround RStudio bug
+  if(exists(".rs.getAnywhere")) {
+    .rs.getAnywhere.original <<- .rs.getAnywhere
+    .rs.getAnywhere <<- function(a, envir=.GlobalEnv){ .rs.getAnywhere.original(a, .GlobalEnv) }
   }
 })
