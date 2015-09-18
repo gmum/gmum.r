@@ -20,4 +20,4 @@ BLAS_LIBS = `$(R_HOME)/bin/R CMD config BLAS_LIBS`
 # Do not delete R_CPPFLAGS, it will break tests
 PKG_CPPFLAGS = $(GCC_STD) $(PREPROCESS) $(R_CPPFLAGS) $(INCLUDES) -pthread
 PKG_CXXFLAGS = --std=c++0x
-PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(R_LIBS) $(FLIBS)
+PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(R_LIBS)

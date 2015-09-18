@@ -15,8 +15,8 @@ test_that("Entropy is correct", {
   plot(c1)
   plot(c2)
   
-  actual_energy_func_type <- c1$energy()
-  actual_energy_standart_type <- c2$energy()
+  actual_energy_func_type <- c1$energy
+  actual_energy_standart_type <- c2$energy
   
   expect_that(actual_energy_func_type, equals(actual_energy_standart_type, tolerance = 1e-4))
   expect_that(actual_energy_func_type, equals(expected_energy, tolerance = 1e-4))
