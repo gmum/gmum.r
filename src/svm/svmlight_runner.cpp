@@ -16,6 +16,7 @@
 #include "svmlight_runner.h"
 #include "utils/logger.h"
 #include "svm_basic.h"
+#include "utils/cutils.h"
 #include "utils/utils.h"
 
 const std::string __file__ = "svmlight_runner.cpp";
@@ -76,25 +77,25 @@ void SVMLightRunner::processRequest(
     arma::mat unique_labels = arma::unique(config.target);
 
     if(unique_labels.size() !=2 && !config.use_transductive_learning){
-    	printf("Passed 3 labels to svmlight without use_transductive_learning\n");
-    	exit(1);
+    	COUT("Passed 3 labels to svmlight without use_transductive_learning");
+    	EXIT(1);
     }
     if((unique_labels.size() <2 || unique_labels.size() > 3)  && config.use_transductive_learning){
-    	printf("Passed incorred # of labels to svmlight (<2 || >3) for transductive learning\n");
-    	exit(1);
+    	COUT("Passed incorred # of labels to svmlight (<2 || >3) for transductive learning");
+    	EXIT(1);
     }
     if(unique_labels.size() == 2){
     	if(unique_labels[0] != -1 && unique_labels[1] != 1){
-    		printf("Please pass negative class as -1 and positive as 1");
-    		exit(1);
+    		COUT("Please pass negative class as -1 and positive as 1");
+    		EXIT(1);
     	}
     }
     if(unique_labels.size() == 3){
     	if(unique_labels[0] != 0 && unique_labels[1] != -1
     			&& unique_labels[2] != 1
     	){
-    		printf("Please pass negative class as -1 and positive as 1");
-    		exit(1);
+    		COUT("Please pass negative class as -1 and positive as 1");
+    		EXIT(1);
     	}
     }
 
@@ -122,7 +123,7 @@ void SVMLightRunner::processRequest(
 void SVMLightRunner::resultsToLabels(SVMConfiguration &config) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".resultsToLabels() Started."
     );
 
@@ -148,7 +149,7 @@ void SVMLightRunner::resultsToLabels(SVMConfiguration &config) {
 
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".resultsToLabels() Done."
     );
 }
@@ -181,7 +182,7 @@ int SVMLightRunner::librarySVMLearnMain(
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".librarySVMLearnMain() Started."
     );
     DOC **docs;  /* training examples */
@@ -265,7 +266,7 @@ int SVMLightRunner::librarySVMLearnMain(
 
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".librarySVMLearnMain() Done."
     );
 
@@ -280,7 +281,7 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".librarySVMClassifyReadInputParameters() Started."
     );
 
@@ -293,7 +294,7 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     strcpy (learn_parm->predfile, "trans_predictions");
     strcpy (learn_parm->alphafile, "");
     strcpy (restartfile, "");
-    // SVMLight verbosity = 1 corresponds to GMUM.R verbosity = 5 (DEBUG)
+    // SVMLight verbosity = 1 corresponds to GMUM.R verbosity = 5 (DEBUG_LEVEL)
     (*verbosity)=config.log.verbosity - 4;
     learn_parm->biased_hyperplane=1;
     learn_parm->sharedslack=0;
@@ -361,7 +362,7 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
     for(i=1;(i<argc) && ((argv[i])[0] == '-');i++) {
       switch ((argv[i])[1])
         {
-        case '?': libraryPrintHelp(); exit(0);
+        case '?': libraryPrintHelp(); EXIT(0);
         case 'z': i++; strcpy(type,argv[i]); break;
         case 'v': i++; (*verbosity)=atol(argv[i]); break;
         case 'b': i++; learn_parm->biased_hyperplane=atol(argv[i]); break;
@@ -389,19 +390,19 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
         case 'l': i++; strcpy(learn_parm->predfile,argv[i]); break;
         case 'a': i++; strcpy(learn_parm->alphafile,argv[i]); break;
         case 'y': i++; strcpy(restartfile,argv[i]); break;
-        default: printf("\n[SVMLight] Unrecognized option %s!\n\n",argv[i]);
+        default: C_PRINTF("\n[SVMLight] Unrecognized option %s!\n\n",argv[i]);
 	         libraryPrintHelp();
-	         exit(0);
+	         EXIT(0);
         }
     }
 
     // GMUM.R changes }
     if(!use_gmumr) {
         if(i>=argc) {
-            printf("\nNot enough input parameters!\n\n");
+            C_PRINTF("\nNot enough input parameters!\n\n");
             libraryWaitAnyKey();
             libraryPrintHelp();
-            exit(0);
+            EXIT(0);
         }
         strcpy (docfile, argv[i]);
     }
@@ -432,82 +433,82 @@ void SVMLightRunner::librarySVMLearnReadInputParameters(
       learn_parm->sharedslack=1;
     }
     else {
-      printf("\nUnknown type '%s': Valid types are 'c' (classification), 'r' regession, and 'p' preference ranking.\n",type);
+      C_PRINTF("\nUnknown type '%s': Valid types are 'c' (classification), 'r' regession, and 'p' preference ranking.\n",type);
       libraryWaitAnyKey();
       libraryPrintHelp();
-      exit(0);
+      EXIT(0);
     }    
     if((learn_parm->skip_final_opt_check) 
        && (kernel_parm->kernel_type == LINEAR)) {
-      printf("\nIt does not make sense to skip the final optimality check for linear kernels.\n\n");
+      C_PRINTF("\nIt does not make sense to skip the final optimality check for linear kernels.\n\n");
       learn_parm->skip_final_opt_check=0;
     }    
     if((learn_parm->skip_final_opt_check) 
        && (learn_parm->remove_inconsistent)) {
-      printf("\nIt is necessary to do the final optimality check when removing inconsistent \nexamples.\n");
+      C_PRINTF("\nIt is necessary to do the final optimality check when removing inconsistent \nexamples.\n");
       libraryWaitAnyKey();
       libraryPrintHelp();
-      exit(0);
+      EXIT(0);
     }    
     if((learn_parm->svm_maxqpsize<2)) {
-      printf("\nMaximum size of QP-subproblems not in valid range: %ld [2..]\n",learn_parm->svm_maxqpsize); 
+      C_PRINTF("\nMaximum size of QP-subproblems not in valid range: %ld [2..]\n",learn_parm->svm_maxqpsize); 
       libraryWaitAnyKey();
       libraryPrintHelp();
-      exit(0);
+      EXIT(0);
     }
     if((learn_parm->svm_maxqpsize<learn_parm->svm_newvarsinqp)) {
-      printf("\nMaximum size of QP-subproblems [%ld] must be larger than the number of\n",learn_parm->svm_maxqpsize); 
-      printf("new variables [%ld] entering the working set in each iteration.\n",learn_parm->svm_newvarsinqp); 
+      C_PRINTF("\nMaximum size of QP-subproblems [%ld] must be larger than the number of\n",learn_parm->svm_maxqpsize); 
+      C_PRINTF("new variables [%ld] entering the working set in each iteration.\n",learn_parm->svm_newvarsinqp); 
       libraryWaitAnyKey();
       libraryPrintHelp();
-      exit(0);
+      EXIT(0);
     }
     if(learn_parm->svm_iter_to_shrink<1) {
-      printf("\nMaximum number of iterations for shrinking not in valid range: %ld [1,..]\n",learn_parm->svm_iter_to_shrink);
+      C_PRINTF("\nMaximum number of iterations for shrinking not in valid range: %ld [1,..]\n",learn_parm->svm_iter_to_shrink);
       libraryWaitAnyKey();
       libraryPrintHelp();
-      exit(0);
+      EXIT(0);
     }
     if(learn_parm->svm_c<0) {
-      printf("\nThe C parameter must be greater than zero!\n\n");
+      C_PRINTF("\nThe C parameter must be greater than zero!\n\n");
       libraryWaitAnyKey();
       libraryPrintHelp();
-      exit(0);
+      EXIT(0);
     }
     if(learn_parm->transduction_posratio>1) {
-      printf("\nThe fraction of unlabeled examples to classify as positives must\n");
-      printf("be less than 1.0 !!!\n\n");
+      C_PRINTF("\nThe fraction of unlabeled examples to classify as positives must\n");
+      C_PRINTF("be less than 1.0 !!!\n\n");
       libraryWaitAnyKey();
       libraryPrintHelp();
-      exit(0);
+      EXIT(0);
     }
     if(learn_parm->svm_costratio<=0) {
-      printf("\nThe COSTRATIO parameter must be greater than zero!\n\n");
+      C_PRINTF("\nThe COSTRATIO parameter must be greater than zero!\n\n");
       libraryWaitAnyKey();
       libraryPrintHelp();
-      exit(0);
+      EXIT(0);
     }
     if(learn_parm->epsilon_crit<=0) {
-      printf("\nThe epsilon parameter must be greater than zero!\n\n");
+      C_PRINTF("\nThe epsilon parameter must be greater than zero!\n\n");
       libraryWaitAnyKey();
       libraryPrintHelp();
-      exit(0);
+      EXIT(0);
     }
     if(learn_parm->rho<0) {
-      printf("\nThe parameter rho for xi/alpha-estimates and leave-one-out pruning must\n");
-      printf("be greater than zero (typically 1.0 or 2.0, see T. Joachims, Estimating the\n");
-      printf("Generalization Performance of an SVM Efficiently, ICML, 2000.)!\n\n");
+      C_PRINTF("\nThe parameter rho for xi/alpha-estimates and leave-one-out pruning must\n");
+      C_PRINTF("be greater than zero (typically 1.0 or 2.0, see T. Joachims, Estimating the\n");
+      C_PRINTF("Generalization Performance of an SVM Efficiently, ICML, 2000.)!\n\n");
       libraryWaitAnyKey();
       libraryPrintHelp();
-      exit(0);
+      EXIT(0);
     }
     if((learn_parm->xa_depth<0) || (learn_parm->xa_depth>100)) {
-      printf("\nThe parameter depth for ext. xi/alpha-estimates must be in [0..100] (zero\n");
-      printf("for switching to the conventional xa/estimates described in T. Joachims,\n");
-      printf("Estimating the Generalization Performance of an SVM Efficiently, ICML, 2000.)\n");
+      C_PRINTF("\nThe parameter depth for ext. xi/alpha-estimates must be in [0..100] (zero\n");
+      C_PRINTF("for switching to the conventional xa/estimates described in T. Joachims,\n");
+      C_PRINTF("Estimating the Generalization Performance of an SVM Efficiently, ICML, 2000.)\n");
       libraryWaitAnyKey();
       libraryPrintHelp();
-      exit(0);
+      EXIT(0);
     }
 }
 
@@ -519,7 +520,7 @@ int SVMLightRunner::librarySVMClassifyMain(
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".librarySVMClassifyMain() Started."
     );
     DOC *doc;   /* test example */
@@ -566,16 +567,16 @@ int SVMLightRunner::librarySVMClassifyMain(
     }
     
     if(verbosity>=2) {
-      printf("Classifying test examples.."); fflush(stdout);
+      C_PRINTF("Classifying test examples.."); C_FFLUSH(stdout);
     }
 
     // GMUM.R changes {
     bool newline;
     if (!use_gmumr) {
         if ((predfl = fopen (predictionsfile, "w")) == NULL)
-        { perror (predictionsfile); exit (1); }
+        { perror (predictionsfile); EXIT (1); }
         if ((docfl = fopen (docfile, "r")) == NULL)
-        { perror (docfile); exit (1); }
+        { perror (docfile); EXIT (1); }
 
         newline = (!feof(docfl)) && fgets(line,(int)lld,docfl);
     } else {
@@ -617,26 +618,26 @@ int SVMLightRunner::librarySVMClassifyMain(
       }
       if(dist>0) {
         if(pred_format==0) { /* old weired output format */
-      fprintf(predfl,"%.8g:+1 %.8g:-1\n",dist,-dist);
+      C_FPRINTF(predfl,"%.8g:+1 %.8g:-1\n",dist,-dist);
         }
         if(doc_label>0) correct++; else incorrect++;
         if(doc_label>0) res_a++; else res_b++;
       }
       else {
         if(pred_format==0) { /* old weired output format */
-      fprintf(predfl,"%.8g:-1 %.8g:+1\n",-dist,dist);
+      C_FPRINTF(predfl,"%.8g:-1 %.8g:+1\n",-dist,dist);
         }
         if(doc_label<0) correct++; else incorrect++;
         if(doc_label>0) res_c++; else res_d++;
       }
       if(pred_format==1) { /* output the value of decision function */
-        fprintf(predfl,"%.8g\n",dist);
+        C_FPRINTF(predfl,"%.8g\n",dist);
       }
       if((int)(0.01+(doc_label*doc_label)) != 1)
         { no_accuracy=1; } /* test data is not binary labeled */
       if(verbosity>=2) {
         if(totdoc % 100 == 0) {
-      printf("%ld..",totdoc); fflush(stdout);
+      C_PRINTF("%ld..",totdoc); C_FFLUSH(stdout);
         }
       }
       // GMUM.R changes {
@@ -666,19 +667,19 @@ int SVMLightRunner::librarySVMClassifyMain(
     free_model(model,1);
 
     if(verbosity>=2) {
-      printf("done\n");
+      C_PRINTF("done\n");
 
   /*   Note by Gary Boone                     Date: 29 April 2000        */
   /*      o Timing is inaccurate. The timer has 0.01 second resolution.  */
   /*        Because classification of a single vector takes less than    */
   /*        0.01 secs, the timer was underflowing.                       */
-      printf("Runtime (without IO) in cpu-seconds: %.2f\n",
+      C_PRINTF("Runtime (without IO) in cpu-seconds: %.2f\n",
          (float)(runtime/100.0));
 
     }
     if((!no_accuracy) && (verbosity>=1)) {
-      printf("Accuracy on test set: %.2f%% (%ld correct, %ld incorrect, %ld total)\n",(float)(correct)*100.0/totdoc,correct,incorrect,totdoc);
-      printf("Precision/recall on test set: %.2f%%/%.2f%%\n",(float)(res_a)*100.0/(res_a+res_b),(float)(res_a)*100.0/(res_a+res_c));
+      C_PRINTF("Accuracy on test set: %.2f%% (%ld correct, %ld incorrect, %ld total)\n",(float)(correct)*100.0/totdoc,correct,incorrect,totdoc);
+      C_PRINTF("Precision/recall on test set: %.2f%%/%.2f%%\n",(float)(res_a)*100.0/(res_a+res_b),(float)(res_a)*100.0/(res_a+res_c));
     }
 
     return(0);
@@ -692,7 +693,7 @@ void SVMLightRunner::librarySVMClassifyReadInputParameters(
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".librarySVMClassifyReadInputParameters() Started."
     );
     long i;
@@ -704,7 +705,7 @@ void SVMLightRunner::librarySVMClassifyReadInputParameters(
         strcpy (predictionsfile, "svm_predictions"); 
         (*verbosity)=2;
     } else {
-        // SVMLight verbosity = 1 corresponds to GMUM.R verbosity = 5 (DEBUG)
+        // SVMLight verbosity = 1 corresponds to GMUM.R verbosity = 5 (DEBUG_LEVEL)
         (*verbosity) = config.log.verbosity - 4;
     }
     // GMUM.R changes }
@@ -713,20 +714,20 @@ void SVMLightRunner::librarySVMClassifyReadInputParameters(
     for(i=1;(i<argc) && ((argv[i])[0] == '-');i++) {
       switch ((argv[i])[1]) 
         { 
-        case 'h': libraryPrintHelp(); exit(0);
+        case 'h': libraryPrintHelp(); EXIT(0);
         case 'v': i++; (*verbosity)=atol(argv[i]); break;
         case 'f': i++; (*pred_format)=atol(argv[i]); break;
-        default: printf("\nUnrecognized option %s!\n\n",argv[i]);
+        default: C_PRINTF("\nUnrecognized option %s!\n\n",argv[i]);
              libraryPrintHelp();
-             exit(0);
+             EXIT(0);
         }
     }
     // GMUM.R changes {
     if(!use_gmumr) {
         if((i+1)>=argc) {
-          printf("\nNot enough input parameters!\n\n");
+          C_PRINTF("\nNot enough input parameters!\n\n");
           libraryPrintHelp();
-          exit(0);
+          EXIT(0);
         }
         strcpy (docfile, argv[i]);
         strcpy (modelfile, argv[i+1]);
@@ -736,9 +737,9 @@ void SVMLightRunner::librarySVMClassifyReadInputParameters(
     }
     // GMUM.R changes }
     if(((*pred_format) != 0) && ((*pred_format) != 1)) {
-      printf("\nOutput format can only take the values 0 or 1!\n\n");
+      C_PRINTF("\nOutput format can only take the values 0 or 1!\n\n");
       libraryPrintHelp();
-      exit(0);
+      EXIT(0);
     }
 }
 
@@ -747,7 +748,7 @@ MODEL * SVMLightRunner::libraryReadModel(
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".libraryReadModel() Started."
     );
     FILE *modelfl;
@@ -760,7 +761,7 @@ MODEL * SVMLightRunner::libraryReadModel(
     MODEL *model;
 
     if(verbosity>=1) {
-      printf("Reading model..."); fflush(stdout);
+      C_PRINTF("Reading model..."); C_FFLUSH(stdout);
     }
 
     // GMUM.R changes {
@@ -775,12 +776,12 @@ MODEL * SVMLightRunner::libraryReadModel(
         line = (char *)my_malloc(sizeof(char)*ll);
 
         if ((modelfl = fopen (modelfile, "r")) == NULL)
-        { perror (modelfile); exit (1); }
+        { perror (modelfile); EXIT (1); }
 
         fscanf(modelfl,"SVM-light Version %s\n",version_buffer);
         if(strcmp(version_buffer,VERSION)) {
           perror ("Version of model-file does not match version of svm_classify!"); 
-          exit (1); 
+          EXIT (1); 
         }
         fscanf(modelfl,"%ld%*[^\n]\n", &model->kernel_parm.kernel_type);  
         fscanf(modelfl,"%ld%*[^\n]\n", &model->kernel_parm.poly_degree);
@@ -799,7 +800,7 @@ MODEL * SVMLightRunner::libraryReadModel(
 
         LOG(
             config.log,
-            LogLevel::DEBUG,
+            LogLevel::DEBUG_LEVEL,
             __debug_prefix__ + ".libraryReadModel() Converting config to model..."
         );
 
@@ -831,7 +832,7 @@ MODEL * SVMLightRunner::libraryReadModel(
 
         LOG(
             config.log,
-            LogLevel::DEBUG,
+            LogLevel::DEBUG_LEVEL,
             __debug_prefix__ + ".libraryReadModel() Converting config done."
         );
     }
@@ -848,9 +849,9 @@ MODEL * SVMLightRunner::libraryReadModel(
           fgets(line,(int)ll,modelfl);
           if(!parse_document(line,words,&(model->alpha[i]),&queryid,&slackid,
                      &costfactor,&wpos,max_words,&comment)) {
-            printf("\nParsing error while reading model file in SV %ld!\n%s",
+            C_PRINTF("\nParsing error while reading model file in SV %ld!\n%s",
                i,line);
-            exit(1);
+            EXIT(1);
           }
           model->supvec[i] = create_example(-1,
                             0,0,
@@ -864,9 +865,9 @@ MODEL * SVMLightRunner::libraryReadModel(
             line = SVMConfigurationToSVMLightModelSVLine(config, i-1);
             if(!parse_document(line,words,&(model->alpha[i]),&queryid,&slackid,
                        &costfactor,&wpos,max_words,&comment)) {
-              printf("\nParsing error while reading model file in SV %ld!\n%s",
+              C_PRINTF("\nParsing error while reading model file in SV %ld!\n%s",
                  i,line);
-              exit(1);
+              EXIT(1);
             }
             model->supvec[i] = create_example(-1,
                               0,0,
@@ -878,12 +879,12 @@ MODEL * SVMLightRunner::libraryReadModel(
     // GMUM.R changes }
     free(words);
     if(verbosity>=1) {
-      fprintf(stdout, "OK. (%d support vectors read)\n",(int)(model->sv_num-1));
+      C_FPRINTF(stdout, "OK. (%d support vectors read)\n",(int)(model->sv_num-1));
     }
 
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".libraryReadModel() Done."
     );
 
@@ -896,7 +897,7 @@ void SVMLightRunner::libraryReadDocuments (
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".libraryReadDocuments() Started."
     );
 
@@ -908,7 +909,7 @@ void SVMLightRunner::libraryReadDocuments (
     FILE *docfl;
 
     if(verbosity>=1) {
-      printf("Scanning examples..."); fflush(stdout);
+      C_PRINTF("Scanning examples..."); C_FFLUSH(stdout);
     }
     // GMUM.R changes {
     if (!use_gmumr) {
@@ -923,7 +924,7 @@ void SVMLightRunner::libraryReadDocuments (
     ll+=2;
     max_docs+=2;
     if(verbosity>=1) {
-      printf("done\n"); fflush(stdout);
+      C_PRINTF("done\n"); C_FFLUSH(stdout);
     }
 
     (*docs) = (DOC **)my_malloc(sizeof(DOC *)*max_docs);    /* feature vectors */
@@ -933,13 +934,13 @@ void SVMLightRunner::libraryReadDocuments (
         line = (char *)my_malloc(sizeof(char)*ll);
 
         if ((docfl = fopen (docfile, "r")) == NULL)
-        { perror (docfile); exit (1); }
+        { perror (docfile); EXIT (1); }
     }
     // GMUM.R changes }
 
     words = (WORD *)my_malloc(sizeof(WORD)*(max_words_doc+10));
     if(verbosity>=1) {
-      printf("Reading examples into memory..."); fflush(stdout);
+      C_PRINTF("Reading examples into memory..."); C_FFLUSH(stdout);
     }
     dnum=0;
     (*totwords)=0;
@@ -965,34 +966,34 @@ void SVMLightRunner::libraryReadDocuments (
       if(line[0] == '#') continue;  /* line contains comments */
       if(!parse_document(line,words,&doc_label,&queryid,&slackid,&costfactor,
                  &wpos,max_words_doc,&comment)) {
-        printf("\nParsing error in line %ld!\n%s",dnum,line);
-        exit(1);
+        C_PRINTF("\nParsing error in line %ld!\n%s",dnum,line);
+        EXIT(1);
       }
       (*label)[dnum]=doc_label;
-      /* printf("docnum=%ld: Class=%f ",dnum,doc_label); */
+      /* C_PRINTF("docnum=%ld: Class=%f ",dnum,doc_label); */
       if(doc_label > 0) dpos++;
       if (doc_label < 0) dneg++;
       if (doc_label == 0) {
     	  if(config.use_transductive_learning){
     		  dunlab++;
     	  }else{
-    		  printf("Please for transductive learning pass use_transductive_learning\n");
-    		  exit(1);
+    		  C_PRINTF("Please for transductive learning pass use_transductive_learning\n");
+    		  EXIT(1);
     	  }
       }
       if((wpos>1) && ((words[wpos-2]).wnum>(*totwords))) 
         (*totwords)=(words[wpos-2]).wnum;
       if((*totwords) > MAXFEATNUM) {
-        printf("\nMaximum feature number exceeds limit defined in MAXFEATNUM!\n");
-        exit(1);
+        C_PRINTF("\nMaximum feature number exceeds limit defined in MAXFEATNUM!\n");
+        EXIT(1);
       }
       (*docs)[dnum] = create_example(dnum,queryid,slackid,costfactor,
                      create_svector(words,comment,1.0));
-      /* printf("\nNorm=%f\n",((*docs)[dnum]->fvec)->twonorm_sq);  */
+      /* C_PRINTF("\nNorm=%f\n",((*docs)[dnum]->fvec)->twonorm_sq);  */
       dnum++;  
       if(verbosity>=1) {
         if((dnum % 100) == 0) {
-        	printf("%ld..",dnum); fflush(stdout);
+        	C_PRINTF("%ld..",dnum); C_FFLUSH(stdout);
         }
       }
       // GMUM.R changes {
@@ -1017,7 +1018,7 @@ void SVMLightRunner::libraryReadDocuments (
     };
     free(words);
     if(verbosity>=1) {
-      fprintf(stdout, "OK. (%ld examples read)\n", dnum);
+      C_FPRINTF(stdout, "OK. (%ld examples read)\n", dnum);
     }
     (*totdoc)=dnum;
 }
@@ -1028,7 +1029,7 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".SVMConfigurationToSVMLightLearnInputLine() Started."
     );
 
@@ -1047,8 +1048,8 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     } else if (!target_value) {
         ss << 0;
     }else{
-    	printf("Unrecognized class label %d\n", target_value);
-    	exit(1);
+    	C_PRINTF("Unrecognized class label %d\n", target_value);
+    	EXIT(1);
     }
 
     // Optional feature: cost :)
@@ -1101,7 +1102,7 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".SVMConfigurationToSVMLightModelSVLine() Started."
     );
 
@@ -1115,7 +1116,7 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
 
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".SVMConfigurationToSVMLightModelSVLine() Done."
     );
 
@@ -1127,23 +1128,12 @@ char * SVMLightRunner::SVMConfigurationToSVMLightModelSVLine(
     return(c_line);
 }
 
-
-// TODO: Remove
-char ** SVMLightRunner::SVMConfigurationToSVMLightModelFile(
-    SVMConfiguration &config
-) {
-    char **result;
-    std::string line_string = "";
-    //result = malloc(sizeof(char *) * number_of_lines);
-}
-
-
 void SVMLightRunner::SVMLightModelToSVMConfiguration(
     MODEL *model, SVMConfiguration &config
 ) {
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".SVMLightModelToSVMConfiguration() Started."
     );
 
@@ -1211,7 +1201,7 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
 
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".SVMLightModelToSVMConfiguration() Done."
     );
 
@@ -1219,14 +1209,14 @@ void SVMLightRunner::SVMLightModelToSVMConfiguration(
 
 void SVMLightRunner::libraryWaitAnyKey()
 {
-  printf("\n(more)\n");
+  C_PRINTF("\n(more)\n");
   (void)getc(stdin);
 }
 
 
 void SVMLightRunner::libraryPrintHelp()
 {
-  printf("\nSVM-light %s: Support Vector Machine, learning module     %s\n",VERSION,VERSION_DATE);
+  C_PRINTF("\nSVM-light %s: Support Vector Machine, learning module     %s\n",VERSION,VERSION_DATE);
   copyright_notice();
 }
 

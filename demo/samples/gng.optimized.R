@@ -18,18 +18,15 @@ library(gmum.r)
 # Construct 10^6 points spherical dataset. Might take a while!
 sphere.dataset <- gng.preset.sphere(N=10000)
 
-# If you decide to use this advanced feature, you have to pass
-# range in which all passed data will reside
+# If you decide to use this advanced feature, you have to pass a
+# range (bounding box) in which all of passed data feature values will reside
 gng <- OptimizedGNG(sphere.dataset, max.nodes=1000, max.iter=10000, dim=3, 
                     value.range=c(0,1))
-
 
 # GNG would much longer, you can check it yourself
 # gng <- GNG(sphere.dataset, max.nodes=1000, max.iter=10000, dim=3)
 
-predictCentroid(gng, centroids(gng), sphere.dataset)
+findClosests(gng, calculateCentroids(gng), sphere.dataset)
 
-
-
-# Plot results
-plot(gng, vertex.size=6)
+# Plot results using spatial coordinates
+plot(gng, layout=gng.plot.layout.v2d, vertex.size=6)

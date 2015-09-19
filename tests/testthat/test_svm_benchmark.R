@@ -4,11 +4,8 @@ library(gmum.r)
 library(testthat)
 
 # You need svmlight executables for this test to work!
-
-eps <- 0.05
-
-test_that("our models have not too differents results than other models", {
-
+test_that("our accuracy is not much different from other implementations", {
+  eps <- 0.05
   data(svm_breast_cancer_dataset)
   ds <- svm.breastcancer.dataset
   ds[,'X1'] <- as.factor(ds[,'X1'])
@@ -16,7 +13,7 @@ test_that("our models have not too differents results than other models", {
   y <- factor(ds[,'X1'])
   formula <- X1 ~ .
   klar <- FALSE # set TRUE for svmlight testing if you have svmlight baniaries
-  
+  glib_svm <- gmum.r::SVM(formula, ds, core="libsvm", kernel="poly", C=1, verbosity=0, gamma=1)
   if (!klar){
     warning("svmlight portion is disabled, enable it if you have svmlight binaries")
   }
@@ -45,6 +42,7 @@ test_that("our models have not too differents results than other models", {
   if(klar) print(sprintf("klaR svmlight acc: %f", klar_acc))
   glight_acc <- svm.accuracy(glight_pred,  y.factor)
   print(sprintf("gmum svmlight acc: %f", glight_acc))
+  
   acc <- svm.accuracy(glib_epred,  y.factor)
   print(sprintf("gmum libsvm 2e acc: %f", acc))
   

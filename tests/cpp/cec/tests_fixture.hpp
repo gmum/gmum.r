@@ -37,6 +37,7 @@ public:
 protected:
     gmum::Params params;
     unsigned int times;
+    int seed;
 };
 
 class EnergyTests : public TestsFixture
@@ -75,6 +76,7 @@ protected:
     gmum::Params params;
     unsigned int iterations_limit;
     unsigned int times;
+    int seed;
 };
 
 #endif // TESTS_FIXTURE_H

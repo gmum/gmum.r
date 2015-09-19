@@ -1,4 +1,5 @@
 #include "cec_configuration.hpp"
+#include "assignment.hpp"
 #include "const.hpp"
 #include <boost/foreach.hpp>
 #include <sstream>
@@ -7,8 +8,6 @@
 #include <hartigan.hpp>
 
 using namespace gmum;
-
-
 
 CecConfiguration::CecConfiguration()
 {
@@ -314,4 +313,9 @@ void CecConfiguration::set_it_max(int it_max) {
 void CecConfiguration::set_algorithm(const std::string algorithm)
 {
     m_params.algorithm.reset(new Hartigan(m_params.log_nclusters, m_params.log_energy, m_params.it_max));
+}
+
+void CecConfiguration::set_seed(int seed)
+{
+    m_params.seed = seed;
 }

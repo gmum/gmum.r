@@ -37,11 +37,11 @@ gmum_cec <- function(nclusters, nstart, points, init_type, method_type, max_iter
     }    
     
     time_ = t
-    iters_ = c$log.iters()
-    energy_ = c$energy()
-    clustering_ = normalize_clustering(c$clustering())
-    centers_ = c$centers()
-    final_nclusters_ = tail(c$log.ncluster(), n=1)    
+    iters_ = c$iterations
+    energy_ = c$energy
+    clustering_ = normalize_clustering(c$clustering)
+    centers_ = c$centers
+    final_nclusters_ = tail(c$logNumberOfClusters, n=1)    
     
     return (list(
         time=time_, 

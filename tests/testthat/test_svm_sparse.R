@@ -2,8 +2,8 @@ library(testthat)
 library(gmum.r)
 
 test_that("sparse matrices work", {
-  x <- read.matrix.csr(system.file("data_sets", "svm", "dexter_train.data", mustWork=TRUE, package="gmum.r"))
-  y <- as.factor(unlist(read.table(system.file("data_sets", "svm", "dexter_train.labels", mustWork=TRUE, package="gmum.r"))))
+  x <- read.matrix.csr(system.file("dev", "datasets", "svm", "dexter_train.data", mustWork=TRUE, package="gmum.r"))
+  y <- as.factor(unlist(read.table(system.file("dev", "datasets", "svm", "dexter_train.labels", mustWork=TRUE, package="gmum.r"))))
 
     libs <- c("svmlight", "libsvm")
     kernels <- c("linear", "poly", "rbf", "sigmoid")
@@ -21,7 +21,7 @@ test_that("sparse matrices work", {
             pred_start_time <- Sys.time()
             pred <- predict(svm, x)
             pred_time <- Sys.time() - pred_start_time
-            print(sprintf("Prediction %f", pred_time))
+            print(sprintf("Prediction time %f", pred_time))
 
             acc <- svm.accuracy(prediction=pred, target=y)
             print(sprintf("Sparse acc, %s prediction: %f", lib_i, acc))

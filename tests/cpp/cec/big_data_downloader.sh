@@ -1,7 +1,7 @@
 #!/bin/bash
 
 URL="http://data.gmum.net/gmum_r/cec/big_tests"
-DATA_DIR="../../../inst/data_sets/cec"
+DATA_DIR="../../../inst/dev/datasets/cec"
 DIRS=`cat test_data_dirs_list`
 FILES=`cat test_data_list`
 

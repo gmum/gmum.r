@@ -2,13 +2,15 @@ library(igraph)
 library(testthat)
 
 test_that("GNG Utility works", {
+    print("GNG Utility works")
+  
     max_nodes <- 500
 
     # Construct gng object
     gng <- GNG(max.nodes=max_nodes, train.online=TRUE, dim=3, verbosity=3, k=1.3)
 
     # Construct examples, here we will use a sphere
-    ex <- gng.preset.sphere(N=10000, prob=-1)
+    ex <- gng.preset.sphere(N=10000)
     labels <- round(runif(10000)*3)
     insertExamples(gng, ex, labels)
 
@@ -18,12 +20,12 @@ test_that("GNG Utility works", {
 
 
     # Wait for it to converge
-    print("Adding jumped distribution. 15s sleep")
+    print("Adding juped distribution. 15s sleep")
     Sys.sleep(15.0)
     pause(gng)
-    plot(gng, mode=gng.plot.2d.errors) #0.068 without utility , 10 times less with
+    plot(gng, mode="2d.errors") #0.068 without utility , 10 times less with
 
-    ex2 <- gng.preset.box(N=10000, r=1.0, center=c(3.0,3.0,3.0), prob=-1)
+    ex2 <- gng.preset.cube(N=10000, r=1.0, center=c(3.0,3.0,3.0))
     insertExamples(gng, ex2, labels)
 
 
@@ -31,9 +33,9 @@ test_that("GNG Utility works", {
     print("Test::Jumped distribution added. 15s sleep")
     Sys.sleep(15.0)
     pause(gng)
-    plot(gng, mode=gng.plot.2d.errors)
+    plot(gng, mode="2d.errors")
 
-    g <- convertToGraph(gng)
+    g <- convertToIGraph(gng)
     length(V(g))
 
     if("rgl" %in% rownames(installed.packages()) == TRUE) {
@@ -44,7 +46,7 @@ test_that("GNG Utility works", {
 
     print("Test::Graph after jumped distribution")
 
-    ig <- convertToGraph(gng)
+    ig <- convertToIGraph(gng)
 
     # Running unit tests (almost)
     test_that("GNG has not isolated vertexes", {
@@ -61,7 +63,7 @@ test_that("GNG Utility works", {
 
     print("Test::Convergence test")
 
-
-
     terminate(gng)
+    
+    expect_that(isRunning(gng) == FALSE, is_true())
 })

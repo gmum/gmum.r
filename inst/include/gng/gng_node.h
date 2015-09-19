@@ -55,10 +55,7 @@ public:
 	double extra_data; //7 - extra data that is voted among vertices when adapting
 	double * position; //8... 8+dim-1
 
-	/*
-	 * Construct empty GNGNode - not initialized storage! Non initialized because used only internally
-	 * in GNGGraph.
-	 */
+	// Construct empty GNGNode
 	GNGNode() {
 		//prevent memory corruption
 		_position_owner = false;
@@ -67,9 +64,7 @@ public:
 
 	~GNGNode() {
 		if (_position_owner) {
-			std::cerr << "Position owner, dim = " << dim << std::endl;
 			delete[] position;
-
 		}
 	}
 
@@ -135,7 +130,7 @@ public:
 	void loadVertexData(vector<double>::iterator & itr, int gng_dim,
 			double * position_ptr) {
 		vector<double> dump;
-		dump.reserve(8 + dim);
+		dump.reserve(8 + gng_dim);
 
 		std::copy(itr + 1, itr + 9 + gng_dim, std::back_inserter(dump));
 		std::advance(itr, (8 + gng_dim));

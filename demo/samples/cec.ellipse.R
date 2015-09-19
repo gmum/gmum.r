@@ -11,7 +11,7 @@
 library(gmum.r)
 
 # Load ellipse_gauss data set
-data(cec_ellipse_gauss)
+data(cec.ellipsegauss)
 
 # Try to fit 5 gaussians to the data set
 cec <- CEC(k=5, x=cec.ellipsegauss, method.init="random")

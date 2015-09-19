@@ -52,8 +52,7 @@ Update ldconfig by simply running `sudo ldconfig`.
 
 ### GMUM.R dependencies
 
-C++ **Armadillo** library and its dependencies ( **Lapack**, **Blas**) need to
-be installed.
+C++ **Armadillo** library and its dependencies ( **LAPACK**, **BLAS**) need to be installed.
 
 ## Build
 

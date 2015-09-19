@@ -9,9 +9,6 @@
 #include <logger.h>
 
 GNGServer::GNGServer(std::string filename) {
-
-	cerr << filename << endl;
-
 	std::ifstream input;
 	input.open(filename.c_str(), ios::in | ios::binary);
 
@@ -33,10 +30,34 @@ void GNGServer::init(GNGConfiguration configuration,
 
 	m_index = gng_server_count++;
 
+
+	/* If verbosity > 0 and production and using RCPP then logging to file
+	 It is because Rcout doesn't work outside of main thread
+	 This is first time I used nested macro ifs. This might be refactored to choose during creation like "log_to_file"
+	 parameter
+	 */
+	#ifdef RCPP_INTERFACE
+	#ifdef DEBUG_GMUM
+	m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity));
+	#else
+	if(configuration.verbosity != 0){
+		ofstream* log_file = new ofstream();
+		log_file->open("gng.log"); // Could create one for each gng, but this can create massive amount of files
+		// TODO: There is leaked resource here
+		m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity, *log_file));
+		COUT("Logging to gng.log");
+	} else {
+		m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity));
+	}
+	#endif
+	#else
+	m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity));
+	#endif
+
 	algorithm_thread = 0;
 	m_running_thread_created = false;
 
-	m_logger = boost::shared_ptr<Logger>(new Logger(configuration.verbosity));
+
 
     if(configuration.seed != -1){
         LOG_PTR(m_logger, 5, "GNGServer()::seeding to "+to_str(configuration.seed));
@@ -50,6 +71,8 @@ void GNGServer::init(GNGConfiguration configuration,
     }
 
 	this->current_configuration = configuration; //assign configuration
+
+
 
 	if (current_configuration.graph_storage == GNGConfiguration::RAMMemory) {
 		//Nothing to do here
@@ -82,10 +105,6 @@ void GNGServer::init(GNGConfiguration configuration,
 						current_configuration.dim, true /* store_extra */, 
 						GNGDatasetSimple<double>::Sequential, current_configuration.seed, m_logger));
 	} else {
-		cerr << "Passed dataset type " << current_configuration.datasetType
-				<< endl;
-		cerr << GNGConfiguration::DatasetSampling << endl;
-		cerr << GNGConfiguration::DatasetSamplingProb << endl;
 		DBG_PTR(m_logger,11, "GNGServer::Not recognized dataset");
 		throw BasicException(
 				"Database type not supported "
@@ -167,18 +186,23 @@ bool GNGServer::isRunning() const {
 
 double GNGServer::nodeDistance(int id1, int id2) const {
 	if (gngAlgorithm->isRunning()) {
-		cerr
-				<< "nodeDistance: Please pause algorithm before calling nodeDistance function\n";
+		CERR("nodeDistance: Please pause algorithm before calling nodeDistance function\n");
 		return -1.0;
 	}
 	if (id1 <= 0 || id2 <= 0) {
-		cerr << "nodeDistance: Indexing starts from 1\n";
+		CERR("nodeDistance: Indexing starts from 1\n");
 		return -1.0;
 	}
 	return gngGraph->get_dist(id1 - 1, id2 - 1);
 }
 
 void GNGServer::save(std::string filename) {
+	bool wasRunning = gngAlgorithm->isRunning();
+
+	gngAlgorithm->pause(true);
+
+	ASSERT(!gngAlgorithm->isRunning());
+
 	std::ofstream output;
 	output.open(filename.c_str(), ios::out | ios::binary);
 
@@ -186,17 +210,22 @@ void GNGServer::save(std::string filename) {
 
 	try {
 		gngGraph->lock();
-		assert(filename != "");
+		ASSERT(filename != "");
 		gngGraph->serialize(output);
 	} catch (...) {
-		cerr << "Failed exporting to GraphML\n";
 #ifdef DEBUG_GMUM
-		throw BasicException("Failed exporting to GraphML\n");
+		throw BasicException("Failed exporting to binary format\n");
 #endif
 		gngGraph->unlock(); //No RAII, yes..
+		output.close();
 		return;
 	}
 	gngGraph->unlock();
+	output.close();
+
+	if(wasRunning){
+		gngAlgorithm->run(false);
+	}
 }
 
 unsigned int GNGServer::getCurrentIteration() const {
@@ -207,10 +236,9 @@ unsigned int GNGServer::getCurrentIteration() const {
 void GNGServer::exportToGraphML(std::string filename) {
 	try {
 		gngGraph->lock();
-		assert(filename != "");
+		ASSERT(filename != "");
 		writeToGraphML(getGraph(), filename);
 	} catch (...) {
-		cerr << "Failed exporting to GraphML\n";
 #ifdef DEBUG_GMUM
 		throw BasicException("Failed exporting to GraphML\n");
 #endif
@@ -290,7 +318,7 @@ Rcpp::List GNGServer::getNode(int index) {
 	int gng_index = index - 1; //1 based
 
 	if(index <= 0) {
-		cerr<<"Indexing of nodes starts from 1 (R convention)\n";
+		CERR("Indexing of nodes starts from 1 (R convention)\n");
 		List ret;
 		return ret;
 	}
@@ -332,7 +360,7 @@ Rcpp::List GNGServer::getNode(int index) {
 
 int GNGServer::Rpredict(Rcpp::NumericVector & r_ex) {
   if(r_ex.size() > current_configuration.dim){
-     cerr<<"Wrong example dimensionality. Note that C++ method accepts only vectors, not matrix, please use S4 predict method instead\n";
+     CERR("Wrong example dimensionality. Note that C++ method accepts only vectors, not matrix, please use S4 predict method instead\n");
      return -1;
   }else{
 	  return 1+gngAlgorithm->predict(std::vector<double>(r_ex.begin(), r_ex.end()) );
@@ -366,8 +394,7 @@ void GNGServer::RinsertLabeledExamples(Rcpp::NumericMatrix & r_points,
 	arma::Row<double> diff_std = arma::abs(std_colwise - 1.0);
 	float max_diff_std = arma::max(diff_std), max_mean = arma::max(mean_colwise);
 	if(max_diff_std > 0.1 || max_mean > 0.1) {
-		cerr<<max_diff_std<<" "<<max_mean<<endl;
-		cerr<<"Warning: it is advised to scale data for optimal algorithm behavior to mean=1 std=0 \n";
+		CERR("it is advised to scale data for optimal algorithm behavior to mean=1 std=0 \n");
 	}
 
 	//Check if data fits in bounding box
@@ -379,8 +406,8 @@ void GNGServer::RinsertLabeledExamples(Rcpp::NumericMatrix & r_points,
 
 		for(size_t i=0;i<current_configuration.dim; ++i) {
 			if(current_configuration.orig[i] > min_colwise[i] || current_configuration.orig[i]+current_configuration.axis[i] < max_colwise[i]) {
-				cerr<<"Error: each feature has to be in range <min, max> passed to gng.type.optimized \n";
-				cerr<<"Error: returning, did not insert examples\n";
+				CERR("Error: each feature has to be in range <min, max> passed to gng.type.optimized");
+				CERR("Error: returning, did not insert examples");
 				return;
 			}
 		}
@@ -388,14 +415,9 @@ void GNGServer::RinsertLabeledExamples(Rcpp::NumericMatrix & r_points,
 
 	arma::inplace_trans( *points, "lowmem");
 
-
-
-
 	if(extra.size()) {
 		if(!(points->n_cols== extra.size())){
-
-			cerr<<"Error: please pass same number of labels as examples\n";
-			cerr<<"Error: passed "<<points->n_cols<<" "<<extra.size()<<"\n";
+			CERR("Error: please pass same number of labels as examples\n");
 			return;
 		}
 		insertExamples(points->memptr(), &extra[0], 0 /*probabilty vector*/,
@@ -417,16 +439,20 @@ void GNGServer::RinsertLabeledExamples(Rcpp::NumericMatrix & r_points,
 
 ///Pause algorithm
 void GNGServer::pause() {
-	gngAlgorithm->pause(/* synchronized*/ true);
+  if(gngAlgorithm.get()){
+  	if(!gngAlgorithm->isRunning()){
+          //CERR("Called pause on not running gng object");
+  		//return;
+  	}
+  	gngAlgorithm->pause(/* synchronized*/ true);
+  }
 }
 
 ///Terminate algorithm
 void GNGServer::terminate() {
 	if(gngAlgorithm.get()){
-		LOG_PTR(m_logger,5, "GNGServer::getAlgorithm terminating");
-		LOG_PTR(m_logger,10, "GNGServer::isRunning ="+ to_str(gngAlgorithm->isRunning()));
+		LOG_PTR(m_logger,3, "GNGServer::getAlgorithm terminating");
 		gngAlgorithm->terminate(/*synchronized*/true);
-		LOG_PTR(m_logger,10, "GNGServer::isRunning ="+ to_str(gngAlgorithm->isRunning()));
 	}
 }
 
@@ -453,8 +479,9 @@ GNGServer::~GNGServer() {
 		algorithm_thread->join();
 	}
 
-	LOG_PTR(m_logger, 5, "GNGServer::destructor for "+to_str(m_index)+" finished");
 
+
+	LOG_PTR(m_logger, 5, "GNGServer::destructor for "+to_str(m_index)+" finished");
 }
 
 unsigned GNGServer::getDatasetSize() const{

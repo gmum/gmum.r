@@ -145,11 +145,6 @@ protected:
     );
 
     /**
-     * Convert SVMConfiguration to SVMLight's model file lines
-     */
-    char ** SVMConfigurationToSVMLightModelFile(SVMConfiguration &config);
-
-    /**
      * Store SVMLight model data into SVMConfiguration
      * NOTE: It does not clean unnecessary data!
      */
