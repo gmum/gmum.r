@@ -1,5 +1,5 @@
 library(testthat)
-library('gmum.r')
+library(gmum.r)
 
 data(svm_two_ellipsoids_dataset)
 data(svm_breast_cancer_dataset)
@@ -65,7 +65,7 @@ test_that("svm max.iter works", {
 
   
   start_time <- Sys.time()
-  svm1 <- SVM(x,y, core="libsvm", max.iter = 10)
+  svm1 <- SVM(x,y, core="libsvm", max.iter = 1)
   restricted_time <- Sys.time() - start_time
   
   start_time <- Sys.time()
@@ -75,7 +75,7 @@ test_that("svm max.iter works", {
   expect_true(restricted_time < normal_time)
   
   start_time <- Sys.time()
-  svm1 <- SVM(x,y, core="svmlight", max.iter = 10)
+  svm1 <- SVM(x,y, core="svmlight", max.iter = 1)
   restricted_time <- Sys.time() - start_time
   
   start_time <- Sys.time()

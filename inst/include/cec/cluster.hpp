@@ -4,7 +4,7 @@
 //add_point and remove_point are updating the cluster. nice! madry stan
 
 #include <cmath>
-#include <armadillo>
+#include <RcppArmadillo.h>
 #include <cmath>
 #include <vector>
 #include "boost/smart_ptr.hpp"

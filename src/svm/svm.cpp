@@ -7,9 +7,16 @@
 #include <stdarg.h>
 #include <limits.h>
 #include <locale.h>
+#include <limits.h>
 #include "svm.h"
 #include "svm_utils.h"
 #include "svm_basic.h"
+#include "utils/cutils.h"
+#include "utils/utils.h"
+
+#ifdef RCPP_INTERFACE
+#include <RcppArmadillo.h>
+#endif
 
 int libsvm_version = LIBSVM_VERSION;
 typedef float Qfloat;
@@ -461,7 +468,7 @@ void Solver::reconstruct_gradient(Logger &log)
 			nr_free++;
 
 	if(2*nr_free < active_size)
-		LOG(log, LogLevel::WARNING, "WARNING: using -h 0 may be faster");
+		LOG(log, LogLevel::WARNING_LEVEL, "WARNING_LEVEL: using -h 0 may be faster");
 
 	if (nr_free*l > 2*active_size*(l-active_size))
 	{
@@ -551,7 +558,7 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 
 		// set max_iter to -1 to disable the mechanism
         if ((max_iter != -1) && (iter >= max_iter)) {
-            LOG(log, LogLevel::WARNING, "WARNING: reaching max number of iterations");
+            LOG(log, LogLevel::WARNING_LEVEL, "WARNING_LEVEL: reaching max number of iterations");
             si->solve_timed_out = true;
             break;
         
@@ -752,7 +759,7 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 
   //gmum.r -> sacherus
 	si->iter =iter;
-	LOG(log, LogLevel::INFO, "optimization finished, #iter = " + to_string(iter));
+	LOG(log, LogLevel::INFO_LEVEL, "optimization finished, #iter = " + to_string(iter));
 
 	delete[] p;
 	delete[] y;
@@ -1443,7 +1450,7 @@ static void solve_c_svc(
 		sum_alpha += alpha[i];
 
 	if (Cp==Cn)
-		LOG(log, LogLevel::DEBUG, "nu = " + to_string(sum_alpha/(Cp*prob->l)));
+		LOG(log, LogLevel::DEBUG_LEVEL, "nu = " + to_string(sum_alpha/(Cp*prob->l)));
 
 	for(i=0;i<l;i++)
 		alpha[i] *= y[i];
@@ -1493,7 +1500,7 @@ static void solve_nu_svc(
 		alpha, 1.0, 1.0, param->eps, si,  param->shrinking, log, param->max_iter);
 	double r = si->r;
 
-	LOG(log, LogLevel::DEBUG, "C = " + to_string(1/r));
+	LOG(log, LogLevel::DEBUG_LEVEL, "C = " + to_string(1/r));
 
 	for(i=0;i<l;i++)
 		alpha[i] *= y[i]/r;
@@ -1571,7 +1578,7 @@ static void solve_epsilon_svr(
 		sum_alpha += fabs(alpha[i]);
 	}
 
-	LOG(log, LogLevel::DEBUG, "nu = " + to_string(sum_alpha/(param->C*l)));
+	LOG(log, LogLevel::DEBUG_LEVEL, "nu = " + to_string(sum_alpha/(param->C*l)));
 
 	delete[] alpha2;
 	delete[] linear_term;
@@ -1606,7 +1613,7 @@ static void solve_nu_svr(
 	s.Solve(2*l, SVR_Q(*prob,*param), linear_term, y,
 		alpha2, C, C, param->eps, si, param->shrinking, log, param->max_iter);
 
-	LOG(log, LogLevel::DEBUG, "epsilon = " + to_string(-si->r));
+	LOG(log, LogLevel::DEBUG_LEVEL, "epsilon = " + to_string(-si->r));
 
 	for(i=0;i<l;i++)
 		alpha[i] = alpha2[i] - alpha2[i+l];
@@ -1650,7 +1657,7 @@ static decision_function svm_train_one(
 			break;
 	}
 
-	LOG(log, LogLevel::DEBUG, "obj = " + to_string(si.obj) + ", rho = " + to_string(si.rho));
+	LOG(log, LogLevel::DEBUG_LEVEL, "obj = " + to_string(si.obj) + ", rho = " + to_string(si.rho));
 
 	// output SVs
 
@@ -1674,7 +1681,7 @@ static decision_function svm_train_one(
 		}
 	}
 
-	LOG(log, LogLevel::DEBUG, "nSV = " + to_string(nSV) + ", nBSV = " + to_string(nBSV));
+	LOG(log, LogLevel::DEBUG_LEVEL, "nSV = " + to_string(nSV) + ", nBSV = " + to_string(nBSV));
 
 	//gmum.r
 	iter = si.iter;
@@ -1788,13 +1795,13 @@ static void sigmoid_train(
 
 		if (stepsize < min_step)
 		{
-			LOG(logger, LogLevel::INFO, "Line search fails in two-class probability estimates");
+			LOG(logger, LogLevel::INFO_LEVEL, "Line search fails in two-class probability estimates");
 			break;
 		}
 	}
 
 	if (iter>=max_iter)
-		LOG(logger, LogLevel::INFO, "Reaching maximal iterations in two-class probability estimates");
+		LOG(logger, LogLevel::INFO_LEVEL, "Reaching maximal iterations in two-class probability estimates");
 	free(t);
 }
 
@@ -1866,7 +1873,7 @@ static void multiclass_probability(int k, double **r, double *p, Logger &log)
 		}
 	}
 	if (iter>=max_iter)
-		LOG(log, LogLevel::INFO, "Exceeds max_iter in multiclass_prob");
+		LOG(log, LogLevel::INFO_LEVEL, "Exceeds max_iter in multiclass_prob");
 	for(t=0;t<k;t++) free(Q[t]);
 	free(Q);
 	free(Qp);
@@ -1886,7 +1893,7 @@ static void svm_binary_svc_probability(
 	for(i=0;i<prob->l;i++) perm[i]=i;
 	for(i=0;i<prob->l;i++)
 	{
-		int j = i+rand()%(prob->l-i);
+		int j = i+ed_c_rand()%(prob->l-i);
 		swap(perm[i],perm[j]);
 	}
 	for(i=0;i<nr_fold;i++)
@@ -1986,7 +1993,7 @@ static double svm_svr_probability(
 		else 
 			mae+=fabs(ymv[i]);
 	mae /= (prob->l-count);
-	LOG(log, LogLevel::DEBUG,
+	LOG(log, LogLevel::DEBUG_LEVEL,
 			"Prob. model for test data: target value = predicted value + z,\nz: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma= " + to_string(mae));
 	free(ymv);
 	return mae;
@@ -2138,7 +2145,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 		// group training data of the same class
 		svm_group_classes(prob,&nr_class,&label,&start,&count,perm);
 		if(nr_class == 1)
-			LOG(log, LogLevel::WARNING, "WARNING: training data in only one class. See README for details.");
+			LOG(log, LogLevel::WARNING_LEVEL, "WARNING_LEVEL: training data in only one class. See README for details.");
 		svm_node **x = Malloc(svm_node *,l);
 		int i;
 		for(i=0;i<l;i++)
@@ -2156,7 +2163,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 				if(param->weight_label[i] == label[j])
 					break;
 			if(j == nr_class) {
-				LOG(log, LogLevel::WARNING, "WARNING: class label " + to_string(param->weight_label[i]) + " specified in weight is not found")
+				LOG(log, LogLevel::WARNING_LEVEL, "WARNING_LEVEL: class label " + to_string(param->weight_label[i]) + " specified in weight is not found")
 			} else {
  				weighted_C[j] *= param->weight[i];
 			}
@@ -2258,7 +2265,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 			nz_count[i] = nSV;
 		}
 		
-		LOG(log, LogLevel::DEBUG, "Total nSV = " + to_string(total_sv));
+		LOG(log, LogLevel::DEBUG_LEVEL, "Total nSV = " + to_string(total_sv));
 
 		model->l = total_sv;
 		model->SV = Malloc(svm_node *,total_sv);
@@ -2305,7 +2312,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 				++p;
 			}
 		
-		LOG(log, LogLevel::TRACE, "Written SV");
+		LOG(log, LogLevel::TRACE_LEVEL, "Written SV");
 		
         free(label);
 		free(probA);
@@ -2322,7 +2329,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param, Logger
 		free(nz_count);
 		free(nz_start);
 	}
-	LOG(log, LogLevel::TRACE, "Finished fitting");
+	LOG(log, LogLevel::TRACE_LEVEL, "Finished fitting");
 	return model;
 }
 
@@ -2337,7 +2344,7 @@ void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, i
 	if (nr_fold > l)
 	{
 		nr_fold = l;
-		fprintf(stderr,"WARNING: # folds > # data. Will use # folds = # data instead (i.e., leave-one-out cross validation)\n");
+		C_FPRINTF(stderr,"WARNING: # folds > # data. Will use # folds = # data instead (i.e., leave-one-out cross validation)\n");
 	}
 	fold_start = Malloc(int,nr_fold+1);
 	// stratified cv may not give leave-one-out rate
@@ -2359,7 +2366,8 @@ void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, i
 		for (c=0; c<nr_class; c++) 
 			for(i=0;i<count[c];i++)
 			{
-				int j = i+rand()%(count[c]-i);
+				int j = 0;
+                j = i+ed_c_rand()%(count[c]-i);
 				swap(index[start[c]+j],index[start[c]+i]);
 			}
 		for(i=0;i<nr_fold;i++)
@@ -2396,7 +2404,7 @@ void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, i
 		for(i=0;i<l;i++) perm[i]=i;
 		for(i=0;i<l;i++)
 		{
-			int j = i+rand()%(l-i);
+			int j = i+ed_c_rand()%(l-i);
 			swap(perm[i],perm[j]);
 		}
 		for(i=0;i<=nr_fold;i++)
@@ -2484,7 +2492,7 @@ double svm_get_svr_probability(const svm_model *model, Logger &log)
 		return model->probA[0];
 	else
 	{
-		fprintf(stderr,"Model doesn't contain information for SVR probability inference\n");
+		C_FPRINTF(stderr,"Model doesn't contain information for SVR probability inference\n");
 		return 0;
 	}
 }
@@ -2639,81 +2647,81 @@ int svm_save_model(const char *model_file_name, const svm_model *model, Logger &
 
 	const svm_parameter& param = model->param;
 
-	fprintf(fp,"svm_type %s\n", svm_type_table[param.svm_type]);
-	fprintf(fp,"kernel_type %s\n", kernel_type_table[param.kernel_type]);
+	C_FPRINTF(fp,"svm_type %s\n", svm_type_table[param.svm_type]);
+	C_FPRINTF(fp,"kernel_type %s\n", kernel_type_table[param.kernel_type]);
 
 	if(param.kernel_type == POLY)
-		fprintf(fp,"degree %d\n", param.degree);
+		C_FPRINTF(fp,"degree %d\n", param.degree);
 
 	if(param.kernel_type == POLY || param.kernel_type == RBF || param.kernel_type == SIGMOID)
-		fprintf(fp,"gamma %g\n", param.gamma);
+		C_FPRINTF(fp,"gamma %g\n", param.gamma);
 
 	if(param.kernel_type == POLY || param.kernel_type == SIGMOID)
-		fprintf(fp,"coef0 %g\n", param.coef0);
+		C_FPRINTF(fp,"coef0 %g\n", param.coef0);
 
 	int nr_class = model->nr_class;
 	int l = model->l;
-	fprintf(fp, "nr_class %d\n", nr_class);
-	fprintf(fp, "total_sv %d\n",l);
+	C_FPRINTF(fp, "nr_class %d\n", nr_class);
+	C_FPRINTF(fp, "total_sv %d\n",l);
 	
 	{
-		fprintf(fp, "rho");
+		C_FPRINTF(fp, "rho");
 		for(int i=0;i<nr_class*(nr_class-1)/2;i++)
-			fprintf(fp," %g",model->rho[i]);
-		fprintf(fp, "\n");
+			C_FPRINTF(fp," %g",model->rho[i]);
+		C_FPRINTF(fp, "\n");
 	}
 	
 	if(model->label)
 	{
-		fprintf(fp, "label");
+		C_FPRINTF(fp, "label");
 		for(int i=0;i<nr_class;i++)
-			fprintf(fp," %d",model->label[i]);
-		fprintf(fp, "\n");
+			C_FPRINTF(fp," %d",model->label[i]);
+		C_FPRINTF(fp, "\n");
 	}
 
 	if(model->probA) // regression has probA only
 	{
-		fprintf(fp, "probA");
+		C_FPRINTF(fp, "probA");
 		for(int i=0;i<nr_class*(nr_class-1)/2;i++)
-			fprintf(fp," %g",model->probA[i]);
-		fprintf(fp, "\n");
+			C_FPRINTF(fp," %g",model->probA[i]);
+		C_FPRINTF(fp, "\n");
 	}
 	if(model->probB)
 	{
-		fprintf(fp, "probB");
+		C_FPRINTF(fp, "probB");
 		for(int i=0;i<nr_class*(nr_class-1)/2;i++)
-			fprintf(fp," %g",model->probB[i]);
-		fprintf(fp, "\n");
+			C_FPRINTF(fp," %g",model->probB[i]);
+		C_FPRINTF(fp, "\n");
 	}
 
 	if(model->nSV)
 	{
-		fprintf(fp, "nr_sv");
+		C_FPRINTF(fp, "nr_sv");
 		for(int i=0;i<nr_class;i++)
-			fprintf(fp," %d",model->nSV[i]);
-		fprintf(fp, "\n");
+			C_FPRINTF(fp," %d",model->nSV[i]);
+		C_FPRINTF(fp, "\n");
 	}
 
-	fprintf(fp, "SV\n");
+	C_FPRINTF(fp, "SV\n");
 	const double * const *sv_coef = model->sv_coef;
 	const svm_node * const *SV = model->SV;
 
 	for(int i=0;i<l;i++)
 	{
 		for(int j=0;j<nr_class-1;j++)
-			fprintf(fp, "%.16g ",sv_coef[j][i]);
+			C_FPRINTF(fp, "%.16g ",sv_coef[j][i]);
 
 		const svm_node *p = SV[i];
 
 		if(param.kernel_type == PRECOMPUTED)
-			fprintf(fp,"0:%d ",(int)(p->value));
+			C_FPRINTF(fp,"0:%d ",(int)(p->value));
 		else
 			while(p->index != -1)
 			{
-				fprintf(fp,"%d:%.8g ",p->index,p->value);
+				C_FPRINTF(fp,"%d:%.8g ",p->index,p->value);
 				p++;
 			}
-		fprintf(fp, "\n");
+		C_FPRINTF(fp, "\n");
 	}
 
 	setlocale(LC_ALL, old_locale);
@@ -2774,7 +2782,7 @@ bool read_model_header(FILE *fp, svm_model* model, Logger &log)
 			}
 			if(svm_type_table[i] == NULL)
 			{
-				fprintf(stderr,"unknown svm type.\n");
+				C_FPRINTF(stderr,"unknown svm type.\n");
 				return false;
 			}
 		}
@@ -2792,7 +2800,7 @@ bool read_model_header(FILE *fp, svm_model* model, Logger &log)
 			}
 			if(kernel_type_table[i] == NULL)
 			{
-				fprintf(stderr,"unknown kernel function.\n");	
+				C_FPRINTF(stderr,"unknown kernel function.\n");	
 				return false;
 			}
 		}
@@ -2852,7 +2860,7 @@ bool read_model_header(FILE *fp, svm_model* model, Logger &log)
 		}
 		else
 		{
-			fprintf(stderr,"unknown text in model file: [%s]\n",cmd);
+			C_FPRINTF(stderr,"unknown text in model file: [%s]\n",cmd);
 			return false;
 		}
 	}
@@ -2882,7 +2890,7 @@ svm_model *svm_load_model(const char *model_file_name, Logger &log)
 	// read header
 	if (!read_model_header(fp, model, log))
 	{
-		fprintf(stderr, "ERROR: fscanf failed to read model\n");
+		C_FPRINTF(stderr, "ERROR: fscanf failed to read model\n");
 		setlocale(LC_ALL, old_locale);
 		free(old_locale);
 		free(model->rho);

@@ -68,7 +68,7 @@ TEST(GraphTests, BasicGraphTest) {
 
 	ASSERT_EQ(g.get_number_nodes(), N_start - 1);
 
-	/** WARNING: highly intrusive test ! Can change implementation*/
+	/** WARNING_LEVEL: highly intrusive test ! Can change implementation*/
 	ASSERT_EQ(g.first_free, 20);
 	ASSERT_EQ(g.next_free[g.first_free], 15); //might fail if not doubling
 	ASSERT_EQ(g.next_free[15], 10);

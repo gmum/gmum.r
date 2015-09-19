@@ -151,7 +151,7 @@ typedef struct learn_parm {
 				  retrain */
   long   skip_final_opt_check; /* do not check KT-Conditions at the end of
 				  optimization for examples removed by 
-				  shrinking. WARNING: This might lead to 
+				  shrinking. WARNING_LEVEL: This might lead to
 				  sub-optimal solutions! */
   long   compute_loo;          /* if nonzero, computes leave-one-out
 				  estimates */

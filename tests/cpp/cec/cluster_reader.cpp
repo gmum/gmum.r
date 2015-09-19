@@ -12,7 +12,7 @@ std::string ClusterReader::prefix() {
 #ifdef TEST_DATA_PATH
     return std::string(TEST_DATA_PATH) + "/cec/" + m_folder_name + "/";
 #else
-    return std::string("../../inst/data_sets/cec/") + m_folder_name + "/";
+    return std::string("../../inst/dev/datasets/cec/") + m_folder_name + "/";
 #endif
 }
 

@@ -51,6 +51,10 @@ public:
 
 	void terminate();
 
+	void setVerbosity(int verbosity) {
+		this->m_logger->verbosity = verbosity;
+	}
+
 	double nodeDistance(int id1, int id2) const;
 
 	void save(std::string filename);
@@ -136,11 +140,10 @@ private:
         // This shouldn't be necessary but R behaves strangely in this matter.
 		GNGServer * gng_server = (GNGServer*) server;
 		try {
-			DBG(gng_server->m_logger,10, "GNGServer::run::proceeding to algorithm");
+			DBG_PTR(gng_server->m_logger,10, "GNGServer::run::proceeding to algorithm");
 			gng_server->getAlgorithm().runAlgorithm();
 		} catch (std::exception & e) {
-			cerr << "GNGServer::failed _run with " << e.what() << endl;
-			DBG(gng_server->m_logger,10, e.what());
+			DBG_PTR(gng_server->m_logger,10, e.what());
 		}
 	}
 

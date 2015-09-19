@@ -1,27 +1,36 @@
-library(igraph)
 library(methods)
 
-
-gng.plot.color.label <- 'label'
-gng.plot.color.fast.cluster <- 'fast.cluster'
-gng.plot.color.cluster <- 'cluster'
-gng.plot.color.none <- 'none'
+#' @import igraph
+#' @importFrom ggplot2 scale_size_continuous scale_size_identity geom_point aes ggplot geom_tile scale_fill_brewer scale_alpha_identity scale_colour_brewer geom_abline
+NULL
 
 
+#' Use first two spatial coordinates as position in layout
+#' 
+#' @note You can pass any igraph layout algorithm to plot
+#' 
+#' @param g GNG object
+#' 
+#' @export
 gng.plot.layout.v2d <- function(g){
   cbind(V(g)$v0, V(g)$v1)
 }
-gng.plot.layout.igraph.fruchterman <- function(g){
-  layout.fruchterman.reingold(g, niter=10000, area=4*vcount(g)^2)
-}
+
+gng.plot.color.label <- 'label'
+
+gng.plot.color.fast.cluster <- 'fast.cluster'
+
+gng.plot.color.cluster <- 'cluster'
+
+gng.plot.color.none <- 'none'
+
 gng.plot.layout.igraph.fruchterman.fast <- layout.fruchterman.reingold
+
 gng.plot.layout.igraph.auto <- layout.auto
 
-gng.plot.2d <- 1
-gng.plot.3d <- 2
-gng.plot.2d.errors <- 3
+gng.plot.2d <- "2d"
 
-
+gng.plot.2d.errors <- "2d.errors"
 
 gng.type.default <- function(){
 	c(2)
@@ -41,163 +50,121 @@ gng.type.utility<- function(k=1.3){
 
 .GNG <- NULL
 
-
-
 #' Plot GNG
 #'
-#' @title plot
-#' 
-#' @description Plot resulting graph using igraph plotting, or using rgl 3d engine.
-#' 
-#' @usage
-#' plot(gng)
-#' 
+#' @title plot GNG object
+#' @description Plot resulting graph using igraph plotting
+#' @rdname plot.gng
 #' @export
-#' 
-#' @rdname plot-methods
-#' 
-#' @docType methods
+#' @method plot Rcpp_GNGServer
 #'
-#' @param mode \code{gng.plot.3d} (3d plot), \code{gng.plot.2d} (igraph plot)
-#' \code{gng.plot.2d.errors} (igraph plot with mean error log plot)
+#' @param x GNG object
+#' @param mode \code{"2d"} (igraph plot)
+#' \code{"2d.errors"} (igraph plot with mean error log plot)
 #' 
-#' @param layout Layout to be used when plotting. Possible values: \code{gng.plot.layour.igraph.v2d} (first two dimensions),
-#' \code{gng.plot.layout.igraph.auto} (auto layout from igraph)  \code{gng.plot.layout.igraph.fruchterman.fast} (fast fruchterman reingold layout),or any function accepting igraph graph and returning layout
+#' @param layout igraph layout to be used when plotting. Defaults to \code{layout.fruchterman.reingold}. 
+#' Other good choice is using \code{gng.plot.layout.v2d}, which returns two first spatial coordinates.
 #' 
-#' @param vertex.color How to color vertexes. Possible values: \code{gng.plot.color.cluster} (vertex color is set to fastgreedy.community clustering),
-#' \code{gng.plot.color.label} (rounds to integer label if present), \code{list of integers} (colors vertices according to provided list), \code{gng.plot.color.none} (every node is white),
+#' @param vertex.color How to color vertexes. Possible values: \code{"fast.cluster"} (vertex color is set to fastgreedy.community clustering),
+#' \code{"label"} (rounds to integer label if present), \code{list of integers} (colors vertices according to provided list), \code{"none"} (every node is white),
 #' 
 #' @param vertex.size Size of plotted vertices
+#' @param ... other arguments not used by this method.
 #' 
 #' @note If you want to "power-use" plotting and plot for instance a subgraph, you might be interested in
-#' exporting igraph with convertToGraph function 
+#' exporting igraph with convertToIGraph function 
 #' 
 #' @examples
-#' 
+#' \dontrun{
+#' gng <- GNG(scaled.wine)
 #' # Plots igraph using first 2 coordinates and colors according to clusters
 #' plot(gng, mode=gng.plot.2d.errors, layout=gng.plot.layout.v2d, vertex.color=gng.plot.color.cluster)
 #' 
-#' # Plot rgl (make sure you have installed rgl library)
-#' plot(gng, mode=gng.plot.3d, layout=gng.plot.layout.v2d, vertex.color=gng.plot.color.cluster)
-#' 
 #' # For more possibilities see gng.plot.* constants
-#' 
-plot.gng <- NULL
+#' }
+plot.Rcpp_GNGServer <- NULL
 
 #' Save model to binary format
-#'
 #' @title gngSave
-#' 
 #' @description Writes model to a disk space efficient binary format. 
-#' 
-#' @usage
-#' gngSave(gng, file.name)
-#' 
 #' @export
-#' 
+#'  
+#' @param object GNG object
 #' @param filename File where binary will be saved
-#' 
-#' @rdname gngSave-methods
-#' 
-#' @docType methods
-#'
-#' @aliases gngSave
-#'
 gngSave <- NULL
-
 
 
 #' Load model from binary format
 #'
 #' @title gngLoad
-#' 
 #' @description Writes model to a disk space efficient binary format. 
-#' 
-#' @usage
-#' gngLoad(file.name)
-#' 
 #' @export
 #' 
 #' @param filename Binary file location
-#' 
-#' @rdname gngLoad-methods
-#' 
-#' @docType methods
-#'
-#' @aliases gngLoad
-#'
 gngLoad <- NULL
 
 #' Get centroids
 #'
-#' @title predictCentroids
-#' 
-#' @description Using infomap.communities finds communities and for each community pick node with biggest betweenness score
-#' 
-#' @usage
-#' predictCentroids(gng)
-#' 
+#' @title calculateCentroids
+#' @description Using passed community.detection finds communities and for each community pick node with biggest betweenness score
 #' @export
 #' 
-#' @rdname predictCentroids-methods
+#' @param object GNG object
+#' @param community.detection.algorithm Used algorithm from igraph package, by default spinglass.community
 #' 
-#' @docType methods
-#'
 #' @examples
-#' # Print position of the first centroid
-#' print(node(gng, predictCentroids(gng)[1])$pos)
-#' 
-#' @aliases predictCentroids
-#'  
-predictCentroids <- NULL
+#' gng <- GNG(gng.preset.sphere(100))
+#' print(node(gng, calculateCentroids(gng)[1])$pos)
+calculateCentroids <- NULL
 
-#' Find closest centroid
+#' Find closest node
 #'
-#' @title findClosest
-#' 
-#' @description Finds closest node from given list to vector
-#' 
-#' @usage
-#' findClosest(gng, predictCentroids(gng), c(1,1,1))
-#' 
+#' @title findClosests
+#' @description Finds closest node from given list to vector. Often used together with calculateCentroids
 #' @export
-#' 
-#' @rdname findClosest-methods
-#' 
-#' @docType methods
-#'
+
+#' @param object GNG object
 #' @param node.ids List of indexes of nodes in gng. 
-#' 
 #' @param x Can be either \code{vector} or \code{data.frame.}
 #' 
 #' @examples
+#' gng <- GNG(gng.preset.sphere(100))
 #' # Find closest centroid to c(1,1,1)
-#' found.centroids <- predictCentroids(gng)
-#' findClosest(gng, found.centroids, c(1,1,1))
+#' found.centroids <- calculateCentroids(gng)
+#' findClosests(gng, found.centroids, c(1,1,1))
 #' 
-#' @aliases predictCentroid
-#' 
-findClosest <- NULL
+findClosests <- NULL
 
+#' Check if GNG is running
+#'
+#' @title isRunning
+#' @description Returns TRUE if GNG object is training
+#' @export
+#' @param object GNG object
+#' 
+#' @examples
+#' gng <- GNG(gng.preset.sphere(100))
+#' # FALSE, because did not pass train.online to constructor
+#' print(isRunning(gng))
+#' 
+isRunning <- function(object) {
+  return(object$.isRunning())
+}
 
 #' Find closest component
-#'
+#' @name predictComponent
 #' @title predictComponent
-#' 
-#' @description Finds connected component closest to given vector(s).
-#' 
-#' @usage
-#' predictComponent(gng, c(1,1,1))
-#' 
+#' @description Finds connected component closest to given vector(s). On the first
+#' execution of function strongly connected components are calculated using igraph::cluster function.
 #' @export
-#' 
 #' @rdname predictComponent-methods
-#' 
 #' @docType methods
 #'
+#' @param object GNG object
 #' @param x Can be either \code{vector} or \code{data.frame}.
 #' 
 #' @examples
+#' gng <- GNG(gng.preset.sphere(100))
 #' # Find closest component to c(1,1,1)
 #' predictComponent(gng,  c(1,1,1))
 #' 
@@ -205,131 +172,138 @@ findClosest <- NULL
 predictComponent <- NULL
 
 #' Get GNG node
-#'
+#' @name node
 #' @title node
-#' 
 #' @description Retrieves node from resulting graph
-#' 
-#' @usage
-#' node(gng, 10)
-#' 
+#' @rdname node-methods
 #' @export
 #' 
-#' @rdname node-methods
-#' 
-#' @docType methods
-#'
+#' @param x GNG object
 #' @param gng_id Id of the node to retrieve. This is the id returned by functions like predict, or centroids
 #' 
 #' @examples
+#' gng <- GNG(gng.preset.sphere(100))
 #' print(node(gng, 10)$pos)
 #' 
 #' @aliases node
 #' 
-node.gng <- NULL
+node <- function(x, gng_id) UseMethod("node")
 
+#' Predict 
+#' @name predict.gng
+#' @title predict
+#' @description Retrieves prediction from trained GNG model
+#' @rdname predict.gng
+#' @export
+#' 
+#' @param object Trained model
+#' @param x Vector or matrix of examples
+#' @param ... other arguments not used by this method
+#' @examples
+#' gng <- GNG(gng.preset.sphere(100))
+#' predict(gng, c(1,2,2))
+predict.Rcpp_GNGServer <- function(object, x, ...){
+  if( is.vector(x)){
+    object$.predict(x)
+  }else{
+    if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
+      stop(gmum.error(GMUM_WRONG_PARAMS, "Wrong target class, please provide data.frame, matrix or numeric vector"))
+    }
+    
+    if (!is(x, "matrix")) {
+      x <- data.matrix(x)
+    }
+    
+    y <- rep(NA, nrow(x))
+    
+    for(i in 1:nrow(x)){
+      y[i] <- object$.predict(x[i,])
+    }
+    
+    y
+  }
+}
 
+#' @export 
+node.Rcpp_GNGServer <- NULL
+
+#' @name run
 #' @title run
-#' 
-#' @description Run algorithm (in parallel)
-#' 
-#' @usage
-#' run(gng)
-#' 
-#' @export
-#' 
 #' @rdname run-methods
+#' @description Run algorithm (in parallel)
+#' @export
 #' 
-#' @docType methods
-#'
+#' @param object GNG object
+#' 
 #' @examples
+#' gng <- GNG(gng.preset.sphere(100))
 #' run(gng)
+#' print(isRunning(gng))
 #' 
-#' @aliases run
-#'
-run.gng <- NULL
+run <- function(object) UseMethod("run")
+
+#' @export
+run.Rcpp_GNGServer <- NULL
 
 #' @title pause
-#' 
 #' @description Pause algorithm
-#' 
-#' @usage
-#' pause(gng)
-#' 
 #' @export
-#' 
-#' @rdname pause-methods
-#' 
-#' @docType methods
 #'
+#' @param object GNG object
+#' 
 #' @examples
+#' gng <- GNG(gng.preset.sphere(100))
 #' pause(gng)
-#' 
-#' @aliases pause
-#'
-pause.gng <- NULL
+#' print(isRunning(gng))
+pause <- function(object) UseMethod("pause")
 
-#' @title pause
-#' 
-#' @description Terminate algorithm
-#' 
-#' @usage
-#' terminate(gng)
-#' 
 #' @export
-#' 
+pause.Rcpp_GNGServer <- NULL
+
+#' @title terminate
+#' @name terminate
+#' @description Terminate algorithm
+#' @export
 #' @rdname terminate-methods
-#' 
 #' @docType methods
+#' 
+#' @param object GNG object
 #'
 #' @examples
+#' gng <- GNG(gng.preset.sphere(100))
 #' terminate(gng)
 #' 
 #' @aliases terminate
 #'
-terminate.gng <- NULL
+terminate <- function(object) UseMethod("terminate")
+
+#' @export
+terminate.Rcpp_GNGServer <- NULL
 
 #' @title meanError
-#' 
 #' @description Gets mean error of the graph (note: blocks the execution, O(n))
-#' 
-#' @usage
-#' meanError(gng)
+#' @param object GNG object
 #' 
 #' @export
 #' 
-#' @rdname meanError-methods
-#' 
-#' @docType methods
-#'
 #' @examples
+#' gng <- GNG(gng.preset.sphere(100))
 #' meanError(gng)
-#' 
-#' @aliases meanError
-#'
-meanError.gng <- NULL
-
+meanError <- NULL
 
 #' @title errorStatistics
-#' 
 #' @description Gets vector with errors for every second of execution
-#' 
-#' @usage
-#' errorStatistics(gng)
-#' 
 #' @export
 #' 
-#' @rdname errorStatistics-methods
+#' @param object GNG object
 #' 
-#' @docType methods
-#'
-#' 
-#' @aliases errorStatistics
-#'
-errorStatistics.gng <- NULL
-
+#' @examples
+#' gng <- GNG(gng.preset.sphere(100))
+#' errorStatistics(gng)
+errorStatistics <- NULL
 
 #' @title Constructor of Optimized GrowingNeuralGas object. 
+#' @rdname optimized-gng
 #' 
 #' @export 
 #' 
@@ -362,56 +336,48 @@ errorStatistics.gng <- NULL
 #'
 #' @param value.range All example features should be in this range, required for optimized version of the algorithm. Default \code{(0,1)} 
 #' 
-#' @examples
+#' @param x Passed data (matrix of data.frame) for offline training
 #' 
+#' @param labels Every example can be associated with labels that are added to nodes later. By default empty
+#' 
+#' @param max.edge.age Maximum edge age. Decrease to increase speed of change of graph topology. Default \code{200}
+#' 
+#' @param verbosity How verbose should the process be, as integer from \eqn{[0,6]}, default: \code{0}
+#' 
+#' @param seed Seed for internal randomization
+#' 
+#' @examples
+#' \dontrun{
 #' # Train online optimizedGNG. All values in this dataset are in the range (-4.3, 4.3)
-#' data(wine, package="rattle")
-#' gng <- OptimizedGNG(train.online = TRUE), value.range=c(min(scale(wine[-1]),max(scale(wine[-1]))), max.nodes=20)
-#' insertExamples(gng, scale(wine[-1]))
+#' X <- gng.preset.sphere(100)
+#' gng <- OptimizedGNG(train.online = TRUE, value.range=c(min(X), max(X)), dim=3, max.nodes=20)
+#' insertExamples(gng, X)
 #' run(gng)
 #' Sys.sleep(10)
 #' pause(gng)
+#' }
 OptimizedGNG <- NULL
 
-
+#' @name clustering
 #' @title clustering
 #' 
 #' @description Gets vector with node indexes assigned to examples in the dataset
 #' 
-#' @usage
-#' clustering(gng)
-#' 
+#' @method clustering Rcpp_GNGServer 
 #' @export
 #' 
 #' @rdname clustering-methods
 #' 
 #' @docType methods
 #'
-#' @aliases clustering
-#'
-clustering.gng <- NULL
-
-#' @title errorStatistics
-#' 
-#' @description Gets vector with errors for every second of execution
-#' 
-#' @usage
-#' errorStatistics(gng)
-#' 
-#' @export
-#' 
-#' @rdname errorStatistics-methods
-#' 
-#' @docType methods
-#'
 #' @examples
-#' errorStatistics(gng)
-#' 
-#' @aliases errorStatistics
-#'
-errorStatistics.gng <- NULL
+#' gng <- GNG(gng.preset.sphere(100))
+#' clustering(gng)
+clustering.Rcpp_GNGServer <- NULL
 
 #' @title Constructor of GrowingNeuralGas object. 
+#' 
+#' @rdname gng
 #' 
 #' @export 
 #' 
@@ -444,19 +410,27 @@ errorStatistics.gng <- NULL
 #' @param k Utility constant, by default turned off. Good value is 1.3. Constant controlling speed of erasing obsolete nodes, 
 #' see \url{http://sund.de/netze/applets/gng/full/tex/DemoGNG/node20.html}
 #' 
-#'
-#' @examples
+#' @param x Passed data (matrix of data.frame) for offline training
 #' 
-#' data(wine, package="rattle")
-#' scaled.wine <- scale(wine[-1])
+#' @param labels Every example can be associated with labels that are added to nodes later. By default empty
+#' 
+#' @param max.edge.age Maximum edge age. Decrease to increase speed of change of graph topology. Default \code{200}
+#' 
+#' @param verbosity How verbose should the process be, as integer from \eqn{[0,6]}, default: \code{0}
+#' 
+#' @param seed Seed for internal randomization
+#' 
+#' @examples
+#' X <- gng.preset.sphere(100)
+#' y <- round(runif(100))
 #' # Train in an offline manner
-#' gng <- GNG(scaled.wine, labels=wine$Type, max.nodes=20)
+#' gng <- GNG(X, labels=y, max.nodes=20)
 #' # Plot
 #' plot(gng)
 #'
 #' # Train in an online manner with utility (erasing obsolete nodes)
-#' gng <- GNG(scaled.wine, labels=wine$Type, max.nodes=20, training=gng.train.online(), k=1.3)
-#' insertExamples(gng, scale(wine[-1])
+#' gng <- GNG(max.nodes=20, train.online=TRUE, k=1.3, dim=3)
+#' insertExamples(gng, X, labels=y)
 #' run(gng)
 #' Sys.sleep(10)
 #' terminate(gng)
@@ -465,64 +439,47 @@ errorStatistics.gng <- NULL
 #'
 GNG <- NULL
 
-print.gng <- NULL
-
-summary.gng <- NULL
-
-#' @title convertToGraph
+#' @title convertToIGraph
+#' @description Converts GNG to igraph object, where every vertex contains attributes gng.index, error, data.label and 3 first spatial coordinates (as attributes v0, v1, v2).
+#' Additionally utility attribute is present if utility GNG is used.
 #' 
-#' @description Converts GNG to igraph object.
-#' 
-#' @usage
-#' convertToGraph(gng)
-#' 
-#' @param gng Learned GNG object
+#' @param object GNG object
+#' @param calculate.dist If true will calculate all \code{n^2} distances in the graph
 #' 
 #' @export
+convertToIGraph <- NULL
+
+#' @title numberNodes
+#' @description Get current number of nodes in the graph
 #' 
-#' @rdname convertToGraph-methods
+#' @param object GNG object
 #' 
-#' @docType methods
-#'
-#' @aliases convertToGraph
-#'
-convertToGraph.gng <- NULL
+#' @export
+numberNodes <- function(object){
+  object$getNumberNodes()
+}
 
-
-generateExamples <- NULL
-
+#' @name insertExamples
 #' @title insertExamples
-#' 
 #' @description Insert examples with optional labels.
 #' 
-#' @usage
-#' insertExamples(gng, M, L=c())
-#' 
 #' @export
 #' 
+#' @param object GNG object
 #' @param examples \code{matrix} or \code{data.frame} with rows as examples. Note: if training online make sure
 #' number of columns matches dim parameter passed to GNG constructor.
-#' 
 #' @param labels \code{vector} of labels, that will be associated with nodes in the graph. GNG will assign to each
 #' node a mean of labels of closest examples.
-#' 
-#' @rdname insertExamples-methods
-#' 
-#' @docType methods
 #'
 #' @examples
+#' X <- gng.preset.sphere(100)
+#' gng <- GNG(X, train.online=TRUE)
+#' # Add more examples
+#' X = gng.preset.sphere(100)
+#' insertExamples(gng, X)
 #' 
-#' #Add preset examples
-#' M = generateExamples(preset=gng.preset.sphere)
-#' insertExamples(gng, M)
-#' @aliases insertExamples
-#'
-insertExamples.Rcpp_GNGServer <- NULL
-
-
-
-
-
+#' @note It copies your examples twice in RAM. You might want to use object$.insertExamples.
+insertExamples <- NULL
 
 .GNG <- function(x=NULL, labels=c(),
                   beta=0.99, 
@@ -536,7 +493,7 @@ insertExamples.Rcpp_GNGServer <- NULL
                   train.online=FALSE,
                   min.improvement=1e-3,
                   lambda=200,
-                  dim=0,
+                  dim=-1,
                   verbosity=0,
                   seed=-1
 ){
@@ -554,6 +511,9 @@ insertExamples.Rcpp_GNGServer <- NULL
   # Fill in configuration
   if(train.online){
     if(is.null(x)){
+      if (dim == -1) {
+        stop(gmum.error(GMUM_WRONG_PARAMS, "To train online, please pass desired dimensionality in dim parameter"))
+      }
       config$dim = dim
     }else{
       config$dim = ncol(x)
@@ -634,10 +594,10 @@ insertExamples.Rcpp_GNGServer <- NULL
       
       tryCatch({
         
-        while(server$getCurrentIteration() == 0 || server$isRunning()){}
+        while(server$getCurrentIteration() == 0 || server$.isRunning()){}
         
         # max_iter is checked in GNG
-        while(iter == 0 || server$isRunning()){
+        while(iter == 0 || server$.isRunning()){
           Sys.sleep(0.1)
           iter = server$getCurrentIteration()
           
@@ -680,7 +640,7 @@ insertExamples.Rcpp_GNGServer <- NULL
         
         
         
-        if(server$isRunning()){
+        if(server$.isRunning()){
           terminate(server)
         }
         
@@ -688,7 +648,7 @@ insertExamples.Rcpp_GNGServer <- NULL
         
       }, interrupt=
         function(interrupt){
-          if(server$isRunning()){
+          if(server$.isRunning()){
             terminate(server)
           }
           
@@ -713,7 +673,7 @@ GNG <- function(x=NULL, labels=c(),
                  max.edge.age=200,
                  train.online=FALSE,
                  max.iter=200,
-                 dim=0,
+                 dim=-1,
                  min.improvement=1e-3,
                  lambda=200,
                  verbosity=0,
@@ -755,23 +715,23 @@ OptimizedGNG <- function(x=NULL, labels=c(),
   }
   call <- match.call(expand.dots = TRUE)
   gng <- .GNG(x=x, labels=labels, beta=beta, alpha=alpha, max.nodes=max.nodes, 
-              eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(min=value.range[1], max=value.range[2]), train.online=train.online, max.iter=max.iter, dim=dim, min.improvement=min.improvement, lambda=lambda, verbosity=verbosity, seed=seed)
+              eps.n=eps.n, eps.w=eps.w, max.edge.age=max.edge.age, type=gng.type.optimized(minimum=value.range[1], maximum=value.range[2]), train.online=train.online, max.iter=max.iter, dim=dim, min.improvement=min.improvement, lambda=lambda, verbosity=verbosity, seed=seed)
   assign("call", call, gng)
   gng
 }    
 
 predictComponent <- function(object, x){
   tryCatch(if(is.null(object$components.membership)){
-    assign("components.membership", clusters(convertToGraph(object))$membership, object)
+    assign("components.membership", clusters(convertToIGraph(object))$membership, object)
   }, error=function(...) 
-    assign("components.membership", clusters(convertToGraph(object))$membership, object))
+    assign("components.membership", clusters(convertToIGraph(object))$membership, object))
   
   object$components.membership[predict(object, x)]
 }
 
-plot.gng <- function(x, vertex.color=gng.plot.color.cluster, 
-                      layout=gng.plot.layout.v2d, mode=gng.plot.2d, 
-                      vertex.size=3){
+plot.Rcpp_GNGServer <- function(x, vertex.color=gng.plot.color.cluster, 
+                      layout=layout.fruchterman.reingold, mode=gng.plot.2d, 
+                      vertex.size=3, ...){
   if(vertex.size <= 0){
     stop("Please pass positivie vertex.size")
   }
@@ -783,22 +743,15 @@ plot.gng <- function(x, vertex.color=gng.plot.color.cluster,
   
   
   if(x$getNumberNodes() > 4000){
-    warning("Trying to plot very large graph (>4000 nodes). It might take a while.")
+    warning("Trying to plot very large graph (>4000 nodes). It might take a long time especially if using layout function.")
   }
+  
   if(x$getNumberNodes() == 0){
     warning("Empty graph")
     return()
   }
   
-  if(mode == gng.plot.3d && !("rgl" %in% rownames(installed.packages()))){
-    warning("Please install rgl and reload the package to plot 3d")
-    return()
-  }
-  
-  if(mode == gng.plot.3d){
-    .gng.plot3d(x)
-  }
-  else if(mode == gng.plot.2d){
+  if(mode == gng.plot.2d){
     .gng.plot2d(x, vertex.color, layout, vertex.size=vertex.size)
   }
   else if(mode == gng.plot.2d.errors){
@@ -808,74 +761,45 @@ plot.gng <- function(x, vertex.color=gng.plot.color.cluster,
   }
 }
 
-print.gng <- function(x){
-  print(sprintf("Growing Neural Gas, nodes %d with mean error %f", 
-                x$getNumberNodes(), x$getMeanError()))
-}
 
-summary.gng <- function(object){
-  if(object$.getConfiguration()$.uniformgrid_optimization){
-    print("(Optimized) Growing Neural Gas")
-  }else{
-    print("Growing Neural Gas")
-  }
-  if(exists("object$call")){
-    print(object$call)
-  }
-  if(object$hasStarted()){
-    print(sprintf("%d nodes with mean error %f", 
-                  object$getNumberNodes(), object$getMeanError()))
-    
-    print(sprintf("Trained %d iterations", object$getCurrentIteration()))
-    print("Mean errors[s]: ")
-    errors = object$getErrorStatistics()
-    if(length(errors) > 10){
-      errors = errors[(length(errors)-10):length(errors)]
-    }
-    
-    print(errors)
-  }
-}
-
-
-node.gng <- function(x, gng_id){
+node.Rcpp_GNGServer  <- function(x, gng_id){
   x$getNode(gng_id)
 }
 
-run.gng <- function(object){
+run.Rcpp_GNGServer  <- function(object){
   # Invalidate components
   assign("components.membership", NULL, object)
-  object$run()
+  object$.run()
 }
 
-pause.gng <- function(object){
-  object$pause()
+pause.Rcpp_GNGServer  <- function(object){
+  object$.pause()
   n = 0.0
   sleep = 0.1
-  while(object$isRunning()){
+  while(object$.isRunning()){
     Sys.sleep(sleep)  
     n = n + 1
     if(n > 2/sleep){
-      print("Warning: GNG has not paused! Check status with gng$isRunning(). Something is wrong.")
+      print("Warning: GNG has not paused! Check status with gng$.isRunning(). Something is wrong.")
       return()
     }
   }
 }
 
-terminate.gng <- function(object){
-  object$terminate()
+terminate.Rcpp_GNGServer <- function(object){
+  object$.terminate()
 }
 
-meanError.gng <- function(object){
+meanError <- function(object){
   object$getMeanError()
 }  
 
-errorStatistics.gng <- function(object){
+errorStatistics <- function(object){
   object$getErrorStatistics()
 }  
 
-clustering.gng <- function(c){
-  c$clustering()
+clustering.Rcpp_GNGServer <- function(c){
+  c$getClustering()
 }  
 
 gngSave <- function(object, filename){
@@ -888,10 +812,8 @@ gngLoad <- function(filename){
   fromFileGNG(filename)
 }
 
-
-
-predictCentroids  <- function(object, community.detection.algorithm=spinglass.community){
-  ig <- convertToGraph(object)
+calculateCentroids  <- function(object, community.detection.algorithm=spinglass.community){
+  ig <- convertToIGraph(object)
   
   cl = clusters(ig)
   components = lapply(levels(as.factor(cl$membership)), function(x) induced.subgraph(ig, cl$membership==as.numeric(x)))
@@ -905,15 +827,15 @@ predictCentroids  <- function(object, community.detection.algorithm=spinglass.co
       #Get index of centroid (which is ordered by betwenness)
       centroid_index = which(order(betweenness(community_graph))==1)
       # Append
-      centroids<- c(centroids, V(community_graph)$index[centroid_index])
+      centroids<- c(centroids, V(community_graph)$gng.index[centroid_index])
     }
   }
   centroids
 }
 
 
-convertToGraph.gng <- function(object, calculate.dist=TRUE){
-  was_running = object$isRunning()
+convertToIGraph <- function(object, calculate.dist=TRUE){
+  was_running = object$.isRunning()
   if(was_running){
     pause(object)
   }
@@ -948,16 +870,14 @@ convertToGraph.gng <- function(object, calculate.dist=TRUE){
     if(length(node) != 0){
       
       igraph_index = indexesGNGToIGraph[i]
-      #print(paste(object$.getLastNodeIndex(), length(indexesGNGToIGraph), object$isRunning()))
       #print(paste(igraph_index, node$neighbours))
       neighbours = node$neighbours[node$neighbours > i]
       adjlist[[igraph_index]] <- sapply(neighbours, function(x){ indexesGNGToIGraph[x] })
     } else{
-      #print("Empty node")
+      print("Empty node")
     }
   }
   
-  #print("Creating the graph")
   
   g <- graph.adjlist(adjlist, mode = "all", duplicate=FALSE)
   for(i in 1:object$.getLastNodeIndex()){
@@ -969,9 +889,10 @@ convertToGraph.gng <- function(object, calculate.dist=TRUE){
       V(g)[igraph_index]$v0 <- node$pos[1]
       V(g)[igraph_index]$v1 <- node$pos[2]
       V(g)[igraph_index]$v2 <- node$pos[3]
-      V(g)[igraph_index]$label <- node$label
+      V(g)[igraph_index]$label <- node$index
+      V(g)[igraph_index]$data.label <- node$label
       V(g)[igraph_index]$error <- node$error
-      V(g)[igraph_index]$index <- node$index
+      V(g)[igraph_index]$gng.index <- node$index
       if(!is.null(node$utility)){
         V(g)[igraph_index]$utility = node$utility
       }
@@ -981,7 +902,7 @@ convertToGraph.gng <- function(object, calculate.dist=TRUE){
   if(calculate.dist){
     # Add distance information
     dists <- apply(get.edges(g, E(g)), 1, function(x){ 
-      object$nodeDistance(indexesIGraphToGNG[x[1]], indexesIGraphToGNG[x[2]])
+      object$.nodeDistance(indexesIGraphToGNG[x[1]], indexesIGraphToGNG[x[2]])
     })
     E(g)$dists = dists
   }
@@ -992,7 +913,6 @@ convertToGraph.gng <- function(object, calculate.dist=TRUE){
   
   g
 }
-
 
 findClosests <- function(object, node.ids, x){
   .findClosests <- function(object, node.ids, x){
@@ -1024,16 +944,9 @@ findClosests <- function(object, node.ids, x){
   }
 }
 
-#' Insert examples
-#' 
-#' @note It copies your examples twice in RAM. You might want to use object$insertExamples, or
-#' not to copy at all set_memory_move_examples (when using this function, remember not to modify the matrix
-#' and after removing the object delete it aswell)
-insertExamples.Rcpp_GNGServer <- function(object, examples, labels=c()){   
-  
-  
+insertExamples <- function(object, examples, labels=c()){    
   if(length(labels) == 0){
-    object$insertExamples(examples)
+    object$.insertExamples(examples)
   }else if(typeof(labels) == "character"){
     if(typeof(labels) == "list"){
       if(is.null(examples$labels)){
@@ -1041,146 +954,28 @@ insertExamples.Rcpp_GNGServer <- function(object, examples, labels=c()){
       }else{
         label.column <- examples$labels
         examples$labels <- NULL
-        object$insertLabeledExamples(examples, label.column)
+        object$.insertLabeledExamples(examples, label.column)
       }
     }else{
       stop(gmum.error(GMUM_WRONG_PARAMS, "Please pass data frame"))
     }
   }else{
-    object$insertLabeledExamples(examples, labels)
+    object$.insertLabeledExamples(examples, labels)
   }    
 }
 
-
-generateExamples <- function(preset, N, r=1.0, center=c(0.5,0.5,0.5)){
-  preset(N, center=center, r=r, prob=-1)
-}
-
-
 loadModule('gng_module', TRUE)
 
-setGeneric("node", 
-           function(x, gng_id, ...) standardGeneric("node"))
-
-setGeneric("clustering", 
-           function(c) standardGeneric("clustering"))
-
-
-setGeneric("convertToGraph", 
-           function(object, ...) standardGeneric("convertToGraph"))
-
-
-
-setGeneric("run", 
-           function(object, ...) standardGeneric("run"))
-
-setGeneric("pause", 
-           function(object, ...) standardGeneric("pause"))
-
-setGeneric("terminate", 
-           function(object, ...) standardGeneric("terminate"))
-
-
-setGeneric("insertExamples", 
-           function(object, ...) standardGeneric("insertExamples"))
-
-
-
-setGeneric("meanError", 
-           function(object, ...) standardGeneric("meanError"))
-
-
-setGeneric("errorStatistics", 
-           function(object, ...) standardGeneric("errorStatistics"))
-
-
-setGeneric("numberNodes", 
-           function(object, ...) standardGeneric("numberNodes"))
-
+#' Class Rcpp_GNGServer.
+#'
+#' Class \code{Rcpp_GNGServer} defines a GNGServer class. 
+#'
+#' @name Rcpp_GNGServer-class
+#' @exportClass Rcpp_GNGServer
+setClass(Class = "Rcpp_GNGServer")
 
 # Lazy loading to allow for discovery of all files
 evalqOnLoad( {
-    
-  # Autocompletion fix
-
-  .GlobalEnv$`.DollarNames.C++Object` <- function( x, pattern ){
-    grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE)[! (substr(grep(pattern, asNamespace("Rcpp")$complete(x), value = TRUE),1,1)==".")]
-  }
-  
-  #.GlobalEnv$DollarNamesGmumr <- function( x, pattern ){
-  #  asNamespace("Rcpp")$`.DollarNames.C++Object`(x, pattern)[! (substr(asNamespace("Rcpp")$`.DollarNames.C++Object`(x, pattern),1,1)==".")]
-  #}
-  #environment(.GlobalEnv$DollarNamesGmumr) <- .GlobalEnv
-  #setMethod( ".DollarNames", "C++Object", .GlobalEnv$DollarNamesGmumr )
-
-  setMethod("insertExamples", "Rcpp_GNGServer", insertExamples.Rcpp_GNGServer)
-  setMethod("plot",  "Rcpp_GNGServer", plot.gng)
-  setMethod("print",  "Rcpp_GNGServer", print.gng)
-  setMethod("summary", "Rcpp_GNGServer", summary.gng)
-  setMethod("show", "Rcpp_GNGServer", summary.gng)
-  
-  setMethod("node", signature("Rcpp_GNGServer","numeric"), node.gng)
-  setMethod("run", "Rcpp_GNGServer", run.gng)
-  setMethod("pause", "Rcpp_GNGServer", pause.gng)
-  setMethod("terminate", "Rcpp_GNGServer", terminate.gng)
-  setMethod("meanError", "Rcpp_GNGServer", meanError.gng) 
-  setMethod("errorStatistics", "Rcpp_GNGServer", errorStatistics.gng) 
-  
-  #'Get number of nodes
-  setMethod("numberNodes" ,
-            "Rcpp_GNGServer",
-            function(object){
-              object$getNumberNodes()
-            })
-  
-  
-    
-
-  setMethod("convertToGraph" ,
-            "Rcpp_GNGServer",
-            convertToGraph.gng)
-
-
-  setMethod("clustering" ,
-            "Rcpp_GNGServer",
-            clustering.gng)
-
-
-
-  setMethod("predict" ,
-            "Rcpp_GNGServer",
-            function(object, x){
-                if( is.vector(x)){
-                    object$predict(x)
-                }else{
-                  if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
-                    stop(gmum.error(GMUM_WRONG_PARAMS, "Wrong target class, please provide data.frame, matrix or numeric vector"))
-                  }
-                  
-                  if (!is(x, "matrix")) {
-                    x <- data.matrix(x)
-                  }
-                  
-                  y <- rep(NA, nrow(x))
-                  
-                  for(i in 1:nrow(x)){
-                    y[i] <- object$predict(x[i,])
-                  }
-                  
-                  y
-                }
-            })
-  
-  
-  methods = list()
-  for(name in names(GNGConfiguration@methods)){
-    methods[[name]] = eval(substitute(
-      function(...) .CppObject$WHAT(...), list(WHAT = as.name(name)))) 
-  }
-  
-  methods[["initialize"]] <- function(...){
-    
-  }
-
+  .wine <<- NULL
 })
 

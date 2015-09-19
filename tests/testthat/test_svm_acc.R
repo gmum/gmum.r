@@ -1,5 +1,5 @@
 library(testthat)
-library('gmum.r')
+library(gmum.r)
 
 data(svm_breast_cancer_dataset)
 
@@ -24,7 +24,11 @@ print("test::svm accuracy")
 
 test_that('accuracy checks input size', {
           
-  ds <- as.data.frame(svm.dataset.xor())
+  ds <- as.data.frame(ds <- matrix( 
+    c(0,1,0,1,0,0,1,1,0,1,1,0),
+    ncol=3,
+    nrow=4,
+    dimnames=list(c(),c("x","y","t"))))
   ds[,3] <- as.factor(ds[,3])
   formula <- t ~ .
   svm <- SVM(formula, ds, core="libsvm", kernel="linear", C=100);

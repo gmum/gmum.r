@@ -58,7 +58,7 @@ void SVMClient::setConfiguration(SVMConfiguration *config) {
 
 void SVMClient::setNumberClass(int nr_class){
     if(nr_class < 1){
-        LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("There needs to be at least 1 class"));
+        LOG(config.log, LogLevel::ERR_LEVEL, "ERROR: " + to_string("There needs to be at least 1 class"));
     }
     else {
         config.nr_class = nr_class;
@@ -67,10 +67,10 @@ void SVMClient::setNumberClass(int nr_class){
 
 void SVMClient::setW(arma::vec new_w){
     if (config.kernel_type != _LINEAR) {
-        LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Decision boundary is not available with non-linear kernel"));
+        LOG(config.log, LogLevel::ERR_LEVEL, "ERROR: " + to_string("Decision boundary is not available with non-linear kernel"));
     }
     else if (new_w.n_elem != config.w.n_elem) {
-        LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Vectors are of different length"));
+        LOG(config.log, LogLevel::ERR_LEVEL, "ERROR: " + to_string("Vectors are of different length"));
     }
     else 
         config.w = arma::sp_mat(new_w.n_elem,1);
@@ -81,7 +81,7 @@ void SVMClient::setW(arma::vec new_w){
 
 void  SVMClient::setAlpha(arma::vec new_alpha){
     if (new_alpha.n_elem != config.alpha_y.n_elem){
-        LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("Vectors are of different length"));
+        LOG(config.log, LogLevel::ERR_LEVEL, "ERROR: " + to_string("Vectors are of different length"));
     }
     else {
         config.alpha_y = new_alpha;
@@ -107,18 +107,18 @@ arma::vec SVMClient::getDecisionFunction() {
 }
 std::string SVMClient::getLibrary(){
     switch(config.library) {
-    case LIBSVM : return "libsvm";
-    case SVMLIGHT : return "svmlight";
-    default : return "error"; 
+      case LIBSVM : return "libsvm";
+      case SVMLIGHT : return "svmlight";
+      default : return "error"; 
     }
 }
 std::string SVMClient::getKernel(){
     switch(config.kernel_type) {
-    case _LINEAR : return "linear";
-    case _POLY : return "poly"; 
-    case _RBF : return "rbf"; 
-    case _SIGMOID : return "sigmoid"; 
-  default : return "error"; 
+      case _LINEAR : return "linear";
+      case _POLY : return "poly"; 
+      case _RBF : return "rbf"; 
+      case _SIGMOID : return "sigmoid"; 
+      default : return "error"; 
     }
 }
 std::string SVMClient::getPreprocess() {
@@ -189,7 +189,7 @@ arma::vec SVMClient::getW() {
         return arma::vec(config.w);
     }
     else {
-    	LOG(config.log, LogLevel::ERR, "ERROR: " + to_string("w is not available with non-linear kernel"));
+    	LOG(config.log, LogLevel::ERR_LEVEL, "ERROR: " + to_string("w is not available with non-linear kernel"));
         return 0;
     }
 }
@@ -240,7 +240,7 @@ void SVMClient::predict( arma::mat problem ) {
 }
 
 void SVMClient::predictFromConfig() {
-    LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".predictFromConfig() Started.");
+    LOG(config.log, LogLevel::DEBUG_LEVEL, __debug_prefix__ + ".predictFromConfig() Started.");
 
     // Number of docs is a number of rows in data matrix
     size_t n_docs = config.getDataExamplesNumber();
@@ -248,17 +248,17 @@ void SVMClient::predictFromConfig() {
     config.decision_function = arma::zeros<arma::vec>(n_docs);
 
 
-    LOG(config.log, LogLevel::DEBUG,
+    LOG(config.log, LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".predictFromConfig() Calculating prediction on " +
 		svm_to_str(n_docs) + " documents...");
 
-    LOG(config.log, LogLevel::TRACE,
+    LOG(config.log, LogLevel::TRACE_LEVEL,
         __debug_prefix__ + ".predictFromConfig() Calculating prediction onto "
         		+svm_to_str(config.pos_target) + " "+svm_to_str(config.neg_target)+
         		"..");
 
     if(config.kernel_type == ::_LINEAR){
-        LOG(config.log, LogLevel::TRACE,
+        LOG(config.log, LogLevel::TRACE_LEVEL,
             __debug_prefix__ + ".predictFromConfig() using linear prediction");
     }
 
@@ -290,7 +290,7 @@ void SVMClient::predictFromConfig() {
     }
 
     if(n_docs){
-		LOG(config.log, LogLevel::DEBUG,
+		LOG(config.log, LogLevel::DEBUG_LEVEL,
 			__debug_prefix__ + ".predictFromConfig() Coverting to labels, first"
 					"result is " + svm_to_str(config.result[0])+
 					"...");
@@ -312,7 +312,7 @@ void SVMClient::predictFromConfig() {
 
     LOG(
         config.log,
-        LogLevel::DEBUG,
+        LogLevel::DEBUG_LEVEL,
         __debug_prefix__ + ".predictFromConfig() Done."
     );
 }
@@ -394,7 +394,7 @@ double SVMClient::kernel(size_t i, size_t j) {
         default: {
             LOG(
                 config.log,
-                LogLevel::FATAL,
+                LogLevel::FATAL_LEVEL,
                 __debug_prefix__ + ".kernel() invalid kernel type!"
             );
             break;
@@ -432,7 +432,7 @@ void SVMClient::sparse_predict(
 }
 
 void SVMClient::requestPredict() {
-    LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".requestPredict() Started.");
+    LOG(config.log, LogLevel::DEBUG_LEVEL, __debug_prefix__ + ".requestPredict() Started.");
     if ( SVMHandlers.size() > 0 ) {
         config.setPrediction(true);
         for (std::vector<SVMHandler*>::iterator iter = SVMHandlers.begin();
@@ -440,11 +440,11 @@ void SVMClient::requestPredict() {
             (*iter)->processRequest(config);
         }
     }
-    LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".requestPredict() Done.");
+    LOG(config.log, LogLevel::DEBUG_LEVEL, __debug_prefix__ + ".requestPredict() Done.");
 }
 
 void SVMClient::createFlow() {
-    LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".createFlow() Started.");
+    LOG(config.log, LogLevel::DEBUG_LEVEL, __debug_prefix__ + ".createFlow() Started.");
     SVMType svm_type = config.library;
     Preprocess preprocess = config.preprocess;
     std::vector<SVMHandler*> handlers;
@@ -482,6 +482,6 @@ void SVMClient::createFlow() {
     }
 
     this->SVMHandlers = handlers;
-    LOG(config.log, LogLevel::DEBUG, __debug_prefix__ + ".createFlow() Done.");
+    LOG(config.log, LogLevel::DEBUG_LEVEL, __debug_prefix__ + ".createFlow() Done.");
 }
 

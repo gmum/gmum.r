@@ -72,6 +72,8 @@ pair<double, double> test_convergence(GNGConfiguration * cnf = 0,
 				s->getDatabase().getPosition(ex) + (config.dim + 1));
 	}
 
+
+
 	cerr << "testNewInterface::Collecting results\n";
 
 	int iteration = 0;

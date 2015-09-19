@@ -1,4 +1,5 @@
 library(testthat)
+library(gmum.r)
 
 test_that("Basic caret support for SVM works ", {
   library(caret)
@@ -33,7 +34,9 @@ test_that("Basic caret support for SVM works ", {
                  trControl = fitControl,
                  tuneGrid = expand.grid(C=c(1,10,100), gamma=c(0.001, 0.01, 0.1)),
                  verbosity = 0)
-  
+
+  print(model)
+  summary(model)
 
   expect_that(max(model$results$Accuracy) > 0.7, is_true())
 })

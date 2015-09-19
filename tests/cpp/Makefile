@@ -1,8 +1,15 @@
+$(warning Remember to make sure to delete all R package objects, you can run "make clean" to do it)
+
+R_HOME=$(shell R RHOME)
+R_CPPFLAGS = $(shell $(R_HOME)/bin/R CMD config --cppflags) $(shell $(R_HOME)/bin/Rscript -e "RcppArmadillo:::CxxFlags()") $(shell $(R_HOME)/bin/Rscript -e "Rcpp:::CxxFlags()")  
+
 include ../../src/Makevars
 
 # Explicit Makevars inheritances adn overrides
 CXX := $(CXX)
-CPPFLAGS := $(PKG_CPPFLAGS) -O2 -g -s --std=c++0x
+PREPROCESS = $(DEBUG) -DNRCPP_INTERFACE -DARMA_64BIT_WORD -DBOOST_DISABLE_ASSERTS
+PKG_CPPFLAGS = $(GCC_STD) $(PREPROCESS) $(R_CPPFLAGS) $(INCLUDES) -pthread --std=c++0x
+CPPFLAGS :=  $(PKG_CPPFLAGS) -O2 -g -s
 LDLIBS := $(PKG_LIBS) -lpthread -lgtest -lgtest_main
 
 ###
@@ -86,7 +93,7 @@ INCLUDES := $(ROOT_INCLUDE) $(BRANCH_INCLUDES) $(COMPILED_LIBRARIES_INCLUDES)
 # Compilation rules
 ###
 
-CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
+CPPFLAGS := $(CPPFLAGS) $(INCLUDES) -DNRCPP_INTERFACE
 CFLAGS := $(CPPFLAGS)
 
 all: $(TEST_MAIN_BIN) helper_scripts
@@ -95,6 +102,7 @@ all: $(TEST_MAIN_BIN) helper_scripts
 	@echo or use helper scripts: $(PRIMARY_TESTS_SCRIPT) $(SECONDARY_TESTS_SCRIPT)
 
 clean:
+	rm $(OBJECTS)
 	rm -f $(TEST_MAIN_BIN) $(TEST_OBJECTS) $(COMPILED_LIBRARIES_OBJECTS)\
 	$(PRIMARY_TESTS_SCRIPT) $(SECONDARY_TESTS_SCRIPT) $(ADDITIONAL_CLEANING)
 

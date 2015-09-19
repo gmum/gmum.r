@@ -1,4 +1,4 @@
-svm.data.root.local <- file.path("inst", "data_sets", "svm") 
+svm.data.root.local <- file.path("inst", "dev", "datasets", "svm") 
 colon_cancer.filename <- "colon-cancer"
 colon_cancer.url <- "http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/colon-cancer.bz2" 
 

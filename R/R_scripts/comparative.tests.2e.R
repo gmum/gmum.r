@@ -40,7 +40,7 @@ get.results <- function(name, data, class.column.name, params, model, seed=777, 
     cf_test <- confusionMatrix(pred_test, testing[, class.column.index])
     cf_train <- confusionMatrix(pred_train, training[, class.column.index])
     
-    score_row = c(name, as.numeric(cf_train$overall[1]), as.numeric(cf_test$overall[1]), model$getNumberSV(), model$getC(), model$getIterations())
+    score_row = c(name, as.numeric(cf_train$overall[1]), as.numeric(cf_test$overall[1]), model$SV, model$C, model$iterations)
     row_length <- length(score_row)
     l <- c(l, score_row)
   }
