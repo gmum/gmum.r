@@ -15,6 +15,6 @@ Pause algorithm
 \examples{
 gng <- GNG(gng.preset.sphere(100))
 pause(gng)
-print(gng$isRunning())
+print(isRunning(gng))
 }
 

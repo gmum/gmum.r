@@ -254,7 +254,7 @@ run.Rcpp_GNGServer <- NULL
 #' @examples
 #' gng <- GNG(gng.preset.sphere(100))
 #' pause(gng)
-#' print(gng$.isRunning())
+#' print(isRunning(gng))
 pause <- function(object) UseMethod("pause")
 
 #' @export
@@ -799,7 +799,7 @@ errorStatistics <- function(object){
 }  
 
 clustering.Rcpp_GNGServer <- function(c){
-  c$.getClustering()
+  c$getClustering()
 }  
 
 gngSave <- function(object, filename){

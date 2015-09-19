@@ -19,7 +19,7 @@ node a mean of labels of closest examples.}
 Insert examples with optional labels.
 }
 \note{
-It copies your examples twice in RAM. You might want to use object$insertExamples.
+It copies your examples twice in RAM. You might want to use object$.insertExamples.
 }
 \examples{
 X <- gng.preset.sphere(100)

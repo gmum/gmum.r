@@ -8,7 +8,7 @@
 \format{\preformatted{ NULL
 }}
 \usage{
-logClusters
+logClusters(c)
 }
 \arguments{
 \item{c}{object Trained CEC model object.}

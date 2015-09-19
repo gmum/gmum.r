@@ -216,6 +216,8 @@ predict.Rcpp_CecModel <- NULL
 #'
 #' @param c object Trained CEC model object.
 #' 
+#' @usage logClusters(c)
+#' 
 #' @examples
 #' \dontrun{
 #' logClusters(c) 

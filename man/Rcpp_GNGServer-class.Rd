@@ -10,7 +10,7 @@ Class \code{Rcpp_GNGServer} defines a GNGServer class.
 \section{Methods}{
 
 \describe{
-\item{\code{clustering()}}{Rcpp::NumericVector clustering()}
+\item{\code{getClustering()}}{Rcpp::NumericVector getClustering()}
 
 \item{\code{getCurrentIteration()}}{unsigned int getCurrentIteration()  const }
 
@@ -23,25 +23,5 @@ Class \code{Rcpp_GNGServer} defines a GNGServer class.
 \item{\code{getNode(...)}}{Rcpp::List getNode(int)}
 
 \item{\code{getNumberNodes()}}{unsigned int getNumberNodes()  const }
-
-\item{\code{hasStarted()}}{bool hasStarted()  const }
-
-\item{\code{insertExamples(...)}}{void insertExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>)}
-
-\item{\code{insertLabeledExamples(...)}}{void insertLabeledExamples(Rcpp::Matrix<14, Rcpp::PreserveStorage>, Rcpp::NumericVector)}
-
-\item{\code{isRunning()}}{bool isRunning()  const }
-
-\item{\code{nodeDistance(...)}}{double nodeDistance(int, int)  const }
-
-\item{\code{pause()}}{void pause()}
-
-\item{\code{predict(...)}}{int predict(Rcpp::Vector<14, Rcpp::PreserveStorage>)}
-
-\item{\code{run()}}{void run()}
-
-\item{\code{setVerbosity(...)}}{void setVerbosity(int)}
-
-\item{\code{terminate()}}{void terminate()}
 }}
 
