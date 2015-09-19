@@ -17,7 +17,7 @@ test_that("Basic saving/loading works", {
   # Check basic equivalency (TODO: check something deeper)
   for(i in 1:100){
     point <- runif(3)
-    expect_that(g$predict(point) == g2$predict(point), is_true())
+    expect_that(g$.predict(point) == g2$.predict(point), is_true())
   }
   
   file.remove("mygraph.bin")
@@ -131,7 +131,7 @@ test_that("GNG is working on mouse dataset", {
     dataset = cec.mouse1.spherical
     gng <- GNG(dataset, seed=778)
   expect_that(gng$getMeanError() < 0.1, is_true())
-  expect_that(all(gng$clustering() == predict(gng,dataset)), is_true())
+  expect_that(all(gng$getClustering() == predict(gng,dataset)), is_true())
   gng.refit <- GNG(dataset, seed=778)
   # Seeding works => error statistics are the same
   expect_that(all(abs(errorStatistics(gng.refit) - errorStatistics(gng)) < 1e-2), is_true() )
@@ -141,7 +141,7 @@ test_that("GNG clustering and predict are returning the same", {
   print("GNG clustering and predict are returning the same")
   X <- replicate(10, rnorm(20))
   gng <- GNG(X)
-  expect_that(all(gng$clustering() == predict(gng,X)), is_true())
+  expect_that(all(gng$getClustering() == predict(gng,X)), is_true())
 })
 
 test_that("GNG errorStatistics and node retrieval work", {
@@ -161,15 +161,15 @@ test_that("GNG synchronization looks ok", {
       synchronization_test <- function(){
         gng <- GNG(dataset, verbosity=3, max.nodes=20)
         gng$.updateClustering()
-        sum_1 = (sum( gng$clustering() != predict(gng, dataset)))
+        sum_1 = (sum( gng$getClustering() != predict(gng, dataset)))
 
         gng <- GNG(train.online=TRUE, dim=2, verbosity=3, max.nodes=20)
-        gng$insertExamples(dataset) 
+        gng$.insertExamples(dataset) 
         Sys.sleep(1)
-        gng$pause()
+        gng$.pause()
         gng$.updateClustering()
 
-        sum_2 = (sum( gng$clustering() != predict(gng, dataset)))
+        sum_2 = (sum( gng$getClustering() != predict(gng, dataset)))
         
         expect_that(sum_1 == 0 && sum_2 == 0, is_true())
         expect_that(isRunning(gng), is_false())

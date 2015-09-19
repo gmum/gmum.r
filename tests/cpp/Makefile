@@ -9,7 +9,7 @@ include ../../src/Makevars
 CXX := $(CXX)
 PREPROCESS = $(DEBUG) -DNRCPP_INTERFACE -DARMA_64BIT_WORD -DBOOST_DISABLE_ASSERTS
 PKG_CPPFLAGS = $(GCC_STD) $(PREPROCESS) $(R_CPPFLAGS) $(INCLUDES) -pthread
-CPPFLAGS :=  $(PKG_CPPFLAGS) -O2 -g -s --std=c++0x
+CPPFLAGS :=  $(PKG_CPPFLAGS) -O2 -g -s
 LDLIBS := $(PKG_LIBS) -lpthread -lgtest -lgtest_main
 
 ###

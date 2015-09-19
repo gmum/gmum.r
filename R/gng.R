@@ -148,7 +148,7 @@ findClosests <- NULL
 #' print(isRunning(gng))
 #' 
 isRunning <- function(object) {
-  return(object$isRunning())
+  return(object$.isRunning())
 }
 
 #' Find closest component
@@ -204,7 +204,7 @@ node <- function(x, gng_id) UseMethod("node")
 #' predict(gng, c(1,2,2))
 predict.Rcpp_GNGServer <- function(object, x, ...){
   if( is.vector(x)){
-    object$predict(x)
+    object$.predict(x)
   }else{
     if ( !is(x, "data.frame") && !is(x, "matrix") && !is(x,"numeric")  ) {
       stop(gmum.error(GMUM_WRONG_PARAMS, "Wrong target class, please provide data.frame, matrix or numeric vector"))
@@ -217,7 +217,7 @@ predict.Rcpp_GNGServer <- function(object, x, ...){
     y <- rep(NA, nrow(x))
     
     for(i in 1:nrow(x)){
-      y[i] <- object$predict(x[i,])
+      y[i] <- object$.predict(x[i,])
     }
     
     y
@@ -254,7 +254,7 @@ run.Rcpp_GNGServer <- NULL
 #' @examples
 #' gng <- GNG(gng.preset.sphere(100))
 #' pause(gng)
-#' print(gng$isRunning())
+#' print(gng$.isRunning())
 pause <- function(object) UseMethod("pause")
 
 #' @export
@@ -478,7 +478,7 @@ numberNodes <- function(object){
 #' X = gng.preset.sphere(100)
 #' insertExamples(gng, X)
 #' 
-#' @note It copies your examples twice in RAM. You might want to use object$insertExamples.
+#' @note It copies your examples twice in RAM. You might want to use object$.insertExamples.
 insertExamples <- NULL
 
 .GNG <- function(x=NULL, labels=c(),
@@ -594,10 +594,10 @@ insertExamples <- NULL
       
       tryCatch({
         
-        while(server$getCurrentIteration() == 0 || server$isRunning()){}
+        while(server$getCurrentIteration() == 0 || server$.isRunning()){}
         
         # max_iter is checked in GNG
-        while(iter == 0 || server$isRunning()){
+        while(iter == 0 || server$.isRunning()){
           Sys.sleep(0.1)
           iter = server$getCurrentIteration()
           
@@ -640,7 +640,7 @@ insertExamples <- NULL
         
         
         
-        if(server$isRunning()){
+        if(server$.isRunning()){
           terminate(server)
         }
         
@@ -648,7 +648,7 @@ insertExamples <- NULL
         
       }, interrupt=
         function(interrupt){
-          if(server$isRunning()){
+          if(server$.isRunning()){
             terminate(server)
           }
           
@@ -769,25 +769,25 @@ node.Rcpp_GNGServer  <- function(x, gng_id){
 run.Rcpp_GNGServer  <- function(object){
   # Invalidate components
   assign("components.membership", NULL, object)
-  object$run()
+  object$.run()
 }
 
 pause.Rcpp_GNGServer  <- function(object){
-  object$pause()
+  object$.pause()
   n = 0.0
   sleep = 0.1
-  while(object$isRunning()){
+  while(object$.isRunning()){
     Sys.sleep(sleep)  
     n = n + 1
     if(n > 2/sleep){
-      print("Warning: GNG has not paused! Check status with gng$isRunning(). Something is wrong.")
+      print("Warning: GNG has not paused! Check status with gng$.isRunning(). Something is wrong.")
       return()
     }
   }
 }
 
 terminate.Rcpp_GNGServer <- function(object){
-  object$terminate()
+  object$.terminate()
 }
 
 meanError <- function(object){
@@ -799,7 +799,7 @@ errorStatistics <- function(object){
 }  
 
 clustering.Rcpp_GNGServer <- function(c){
-  c$clustering()
+  c$.getClustering()
 }  
 
 gngSave <- function(object, filename){
@@ -835,7 +835,7 @@ calculateCentroids  <- function(object, community.detection.algorithm=spinglass.
 
 
 convertToIGraph <- function(object, calculate.dist=TRUE){
-  was_running = object$isRunning()
+  was_running = object$.isRunning()
   if(was_running){
     pause(object)
   }
@@ -902,7 +902,7 @@ convertToIGraph <- function(object, calculate.dist=TRUE){
   if(calculate.dist){
     # Add distance information
     dists <- apply(get.edges(g, E(g)), 1, function(x){ 
-      object$nodeDistance(indexesIGraphToGNG[x[1]], indexesIGraphToGNG[x[2]])
+      object$.nodeDistance(indexesIGraphToGNG[x[1]], indexesIGraphToGNG[x[2]])
     })
     E(g)$dists = dists
   }
@@ -946,7 +946,7 @@ findClosests <- function(object, node.ids, x){
 
 insertExamples <- function(object, examples, labels=c()){    
   if(length(labels) == 0){
-    object$insertExamples(examples)
+    object$.insertExamples(examples)
   }else if(typeof(labels) == "character"){
     if(typeof(labels) == "list"){
       if(is.null(examples$labels)){
@@ -954,13 +954,13 @@ insertExamples <- function(object, examples, labels=c()){
       }else{
         label.column <- examples$labels
         examples$labels <- NULL
-        object$insertLabeledExamples(examples, label.column)
+        object$.insertLabeledExamples(examples, label.column)
       }
     }else{
       stop(gmum.error(GMUM_WRONG_PARAMS, "Please pass data frame"))
     }
   }else{
-    object$insertLabeledExamples(examples, labels)
+    object$.insertLabeledExamples(examples, labels)
   }    
 }
 

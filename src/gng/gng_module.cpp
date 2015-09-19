@@ -26,10 +26,6 @@ GNGServer * loadFromFile(std::string filename){
 	return out;
 }
 
- static void finalizer_GNGServer( GNGServer* ptr ){
-           delete ptr;
- }
-
 RCPP_MODULE(gng_module){
 	//TODO: Rcpp doesn't accept dot starting name so no way to hide it easily
     Rcpp::function("fromFileGNG", &loadFromFile);
@@ -64,38 +60,33 @@ RCPP_MODULE(gng_module){
 	.field("max_iter", &GNGConfiguration::max_iter)
 	.method(".check_correctness", &GNGConfiguration::check_correctness)
 	.method(".set_bounding_box", &GNGConfiguration::setBoundingBox)
-    .method(".show", &GNGConfiguration::show);
-
-
-	
+  .method(".show", &GNGConfiguration::show);
 
 	class_<GNGServer>("GNGServer")
-			 .constructor<GNGConfiguration*>()
-			.method("setVerbosity", &GNGServer::setVerbosity)
-			.method(".save", &GNGServer::save)
-			.method("isRunning", &GNGServer::isRunning)
-			.method("run", &GNGServer::run)
-			.method("getCurrentIteration", &GNGServer::getCurrentIteration)
-			.method("pause", &GNGServer::pause)
-			.method("terminate", &GNGServer::terminate)
-			.method("getMeanError", &GNGServer::getMeanError)
-			.method("hasStarted", &GNGServer::hasStarted)
-			.method("nodeDistance", &GNGServer::nodeDistance)
-			.method("clustering", &GNGServer::RgetClustering)
-			.method(".getConfiguration", &GNGServer::getConfiguration)
-			.method("getDatasetSize", &GNGServer::getDatasetSize)
-			.method("getNumberNodes", &GNGServer::getNumberNodes)
-			.method(".exportToGraphML", &GNGServer::exportToGraphML)
-			.method(".getGNGErrorIndex", &GNGServer::getGNGErrorIndex)
-			.method("getNode", &GNGServer::getNode)
-			.method("insertExamples", &GNGServer::RinsertExamples)
-			.method("insertLabeledExamples", &GNGServer::RinsertLabeledExamples)
-			.method("getErrorStatistics", &GNGServer::RgetErrorStatistics)
-			.method("predict", &GNGServer::Rpredict)
-
-			.method(".getLastNodeIndex", &GNGServer::_getLastNodeIndex)
-			.method(".updateClustering", &GNGServer::_updateClustering);
-//            .finalizer(&finalizer_GNGServer);
+	  .constructor<GNGConfiguration*>()
+   .method(".setVerbosity", &GNGServer::setVerbosity)
+	 .method(".save", &GNGServer::save)
+   .method(".isRunning", &GNGServer::isRunning)
+   .method(".run", &GNGServer::run)
+	 .method(".pause", &GNGServer::pause)
+   .method(".terminate", &GNGServer::terminate)
+   .method(".exportToGraphML", &GNGServer::exportToGraphML)
+   .method(".getGNGErrorIndex", &GNGServer::getGNGErrorIndex)
+   .method(".hasStarted", &GNGServer::hasStarted)
+   .method(".nodeDistance", &GNGServer::nodeDistance)
+   .method(".insertExamples", &GNGServer::RinsertExamples)
+   .method(".insertLabeledExamples", &GNGServer::RinsertLabeledExamples)
+   .method(".predict", &GNGServer::Rpredict)
+   .method(".getConfiguration", &GNGServer::getConfiguration)
+   .method(".getLastNodeIndex", &GNGServer::_getLastNodeIndex)
+   .method(".updateClustering", &GNGServer::_updateClustering)
+   .method("getClustering", &GNGServer::RgetClustering)
+	 .method("getErrorStatistics", &GNGServer::RgetErrorStatistics)
+	 .method("getCurrentIteration", &GNGServer::getCurrentIteration)
+   .method("getDatasetSize", &GNGServer::getDatasetSize)
+   .method("getNumberNodes", &GNGServer::getNumberNodes)
+   .method("getNode", &GNGServer::getNode)
+   .method("getMeanError", &GNGServer::getMeanError);
 }
 
 #include <RcppArmadillo.h>
