@@ -16,6 +16,6 @@ R_CPPFLAGS := $(shell R CMD config --cppflags)  $(shell echo 'Rcpp:::CxxFlags()'
 LAPACK_LIBS := $(shell R CMD config LAPACK_LIBS)
 BLAS_LIBS := $(shell R CMD config BLAS_LIBS)
 
-PKG_CPPFLAGS := $(PKG_CPPFLAGS) $(GCC_STD) $(PREPROCESS) $(R_CPPFLAGS) $(INCLUDES) -Wall -pedantic -mtune=native -static-libstdc++ -static-libgcc -lstdc++ -lpthread
+PKG_CPPFLAGS := $(PKG_CPPFLAGS) $(GCC_STD) $(PREPROCESS) $(R_CPPFLAGS) $(INCLUDES) -mtune=native -static-libstdc++ -static-libgcc -lstdc++ -lpthread
 PKG_CXXFLAGS := --std=c++0x
-PKG_LIBS := $(PKG_LIBS) $(LAPACK_LIBS) $(BLAS_LIBS) $(R_LIBS) -static-libstdc++ -static-libgcc -lstdc++ -lpthread
+PKG_LIBS := $(PKG_LIBS) $(LAPACK_LIBS) $(BLAS_LIBS) $(R_LIBS) $(FLIBS) -static-libstdc++ -static-libgcc -lstdc++ -lpthread

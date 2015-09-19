@@ -16,7 +16,7 @@ echo "Creating folder structure"
 mkdir -p $destination
 
 echo "Copy necessary files"
-rsync -rP --exclude=".*" --exclude="demo/samples/*" --exclude="inst/data_sets/*" --exclude="cmake/*" --exclude="build/*" --exclude="doc/*" --exclude="libs/*" --exclude="tests/*" --exclude="..Rcheck/*" --include="*.cpp" --include="*.h" --include="*.hpp" --include="*.Rd" --include="*.c" --include="*.R" --include="*/" --exclude="*" . $destination
+rsync -rP --exclude=".*" --exclude="demo/samples/*" --exclude="inst/data_sets/*" --exclude="cmake/*" --exclude="build/*" --exclude="doc/*" --exclude="libs/*" --exclude="tests/*" --exclude="..Rcheck/*" --include="*.cpp" --include="*.h" --include="*.hpp" --include="*.Rd" --include="*.c" --include="*.R" --include="*/" --exclude="*" --exclude="pkg/*" --exclude="pkg" . $destination
 
 # Copy datasets
 mkdir $destination/data
@@ -32,6 +32,7 @@ cp LICENSE $destination
 cp NAMESPACE $destination
 cp demo/00Index $destination/demo
 cp src/Makevars $destination/src
+cp src/Makevars.win $destination/src
 cp inst/include/svmlight/Makefile $destination/inst/include/svmlight/
 cp inst/include/svmlight/LICENSE.txt $destination/inst/include/svmlight/
 
@@ -41,4 +42,4 @@ cp inst/include/svmlight/LICENSE.txt $destination/inst/include/svmlight/
 rm -r $destination/..Rcheck
 rm -r $destination/.git
 rm -r $destination/.idea
-
+rm -r pkg/pkg
