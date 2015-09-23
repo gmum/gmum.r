@@ -35,6 +35,7 @@ script:
 
 after_failure:
   - ./travis-tool.sh dump_logs
+  - cat boost_1_58_0/boost_log
 
 notifications:
   email:
