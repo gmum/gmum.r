@@ -17,7 +17,8 @@ before_install:
 #  - cd inst/dev/datasets/svm/ && ./download_transduction.sh && cd ../../../..
 
 install:
-  - ./travis-tool.sh install_deps
+  #- ./travis-tool.sh install_deps
+  - R -e "install.packages('RcppArmadillo', repos='http://cran.us.r-project.org');"
   # Install dependencies of R tests
 #  - Rscript -e 'library("devtools"); library("methods"); options(repos=c(CRAN="http://cran.rstudio.com")); install_deps(dependencies = "Suggests")'
 
