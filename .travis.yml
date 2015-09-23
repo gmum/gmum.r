@@ -28,6 +28,7 @@ install:
   - cd boost_1_58_0
   - ./bootstrap.sh
   - sudo ./b2 install
+  - cd ..
 
 script:
 #  - ./travis-tool.sh run_tests
