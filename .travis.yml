@@ -8,10 +8,18 @@ language: c
 sudo: required
 
 before_install:
+  # R
   - sudo apt-get install libarmadillo-dev libboost-dev libgtest-dev
   - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
   - chmod 755 ./travis-tool.sh
   - ./travis-tool.sh bootstrap
+  # debug
+  - g++ --version
+  # C++
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq g++-4.9
+  - export CXX="g++-4.9"
   # Test datasets
 #  - cd inst/dev/datasets/svm/ && ./download_large.sh && cd ../../../..
 #  - cd inst/dev/datasets/svm/ && ./download_transduction.sh && cd ../../../..
