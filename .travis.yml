@@ -7,20 +7,21 @@ language: c
 
 sudo: required
 
-before_install:
-  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
-  - chmod 755 ./travis-tool.sh
-  - ./travis-tool.sh bootstrap
+#before_install:
+#  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
+#  - chmod 755 ./travis-tool.sh
+#  - ./travis-tool.sh bootstrap
   # Test datasets
-  - cd inst/dev/datasets/svm/ && ./download_large.sh && cd ../../../..
-  - cd inst/dev/datasets/svm/ && ./download_transduction.sh && cd ../../../..
+#  - cd inst/dev/datasets/svm/ && ./download_large.sh && cd ../../../..
+#  - cd inst/dev/datasets/svm/ && ./download_transduction.sh && cd ../../../..
 
-install:
-  - ./travis-tool.sh install_deps
+#install:
+#  - ./travis-tool.sh install_deps
   # Install dependencies of R tests
-  - Rscript -e 'library("devtools"); library("methods"); options(repos=c(CRAN="http://cran.rstudio.com")); install_deps(dependencies = "Suggests")'
+#  - Rscript -e 'library("devtools"); library("methods"); options(repos=c(CRAN="http://cran.rstudio.com")); install_deps(dependencies = "Suggests")'
 
-script: ./travis-tool.sh run_tests
+script:
+#  - ./travis-tool.sh run_tests
   - cd tests/cpp/ && make clean && make && ./run_primary_tests.sh
 
 after_failure:
