@@ -21,6 +21,13 @@ install:
   - R -e "install.packages('RcppArmadillo', repos='http://cran.us.r-project.org');"
   # Install dependencies of R tests
 #  - Rscript -e 'library("devtools"); library("methods"); options(repos=c(CRAN="http://cran.rstudio.com")); install_deps(dependencies = "Suggests")'
+  # Install C++ dependencies
+  - sudo apt-get update
+  - wget -c 'http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.bz2/download'
+  - tar xf download
+  - cd boost_1_58_0
+  - ./bootstrap.sh
+  - ./b2 install
 
 script:
 #  - ./travis-tool.sh run_tests
