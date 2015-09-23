@@ -7,10 +7,10 @@ language: c
 
 sudo: required
 
-#before_install:
-#  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
-#  - chmod 755 ./travis-tool.sh
-#  - ./travis-tool.sh bootstrap
+before_install:
+  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
+  - chmod 755 ./travis-tool.sh
+  - ./travis-tool.sh bootstrap
   # Test datasets
 #  - cd inst/dev/datasets/svm/ && ./download_large.sh && cd ../../../..
 #  - cd inst/dev/datasets/svm/ && ./download_transduction.sh && cd ../../../..
