@@ -16,33 +16,33 @@ before_install:
   - g++ --version
   # C++
   - sudo apt-get install libarmadillo-dev libboost-dev libgtest-dev
-  - ln -s /usr/src/gtest gtest
-  - cd gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib && cd .. && rm gtest
+  - ln -s /usr/src/gtest gtest && cd gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib && cd .. && rm gtest
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get update -qq
   - sudo apt-get install -qq g++-4.9
   - export CXX="g++-4.9"
   # Test datasets
-#  - cd inst/dev/datasets/svm/ && ./download_large.sh && cd ../../../..
-#  - cd inst/dev/datasets/svm/ && ./download_transduction.sh && cd ../../../..
+  - cd inst/dev/datasets/svm/ && ./download_large.sh && cd ../../../..
+  - cd inst/dev/datasets/svm/ && ./download_transduction.sh && cd ../../../..
 
 install:
-  #- ./travis-tool.sh install_deps
+  - ./travis-tool.sh install_deps
   - R -e "install.packages('RcppArmadillo', repos='http://cran.us.r-project.org');"
   # Install dependencies of R tests
-#  - Rscript -e 'library("devtools"); library("methods"); options(repos=c(CRAN="http://cran.rstudio.com")); install_deps(dependencies = "Suggests")'
+  - Rscript -e 'library("devtools"); library("methods"); options(repos=c(CRAN="http://cran.rstudio.com")); install_deps(dependencies = "Suggests")'
   # Install C++ dependencies
-  - sudo apt-get update
   - wget -c 'http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.bz2/download'
   - tar xf download
   - cd boost_1_58_0
   - ./bootstrap.sh
-  - sudo ./b2 install
+  - sudo ./b2 install | grep --invert-match common.
   - cd ..
+  # Compile C++ tests
+  - cd tests/cpp/ && make clean && make && cd ../..
 
 script:
-#  - ./travis-tool.sh run_tests
-  - cd tests/cpp/ && make clean && make && ./run_primary_tests.sh
+  - ./travis-tool.sh run_tests
+  - cd tests/cpp/ && ./run_primary_tests.sh && cd ../..
 
 after_failure:
   - ./travis-tool.sh dump_logs
