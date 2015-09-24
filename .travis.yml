@@ -14,7 +14,8 @@ before_install:
   - ./travis-tool.sh bootstrap
   # debug
   - g++ --version
-  # C++
+  # Install dependencies of C++ tests
+  - R -e "install.packages('BH', repos='http://cran.us.r-project.org');"
   - sudo apt-get install libarmadillo-dev libboost-dev libgtest-dev
   - ln -s /usr/src/gtest gtest && cd gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib && cd .. && rm gtest
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
@@ -27,16 +28,8 @@ before_install:
 
 install:
   - ./travis-tool.sh install_deps
-  - R -e "install.packages('RcppArmadillo', repos='http://cran.us.r-project.org');"
   # Install dependencies of R tests
   - Rscript -e 'library("devtools"); library("methods"); options(repos=c(CRAN="http://cran.rstudio.com")); install_deps(dependencies = "Suggests")'
-  # Install C++ dependencies
-  - wget -c 'http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.bz2/download'
-  - tar xf download
-  - cd boost_1_58_0
-  - ./bootstrap.sh
-  - sudo ./b2 install | grep --invert-match common.
-  - cd ..
   # Compile C++ tests
   - cd tests/cpp/ && make clean && make && cd ../..
 
