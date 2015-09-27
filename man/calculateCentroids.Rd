@@ -19,7 +19,9 @@ Using passed community.detection finds communities and for each community pick n
 Get centroids
 }
 \examples{
+\dontrun{
 gng <- GNG(gng.preset.sphere(100))
 print(node(gng, calculateCentroids(gng)[1])$pos)
+}
 }
 

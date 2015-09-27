@@ -52,6 +52,7 @@ see \url{http://sund.de/netze/applets/gng/full/tex/DemoGNG/node20.html}}
 Construct GNG object. Can be used to train offline, or online.
 }
 \examples{
+\dontrun{
 X <- gng.preset.sphere(100)
 y <- round(runif(100))
 # Train in an offline manner
@@ -67,5 +68,6 @@ Sys.sleep(10)
 terminate(gng)
 # Plot
 plot(gng)
+}
 }
 

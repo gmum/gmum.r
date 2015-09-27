@@ -4,7 +4,6 @@ library(methods)
 #' @importFrom ggplot2 scale_size_continuous scale_size_identity geom_point aes ggplot geom_tile scale_fill_brewer scale_alpha_identity scale_colour_brewer geom_abline
 NULL
 
-
 #' Use first two spatial coordinates as position in layout
 #' 
 #' @note You can pass any igraph layout algorithm to plot
@@ -113,8 +112,10 @@ gngLoad <- NULL
 #' @param community.detection.algorithm Used algorithm from igraph package, by default spinglass.community
 #' 
 #' @examples
+#' \dontrun{
 #' gng <- GNG(gng.preset.sphere(100))
 #' print(node(gng, calculateCentroids(gng)[1])$pos)
+#' }
 calculateCentroids <- NULL
 
 #' Find closest node
@@ -128,11 +129,12 @@ calculateCentroids <- NULL
 #' @param x Can be either \code{vector} or \code{data.frame.}
 #' 
 #' @examples
+#' \dontrun{
 #' gng <- GNG(gng.preset.sphere(100))
 #' # Find closest centroid to c(1,1,1)
 #' found.centroids <- calculateCentroids(gng)
 #' findClosests(gng, found.centroids, c(1,1,1))
-#' 
+#' }
 findClosests <- NULL
 
 #' Check if GNG is running
@@ -421,6 +423,7 @@ clustering.Rcpp_GNGServer <- NULL
 #' @param seed Seed for internal randomization
 #' 
 #' @examples
+#' \dontrun{
 #' X <- gng.preset.sphere(100)
 #' y <- round(runif(100))
 #' # Train in an offline manner
@@ -436,7 +439,7 @@ clustering.Rcpp_GNGServer <- NULL
 #' terminate(gng)
 #' # Plot
 #' plot(gng)
-#'
+#' }
 GNG <- NULL
 
 #' @title convertToIGraph

@@ -1,3 +1,9 @@
+#' @importFrom grDevices rainbow
+#' @importFrom graphics hist pairs par plot plot.new points title
+#' @importFrom stats na.omit prcomp predict rnorm runif update
+#' @importFrom utils data read.csv
+NULL
+
 # Lazy loading to allow for discovery of all files
 evalqOnLoad( {
   # Autocompletion override
@@ -12,7 +18,7 @@ evalqOnLoad( {
   .DollarNames.Rcpp_CecModel <<- autocompl
   
   # Workaround RStudio bug
-  if(exists(".rs.getAnywhere")) {
+  if(exists(".rs.getAnywhere") && !exists(".rs.getAnywhere.original")) {
     .rs.getAnywhere.original <<- .rs.getAnywhere
     .rs.getAnywhere <<- function(a, envir=.GlobalEnv){ .rs.getAnywhere.original(a, .GlobalEnv) }
   }

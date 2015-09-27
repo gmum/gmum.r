@@ -24,4 +24,8 @@ if(!is.installed("e1071")){
 	install.packages("e1071",repos='http://cran.us.r-project.org')
 }
 
+if(!is.installed("MASS")){
+  install.packages("MASS",repos='http://cran.us.r-project.org')
+}
+
 test_check('gmum.r')

@@ -1,6 +1,6 @@
 Package: gmum.r
 Version: 0.2
-Date: 2015-08-05
+Date: 2015-09-25
 Title: Efficient C++ Implementations of SVM, GNG and CEC Models
 Type: Package
 Author: Wojciech Czarnecki, Stanislaw Jastrzebski, Marcin Data, Igor Sieradzki, Mateusz Bruno-Kaminski, Karol Jurek, Piotr Kowenzowski, Michal Pletty, Konrad Talik, Maciej Zgliczynski
@@ -8,14 +8,13 @@ Maintainer: Stanislaw Jastrzebski <staszek.jastrzebski@gmail.com>
 Description: Package focusing on efficiency (C++ implementations) and intuitive API. gmum.r is a close collaboration between GMUM group members (http://gmum.net) and students.
 License: MIT + file LICENSE
 Repository: CRAN
-Depends:
+Imports:
     ggplot2 (>= 1.0.0),
     stats, 
     igraph,
     SparseM,
-    httr,
     Matrix,
-    MASS (>= 7.3),
+    httr,
     Rcpp (>= 0.11.6)
 LinkingTo: Rcpp, RcppArmadillo, BH
 NeedsCompilation: yes
