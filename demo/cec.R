@@ -17,16 +17,15 @@ plot(c)
 # Better than before, however, we know that clusters are spherical; let's inform CEC about that.
 c <- CEC(k=3, x=dataset, control.nstart=10, method.type='spherical')
 plot(c)
-# Ain't that great? :D
 
-# You can learn details of clustering like this:
-c$centers()
-c$covMatrix()
+# Learn details of clustering:
+c$centers
+c$covMatrix
 
-# You can predict cluster which a point would belong to:
+# Predict cluster which a point would belong to:
 predict(c, c(1,1))
 
-# You can visualise size and shape of clusters:
+# Visualise size and shape of clusters:
 plot(c, ellipses=TRUE)
 
 # Try the same with random assignment.
