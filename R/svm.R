@@ -95,7 +95,7 @@ library(ggplot2)
 #'
 #' # for more in-depth examples visit \url{http://r.gmum.net/getting_started.html}
 #' }
-SVM <- NULL
+SVM <- function(x, ...) UseMethod("SVM")
 
 #' Class Rcpp_SVMClient.
 #'
@@ -278,18 +278,15 @@ caret.gmumSvmLinear <- NULL
 #' @export
 caret.gmumSvmPoly <- NULL
 
+#' @export 
 #' @rdname svm
-#' @export SVM.formula
 SVM.formula <- NULL
 
+#' @export
 #' @rdname svm
-#' @export SVM.default
 SVM.default <- NULL
 
 loadModule('svm_wrapper', TRUE)
-
-SVM <- function(x, ...)
-  UseMethod("SVM")
 
 SVM.formula <- function(formula, data, ...) {
   call <- match.call(expand.dots = TRUE)

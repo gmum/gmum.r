@@ -15,11 +15,6 @@ svm.kernel.sigmoid <- "sigmoid"
 svm.plot.contour <- "contour"
 svm.plot.pca <- "pca"
 
-svm.dataset.breast_cancer <- function() {
-  data(svm_breast_cancer_dataset)
-  return (svm.breastcancer.dataset)
-}
-
 read.libsvm = function( filename, dimensionality ) {
   
   content = readLines( filename )
@@ -54,11 +49,6 @@ read.libsvm = function( filename, dimensionality ) {
 svm.dataset.colon_cancer <- function() {
   bc <- read.libsvm(svm.colon_cancer.path, 2000)
   return(bc)
-}
-
-svm.dataset.2e <- function() {
-  data(svm_two_ellipsoids_dataset)
-  return(svm.twoellipsoids.dataset)
 }
 
 svm.dataset.circles <- function() { 
