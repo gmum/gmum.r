@@ -26,6 +26,7 @@
 # include <stdlib.h>
 # include <time.h> 
 # include <float.h>
+# include <stdint.h>
 
 # define VERSION       "V6.02"
 # define VERSION_DATE  "14.08.08"
