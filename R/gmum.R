@@ -2,6 +2,7 @@
 #' @importFrom graphics hist pairs par plot plot.new points title
 #' @importFrom stats na.omit prcomp predict rnorm runif update
 #' @importFrom utils data read.csv
+#' @importFrom Matrix Matrix
 NULL
 
 # Lazy loading to allow for discovery of all files
