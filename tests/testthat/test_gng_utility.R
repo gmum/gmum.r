@@ -1,4 +1,3 @@
-library(igraph)
 library(testthat)
 
 test_that("GNG Utility works", {

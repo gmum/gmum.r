@@ -17,7 +17,7 @@ test_that("Basic saving/loading works", {
   # Check basic equivalency (TODO: check something deeper)
   for(i in 1:100){
     point <- runif(3)
-    expect_that(g$.predict(point) == g2$.predict(point), is_true())
+    expect_that(predict(g, point) == predict(g2, point), is_true())
   }
   
   file.remove("mygraph.bin")

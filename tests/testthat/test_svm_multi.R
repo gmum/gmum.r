@@ -1,5 +1,3 @@
-library(MASS)
-library(SparseM)
 library(testthat)
 library(gmum.r)
 library(caret)
