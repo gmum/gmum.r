@@ -1048,7 +1048,7 @@ std::string SVMLightRunner::SVMConfigurationToSVMLightLearnInputLine(
     } else if (!target_value) {
         ss << 0;
     }else{
-    	C_PRINTF("Unrecognized class label %d\n", target_value);
+    	C_PRINTF("Unrecognized class label %f\n", target_value);
     	EXIT(1);
     }
 

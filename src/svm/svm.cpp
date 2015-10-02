@@ -2713,9 +2713,9 @@ int svm_save_model(const char *model_file_name, const svm_model *model, Logger &
 
 		const svm_node *p = SV[i];
 
-		if(param.kernel_type == PRECOMPUTED)
+		if(param.kernel_type == PRECOMPUTED) {
 			C_FPRINTF(fp,"0:%d ",(int)(p->value));
-		else
+		} else
 			while(p->index != -1)
 			{
 				C_FPRINTF(fp,"%d:%.8g ",p->index,p->value);
