@@ -15,7 +15,9 @@ Imports:
     SparseM,
     Matrix,
     httr,
-    Rcpp (>= 0.11.6)
+    Rcpp (>= 0.11.6),
+    methods,
+    grid
 LinkingTo: Rcpp, RcppArmadillo, BH
 NeedsCompilation: yes
 LazyData: yes
@@ -25,7 +27,6 @@ Suggests:
     e1071,
     klaR,
     testthat,
-    methods,
     mlbench
 URL: https://github.com/gmum/gmum.r
 BugReports: https://github.com/gmum/gmum.r/issues
