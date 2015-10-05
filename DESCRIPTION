@@ -1,11 +1,11 @@
 Package: gmum.r
-Version: 0.2
+Version: 0.2.1
 Date: 2015-09-25
-Title: Efficient C++ Implementations of SVM, GNG and CEC Models
+Title: GMUM Machine Learning Group Package
 Type: Package
 Author: Wojciech Czarnecki, Stanislaw Jastrzebski, Marcin Data, Igor Sieradzki, Mateusz Bruno-Kaminski, Karol Jurek, Piotr Kowenzowski, Michal Pletty, Konrad Talik, Maciej Zgliczynski
 Maintainer: Stanislaw Jastrzebski <staszek.jastrzebski@gmail.com>
-Description: Package focusing on efficiency (C++ implementations) and intuitive API. gmum.r is a close collaboration between GMUM group members (http://gmum.net) and students.
+Description: Direct R interface to Support Vector Machine libraries ('LIBSVM' and 'SVMLight') and efficient C++ implementations of Growing Neural Gas and models developed by 'GMUM' group (Cross Entropy Clustering and 2eSVM).
 License: MIT + file LICENSE
 Repository: CRAN
 Imports:
