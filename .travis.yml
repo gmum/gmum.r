@@ -8,9 +8,20 @@ language: c
 sudo: required
 
 before_install:
+  # R
   - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
   - chmod 755 ./travis-tool.sh
   - ./travis-tool.sh bootstrap
+  # debug
+  - g++ --version
+  # Install dependencies of C++ tests
+  - R -e "install.packages('BH', repos='http://cran.us.r-project.org');"
+  - sudo apt-get install libarmadillo-dev libboost-dev libgtest-dev
+  - ln -s /usr/src/gtest gtest && cd gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib && cd .. && rm gtest
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq g++-4.9
+  - export CXX="g++-4.9"
   # Test datasets
   - cd inst/dev/datasets/svm/ && ./download_large.sh && cd ../../../..
   - cd inst/dev/datasets/svm/ && ./download_transduction.sh && cd ../../../..
@@ -19,11 +30,16 @@ install:
   - ./travis-tool.sh install_deps
   # Install dependencies of R tests
   - Rscript -e 'library("devtools"); library("methods"); options(repos=c(CRAN="http://cran.rstudio.com")); install_deps(dependencies = "Suggests")'
+  # Compile C++ tests
+  - cd tests/cpp/ && make clean && make && cd ../..
 
-script: ./travis-tool.sh run_tests
+script:
+  - ./travis-tool.sh run_tests
+  - cd tests/cpp/ && ./run_primary_tests.sh && cd ../..
 
 after_failure:
   - ./travis-tool.sh dump_logs
+  - cat boost_1_58_0/boost_log
 
 notifications:
   email:

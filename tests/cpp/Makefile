@@ -1,11 +1,11 @@
 $(warning Remember to make sure to delete all R package objects, you can run "make clean" to do it)
 
 R_HOME=$(shell R RHOME)
-R_CPPFLAGS = $(shell $(R_HOME)/bin/R CMD config --cppflags) $(shell $(R_HOME)/bin/Rscript -e "RcppArmadillo:::CxxFlags()") $(shell $(R_HOME)/bin/Rscript -e "Rcpp:::CxxFlags()")  
+R_CPPFLAGS = $(shell $(R_HOME)/bin/R CMD config --cppflags) $(shell $(R_HOME)/bin/Rscript -e "RcppArmadillo:::CxxFlags()") $(shell $(R_HOME)/bin/Rscript -e "Rcpp:::CxxFlags()")
 
 include ../../src/Makevars
 
-# Explicit Makevars inheritances adn overrides
+# Explicit Makevars inheritances and overrides
 CXX := $(CXX)
 PREPROCESS = $(DEBUG) -DNRCPP_INTERFACE -DARMA_64BIT_WORD -DBOOST_DISABLE_ASSERTS
 PKG_CPPFLAGS = $(GCC_STD) $(PREPROCESS) $(R_CPPFLAGS) $(INCLUDES) -pthread --std=c++0x
@@ -102,9 +102,9 @@ all: $(TEST_MAIN_BIN) helper_scripts
 	@echo or use helper scripts: $(PRIMARY_TESTS_SCRIPT) $(SECONDARY_TESTS_SCRIPT)
 
 clean:
-	rm $(OBJECTS)
-	rm -f $(TEST_MAIN_BIN) $(TEST_OBJECTS) $(COMPILED_LIBRARIES_OBJECTS)\
-	$(PRIMARY_TESTS_SCRIPT) $(SECONDARY_TESTS_SCRIPT) $(ADDITIONAL_CLEANING)
+	rm -f $(OBJECTS) $(TEST_MAIN_BIN) $(TEST_OBJECTS) \
+	$(COMPILED_LIBRARIES_OBJECTS) $(PRIMARY_TESTS_SCRIPT) \
+	$(SECONDARY_TESTS_SCRIPT) $(ADDITIONAL_CLEANING)
 
 $(TEST_MAIN_BIN): $(TEST_OBJECTS) $(OBJECTS) $(COMPILED_LIBRARIES_OBJECTS)
 	@echo Linking all tests...
