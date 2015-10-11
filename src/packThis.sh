@@ -43,3 +43,6 @@ rm -r $destination/..Rcheck
 rm -r $destination/.git
 rm -r $destination/.idea
 rm -r pkg/pkg
+rm -r pkg/doc
+rm -r pkg/cmake
+rm -r pkg/libs

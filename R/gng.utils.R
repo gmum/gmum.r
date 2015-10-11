@@ -1,3 +1,5 @@
+#' @importFrom httr GET content
+
 #' @export
 #' @rdname print.gng
 #' @method print Rcpp_GNGServer

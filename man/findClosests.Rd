@@ -20,9 +20,11 @@ Finds closest node from given list to vector. Often used together with calculate
 Find closest node
 }
 \examples{
+\dontrun{
 gng <- GNG(gng.preset.sphere(100))
 # Find closest centroid to c(1,1,1)
 found.centroids <- calculateCentroids(gng)
 findClosests(gng, found.centroids, c(1,1,1))
+}
 }
 

@@ -1,9 +1,5 @@
-#I HATE R
-
 library(gmum.r)
-set.seed(777)#source("caret.svm.models.R")
-
-
+set.seed(777)
 test_that("svmlight is deterministic: gives always this same number of iterations and SVs for breastcancer", {
   data(svm_breast_cancer_dataset)
   ds <- svm.breastcancer.dataset
