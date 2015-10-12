@@ -34,8 +34,8 @@ install:
   - cd tests/cpp/ && make clean && make && cd ../..
 
 script:
-  - ./travis-tool.sh run_tests
   - cd tests/cpp/ && ./run_primary_tests.sh && cd ../..
+  - ./travis-tool.sh run_tests
 
 after_failure:
   - ./travis-tool.sh dump_logs
