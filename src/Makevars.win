@@ -1,3 +1,21 @@
+# Note!: R is overwriting all optimization flags, if you are a dev you can change flags in ~/.R/Makevars 
 
-## Use the R_HOME indirection to support installations of multiple R version
-PKG_LIBS = $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" -e "Rcpp:::LdFlags()")
+CPP_SOURCES := $(wildcard svm/*.cpp cec/*.cpp utils/*.cpp gng/*.cpp)
+SOURCES := $(CPP_SOURCES) $(wildcard svmlight/*.c)
+INCLUDES := -I ../inst/include/svmlight -I ../inst/include/utils -I ../inst/include  -I ../inst/include/cec -I ../inst/include/gng -I ../inst/include/svm
+
+SVMLIGHT_OBJECTS = svmlight/svm_common.o svmlight/svm_hideo.o svmlight/svm_learn.o
+COMPILED_LIBRARIES_OBJECTS = $(SVMLIGHT_OBJECTS)
+OBJECTS = $(CPP_SOURCES:.cpp=.o) $(COMPILED_LIBRARIES_OBJECTS)
+
+DEBUG := -DNDEBUG_GMUM
+PREPROCESS := $(DEBUG) -DARMA_DONT_USE_CXX11 -DRCPP_INTERFACE -DARMA_64BIT_WORD
+
+R_LIBS :=    $(shell R CMD config --ldflags)  $(shell echo 'Rcpp:::LdFlags()'  | R --vanilla --slave)
+R_CPPFLAGS := $(shell R CMD config --cppflags)  $(shell echo 'Rcpp:::CxxFlags()' | R --vanilla --slave)     $(shell echo 'RcppArmadillo:::CxxFlags()' | R --vanilla --slave)
+LAPACK_LIBS := $(shell R CMD config LAPACK_LIBS)
+BLAS_LIBS := $(shell R CMD config BLAS_LIBS)
+
+PKG_CPPFLAGS := $(PKG_CPPFLAGS) $(GCC_STD) $(PREPROCESS) $(R_CPPFLAGS) $(INCLUDES) -mtune=native -static-libstdc++ -static-libgcc -lstdc++ -lpthread
+PKG_CXXFLAGS := --std=c++0x
+PKG_LIBS := $(PKG_LIBS) $(LAPACK_LIBS) $(BLAS_LIBS) $(R_LIBS) $(FLIBS) -static-libstdc++ -static-libgcc -lstdc++ -lpthread
