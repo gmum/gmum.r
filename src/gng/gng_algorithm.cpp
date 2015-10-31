@@ -608,16 +608,18 @@ void GNGAlgorithm::runAlgorithm() { //1 thread needed to do it (the one that com
 				ex = g_db->drawExample();
 				position = g_db->getPosition(ex);
 				vertex_data = g_db->getExtraData(ex);
+
+				gmum::scoped_lock<GNGGraph> graph_lock(m_g);
+				std::pair<double, int> adapt_result = adapt(position, vertex_data);
+
+				ASSERT(adapt_result.second >= 0);
+				set_clustering(ex, adapt_result.second);
+	
+				accumulated_error += adapt_result.first;
+				
+				accumulated_error_count += 1;
 			}
 
-			gmum::scoped_lock<GNGGraph> graph_lock(m_g);
-			std::pair<double, int> adapt_result = adapt(position, vertex_data);
-
-			ASSERT(adapt_result.second >= 0);
-
-			set_clustering(ex, adapt_result.second);
-			accumulated_error += adapt_result.first;
-			accumulated_error_count += 1;
 		}
 
 #ifdef GMUM_DEBUG
