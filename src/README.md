@@ -1,5 +1,7 @@
 # Manual latest version installation
 
+Note: we recommend installing package directly from CRAN
+
 ## Linux/MacOS
 
 Installation should be straightforward.
