@@ -133,3 +133,6 @@ c <- CEC(k=3, x=dataset, control.nstart=10, method.type='spherical', method.init
 plot(c)
 ```
 
+## Citation
+
+If you use gmum.r in your work please cite one of the papers, see `citation()`.
