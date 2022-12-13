@@ -25,7 +25,7 @@
 using namespace std;
 typedef vector<int> VI;
 #define FOR(x, b, e) for(size_t x=b; x<=(e); ++x)
-#define FORD(x, b, e) for(size_t x=b; x>=(e); ––x)
+#define FORD(x, b, e) for(size_t x=b; x>=(e); --x)
 #define REP(x, n) for(size_t x=0; x<(n); ++x)
 #define VAR(v,n) typeof(n) v=(n)
 #define SIZE(x) (int)(x).size()
